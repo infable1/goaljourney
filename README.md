@@ -5,18 +5,29 @@ specialised ~4B open-weight model that helps a user reach one goal: it asks only
 builds a living route (Journey), verifies progress with task-specific evidence, and adapts the
 route as reality changes — without becoming a general-purpose assistant.
 
-**Status (Milestone 1.5 — Human Review & Dataset Calibration):** 93 training examples and 30
-evaluation cases pass every automated check. A human-review system, audits, layered leakage checks
-and release gates are in place. The audit found concrete defects that the validators miss, so
-**no example is approved yet and release `v0.1.0` is not training-ready** (2/11 release gates pass).
-Next step: human review of the 30-item sample, starting with the 8 calibration items.
+**Status (Milestone 1.6 — Dataset Calibration v0.1.1):**
+
+* **Policies** are decided: capabilities, confidence semantics, deadline autonomy, Russian voice and
+  fact provenance.
+* **Dataset v0.1.1** is a traced revision of the immutable v0.1.0: 36 examples revised, every change in
+  `data/revisions/v0.1.1.yaml`. The six defects named in the brief are fixed, pending human review.
+* **Deterministic validators** now check calendars, workload arithmetic, deadline autonomy, capability
+  use, evidence ceilings, fact provenance and Russian gendered forms.
+* **Evaluation v0.2.0** has 63 cases (106 model calls): atomic, composite and longitudinal, written from
+  independent seeds. Its leakage report separates lexical, template and scenario overlap.
+
+Still, **nothing is approved and release `v0.1.1` is not training-ready** (1/11 release gates pass).
+Next step: human review, starting with the 8 calibration items.
 
 | Document | What it is |
 |---|---|
 | [`DATASET_SPEC.md`](DATASET_SPEC.md) | The data contract: records, operations, policies, rules, splits, exports, evaluation |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Short architectural proposal and design decisions |
 | [`DATA_SOURCES.md`](DATA_SOURCES.md) | Provenance, licensing, privacy |
-| [`docs/DATASET_AUDIT_v0.1.0.md`](docs/DATASET_AUDIT_v0.1.0.md) | Audit of v0.1.0: composition, gaps, Problems 1–9, schema/rule weaknesses |
+| [`docs/POLICY_DECISIONS_v0.1.1.md`](docs/POLICY_DECISIONS_v0.1.1.md) | POL-A…F: capabilities, confidence semantics, deadline autonomy, Russian voice, fact provenance, product principle |
+| [`docs/DATASET_AUDIT_v0.1.1.md`](docs/DATASET_AUDIT_v0.1.1.md) | Audit of v0.1.1: the revisions, validator and schema changes, remaining issues, gates |
+| [`docs/EVALUATION_V0.2_DESIGN.md`](docs/EVALUATION_V0.2_DESIGN.md) | Evaluation v0.2.0: case types, strata, adversarial coverage, leakage review |
+| [`docs/DATASET_AUDIT_v0.1.0.md`](docs/DATASET_AUDIT_v0.1.0.md) | Audit of v0.1.0 (frozen): composition, gaps, Problems 1–9, schema/rule weaknesses |
 | [`docs/HUMAN_REVIEW_GUIDE.md`](docs/HUMAN_REVIEW_GUIDE.md) | How to review: roles, independence, rubric A–Q, Russian neutrality, workflow |
 | [`docs/EVALUATION_EXPANSION_PLAN.md`](docs/EVALUATION_EXPANSION_PLAN.md) | From 30 to 200–500 independent evaluation cases |
 | [`docs/LEAKAGE_CHECKS.md`](docs/LEAKAGE_CHECKS.md) | What each leakage layer can and cannot establish |
@@ -29,13 +40,17 @@ Requires Python ≥ 3.10.
 ```bash
 python3 -m pip install -r requirements.txt   # jsonschema, referencing, PyYAML, pytest
 python3 scripts/gj.py validate               # everything must print RESULT: PASS
-python3 -m pytest -q                         # 225 tests
-python3 scripts/gj.py eval run --predictor reference   # sanity: 30/30 cases pass
-python3 scripts/gj.py eval run --predictor naive       # sanity: checks discriminate
+python3 -m pytest -q                         # 416 tests
+python3 scripts/gj.py eval run --predictor reference   # sanity: 106/106 model calls (63/63 cases) pass
+python3 scripts/gj.py eval run --predictor naive       # sanity: checks discriminate (0/106)
 ```
 
-`make check` runs validate + tests + both evaluation sanity runs + the leakage report + review-log
-verification. All commands exit non-zero on failure, so they can gate CI. `make gates` fails until the
+`make check` runs:
+
+* validate and tests;
+* the drift checks: evaluation builder, revision ledger, review sample and its status;
+* both evaluation sanity runs;
+* the leakage report and review-log verification. All commands exit non-zero on failure, so they can gate CI. `make gates` fails until the
 release is training-ready (by design, it fails today).
 
 ## Commands
@@ -48,17 +63,20 @@ All commands: `python3 scripts/gj.py <command> --help`.
 | `stats [--json]` | Distribution by operation, behaviour, language, domain, difficulty, size, safety, failure mode |
 | `coverage` | Pool vs. scale-up targets (`configs/coverage_targets.yaml`), with the seed scenarios that can fill each gap |
 | `generate --scenario ID --task-type OP --limit N [--with-contrastive] [--dry-run]` | Synthetic candidates from scenario seeds via a teacher LLM → `data/generated/<run_id>/` |
-| `review sample [--write\|--check]` | Deterministic 30-item review sample → `review/review_manifest_v<ver>.json` |
+| `review sample [--write\|--check]` | Deterministic 30-item review sample → `review/review_manifest_v<ver>.json`; v0.1.1 keeps the v0.1.0 sample (`configs/review.yaml` `sample_version`) |
+| `review sample-status [--write\|--check]` | The sample in force at this version: per item what changed (revision ids), known issues, human status → `review/review_sample_status_v<ver>.json` |
 | `review list [--manifest] [--status S]` / `review show ID [--show-automated]` | Examples with tier, required qualifications and status / one example for review (automated findings hidden by default) |
 | `review template ID` → `review approve\|revise\|reject ID --reviewer ME --from FILE` | Record a decision (categorical rubric A–Q + overall) in the append-only, hash-chained log |
 | `review apply SHEET` / `review export --format md\|sheet\|json` | Batch review sheets / reading packets |
 | `review history ID` / `review stats` / `review verify-log` | Decisions + diffs between versions / progress, agreement (kappa), funnel / log integrity |
 | `audit [--write] [--record ID]` | Heuristic audits (Problems 1–9, dates) + known issues register |
-| `leakage [--distribution]` | Layered train/eval/seed leakage report (fails on hard findings) |
+| `revisions check\|sync\|diff [ID]` | Revision ledger vs the base release: every change recorded with defect, correction, rationale and snapshots (no silent edits) |
+| `leakage [--distribution]` | Leakage report in three families — lexical, semantic/template, scenario (fails on hard findings) |
 | `split [--review-policy require_approved\|allow_pending] [--dry-run]` | Immutable release `data/{train,validation,test}/goaljourney-v<ver>.jsonl` + manifest; aborts on any invalid example or hard leakage |
 | `gates [--purpose sft\|preference]` | Release gates: is the release `training_ready`? (thresholds + rationale in `configs/release_gates.yaml`) |
 | `export --format sft\|preference\|eval [--allow-draft] [--review-policy …]` | Training files only from approved content of a training-ready release (otherwise refused, or a marked draft); eval export ungated |
-| `eval run --predictor reference\|naive\|model [--provider P --model M]` | Predict and score → `evaluation/reports/<run_id>/report.{json,md}` |
+| `eval build-cases [--check]` | Render `evaluation/cases/v0.2.0/` (and seeds, eval scenarios, leakage `cases:` block) from `evaluation/builders/v0_2_0/` |
+| `eval run --predictor reference\|naive\|model [--provider P --model M]` | Predict and score each model call (atomic case or step) → `evaluation/reports/<run_id>/report.{json,md}` |
 | `eval score --predictions file.jsonl` | Score predictions produced elsewhere (`{"case_id", "raw"}` per line) |
 | `eval review-sheet --predictions file.jsonl --out sheet.yaml` | Human review sheet for model outputs (scored separately from automated metrics) |
 
@@ -71,10 +89,13 @@ All commands: `python3 scripts/gj.py <command> --help`.
 4. `gj review stats` for progress and agreement.
 
 **Add or edit examples by hand**
-1. Edit/add YAML under `data/raw/examples/` (see `DATASET_SPEC.md` §19). Editing reviewed content makes it `stale`;
-   record a `revise` decision first so the change is traceable.
-2. `gj validate` until `PASS`, then `gj audit --write`.
-3. Review again; bump `dataset_version` before the next release.
+1. Edit/add YAML under `data/raw/examples/` (see `DATASET_SPEC.md` §19). Editing content that was decided
+   makes its status `pending` (detail `content_changed`).
+2. Record the change in the revision ledger `data/revisions/v<ver>.yaml` (defect, correction, rationale),
+   then run `gj revisions sync` and `gj revisions check`. A release cannot be built with an unrecorded
+   change.
+3. `gj validate` until `PASS`, then `gj audit --write` and `gj review sample-status --write`.
+4. Review again; bump `dataset_version` before the next release.
 
 **Generate synthetic candidates (scale-up)**
 ```bash
@@ -104,20 +125,21 @@ export OPENAI_COMPATIBLE_BASE_URL=http://localhost:8000/v1
 python3 scripts/gj.py eval run --predictor model --provider openai_compatible --model my-navigator-4b
 python3 scripts/gj.py eval review-sheet --predictions evaluation/reports/<run_id>/predictions.jsonl --out review_model.yaml
 ```
-The model is prompted exactly as in SFT export (`prompts/navigator/v0.1.0/system.md` + request JSON).
+The model is prompted exactly as in SFT export (`prompts/navigator/v0.1.1/system.md` + request JSON).
 
-## Current dataset (v0.1.0)
+## Current dataset (v0.1.1)
 
 | | |
 |---|---|
-| Training pool | 93 examples → release: train 81 / validation 12 (split by scenario group) |
-| Test | 30 evaluation cases, 173 automated checks, 12 dimensions |
-| Languages | RU 41 / EN 52 answers; 3 mixed-language inputs |
-| Coverage | all 14 operations, all behaviour families of the brief, 20 domains, 5 safety categories |
-| Contrastive | 64 rejected outputs over 30 failure modes (every mode ≥ 2) |
-| Review | 0 approved — release is `draft_unreviewed`; 30-item review sample ready; 10 examples need expert sign-off |
-| Audit | 41 examples with recorded issues (6 high, 7 medium, 10 policy-dependent, 18 low) — see `docs/DATASET_AUDIT_v0.1.0.md` |
-| Release gates | 2/11 pass — **not training-ready** |
+| Training pool | 93 examples → release v0.1.1: train 81 / validation 12 (split by behavioural scenario group) |
+| Revisions | 36 examples changed from v0.1.0 (13 defect fixes, 23 policy alignments), all pending human review — `data/revisions/v0.1.1.yaml` |
+| Test | evaluation v0.2.0: 63 cases (43 atomic, 14 composite, 6 longitudinal) = 106 model calls, 658 automated checks; v0.1.0's 30 cases kept frozen |
+| Languages | RU 41 / EN 52 answers; 3 mixed-language inputs (eval: 29 RU / 34 EN cases, 4 mixed inputs) |
+| Coverage | all 14 operations, 20 domains, 5 safety categories |
+| Contrastive | 64 rejected outputs covering 32 of the 36 failure modes (each ≥ 2); calendar_error, arithmetic_error, ignored_contradiction and gendered_language (new in v0.1.1) have no rejected example yet |
+| Review | 0 approved — release is `draft_unreviewed`; the v0.1.0 review sample is carried forward (12 of 30 items changed) |
+| Known issues | 34: 22 fixed pending review, 11 open (2 medium), 1 won't fix |
+| Release gates | 1/11 pass — **not training-ready** |
 
 `gj stats` and `gj coverage` print the live numbers.
 
@@ -132,15 +154,18 @@ generation/
   pipelines/      validate, stats, coverage, generate, review (+store, sampling), audit, leakage, gates, split, export
   scenarios/      scenario seeds for scale-up
 evaluation/
-  cases/v0.1.0/   evaluation cases (+ reference outputs)
+  cases/v0.2.0/   current evaluation cases (GENERATED from builders/); cases/v0.1.0/ frozen
+  builders/       evaluation v0.2.0 authoring source (Python) → `gj eval build-cases`
+  seeds/          independent evaluation seeds
   metrics/        checks and aggregation
   runners/        predictors, runner, case validation, naive baseline
   leakage/        evaluation-side leakage metadata (scenario groups, templates, reviewed overlaps)
   rubrics/        dataset review rubric (v0.2.0), model output rubric
 prompts/          navigator runtime prompt, teacher prompts, operation guides, failure-mode catalogue
-data/             raw → generated → reviewed (decision log + snapshots) → train/validation/test (+ manifests)
-review/           reviewer registry, review sample manifest, known issues, audit findings
-docs/             architecture, audit, review guide, leakage checks, evaluation expansion plan
+data/             raw → generated → reviewed (decision log + snapshots) → train/validation/test (+ manifests);
+                  revisions/ (ledger + snapshots), scenarios/ (behavioural scenario registry)
+review/           reviewer registry, review sample manifest + per-version status, known issues, audit findings
+docs/             architecture, policy decisions, audits, review guide, leakage checks, evaluation design and expansion plan
 configs/          versions, dataset, generation, evaluation, export, coverage targets, review, release gates, licensing
 scripts/gj.py     CLI
 tests/            pytest suite
@@ -148,13 +173,21 @@ tests/            pytest suite
 
 ## Principles the tooling enforces
 
+* Only capabilities the product has are used or promised (`configs/product_capabilities.yaml`); confidence
+  never exceeds what the evidence class supports (`configs/evidence_policy.yaml`).
 * No photo-only verification; self-report accepted where proof is impossible and labelled `limited`.
 * Insufficient evidence → `needs_more_evidence`, not rejection.
-* Completed progress is never silently discarded; major changes and deadline changes need consent.
+* Completed progress is never silently discarded; major changes need consent. Deadline autonomy:
+  task dates may adapt automatically; milestone dates may adapt with a stated summary; goal dates are
+  only proposed until the user confirms.
+* Dates, weekdays and hour arithmetic in messages must follow from the calendar and the plan; facts
+  keep their provenance (user-provided is never presented as verified).
 * Current external facts are cited only from provided research; otherwise marked for verification.
 * Levels and achievements follow verified progress, never app activity.
 * Releases are immutable; nothing unreviewed is treated as ground truth: training exports contain only
   content a qualified human approved, and only when every release gate passes.
-* Leakage is checked in seven layers (exact, near-duplicate, paraphrase, template, scenario, seed); the
-  checks can show that leakage exists, not that it is absent — behavioural overlaps between evaluation
-  and training are reviewed by people (`docs/LEAKAGE_CHECKS.md`).
+* Every change to a released example is recorded in a revision ledger with the defect, correction,
+  rationale and snapshots; releases are built only from a clean ledger.
+* Leakage is checked in eight layers, grouped into lexical, semantic/template and scenario families.
+  The checks can show that leakage exists, not that it is absent: behavioural overlaps between
+  evaluation and training are reviewed by people (`docs/LEAKAGE_CHECKS.md`).

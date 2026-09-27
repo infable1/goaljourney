@@ -1,11 +1,19 @@
 # Leakage checks — what they can and cannot establish
 
-`gj leakage` runs seven layers between the training pool, the evaluation cases and the scenario
-seeds. `gj split` aborts a release on any **hard** finding, and the release gates additionally
+`gj leakage` runs eight layers between the training pool, the evaluation cases and the scenario
+seeds. From evaluation v0.2.0, each step of a multi-step case is checked as its own unit
+(`<case_id>/<step_id>`), and the report groups the layers into three families:
+
+* **lexical**: L1–L4, wording;
+* **semantic/template**: L5, L8, plus the human-reviewed overlap list — the same decision structure
+  behind different words;
+* **scenario**: L6, L7 — the same scenario or seed on both sides.
+
+Each family's report line states what the family cannot establish. `gj split` aborts a release on any **hard** finding, and the release gates additionally
 require a human disposition for every reviewed overlap (`configs/release_gates.yaml`).
 
 **No combination of these checks can show that there is no leakage.** They can show that some
-specific kind of leakage *exists*. A clean report means "none of these seven narrow tests fired",
+specific kind of leakage *exists*. A clean report means "none of these eight narrow tests fired",
 nothing more. Every statement in the repository about leakage is phrased that way.
 
 ## Layers
@@ -17,8 +25,9 @@ nothing more. Every statement in the repository about leakage is phrased that wa
 | L3 `char_near_dup` | 5-character shingle Jaccard on the situation text (goal, user messages, evidence, events, task title) | hard ≥ 0.55 (pool↔eval); warning ≥ 0.70 (within pool) | shared wording | paraphrases (hand-made paraphrases of eval inputs score 0.17–0.34), translations |
 | L4 `lexical_para` | TF-IDF cosine over stemmed content words (5-char prefix stemming, RU+EN stop words) | hard ≥ 0.50; warning ≥ 0.30 | same-language paraphrases that keep the content words (0.55–0.84 on the test paraphrases) | translations, re-told situations with different vocabulary, same behaviour in a new domain |
 | L5 `template` | same *behavioural signature* (operation, events, trigger, status/classification/intent/category, deadline flexibility, time up/down, retry, retrieved memory) **and** shared numbers (Jaccard ≥ 0.5) or lexical ≥ 0.15 | warning, needs a disposition | the same decision structure with the same numbers or vocabulary | cross-lingual twins, re-numbered twins, templates whose signature fields differ |
-| L6 `scenario_group` | scenario groups: train↔validation (from the release manifest) and pool↔eval (evaluation metadata) | hard | a scenario that straddles splits | two different groups that describe the same scenario |
+| L6 `scenario_group` | scenario groups: train↔validation (from the release manifest), pool↔eval (evaluation metadata), and registry sides (a training row on an eval-side scenario or vice versa) | hard | a scenario that straddles splits or sides | two different groups that describe the same scenario |
 | L7 `seed` | seed ids used by generated examples vs eval `seed_origin`; seed text vs eval inputs (TF-IDF) | hard (ids); warning ≥ 0.30 (text) | seed reuse; seeds that mirror an eval case before generation starts | seeds that were never recorded; eval cases derived informally from a seed |
+| L8 `decision_pattern` | behavioural-scenario registry patterns `operation\|trigger\|condition\|decision`: each eval unit (the case's scenario, or a step's `step_pattern`) vs every training scenario | hard if identical; warning if same operation and condition/decision term Jaccard ≥ 0.5 | reused or similarly labelled decision patterns | the same decision described with different labels (labels are written by the author) |
 
 ## How the thresholds were chosen (v0.1.0)
 
@@ -61,10 +70,34 @@ detected, and the evaluation set substantially re-tests the training set's behav
 Until the dispositions are decided and the expansion plan is followed, v0.1.0 evaluation results
 measure recall of practised templates more than generalisation.
 
+## What evaluation v0.2.0 shows
+
+From `gj leakage --distribution` on 93 examples, 63 cases (106 units) and 30 training seeds:
+
+* **Lexical: 0 hard.** Max pool↔eval lexical similarity is 0.338, and character similarity 0.139.
+  One warning: `gj-daily-003`~`e2-gc-02` (0.34), two conversational-language goals.
+* **Semantic/template: 0 hard.** There are 13 automated candidates (11 template, 2 decision pattern),
+  and every one is in the reviewed list.
+* **Scenario: 0 hard, 0 warnings.** Every case has its own eval-side scenario; seed ids and seed text
+  are clear.
+* **The manual review** read every case and step against all 92 training scenarios.
+  * Before release, it rewrote three atomic cases that repeated a training decision pattern. It also
+    moved five cases whose topic repeated a training example or a training seed to new topics.
+  * It records 100 remaining overlaps in
+    [`evaluation/leakage/v0.2.0.yaml`](../evaluation/leakage/v0.2.0.yaml): 11 strong (all set-up or
+    intermediate steps of multi-step cases), 78 medium, 4 topic-only and 7 coincidental. 46 of the
+    100 are cross-lingual.
+  * The automated layers found **13 of the 116** reviewed (unit, training example) pairs.
+
+The conclusion is the same kind as for v0.1.0, and not "no leakage". No copy- or paraphrase-level
+leakage was detected. Most evaluation units test trained behaviours under a different decisive
+condition. The strong overlaps are listed, and all 100 still need a human disposition.
+
 ## Evaluation metadata
 
 `evaluation/leakage/v<eval_version>.yaml` sits outside the case files, so adding provenance does not
-change released test data. It holds, per case, `scenario_group`, `behavior_template`, `seed_origin`
+change released test data. For v0.2.0, its `cases:` block is generated by `gj eval build-cases`; the
+overlap lists below it are maintained by hand and preserved on regeneration. It holds, per case, `scenario_group`, `behavior_template`, `seed_origin`
 and `author`. It also holds the reviewed `template_overlaps` and `seed_overlaps`, each with a
 `proposed_disposition` (the agent's suggestion) and a `disposition` that stays `open` until a person
 decides:

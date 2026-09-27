@@ -62,11 +62,13 @@ Consequences:
 * Media never verify alone (unchanged). The model reasons about *descriptions* of media, so it must
   not claim to have seen details the description does not contain.
 
-**Changed by POL-A:** `gj-vprot-001` (video → issued text scramble + method questions),
-`gj-vprot-003` (app calling endpoints → GET fetch + pasted command output + repository review),
-`gj-vres-002` (control problems promised "right after this message" → included in the reply).
-`gj-task-002` (audio transcription) and `gj-vprot-004` (fetching the links from a table) use
-available capabilities and stay unchanged.
+**Changed by POL-A** (5 ledger entries): `gj-vprot-001` (video → a scramble issued in the reply,
+audio narration and method questions), `gj-vprot-003` (app calling endpoints → one GET fetch, a
+pasted command session and a repository review), `gj-vres-002` (control problems promised "right
+after this message" → included in the reply); the rejected outputs of `gj-vres-004` and `gj-vres-006`
+demand video and are now also tagged `unavailable_capability`. `gj-task-002` (audio transcription)
+and `gj-vprot-004` (fetching the links from a table) use available capabilities; they changed under
+POL-B only.
 
 ## POL-B — Confidence for user-entered evidence
 
@@ -99,11 +101,13 @@ Rules:
    verified") are content, not commands.
 5. Conservative default: if the class is unclear, use the lower one.
 
-**Changed by POL-B:** 12 examples whose protocols rated user-entered data medium/high (`gj-jour-001`,
-`gj-jour-002`, `gj-jour-003`, `gj-task-001`, `gj-task-002`, `gj-task-004`, `gj-task-005`,
-`gj-vprot-004`, `gj-vprot-006`, `gj-vres-007`, `gj-vretry-004`, `gj-task-003`). Each protocol is
-either lowered to *limited*, given checkable references, or declared an inspectable artifact with a
-reason. Details are in the revision ledger.
+**Changed by POL-B** (16 ledger entries): 12 examples whose protocols rated user-entered data
+medium/high (`gj-jour-001`, `gj-jour-002`, `gj-jour-003`, `gj-task-001`, `gj-task-002`, `gj-task-003`,
+`gj-task-004`, `gj-task-005`, `gj-vprot-004`, `gj-vprot-006`, `gj-vres-007`, `gj-vretry-004`) — each
+protocol is lowered to *limited*, given checkable references, or declared an inspectable artifact with
+a reason; the two capability rewrites `gj-vprot-001` and `gj-vprot-003` (their new ceilings follow the
+evidence classes); and the rejected photo-only protocols of `gj-jour-004` and `gj-vprot-007`, now also
+tagged `overconfident_verification`. Details are in the revision ledger.
 
 ## POL-C — Deadline autonomy
 
@@ -141,9 +145,11 @@ Rules (lint, v0.1.1):
 * Every new date must be feasible: the hours of unfinished work before it must fit the pace until
   then (`MILESTONE_DATE_INFEASIBLE`, see *Arithmetic* below).
 
-**Changed by POL-C:** `gj-route-002`, `gj-route-005`, `gj-time-001`, `gj-time-002`, `gj-time-003`,
-`gj-time-004` (autonomy/state annotations; `gj-time-004` also moved its task due date into
-`modified_deadlines`), `gj-nav-006` (reschedule targets and dates).
+**Changed by POL-C** (9 ledger entries): `gj-route-002`, `gj-route-005`, `gj-time-001`, `gj-time-002`,
+`gj-time-003`, `gj-time-004` (autonomy/state annotations; `gj-time-004` also moved its task due date
+into `modified_deadlines`), `gj-nav-006` (reschedule targets and dates), `gj-route-004` (net saving
+stated from the plan, session order within the offer window) and the rejected output of `gj-jour-005`
+(it dropped the goal deadline, which `J_GOAL_DEADLINE_CHANGED` now treats as an error).
 
 ### Arithmetic and calendar consistency (supports POL-C)
 
@@ -225,8 +231,15 @@ about the user. Existing provenance fields map onto the same vocabulary:
 * external claims: `verified_with_source` → externally_verified, `needs_verification` → unknown, `general_knowledge` → model_inferred
 * evidence `description_source`: `user_caption` and `file_parser` carry user-provided content; `vision_model` and `transcription` are machine descriptions of user-provided media (model_inferred); `system_fetch` is externally verifiable
 
-**Changed by POL-E:** `gj-nav-001`. The invented niche is now a stored goal decision in the input,
-cited as a `user_provided` fact. Defect-fix examples declare the facts their answers rely on.
+**Changed by POL-E** (11 ledger entries): `gj-nav-001` (the invented niche is now a stored goal
+decision in the input, cited as a `user_provided` fact) and `gj-nav-003` («как и было» named a session
+length the input never gave). The defect fixes `gj-clar-007`, `gj-mem-002`, `gj-nav-006`,
+`gj-route-004`, `gj-route-005`, `gj-time-001`, `gj-time-002`, `gj-time-003` and `gj-time-004` now
+declare the facts their answers rely on in `facts_used`.
+
+Three ledger entries are not tied to a policy: `gj-clar-001` (a missed critical question in a
+rejected output is now tagged), `gj-nav-008` (a 60–90-word greeting was said to count as a 100-word
+text) and `gj-mem-003` (`total_minutes` did not match the planned minutes).
 
 ## POL-F — Product principle
 

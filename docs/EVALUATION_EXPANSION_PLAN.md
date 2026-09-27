@@ -1,6 +1,21 @@
 # Evaluation expansion plan — from 30 to 200–500 cases
 
-*Status: plan (Milestone 1.5). Current suite: eval v0.1.0, 30 cases, 173 automated checks.*
+*Status: plan (Milestone 1.5), partly carried out in Milestone 1.6.*
+
+**Milestone 1.6 update.** Evaluation v0.2.0
+([`EVALUATION_V0.2_DESIGN.md`](EVALUATION_V0.2_DESIGN.md)) is the current suite: 63 cases, 106 model
+calls. It implements these parts of this plan:
+
+* independent seeds;
+* one eval-side behavioural scenario per case;
+* composite and longitudinal cases;
+* adversarial evidence;
+* mixed-language and non-allowed safety cases;
+* a language check on every unit;
+* a reviewed overlap list.
+
+It does **not** yet achieve independent authorship: the same agent wrote it. It is also below the
+200-case floor. Steps 3–6 below remain open.
 
 ## 1. Why the current suite is not enough
 

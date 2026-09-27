@@ -1,15 +1,24 @@
-# GoalJourney Dataset Specification — v0.1.0
+# GoalJourney Dataset Specification — v0.1.1
 
 This document is the contract for the GoalJourney training and evaluation data: what an example
 is, what each AI operation must return, which behaviours are enforced automatically, how examples
 are reviewed, split, versioned and exported. The architectural rationale is in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-**Status of v0.1.0:** 93 agent-authored synthetic examples and 30 evaluation cases, all passing
-automated validation, **none human-reviewed yet** (release `draft_unreviewed`). Synthetic data is
-not ground truth — see §12. **Milestone 1.5** added the human-review system, audits, layered
-leakage checks and release gates; the audit found concrete defects in examples that pass every
-validator ([`docs/DATASET_AUDIT_v0.1.0.md`](docs/DATASET_AUDIT_v0.1.0.md)). v0.1.0 is not training-ready.
+**Status of v0.1.1:** 93 agent-authored synthetic examples, **none human-reviewed yet** (release
+`draft_unreviewed`). Synthetic data is not ground truth — see §14.
+
+* **Milestone 1.5** added the human-review system, audits, layered leakage checks and release gates.
+* **Milestone 1.6** made the following changes:
+  * decided the open policies ([`docs/POLICY_DECISIONS_v0.1.1.md`](docs/POLICY_DECISIONS_v0.1.1.md));
+  * revised 36 examples through a revision ledger (v0.1.0 is immutable);
+  * added deterministic validators for dates, arithmetic, deadline autonomy, capabilities, evidence
+    ceilings, provenance and Russian voice;
+  * replaced the evaluation set with v0.2.0: 63 cases, atomic, composite and longitudinal
+    ([`docs/EVALUATION_V0.2_DESIGN.md`](docs/EVALUATION_V0.2_DESIGN.md)).
+
+Audit: [`docs/DATASET_AUDIT_v0.1.1.md`](docs/DATASET_AUDIT_v0.1.1.md). v0.1.1 is not
+training-ready.
 
 ---
 
@@ -28,12 +37,12 @@ release manifest and generation run.
 
 | Version | Current | Covers |
 |---|---|---|
-| `dataset_version` | 0.1.0 | `data/{train,validation,test}/goaljourney-v<ver>.jsonl` + manifest |
-| `schema_version` | 0.1.0 | `schemas/*.json` (`$id` contains `v0.1.0`), `schema_version` in every record |
-| `navigator_prompt_version` | 0.1.0 | `prompts/navigator/v0.1.0/system.md` (runtime prompt used in SFT export and eval) |
-| `generation_prompt_version` | 0.1.0 | `prompts/generation/v0.1.0/` (teacher prompts) |
-| `pipeline_version` | 0.2.0 | `gjcore/`, `generation/` code (0.2.0: review log v0.2, audit, leakage layers, release gates) |
-| `evaluation_version` | 0.1.0 | `evaluation/cases/v0.1.0/` + check semantics |
+| `dataset_version` | 0.1.1 | `data/{train,validation,test}/goaljourney-v<ver>.jsonl` + manifest; derived versions list every change in `data/revisions/v<ver>.yaml` |
+| `schema_version` | 0.1.1 | `schemas/*.json` (`$id` contains `v0.1.1`); earlier versions frozen in `schemas/archive/v<ver>/`; every record is validated with the schemas and lint rules of its own `schema_version` |
+| `navigator_prompt_version` | 0.1.1 | `prompts/navigator/v0.1.1/system.md` (runtime prompt used in SFT export and eval; adds POL-A…E) |
+| `generation_prompt_version` | 0.1.1 | `prompts/generation/v0.1.1/` (teacher prompts; policies and new failure modes) |
+| `pipeline_version` | 0.3.0 | `gjcore/`, `generation/` code (0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders) |
+| `evaluation_version` | 0.2.0 | `evaluation/cases/v0.2.0/` (generated from `evaluation/builders/v0_2_0/`) + check semantics; v0.1.0 kept frozen |
 | `base_model` | unset | chosen later; recorded here, never hard-coded |
 
 Releases are immutable: `gj split` refuses to overwrite an existing dataset version with different
@@ -49,22 +58,27 @@ data/raw/examples/         authored examples, YAML, one file per behaviour famil
 data/generated/<run_id>/   pipeline candidates + rejected + run manifest (committed, reviewable)
 data/reviewed/review_events.jsonl   append-only, hash-chained human review log (decisions per content hash)
 data/reviewed/snapshots/   exact reviewed content, one file per content hash (never overwritten)
-review/                    reviewer registry, review sample manifest, known issues, audit findings
+review/                    reviewer registry, review sample manifest + per-version sample status, known issues, audit findings
+data/revisions/            revision ledger per derived dataset version + content snapshots
+data/scenarios/            behavioural scenario registry (train and eval sides)
 data/{train,validation,test}/goaljourney-v<ver>.jsonl   immutable releases
 data/manifests/goaljourney-v<ver>.json                  release manifest (hashes, counts, versions)
 generation/scenarios/      scenario seeds for synthetic scale-up
 generation/validators/     schema/semantic/record/similarity validators
 generation/generators/     providers, teacher prompt rendering, candidate generator
 generation/pipelines/      validate, stats, coverage, generate, review(+store, sampling), audit, leakage, gates, split, export
-evaluation/cases/v0.1.0/   evaluation cases with automated checks
+evaluation/cases/v0.2.0/   evaluation cases with automated checks (generated; v0.1.0/ frozen)
+evaluation/builders/       evaluation authoring source (`gj eval build-cases`)
+evaluation/seeds/          independent evaluation seeds
 evaluation/leakage/        evaluation-side leakage metadata (scenario groups, templates, reviewed overlaps)
 evaluation/rubrics/        dataset review rubric (v0.2.0), legacy v0.1 rubric, model-output rubric
 evaluation/metrics/        check implementations and aggregation
 evaluation/runners/        predictors (reference, naive, model), runner, case validator
 prompts/                   navigator runtime prompt and teacher prompts (versioned)
 configs/                   versions, dataset, generation, evaluation, export, coverage targets,
-                           review, release gates, licensing status
-docs/                      architecture, dataset audit, human review guide, leakage checks, eval expansion plan
+                           review, release gates, licensing status, product capabilities, evidence policy
+docs/                      architecture, policy decisions, dataset audits, human review guide, leakage checks,
+                           evaluation design and expansion plan
 ```
 
 ## 4. Example record
@@ -90,7 +104,11 @@ Schema: [`schemas/example_record.json`](schemas/example_record.json).
 | `review_status`, `content_hash` | computed at release time; not authored |
 
 **Content hash** = SHA-256 of canonical JSON of `{task_type, input, expected_output, contrastive}`.
-A review approves one exact hash; editing trainable content makes the review `stale`.
+A review approves one exact hash; editing trainable content returns the example to `pending`
+(detail `content_changed`) until it is reviewed again.
+
+v0.1.1 adds `topic_group` (the v0.1.0 topical group, kept for traceability) and `revision` (dataset
+version, revision ids, previous content hash) for revised rows.
 
 Why this differs from the brief's suggested format: see `docs/ARCHITECTURE.md` §3.
 
@@ -144,8 +162,21 @@ later nodes stay `outline` until their region opens (progressive disclosure agai
 * Self-report is legitimate when objective proof is impossible or intrusive; such protocols set
   `self_report_only=true`, `confidence_ceiling=limited`, and results carry `confidence=limited`.
   Demanding photo/video beyond such a protocol is an error.
-* The model is text-only in v0.1: images/audio/video reach it as `evidence.description` from a
-  captioner/transcriber or the user (`description_source`), URLs as a system-fetched summary.
+* The model is text-only: images and audio reach it as `evidence.description` from an image
+  describer or a transcriber (`description_source`), files as extracted text, and URLs as one
+  system-fetched extract.
+* **Capabilities (POL-A).** Only *available* capabilities may be required, relied on or promised
+  (`configs/product_capabilities.yaml`). Video analysis, tracker sync, proactive messages and the
+  calendar are *planned*; API calls, account access and contacting third parties are *unsupported*.
+  Codes: `VP_METHOD_UNAVAILABLE`, `EVIDENCE_SOURCE_UNAVAILABLE`, `CAPABILITY_PROMISE`.
+* **Confidence follows the evidence class (POL-B, `configs/evidence_policy.yaml`).**
+  * `self_report`, `user_entered_data` and `image_description` → at most *limited*;
+  * `inspectable_artifact` and `externally_verifiable` → up to *high*;
+  * user-entered data with checkable references plus a URL spot-check → *medium*;
+  * an image together with a non-image required method → *medium*.
+
+  Codes: `VP_CEILING_ABOVE_EVIDENCE`, `VR_CONFIDENCE_ABOVE_EVIDENCE`. A contradiction between a claim
+  and the evidence is recorded in `contradictions` and blocks `verified` (`VR_CONTRADICTION_VERIFIED`).
 * Privacy: protocols never ask for third-party personal data or private documents when a
   structured summary suffices.
 
@@ -188,9 +219,15 @@ adviser and never prescribes doses, diets, legal strategy or investments.
 * The answer follows the language of the user's own messages; with mixed input, the predominant
   language, then a stored language preference; the app locale is only a hint.
 * Keys and enum values are English in both languages — no separate product logic per language.
-* **Russian persona voice:** the navigator's self-reference avoids gendered past-tense forms
-  ("Понятно", "Предлагаю", "Задачи заменены" rather than "Понял", "Заменил") so the persona has no
-  grammatical gender until the product decides otherwise. Users are never assigned a gender.
+* **Russian voice (POL-D):**
+  * The navigator's self-reference avoids gendered past-tense forms («Понятно», «Предлагаю», «Задачи
+    заменены» rather than «Понял», «Заменил»).
+  * The user is never addressed with a gendered form, even when the user describes themselves with
+    one.
+  * Stored memory is written without gendered forms.
+  * Level and badge titles may use natural role nouns.
+
+  Codes: `RU_GENDERED_SELF_REFERENCE`, `RU_GENDERED_USER_ADDRESS`, `RU_GENDERED_MEMORY`.
 
 ## 12. Contrastive examples and failure modes
 
@@ -198,13 +235,21 @@ Bad behaviour is attached to a good example as `contrastive[]` outputs, never st
 standalone target. SFT uses only `expected_output`; preference export pairs it with each rejected
 output. Rejected outputs must be **schema-valid** (the failure is behavioural, not formatting).
 
-The catalogue ([`prompts/generation/v0.1.0/failure_modes.yaml`](prompts/generation/v0.1.0/failure_modes.yaml))
-defines 30 failure modes. 14 are **auto**: the linter must detect every instance, and validation
-fails if a tagged contrastive output is not caught (a self-test of the linter). The rest are
-best-effort or human-only (e.g. `generic_plan`, `blind_compliance`, `ignored_preferences`).
+The catalogue ([`prompts/generation/v0.1.1/failure_modes.yaml`](prompts/generation/v0.1.1/failure_modes.yaml))
+defines 36 failure modes. v0.1.1 adds six: `calendar_error`, `arithmetic_error`,
+`unavailable_capability`, `overconfident_verification`, `ignored_contradiction` and
+`gendered_language`.
 
-v0.1.0 contains 64 contrastive outputs; every failure mode has ≥ 2 and the 15 failure types named
-in the brief have 2–7 each.
+* **Auto modes.** The linter must detect every instance, and validation fails if a tagged contrastive
+  output is not caught (a self-test of the linter).
+* **Other modes** are best-effort or human-only, e.g. `generic_plan`, `blind_compliance`,
+  `ignored_preferences`.
+* **Untagged defects.** At v0.1.1, a rejected output with lint errors outside its tagged modes gets a
+  warning, so untagged extra defects surface.
+
+v0.1.1 contains 64 contrastive outputs covering 32 of the 36 modes (each ≥ 2). Four new modes have
+no rejected example yet: `calendar_error`, `arithmetic_error`, `ignored_contradiction` and
+`gendered_language`.
 
 ## 13. Validation
 
@@ -213,7 +258,10 @@ metadata consistency → contrastive self-test; plus a YAML authoring guard, nea
 detection across scenario groups, scenario-seed validation and evaluation-case validation (every
 reference output must pass its own checks).
 
-The **semantic linter** (`generation/validators/semantic.py`) holds ~115 coded rules, e.g.:
+The **semantic linter** (`generation/validators/semantic.py`, with `calendar.py`, `workload.py`,
+`quantities.py`, `policy.py`, `provenance.py` and `russian.py`) holds ~170 coded rules. Rules added in
+v0.1.1 apply only to records with `schema_version` ≥ 0.1.1. Inputs are linted too: protocols given in
+the input, weekdays in earlier assistant turns, and memory wording. Examples:
 
 | Area | Rules (codes) |
 |---|---|
@@ -232,6 +280,18 @@ The **semantic linter** (`generation/validators/semantic.py`) holds ~115 coded r
 | Safety | `S_RESTRICTED_PROCEED`, `S_HIGH_RISK_ROLE`, `S_NO_REFERRAL`, `S_OVER_REFUSAL`, `S_NO_BOUNDARIES`, `S_CATEGORY_MISMATCH` |
 | Memory | `MEM_WRONG_GOAL`, `MEM_SENSITIVE_USER_SCOPE`, `MEM_THIRD_PARTY_STORED`, `MEM_UNKNOWN_ID` |
 | Progress | `PU_ACTIVITY_BASED`, `PU_LEVEL_UNSUPPORTED`, `PU_UNVERIFIED_EVIDENCE`, `PU_PROGRESS_WITHOUT_VERIFICATION` |
+| Calendar (v0.1.1) | `DATE_WEEKDAY_MISMATCH` |
+| Arithmetic (v0.1.1) | `ARITH_REMAINING_BEFORE/AFTER`, `ARITH_UNESTIMATED`, `ARITH_WEEKS_NEEDED/AVAILABLE`, `ARITH_FITS`, `ARITH_HORIZON_DATE`, `ARITH_PACE`, `ARITH_TEXT_UNDERIVABLE`, `MILESTONE_DATE_INFEASIBLE`, `J_MILESTONE_OVERBOOKED`, `T_OVER_CAPACITY` |
+| Deadline autonomy (v0.1.1) | `RA_DEADLINE_AUTONOMY_MISSING/WRONG`, `RA_DEADLINE_STATE_INCONSISTENT`, `RA_MILESTONE_NO_SUMMARY`, `RA_UNDECLARED_DEADLINE_CHANGE`, `RA_WORKLOAD_MISSING`, `RA_UNFIT_NO_DECISION`, `NAV_RESCHEDULE_UNDECLARED`, `NAV_GOAL_DEADLINE_NO_CONFIRM`, `GC_DEADLINE_NO_CONFIRM`, `J_GOAL_DEADLINE_CHANGED` |
+| Capabilities & evidence (v0.1.1) | `VP_METHOD_UNAVAILABLE`, `EVIDENCE_SOURCE_UNAVAILABLE`, `CAPABILITY_PROMISE`, `VP_CEILING_ABOVE_EVIDENCE`, `VR_CONFIDENCE_ABOVE_EVIDENCE`, `VR_CONTRADICTION_VERIFIED`, `VR_CONTRADICTION_BAD_REF` |
+| Provenance (v0.1.1) | `FACT_BAD_REF`, `FACT_NOT_GROUNDED`, `FACT_PROVENANCE_UPGRADED`, `FACT_VERIFIED_WITHOUT_SOURCE`, `MEM_SOURCE_NOT_GROUNDED` |
+| Russian voice (v0.1.1) | `RU_GENDERED_SELF_REFERENCE`, `RU_GENDERED_USER_ADDRESS`, `RU_GENDERED_MEMORY` |
+
+**Fact provenance (POL-E).** Answers that rely on facts list them in `facts_used`, each with
+`source_type` (`user_provided | model_inferred | externally_verified | unknown`) and a `source_ref`
+into the context (`conversation[i]`, `user_memory:<id>`, `research:<id>`, `events[i]`, …). An
+inferred fact is never presented as user-provided or verified. Conversational text itself does not
+carry provenance fields.
 
 Errors block; warnings are surfaced for review (`--strict` makes them blocking). Heuristic rules
 (language script ratio, vagueness patterns, professional-authority phrases) catch clear cases, not
@@ -269,9 +329,21 @@ overall, issues, notes, acknowledged findings, snapshot path, previous-event has
 chain makes edits, deletions and reordering detectable (`gj review verify-log`). The reviewed
 content is preserved in `data/reviewed/snapshots/<hash>.json`.
 
-**Status** (derived, never authored): `pending`, `stale` (content changed since the last decision),
-`approved`, `approved_pending_expert`, `needs_revision`, `rejected`. Latest decision per reviewer
-counts; the most conservative wins; an adjudicator's decision is final.
+**Status** (derived, never authored; review log v0.3.0):
+
+| Status | Detail |
+|---|---|
+| `pending` | `not_reviewed`, `content_changed` (content changed since the last decision) or `awaiting_expert` |
+| `approved` | `decided` |
+| `needs_revision` | `decided` |
+| `rejected` | `decided` |
+
+Rules:
+
+* The latest decision per reviewer counts.
+* The most conservative decision wins.
+* An adjudicator's decision is final.
+* The log is append-only: a changed example gets a new decision; old ones are never rewritten.
 
 **Qualifications and tiers** (`configs/review.yaml`): reviewers are registered in
 `review/reviewers.yaml` and must be human. Approval requires a reviewer who reads the example's
@@ -283,6 +355,14 @@ No example is ever approved automatically.
 (`review/review_manifest_v<ver>.json`, schema `schemas/review_manifest.json`): 40% random (drawn first,
 unbiased), 30% highest risk, 20% contrastive, 10% edge; coverage repair (every operation/behaviour,
 RU, EN, mixed, contrastive, ≥ 3 expert-tier); 8 calibration items reviewed by everyone first.
+A new dataset version keeps the sample in force unless a new one is drawn deliberately.
+v0.1.1 keeps the v0.1.0 sample (`configs/review.yaml` `sampling.sample_version`), regenerated from
+the frozen v0.1.0 inputs. `gj review sample-status` writes `review/review_sample_status_v<ver>.json`.
+For each item it records:
+
+* whether the content changed since sampling, and the revision ids behind the change;
+* the known issues that name the example;
+* the human status. Automation never sets it.
 
 ```
 gj review list --manifest           gj review show ID [--show-automated]
@@ -295,16 +375,32 @@ gj review history ID                gj review stats             gj review verify
 
 * **train / validation:** deterministic split by `scenario_group`, stratified by task type
   (seeded hash ordering, `validation_fraction` 0.15, strata with ≥ 4 examples contribute).
+  From v0.1.1, scenario groups are **behavioural scenarios**
+  (`data/scenarios/behavioural_scenarios.yaml`: operation | trigger | condition | decision) rather
+  than topics. The old topical group is kept as `topic_group`.
 * **test:** the evaluation cases (authored separately), frozen into the release.
 * **Leakage guard** (layers and limits: [`docs/LEAKAGE_CHECKS.md`](docs/LEAKAGE_CHECKS.md)): the build
   aborts on any hard finding — identical input, character near-duplicate (5-char shingle Jaccard ≥ 0.55),
-  lexical paraphrase (TF-IDF cosine ≥ 0.50), shared scenario group, reused seed id. Template overlaps
-  and seed similarity are warnings that need a human disposition (release gate). These checks can show
-  that leakage exists; they cannot show that it does not.
+  lexical paraphrase (TF-IDF cosine ≥ 0.50), shared scenario group, a scenario on the wrong registry
+  side, reused seed id, identical decision pattern. Multi-step evaluation cases are checked per step.
+  Template and similar-decision-pattern candidates and seed similarity are warnings that need a human
+  disposition (release gate). The report groups the layers into lexical, semantic/template and
+  scenario families. These checks can show that leakage exists; they cannot show that it does not.
+* **Revisions (no silent edits).** A version derived from an earlier release carries a ledger
+  `data/revisions/v<ver>.yaml` (schema `schemas/revision_ledger.json`). It has one entry per changed
+  example, and each entry records:
+  * the defect, the correction and the rationale;
+  * the known issues and policies involved;
+  * `reviewer_status`;
+  * computed content hashes, changed paths and snapshots of both versions.
+
+  `gj revisions check` fails on any unrecorded or stale change; `gj split` refuses to build without a
+  clean ledger. The release manifest lists `revision_ids` and `previous_content_hash` for revised rows.
 * **Review policy:** `require_approved` (only approved content) or `allow_pending` (pending
   *authored* examples allowed, release marked `draft_unreviewed`). Generated candidates enter a
-  release only when approved, under either policy. `stale`, `needs_revision`, `rejected` and
-  `approved_pending_expert` content is always excluded.
+  release only when approved, under either policy. Content that is `needs_revision` or `rejected` is
+  always excluded; under `allow_pending`, `pending` authored content of any detail (`not_reviewed`,
+  `content_changed`, `awaiting_expert`) is released only as a draft.
 * **Release status:** `draft_unreviewed` (pending rows) → `reviewed_not_training_ready` (all rows
   approved but a release gate fails) → `training_ready` (every gate in
   [`configs/release_gates.yaml`](configs/release_gates.yaml) passes: strict validation, 100% approval,
@@ -331,17 +427,23 @@ Evaluation of a model uses exactly the same prompt (`gjcore/prompting.py`).
 
 ## 17. Evaluation
 
-30 cases in `evaluation/cases/v0.1.0/` (173 automated checks) cover the 12 dimensions: question
-quality, planning quality, task quality, verification quality, route adaptation, user agency,
-hallucination resistance, web research decisions, safety behaviour, language consistency,
-structured output validity, memory isolation.
+Evaluation v0.2.0 ([`docs/EVALUATION_V0.2_DESIGN.md`](docs/EVALUATION_V0.2_DESIGN.md)) has 63 cases
+from independent seeds: 43 atomic, 14 composite (2 steps) and 6 longitudinal (5–9 steps). That is
+106 model calls with 658 automated checks. Composite and longitudinal cases are teacher-forced:
+every step runs on the canonical state of the earlier steps and is scored on its own. A case passes
+only if all its steps pass.
+
+The cases cover the 12 v0.1.0 dimensions plus `state_consistency`, `numeric_consistency` and
+`evidence_integrity`. They are authored in `evaluation/builders/v0_2_0/` and rendered by
+`gj eval build-cases`. Evaluation v0.1.0 (30 atomic cases) stays frozen and validated.
 
 Metrics (automated, per metric and per dimension; **no overall score by design**):
 schema validity, semantic validity, unnecessary question rate, missing critical question rate,
 verification status accuracy, verification rigor, route preservation, hallucination rate, web
 research decision accuracy, safety policy compliance, language match, memory leak rate, user
 agency compliance, constraint compliance, task actionability, decision transparency, scope
-adherence, progress integrity, feasibility judgement.
+adherence, progress integrity, feasibility judgement; from v0.2.0 also state consistency, numeric
+consistency, evidence integrity, capability compliance, fact provenance and deadline autonomy.
 
 Human review of model outputs uses a separate rubric
 ([`evaluation/rubrics/model_output_rubric.yaml`](evaluation/rubrics/model_output_rubric.yaml)) and
@@ -351,10 +453,16 @@ Sanity instruments: the `reference` predictor must pass every check; the `naive`
 English, fixed questionnaire, verifies everything, never researches, everything "allowed") is
 schema-valid on every case and must fail most behavioural checks.
 
-Known weaknesses of eval v0.1.0 (same author as the training data, 27 reviewed behavioural overlaps,
-1–4 cases per operation, single-turn) and the path to 200–500 independent cases are in
+Known weaknesses of eval v0.2.0:
+
+* the same author as the training data;
+* 100 reviewed overlaps without a human disposition (11 strong, all set-up or intermediate steps);
+* 63 cases, against a gate of 200.
+
+The path to 200–500 independent cases is in
 [`docs/EVALUATION_EXPANSION_PLAN.md`](docs/EVALUATION_EXPANSION_PLAN.md). Evaluation-side provenance
-(scenario group, behaviour template, seed origin) lives in `evaluation/leakage/v<ver>.yaml`.
+(scenario group, behaviour template, seed origin, reviewed overlaps) lives in
+`evaluation/leakage/v<ver>.yaml`.
 
 ## 18. Synthetic generation and scale-up (Milestone 2)
 
@@ -387,20 +495,26 @@ parallel, authored separately and leakage-checked.
 * Keep the first region detailed and later regions as outlines.
 * Contrastive outputs: realistic mistakes, schema-valid, precisely tagged.
 
-## 20. Known limitations (v0.1.0)
+## 20. Known limitations (v0.1.1)
 
-* Examples were written by an AI agent under this spec. The Milestone-1.5 audit found 6 examples with
-  high-severity defects and 35 more with medium or low issues, all passing validation. Proposed fixes
-  are in `review/known_issues_v0.1.0.yaml`, unapplied until confirmed by human reviewers.
-* Open policy questions (block revisions of ~10 examples): the product capability list; confidence
-  ceilings for user-entered structured data; consent for milestone-date changes; Russian identity
-  labels in levels and achievements.
-* Language, vagueness, gender-form and date checks are heuristics; semantic lint cannot judge
-  whether a plan is generic, whether arithmetic claims hold, or whether a tone is right. Those are
-  human-review criteria.
+* **Authorship and review.** Examples, revisions, validators and evaluation cases were written by an
+  AI agent under this spec. The 36 v0.1.1 revisions fix the six high-severity defects and the
+  policy-dependent issues, but they are **pending human review**. Of the 34 known issues:
+  * 22 are fixed pending review;
+  * 11 are open (2 medium);
+  * 1 is won't-fix.
+* **Policy confirmation.** The policies (POL-A…F) were decided by dataset engineering and still need
+  product-owner confirmation.
+* **Validator limits.**
+  * Dates, weekdays and hour/week/month arithmetic are now checked deterministically; money and
+    distances are not.
+  * Vagueness and gendered-form checks remain heuristic.
+  * Lint cannot judge whether a plan is generic or whether a tone is right. Those are human-review
+    criteria.
 * Near-duplicate and paraphrase detection is O(n²) and same-language only. Cross-lingual overlaps
   (8 reviewed) are invisible to automation; move to MinHash/LSH and multilingual embeddings at scale.
-* Evaluation cases (30) are far below the 200–500 target and not independent of the training data.
+* Evaluation cases (63 in v0.2.0) are below the 200–500 target and share their author with the
+  training data.
 * Every scenario group has one example; `memory_extraction` (2) and `progress_update` (3) are thin;
   mixed-language input is 3%.
 * Licensing questions in `configs/licensing_status.yaml` are unresolved.

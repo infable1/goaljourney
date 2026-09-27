@@ -9,8 +9,11 @@ gendered form of address or an invented fact from the parts we meant it to learn
 as if it were the only one the model will ever see for that situation.
 
 The examples were written by an AI agent. They pass every automated check, and they still contain
-errors (see [`DATASET_AUDIT_v0.1.0.md`](DATASET_AUDIT_v0.1.0.md)). **Passing validation is not evidence
-of quality.** Your judgement is the quality gate.
+errors (see [`DATASET_AUDIT_v0.1.0.md`](DATASET_AUDIT_v0.1.0.md) and, for the v0.1.1 revisions,
+[`DATASET_AUDIT_v0.1.1.md`](DATASET_AUDIT_v0.1.1.md)). **Passing validation is not evidence of
+quality.** Your judgement is the quality gate. The policies you review against — capabilities,
+confidence semantics, deadline autonomy, Russian voice, fact provenance — are in
+[`POLICY_DECISIONS_v0.1.1.md`](POLICY_DECISIONS_v0.1.1.md).
 
 ## 1. Before you start
 
@@ -27,7 +30,7 @@ of quality.** Your judgement is the quality gate.
 | Role | Can do | Notes |
 |---|---|---|
 | `dataset_reviewer` | approve, revise or reject examples in the languages they list | Russian and mixed-input examples need a reviewer who reads Russian; mixed input needs both languages |
-| `domain_expert` | the same, and signs off expert-tier examples in their `expert_domains` | expert-tier examples stay `approved_pending_expert` until approvals cover every required domain |
+| `domain_expert` | the same, and signs off expert-tier examples in their `expert_domains` | expert-tier examples stay `pending` (detail `awaiting_expert`) until approvals cover every required domain |
 | `adjudicator` | resolves disagreements; their latest decision on a content version is final | use sparingly, and write the reasoning in `notes` |
 
 **Expert tier** means a non-`allowed` safety category or an explicit risk tag, which covers 10
@@ -38,7 +41,7 @@ mental_health, legal, financial, physical_safety, privacy or safety_policy.
 
 | Class | Properties | Who decides |
 |---|---|---|
-| **automatically validatable** | schema validity; ids and references; dependency DAG and order; dates vs `today` and the deadline; daily time budget; photo-only proof; self-report confidence ceiling; verification status vs criteria; exposed reasoning; response language (script); `must_not_mention` memory leaks; rejected outputs in the 14 auto-detectable failure modes | `gj validate` — if it fails, fix the example; you still judge everything else |
+| **automatically validatable** | schema validity; ids and references; dependency DAG and order; dates vs `today` and the deadline; daily time budget; photo-only proof; self-report confidence ceiling; verification status vs criteria; exposed reasoning; response language (script); `must_not_mention` memory leaks; rejected outputs in the auto-detectable failure modes. **Since v0.1.1:** weekday vs date; hour/week arithmetic in the plan *and in the message text*; deadline autonomy (task auto / milestone with summary / goal only proposed); capabilities (no video, no reminders, no API calls); confidence ceilings by evidence class; recorded contradictions; `facts_used` provenance; Russian gendered self-reference, address and memory | `gj validate` — if it fails, fix the example; you still judge everything else |
 | **flagged by heuristics, decided by you** | vague titles (incl. outline nodes); user-entered data rated as objective; product-capability assumptions; too many questions; unsupported feasibility claims; capacity mismatch; milestone-date changes without consent; unsupported generalisations; quantities not in the input; retrieved-memory leaks; Russian gendered forms; weekday/date mismatches | `gj audit` shows candidates; a heuristic hit is a question, not a verdict |
 | **human review required** | usefulness; goal understanding (no invented facts); question minimality; actionability; realism and arithmetic; verification fit; evidence interpretation; user agency; adaptation proportionality; explanation quality; natural language and gender neutrality; contrastive plausibility and tagging; the 16 human-only failure modes | you |
 | **expert review required** | medical, mental-health, legal, financial, physical-safety and privacy content of expert-tier examples; any health claim | a qualified `domain_expert` |
@@ -48,9 +51,21 @@ No example is ever approved automatically, whatever its tier.
 ## 4. The review sample
 
 [`review/review_manifest_v0.1.0.json`](../review/review_manifest_v0.1.0.json) is a deterministic sample
-of 30 examples. At sampling time, `gj review sample --check` proves it regenerates identically. The
-manifest is then frozen: later edits to examples do not re-sample, and `gj review list --manifest` marks
-items whose content changed since sampling. Each item has a stable id `rv-0.1.0-NN`.
+of 30 examples. `gj review sample --check` proves it regenerates identically from its frozen inputs.
+The manifest is frozen: later edits to examples do not re-sample. Each item has a stable id
+`rv-0.1.0-NN`.
+
+Dataset v0.1.1 keeps this sample (`configs/review.yaml` `sampling.sample_version`).
+[`review/review_sample_status_v0.1.1.json`](../review/review_sample_status_v0.1.1.json)
+(`gj review sample-status`) shows, per item:
+
+* whether the content changed since sampling, and which revision (`REV-0.1.1-NNN`) changed it;
+* the known issues that name the example;
+* the current human status.
+
+12 of the 30 items changed in v0.1.1, including 2 calibration items. Rate the **current** content.
+The ledger entry (`gj revisions diff ID`) shows what changed and why; read it only after your
+independent rating.
 
 | Stratum | Share | Why |
 |---|---|---|
@@ -172,16 +187,35 @@ forms themselves («я прочитал»), which is fine in the input. The outp
 ## 10. Revisions and history
 
 * Decisions apply to **exact content** (a SHA-256 of task type, input, expected output and rejected
-  outputs). Editing an example makes its status `stale`, and it must be reviewed again. Metadata
-  edits (tags, notes) do not invalidate reviews.
+  outputs). Editing an example returns it to `pending` (detail `content_changed`), and it must be
+  reviewed again. Metadata edits (tags, notes) do not invalidate reviews.
+* **Statuses** (canonical, derived from the log):
+
+  | Status | Detail |
+  |---|---|
+  | `pending` | `not_reviewed`, `content_changed` or `awaiting_expert` |
+  | `approved` | `decided` |
+  | `needs_revision` | `decided` |
+  | `rejected` | `decided` |
+
+  Only `approved` content can reach a training file.
 * The reviewed content is preserved in `data/reviewed/snapshots/<hash>.json`, written once and never
   overwritten. `gj review history ID` shows every decision and a diff between reviewed versions and
   the current content.
-* **Never rewrite an example silently.** The flow is: record `revise` with the issue and proposed fix
-  → edit the YAML → `gj validate` → `gj audit --write` (the committed findings file must match the data;
-  a test checks it) → review again. Update the known-issues register (`status: fixed`,
-  `resolution`). Bump `dataset_version` before building a release with the new content; releases are
-  immutable.
+* **Never rewrite an example silently.** The flow is:
+  1. record `revise` with the issue and proposed fix;
+  2. edit the YAML;
+  3. add a ledger entry to `data/revisions/v<ver>.yaml` (defect, correction, rationale, known issues,
+     policies), then run `gj revisions sync` and `gj revisions check`;
+  4. `gj validate`;
+  5. `gj audit --write` and `gj review sample-status --write` (committed files must match; tests check
+     it);
+  6. review again.
+
+  Update the known-issues register (`status: fixed_pending_review`, `resolution`). A ledger entry's
+  `reviewer_status` is a human decision; it stays `pending_human_review` until you record one. Bump
+  `dataset_version` before building a release with the new content; releases are immutable, and
+  `gj split` refuses a version whose ledger is incomplete.
 * The known-issues register is a list of *proposed* revisions from inspection. Confirm an issue with
   `gj review revise`, or mark it `disputed` or `wont_fix` with a reason.
 

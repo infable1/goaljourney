@@ -74,9 +74,15 @@ authored            ▼
 data/raw/examples/*.yaml
                     │
                     ▼
-            validate  = JSON Schema  +  semantic lint (~115 rules)
-                        +  contrastive self-test (bad outputs must be caught)
+            validate  = JSON Schema  +  semantic lint (~170 rules, versioned by schema_version:
+                        calendar, workload arithmetic, deadline autonomy, capabilities,
+                        evidence ceilings, fact provenance, Russian voice since v0.1.1)
+                        +  input lint  +  contrastive self-test (bad outputs must be caught)
                         +  near-duplicate / diversity check
+                    │
+                    ▼
+            revisions = ledger of every change since the base release
+                        (defect, correction, rationale, snapshots; no silent edits)
                     │
                     ▼
             audit     = heuristic findings + known issues (review aids)
@@ -86,8 +92,9 @@ data/raw/examples/*.yaml
                         (qualified reviewers, expert tier, snapshots, hash chain)
                     │
                     ▼
-            split     = by scenario_group, stratified by behaviour,
-                        layered leakage checks against evaluation cases and seeds
+            split     = by behavioural scenario group, stratified by operation,
+                        layered leakage checks against evaluation cases (per step) and seeds,
+                        refused while the revision ledger is incomplete
                     │   immutable release: data/{train,validation,test}/<ver>.jsonl
                     ▼   + data/manifests/<ver>.json (hashes, versions, counts)
             gates     = release gates → training_ready?
@@ -102,11 +109,23 @@ scores (optional) are stored as advisory metadata.
 
 ## 5. Evaluation
 
-* **Cases are authored separately** from training examples (different goals,
-  different wording); `split` refuses to build a release if a training input
-  is a near-duplicate of an evaluation input.
-* Each case carries **machine-checkable assertions** (`checks`) tagged with a
-  metric and one of 12 dimensions, plus human-review focus points.
+* **Cases are authored separately** from training examples, starting from
+  independent seeds (`evaluation/seeds/`). Each case has its own eval-side
+  behavioural scenario, whose decision pattern must differ from every training
+  pattern. `split` refuses to build a release on any hard leakage finding.
+* **Three case types** (evaluation v0.2.0):
+  * atomic — one model call;
+  * composite — 2 steps;
+  * longitudinal — 5–9 steps over weeks.
+
+  Each step is a unit scored on a canonical, teacher-forced state, so cross-step
+  consistency is checked without error cascades.
+* Cases are authored as Python data in `evaluation/builders/` and rendered to YAML
+  (`gj eval build-cases`, drift-checked).
+* Each unit carries **machine-checkable assertions** (`checks`) tagged with a
+  metric and a dimension, plus human-review focus points. Most v0.2.0 checks
+  reuse the training-data lint codes: the same deterministic rules keep data
+  honest and score models.
 * Metrics are reported **per metric and per dimension**. There is
   deliberately no single overall score.
 * The runner is predictor-agnostic: `reference` (sanity: must score 100%),
@@ -120,13 +139,14 @@ scores (optional) are stored as advisory metadata.
 |---|---|
 | `schemas/` | JSON Schema 2020-12, single source of truth |
 | `gjcore/` | shared utilities: paths, IO, schema registry, config, env, hashing |
-| `generation/validators/` | schema + semantic + quality + dedup + leakage checks |
+| `generation/validators/` | schema + semantic + quality + dedup + leakage checks; `calendar`, `workload`, `quantities`, `policy`, `provenance`, `russian` (v0.1.1) |
 | `generation/generators/` | LLM providers, prompt rendering, candidate generation |
-| `generation/pipelines/` | validate, stats, coverage, review, split, export |
-| `evaluation/metrics/` | check implementations and metric aggregation |
+| `generation/pipelines/` | validate, stats, coverage, review (+store, sampling, sample status), audit, revisions, leakage, gates, split, export |
+| `evaluation/builders/` | evaluation case authoring source (rendered to `evaluation/cases/`) |
+| `evaluation/metrics/` | check implementations, unit expansion and metric aggregation |
 | `evaluation/runners/` | predictors and the evaluation runner |
 | `prompts/` | versioned prompts: `navigator/` (runtime model) and `generation/` (teacher) |
-| `configs/` | versions, dataset, generation, evaluation, export, coverage targets |
+| `configs/` | versions, dataset, generation, evaluation, export, coverage targets, review, release gates, product capabilities (POL-A), evidence policy (POL-B) |
 | `scripts/gj.py` | the single CLI entry point |
 
 Dependencies are deliberately minimal (`jsonschema`, `referencing`, `PyYAML`, `pytest`). LLM
@@ -137,9 +157,12 @@ a replay provider covers offline tests.
 
 ## 7. Known limitations accepted for v0.1
 
-* The target model is text-only. Photo/audio/video evidence reaches it as a
-  textual description (user caption or upstream captioner), and the dataset
-  models that explicitly (`evidence.description_source`).
+* The target model is text-only. Photo and audio evidence reach it as a
+  textual description or transcript, files as extracted text and URLs as one
+  fetched extract (`evidence.description_source`). Which capabilities exist is
+  a versioned registry (`configs/product_capabilities.yaml`): training data never
+  requires a *planned* capability, such as video, and never promises an
+  *unsupported* one.
 * Language checks are script-based heuristics (Cyrillic vs Latin ratio); they
   catch wrong-language answers, not bad style — style is a human-review item.
 * Semantic lint cannot judge "is this plan generic?". Those failure modes are
