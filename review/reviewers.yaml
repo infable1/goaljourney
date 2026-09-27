@@ -1,0 +1,24 @@
+# Reviewer registry — who may record review decisions (gj review approve|revise|reject|apply).
+#
+# Add yourself before your first review. Use a stable pseudonymous id (no e-mail addresses or other
+# personal data); the id, roles, languages and expert domains are copied into every decision you record,
+# so later edits here never change the meaning of a past decision.
+#
+#   id              lowercase, 2–41 chars: letters, digits, . _ -
+#   roles           dataset_reviewer | domain_expert | adjudicator   (see configs/review.yaml)
+#   languages       languages you can judge natively or near-natively: en, ru
+#                   (Russian and mixed-input examples require ru; mixed input requires both)
+#   expert_domains  only for domain_expert: medical, mental_health, legal, financial, physical_safety,
+#                   privacy, safety_policy — list only domains you are professionally qualified in
+#   human           must be true. Automated agents (including the AI that wrote the examples) may run
+#                   audits and propose revisions, but can never record a review decision.
+#   active          set to false instead of deleting an entry
+#
+# Example (commented out on purpose — replace with your own entry):
+#   - id: reviewer-a
+#     roles: [dataset_reviewer]
+#     languages: [en, ru]
+#     expert_domains: []
+#     human: true
+#     active: true
+reviewers: []

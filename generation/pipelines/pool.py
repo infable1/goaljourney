@@ -3,7 +3,7 @@
 from gjcore.config import load_config
 from gjcore.io import read_jsonl
 from gjcore.paths import repo_path
-from gjcore.records import content_hash, load_examples
+from gjcore.records import load_examples
 
 
 def load_pool(include_generated=True):
@@ -17,19 +17,13 @@ def load_pool(include_generated=True):
     return pool
 
 
-def load_review_log():
-    path = repo_path(load_config("dataset")["paths"]["review_log"])
-    return read_jsonl(path) if path.exists() else []
+def load_review_events():
+    from .review_store import ReviewStore
+    return ReviewStore.default().events()
 
 
-def review_status(record, log=None) -> str:
-    """pending | approved | rejected | needs_revision | stale (reviewed, but content changed since)."""
-    log = load_review_log() if log is None else log
-    h = content_hash(record)
-    entries = [e for e in log if e.get("example_id") == record.get("id")]
-    if not entries:
-        return "pending"
-    matching = [e for e in entries if e.get("content_hash") == h]
-    if not matching:
-        return "stale"
-    return matching[-1]["decision"]
+def review_status(record, events=None) -> str:
+    """pending | stale | approved | approved_pending_expert | needs_revision | rejected
+    (see generation/pipelines/review_store.py). Only `approved` is eligible for training."""
+    from .review_store import resolve
+    return resolve(record, load_review_events() if events is None else events)["status"]

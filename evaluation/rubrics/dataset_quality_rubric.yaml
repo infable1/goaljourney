@@ -1,3 +1,5 @@
+# SUPERSEDED by dataset_review_rubric.yaml (v0.2.0, categorical ratings, Milestone 1.5).
+# Kept unchanged for reference: no review decisions were ever recorded against this version.
 # Dataset quality rubric (v0.1.0) — used by human reviewers of TRAINING examples (gj review).
 # Scale 1–4 per criterion; null = not applicable to this example's task type.
 #   4 = exemplary, would train exactly the behaviour we want

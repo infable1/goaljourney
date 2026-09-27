@@ -97,9 +97,9 @@
       }
     },
     "review_status": {
-      "description": "Computed at release time from data/reviewed/reviews.jsonl. Not authored in raw files.",
+      "description": "Computed at release time from the review log (data/reviewed/review_events.jsonl). Not authored in raw files.",
       "type": "string",
-      "enum": ["pending", "approved", "rejected", "needs_revision", "stale"]
+      "enum": ["pending", "approved", "approved_pending_expert", "rejected", "needs_revision", "stale"]
     },
     "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
   },

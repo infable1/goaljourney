@@ -1,0 +1,337 @@
+# Known issues register — dataset v0.1.0
+#
+# Issues found by reading the examples during Milestone 1.5, each with a PROPOSED revision.
+# Nothing here has been applied: examples are only edited after a human reviewer confirms the issue
+# (`gj review revise`), so that every change is recorded (review event + preserved snapshot of the
+# old content). When an issue is fixed, set status: fixed and add `resolution` (commit / event id).
+#
+# found_by: these were found by the AI agent that also authored the examples. They are review aids,
+# not human judgements, and the same author's blind spots apply — reviewers should expect to find
+# issues that are NOT listed here.
+#
+# severity
+#   high    teaches a clearly wrong behaviour or breaks an explicit product rule (dates, arithmetic,
+#           invented user facts, gendered address/self-reference)
+#   medium  questionable enough that it probably needs a revision or a policy decision
+#   low     wording, overclaiming, consistency nits
+version: "0.1.0"
+issues:
+  - id: KI-001
+    records: [gj-nav-006]
+    problem: X temporal / E realism
+    severity: high
+    location: expected_output.message_to_user
+    description: "«позвоню в воскресенье 5-го» — 5 October 2026 is a Monday (today is Sunday 27 September). The milestone move to 14 October is stated in decision_summary.impact but is not part of proposed_changes."
+    proposed_revision: "«позвоню в понедельник, 5-го» (or Sunday 4 October); add the milestone m1 date change to proposed_changes or drop it from the summary."
+    status: open
+    found_by: agent inspection (confirmed by the weekday_date_mismatch audit rule)
+
+  - id: KI-002
+    records: [gj-time-001]
+    problem: E realism (arithmetic) / B goal understanding
+    severity: high
+    location: expected_output.message_to_user, decision_summary
+    description: "«about 140 hours of remaining work … around 11 months» counts the already verified project 1 (1,500 min). Remaining work is n2+n3+n4+n5+n6 = 6,900 min ≈ 115 h ≈ 38 weeks (≈ 9 months) at 3 h/week. The alternative's why_not («too late for the job search you planned») assumes a job search although the user has just accepted a job."
+    proposed_revision: "Use ≈115 h / ≈9 months in the message, decision_summary.why and the alternative; replace the job-search rationale with the user's stated purpose, or ask what the portfolio is for now."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-003
+    records: [gj-time-004]
+    problem: E realism (arithmetic)
+    severity: high
+    location: expected_output.message_to_user, modified_deadlines, decision_summary.impact
+    description: "After 18 October the plan leaves chapter 3 (720 min) + chapter 4 (1,200 min) = 32 h at 4 h/week ≈ 8 weeks (≈ 13 December); even using the unused vacation hours it is ≈ 29 November. Moving milestone m1 to 22 November and «about three extra weeks of buffer» are not supported. The original 10 December milestone was itself infeasible (55 h at 4 h/week ≈ 31 December), which the answer should surface. new_weekly_hours_planned: 15 although the plan returns to 4 h/week after 18 October (the schema cannot express a temporary pace)."
+    proposed_revision: "Recompute the milestone (≈ early–mid December), state that the vacation recovers the previously missing time rather than creating buffer, and resolve the temporary-pace representation (see schema weakness S2 in docs/DATASET_AUDIT_v0.1.0.md)."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-004
+    records: [gj-task-004]
+    problem: P9 language (gender-neutral persona)
+    severity: high
+    location: expected_output.message_to_user
+    description: "The assistant refers to itself in the masculine: «Подготовку разбил на 4 задачи». The persona must not use gendered self-reference."
+    proposed_revision: "«Подготовка разбита на 4 задачи, каждая — блоками до двух часов.»"
+    status: open
+    found_by: agent inspection (confirmed by ru_gendered_self_reference)
+
+  - id: KI-005
+    records: [gj-clar-007]
+    problem: P9 language (never infer the user's gender)
+    severity: high
+    location: expected_output.message_to_user, questions[1].question
+    description: "The user is addressed in the masculine: «едете ли вы один или с семьёй?» / «едете ли один или с семьёй?». The user's gender is unknown. Also asserts a market generalisation («во многих немецких IT-компаниях рабочий язык английский»)."
+    proposed_revision: "«…и планируете переезд в одиночку или с семьёй?»; hedge or drop the market claim."
+    status: open
+    found_by: agent inspection (confirmed by ru_gendered_user_address)
+
+  - id: KI-006
+    records: [gj-nav-001]
+    problem: B goal understanding (invented user fact) / L external-fact discipline
+    severity: high
+    location: expected_output.message_to_user
+    description: "States the user's niche as «бюджетные путешествия с детьми», which appears nowhere in the input (node n1 «Выбрать нишу» is verified but its result is not given). Also overclaims («около двух часов вместо месяцев проб и ошибок»)."
+    proposed_revision: "Either add the chosen niche to the input (e.g. goal.description or the verified node's result) or write «в вашей нише»; soften the time claim."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-007
+    records: [gj-time-003]
+    problem: E realism (ungrounded number)
+    severity: medium
+    location: expected_output.message_to_user, decision_summary.why
+    description: "«в плане — примерно 60 [часов]» is not derivable from the input: no node has a duration, and the original pacing (10 h × 11 weeks) implies ≈110 h of capacity. The ≈30 h available until 12 December is correct."
+    proposed_revision: "Add estimated_duration_minutes to the input nodes so that the remaining total is grounded, or phrase the comparison without a number."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-008
+    records: [gj-jour-001]
+    problem: E realism / P5 pacing
+    severity: medium
+    location: expected_output.journey.pacing, milestones, achievements[a4]
+    description: "Pacing says 10 h/week × 22 weeks (220 h) and the message says «в темпе 10 часов в неделю», but estimated tasks total ≈47 h (job-search nodes unestimated); milestone m1 (4 weeks ≈ 40 h of capacity) contains ≈14 h of tasks. Achievement a4 «Первое собеседование» unlocks on completing n14 («20 откликов и 3 собеседования»), i.e. after the third interview."
+    proposed_revision: "Rebalance milestone dates or explain where the remaining weekly time goes; attach a4 to a node that represents the first interview."
+    status: open
+    found_by: agent inspection (confirmed by capacity_mismatch)
+
+  - id: KI-009
+    records: [gj-route-004]
+    problem: F dependency / E realism / I user agency
+    severity: medium
+    location: expected_output.added_nodes[n6], message_to_user, decision_summary
+    description: "Mentor session 2 (n6) depends on n4 (3 run-throughs), which depends on the final deck (m1 target 25 October) — but the sessions are only offered in October, leaving about 6 days; «Сроки не меняются» ignores this. «Экономия около 7 часов» counts only the 450-min cut in n2 and ignores the 2 added mentor hours (net ≈5.5 h). Cutting n2 from 20 to 5 decks is applied as a 'minor' change without asking."
+    proposed_revision: "Make the October window explicit (e.g. session 2 on a draft run-through), state the net saving, and ask before reducing the user's planned task."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-010
+    records: [gj-route-005]
+    problem: I user agency / E realism
+    severity: medium
+    location: expected_output.modified_deadlines, requires_user_confirmation, decision_summary.impact
+    description: "Milestone m1 moves 1 → 23 November with requires_user_confirmation: false and the message presents the changes as done. decision_summary says the remediation is absorbed «using the buffer» although the milestone moves three weeks. Mock exam 2 on 23 November checks a fix made ~8 weeks earlier."
+    proposed_revision: "Apply the (to be decided) consent policy for milestone dates; schedule the second mock shortly after the drills; make the impact statement consistent."
+    status: open
+    found_by: agent inspection (confirmed by deadline_change_without_consent)
+
+  - id: KI-011
+    records: [gj-task-003]
+    problem: Q privacy / G verification quality
+    severity: medium
+    location: expected_output.tasks[n1-t1]
+    description: "Asks the user to import 18 months of shop sales data into an unspecified «free browser-based SQL sandbox»; sales exports often contain customer names and addresses. The COUNT(*) check compares two numbers that are both reported by the user, yet the ceiling is 'high'."
+    proposed_revision: "Use a local SQLite tool (or remove personal columns before any upload); make the check compare against something the user cannot simply type (e.g. the file's line count shown in the tool) or lower the ceiling."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-012
+    records: [gj-goalchg-001]
+    problem: P4 missing critical question / C question minimality
+    severity: medium
+    location: expected_output.message_to_user
+    description: "«The December 1 date still works» for a sub-60-minute 10 km, although the user's current pace is unknown (7 km 'feels okay')."
+    proposed_revision: "Ask for the current 7 km time before asserting the date (or hedge: «if your 7 km pace is around X…»); keep the minor_adjustment classification."
+    status: open
+    found_by: agent inspection (confirmed by unsupported_feasibility_claim)
+
+  - id: KI-013
+    records: [gj-jour-004]
+    problem: P9 language (gendered identity labels) / realism
+    severity: medium
+    location: expected_output.journey.levels, achievements[a1]
+    description: "Level titles label the user with masculine forms: «Любитель доставки», «Уверенный нарезчик», «Домашний повар», «Хозяин ужина». A policy for gendered identity labels in Russian does not exist yet. Achievement a1 «Первое блюдо своими руками» unlocks on the first verified task, which is knife practice, not a dish."
+    proposed_revision: "Gender-neutral titles naming the stage rather than the person (e.g. «Уверенная нарезка», «Домашняя кухня», «Ужин для друзей»); attach a1 to the first dish (n5) or rename it."
+    status: open
+    found_by: agent inspection (confirmed by ru_gendered_identity_label)
+
+  - id: KI-014
+    records: [gj-vprot-001, gj-vprot-003, gj-vprot-004, gj-task-002, gj-vres-002, ev-vr-01]
+    problem: P2 verification (product capability assumptions)
+    severity: medium
+    location: verification protocols and messages
+    description: "Verification relies on capabilities that no spec defines: issuing a random scramble (vprot-001), calling the user's API endpoints (vprot-003), the AI opening links (vprot-004), automatic transcription and timing of audio (task-002), and sending control tasks in a later message (vres-002, ev-vr-01). If the product lacks them, the model learns to promise features that do not exist."
+    proposed_revision: "Product owner publishes the capability list (docs + navigator prompt); revise the examples to match it."
+    status: open
+    found_by: agent inspection (confirmed by capability_assumption / promises_later_message)
+
+  - id: KI-015
+    records: [gj-jour-001, gj-jour-002, gj-jour-003, gj-task-001, gj-task-002, gj-task-004, gj-task-005, gj-vprot-004, gj-vprot-006]
+    problem: P2 verification (user-entered data treated as objective)
+    severity: medium
+    location: verification protocols with only structured_result required
+    description: "Protocols whose only required evidence is user-entered (structured_result, sometimes + follow_up_questions) are not self_report_only and have a 'medium' or 'high' ceiling. Sometimes that is defensible (rows carry links or quotes), sometimes it is not (e.g. gj-jour-002 n3 capacity, gj-task-004 n1-t3 repairs). There is no rule for when structured user data may exceed 'limited'."
+    proposed_revision: "Decide a policy, e.g. «structured_result alone → limited, unless every row carries an externally checkable reference (URL, document, third-party message)»; then re-rate these protocols."
+    status: open
+    found_by: agent inspection (confirmed by user_entered_as_objective)
+
+  - id: KI-016
+    records: [gj-jour-005]
+    problem: M safety (expert review)
+    severity: low
+    location: expected_output.message_to_user, milestones[m2]
+    description: "Health claim «About 8 kg over five months is a gradual pace» needs medical/dietetic confirmation; milestone m2 requires following an eating plan «from professional» that the user may never obtain."
+    proposed_revision: "Expert sign-off on the claim; make the m2 criterion conditional on the professional's plan existing."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-017
+    records: [gj-feas-002]
+    problem: M safety / L external-fact discipline
+    severity: low
+    location: expected_output.message_to_user, record safety_category
+    description: "«объём придётся наращивать быстрее, чем обычно советуют, а это главный риск травм» is a sports-medicine generalisation; classifying a marathon in 17 weeks from 10 km/week as 'allowed' rather than 'sensitive' is debatable."
+    proposed_revision: "Expert check of the claim and the category."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-018
+    records: [gj-clar-001]
+    problem: C question minimality
+    severity: low
+    location: expected_output.questions[2]
+    description: "The third question (country for payments) does not change the first steps; the answer's own fallback already plans without it."
+    proposed_revision: "Defer the payment-country question to the step where payments are set up."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-019
+    records: [gj-clar-002, gj-vres-003, gj-vres-005, gj-route-004, gj-route-006, gj-jour-003, gj-lang-001]
+    problem: L external-fact discipline / K explanation quality (overclaiming)
+    severity: low
+    location: user-facing text
+    description: "Confident generalisations without a source: «many analyst roles value exactly that domain knowledge», «those two sections are what the demo-day judges decide on», «everything a hiring manager looks for», «ценнее любого количества чужих деков», «работает хуже любого, который вам нравится», «booking months ahead usually keeps them within budget», «на нём чаще всего спотыкаются». How much general knowledge the navigator may assert is not specified."
+    proposed_revision: "Hedge or remove; add a rule to DATASET_SPEC on stable general knowledge vs. claims that need a source."
+    status: open
+    found_by: agent inspection (partly confirmed by unsupported_generalisation)
+
+  - id: KI-020
+    records: [gj-nav-003]
+    problem: B goal understanding (invented detail)
+    severity: low
+    location: expected_output.message_to_user
+    description: "«3 тренировки в неделю по 25–30 минут, как и было» — the original session length is not in the input (3 h/week suggests ~60 min)."
+    proposed_revision: "Drop «как и было» or ground the length in the input."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-021
+    records: [gj-nav-008]
+    problem: E realism
+    severity: low
+    location: expected_output.message_to_user
+    description: "A 5–6 sentence greeting (~60–90 words) is said to count as one of the three 100-word texts."
+    proposed_revision: "«8–10 предложений (около 100 слов)»."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-022
+    records: [gj-safe-002]
+    problem: M safety (internal consistency)
+    severity: low
+    location: expected_output.professional_referral
+    description: "professional_referral.needed is false while professional_type and urgency are filled (an optional referral)."
+    proposed_revision: "Represent an optional referral explicitly (schema) or set needed: false without type/urgency."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-023
+    records: [gj-mem-001]
+    problem: Q privacy and memory
+    severity: low
+    location: expected_output.items[2]
+    description: "The caregiving constraint is stored with sensitive: false; it is a consequence of a family member's health condition and arguably sensitive."
+    proposed_revision: "Reviewer decision; document the sensitivity policy for derived constraints."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-024
+    records: [gj-mem-002]
+    problem: B goal understanding (inferred detail)
+    severity: low
+    location: expected_output.items[0]
+    description: "«400 тысяч» is stored as «400 000 рублей» — the currency is inferred, not stated."
+    proposed_revision: "Store «400 000 (валюта не указана)» or confirm the currency."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-025
+    records: [gj-mem-003]
+    problem: E realism (internal consistency)
+    severity: low
+    location: expected_output.total_minutes
+    description: "total_minutes is 30 while the message plans 40 minutes (a 10-minute comparison that is not a task)."
+    proposed_revision: "Put the comparison into scope_note and total 40, or drop it from the message."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-026
+    records: [gj-feas-003]
+    problem: E realism (status calibration)
+    severity: low
+    location: expected_output.status
+    description: "Status 'likely_unrealistic' while the message calls the gap «small enough to close» (≈ $235/month). The spec does not define where 'ambitious' ends and 'likely_unrealistic' begins."
+    proposed_revision: "Define status boundaries in DATASET_SPEC (e.g. by the size of the change needed) and re-label consistently."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-027
+    records: [gj-goalchg-002]
+    problem: I user agency / B goal understanding
+    severity: low
+    location: expected_output.updated_goal.success_criteria
+    description: "The success criterion «10 оплаченных заказов за месяц» is set by the navigator without asking."
+    proposed_revision: "Mark it as a proposal/assumption or ask for the user's target."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-028
+    records: [gj-task-001]
+    problem: E realism
+    severity: low
+    location: expected_output.tasks[n6-t3].sessions
+    description: "Three onboarding calls scheduled around three testers are modelled as sessions: 1."
+    proposed_revision: "sessions: 3 (the 60-minute total can stay)."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-029
+    records: [gj-time-002]
+    problem: K explanation / I user agency
+    severity: low
+    location: expected_output.message_to_user, modified_deadlines
+    description: "«примерно втрое быстрее» while the final milestone moves only from 30 June to 28 February (~1.6×); three milestone dates change without confirmation (earlier dates are commitments too)."
+    proposed_revision: "Align the wording with the dates; decide the consent policy for bringing dates forward."
+    status: open
+    found_by: agent inspection (partly confirmed by deadline_change_without_consent)
+
+  - id: KI-030
+    records: [gj-route-002]
+    problem: J adaptation quality (schema limitation) / L external facts
+    severity: low
+    location: expected_output.preserved_progress, user_options
+    description: "The completed node n3 (verbal agreement with «Точка») stays 'completed' although the agreement is void — the schema cannot mark completed-but-invalidated progress. The spring option assumes «Точка» will host the exhibition after reopening."
+    proposed_revision: "Add an invalidated-progress representation to route_adaptation (schema); hedge the spring option («если «Точка» подтвердит даты»)."
+    status: open
+    found_by: agent inspection
+
+  - id: KI-031
+    records: [gj-mem-002, gj-lang-001]
+    problem: P9 language (input hygiene)
+    severity: low
+    location: input.user_memory
+    description: "Stored user memory in the input describes the user with masculine forms («свободен по выходным», «даже если сам пишет»). Inputs model what the product's memory would contain, and memory_extraction outputs must be gender-neutral."
+    proposed_revision: "«выходные свободны», «даже если пишет вперемешку»."
+    status: open
+    found_by: agent inspection (confirmed by ru_gendered_memory_input)
+
+  - id: KI-032
+    records: [gj-route-002, gj-time-003]
+    problem: P contrastive quality
+    severity: low
+    location: contrastive outputs gj-route-002-c1, gj-time-003-c1
+    description: "Rejected outputs carry an untagged extra defect — gendered self-reference («я уже всё проверил», «Перенёс ваш экзамен»). A rejected output should differ from the chosen one only in its tagged failure modes."
+    proposed_revision: "Neutral wording in the rejected outputs («всё уже проверено», «Экзамен перенесён на весну»)."
+    status: open
+    found_by: agent inspection (confirmed by ru_gendered_self_reference on contrastive scope)

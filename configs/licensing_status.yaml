@@ -1,0 +1,46 @@
+# Open licensing questions (gate `licensing_resolved` in configs/release_gates.yaml).
+# This file records decisions and who made them; it is not legal advice. To resolve an item set
+# status: resolved and fill decided_by, decided_on and conclusion (with a link to the evidence).
+# See DATA_SOURCES.md for the provenance of every source.
+items:
+  - id: LIC-001
+    question: May outputs of the LLMs used to author (v0.1.0) and to generate (scale-up) the data be used to train and
+      commercially deploy the GoalJourney navigator?
+    scope: all 93 training examples, 30 evaluation cases, 30 scenario seeds, every future generated candidate
+    status: unresolved
+    owner: null
+    notes: The v0.1.0 data was written by an AI coding agent; the scale-up teacher is configured in configs/generation.yaml.
+      Check the current terms of service of every provider/model used, including restrictions on developing competing
+      models, and record the model ids and the terms version reviewed.
+
+  - id: LIC-002
+    question: Who owns the AI-authored examples labelled `proprietary-internal`, and under which licence (if any) could the
+      dataset be shared with contractors, annotation vendors or the public?
+    scope: provenance.license of every record
+    status: unresolved
+    owner: null
+    notes: The label is a placeholder for "not for redistribution"; it has not been confirmed by counsel.
+
+  - id: LIC-003
+    question: Does the chosen base model's licence permit commercial fine-tuning and deployment, and what attribution or
+      use restrictions apply?
+    scope: configs/versions.yaml base_model (currently null — not chosen)
+    status: unresolved
+    owner: null
+    notes: Cannot be resolved before a base model is selected.
+
+  - id: LIC-004
+    question: Are the third-party names in examples and evaluation cases (e.g. IELTS, JLPT, PMP, TestFlight, App Store,
+      Vercel, Netlify) acceptable as nominative references?
+    scope: examples and evaluation cases that name real products, exams or organisations
+    status: unresolved
+    owner: null
+    notes: The data deliberately asserts no current facts about them (they are marked for verification); confirm this is sufficient.
+
+  - id: LIC-005
+    question: Do agreements with human reviewers (employees, contractors or vendors) assign the rights to their review
+      decisions, notes and any rewritten examples to the project?
+    scope: data/reviewed/, review/, any example revised by a reviewer
+    status: unresolved
+    owner: null
+    notes: Needed before the first external reviewer records a decision.

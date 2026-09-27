@@ -1,7 +1,6 @@
 paths:
   raw_examples: data/raw/examples
   generated: data/generated
-  review_log: data/reviewed/reviews.jsonl
   train: data/train
   validation: data/validation
   test: data/test
@@ -20,11 +19,24 @@ split:
   review_policy: allow_pending
 
 leakage:
-  # Character-shingle Jaccard similarity above which two inputs count as near-duplicates.
+  # Layers and their limits: docs/LEAKAGE_CHECKS.md. Threshold rationale is recorded there with the
+  # similarity distributions they were chosen from (`gj leakage --distribution`).
+  # L3 character-shingle Jaccard above which two inputs count as near-duplicates (hard).
   shingle_size: 5
   near_duplicate_threshold: 0.55
   # Within the training pool, similarity above this is flagged as template repetition (warning).
   repetition_warning_threshold: 0.70
+  # L4 TF-IDF cosine over stemmed content words. v0.1.0: unrelated pairs max 0.376 (p99 0.133);
+  # hand-made same-language paraphrases of eval inputs 0.55-0.84. Hard sits between the two.
+  lexical_hard_threshold: 0.50
+  lexical_warning_threshold: 0.30
+  # L5 same behavioural signature AND (lexical >= this OR shared-numbers Jaccard >= that) -> template candidate.
+  template_lexical_threshold: 0.15
+  template_numeric_threshold: 0.50
+  # L7 a training seed this similar to an evaluation case is reported (every candidate it generates would be too).
+  seed_lexical_warning_threshold: 0.30
+  # Evaluation-side metadata (scenario groups, seed origin, reviewed template overlaps).
+  eval_metadata_dir: evaluation/leakage
 
 validation:
   # Treat semantic-lint warnings as errors (use for release builds).

@@ -10,8 +10,9 @@ contract lives in [`DATASET_SPEC.md`](../DATASET_SPEC.md).
 2. Every example is **behaviourally checked**, not just format-checked
    (dependencies form a DAG, a photo never verifies a task on its own, daily
    plans fit the time budget, major route changes need user confirmation, ...).
-3. Train / validation / test **cannot leak** into each other (split by
-   scenario group, near-duplicate guard, test set authored separately).
+3. Train / validation / test are guarded against leakage (split by scenario group, layered
+   exact / near-duplicate / paraphrase / template / seed checks, reviewed behavioural overlaps).
+   The checks can show leakage exists, not that it is absent (`docs/LEAKAGE_CHECKS.md`).
 4. Nothing is trained on until a **human** has reviewed the exact content
    (review log is keyed by content hash; edits invalidate approval).
 5. Everything is **versioned and reproducible** (dataset, schema, prompt,
@@ -57,7 +58,7 @@ Changes:
 | `contrastive[]` added instead of standalone "bad" examples | A bad output is attached to the same input as the good one, tagged with `failure_modes`. SFT exports only the good output; preference export gets (chosen, rejected) pairs for free. Standalone negative examples would otherwise risk being trained on as targets. |
 | `annotations` added (not model input) | Author knowledge the validators need: facts already known, questions that must be asked, strings that must not leak. |
 | `version` split into `schema_version` (record) + dataset release version (manifest) | A record doesn't know which release it ends up in. |
-| `review_status` moved to an append-only log (`data/reviewed/reviews.jsonl`) keyed by content hash | An in-file flag can be flipped silently and survives later edits. A hash-keyed log gives an audit trail and invalidates approvals when content changes. |
+| `review_status` moved to an append-only log (`data/reviewed/review_events.jsonl` since Milestone 1.5; hash-chained, with content snapshots) keyed by content hash | An in-file flag can be flipped silently and survives later edits. A hash-keyed log gives an audit trail and invalidates approvals when content changes. |
 | `source` expanded to `provenance{source, method, author, license, ...}` | Honest labelling: these v0.1 examples are *agent-authored synthetic*, not human-authored ground truth. |
 
 ## 4. Pipeline
@@ -78,14 +79,21 @@ data/raw/examples/*.yaml
                         +  near-duplicate / diversity check
                     │
                     ▼
-            review    = human rubric scoring → data/reviewed/reviews.jsonl
+            audit     = heuristic findings + known issues (review aids)
+                    │
+                    ▼
+            review    = human decisions (rubric A–Q + overall) → data/reviewed/review_events.jsonl
+                        (qualified reviewers, expert tier, snapshots, hash chain)
                     │
                     ▼
             split     = by scenario_group, stratified by behaviour,
-                        leakage check against evaluation cases
+                        layered leakage checks against evaluation cases and seeds
                     │   immutable release: data/{train,validation,test}/<ver>.jsonl
                     ▼   + data/manifests/<ver>.json (hashes, versions, counts)
-            export    = SFT chat JSONL | preference pairs | eval prompts
+            gates     = release gates → training_ready?
+                    │
+                    ▼
+            export    = SFT chat JSONL | preference pairs (approved + training_ready only) | eval prompts
 ```
 
 The automated validators never *approve* anything — they only reject or

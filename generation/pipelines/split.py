@@ -3,12 +3,17 @@
 Steps (the build aborts on any failure — nothing is written half-way):
   1. every example in the pool validates (schema + semantic + contrastive self-test), ids unique;
   2. evaluation cases validate (their reference outputs pass their own checks);
-  3. selection by review policy: approved examples always; pending *authored* examples only under
-     `allow_pending` (release marked draft_unreviewed); generated candidates only when approved;
-  4. leakage guard: no selected training input may be a near-duplicate of an evaluation input;
+  3. selection by review policy: `approved` examples always; `pending` *authored* examples only under
+     `allow_pending` (release marked draft_unreviewed); everything else (stale, needs_revision,
+     rejected, approved_pending_expert) and unapproved generated candidates are excluded;
+  4. leakage guard: any hard finding of the layered checks (exact, near-duplicate, lexical paraphrase,
+     scenario group, seed id — see docs/LEAKAGE_CHECKS.md) aborts the build;
   5. deterministic group split: whole scenario groups go to train or validation, stratified by task type;
   6. files written to data/{train,validation,test}/goaljourney-v<version>.jsonl plus a manifest.
-     An existing version is never overwritten: identical rebuilds are a no-op, different content fails.
+     release_status: draft_unreviewed (pending rows) | reviewed_not_training_ready (gates fail) |
+     training_ready (all release gates pass, configs/release_gates.yaml).
+     An existing version is never overwritten: identical data files are a no-op (the manifest is kept
+     as built), different data fails.
 """
 import hashlib
 import math
@@ -20,10 +25,10 @@ from gjcore.config import load_config, versions
 from gjcore.io import canonical_json, dump_json, load_json, sha256_text
 from gjcore.paths import REPO_ROOT, rel, repo_path
 from gjcore.records import content_hash, load_eval_cases
-from generation.validators import similarity
+from generation.validators import leakage as L
 from generation.validators.records import check_unique_ids, validate_example
 
-from .pool import load_pool, load_review_log, review_status
+from .pool import load_pool, load_review_events, review_status
 
 VOLATILE_MANIFEST_KEYS = ("created_at", "git_commit")
 
@@ -99,23 +104,22 @@ def build_release(version=None, review_policy=None, dry_run=False):
         return 1
     cases = [c for c, _ in load_eval_cases(repo_path(load_config("evaluation")["cases_dir"]))]
 
-    log = load_review_log()
+    events = load_review_events()
     selected, excluded = [], Counter()
     for rec, _, origin in pool:
-        st = review_status(rec, log)
+        st = review_status(rec, events)
         if st == "approved" or (policy == "allow_pending" and origin == "authored" and st == "pending"):
             selected.append({**rec, "review_status": st, "content_hash": content_hash(rec)})
         else:
             excluded[f"{origin}/{st}"] += 1
 
-    leaks = similarity.cross_near_duplicates(
-        [(r["id"], similarity.signature_text(r["input"])) for r in selected],
-        [(c["id"], similarity.signature_text(c["input"])) for c in cases],
-        leak_cfg["near_duplicate_threshold"], leak_cfg["shingle_size"])
-    if leaks:
-        print(f"✗ leakage: {len(leaks)} training input(s) near-duplicate an evaluation case:")
-        for a, b, s in leaks:
-            print(f"    {a} ~ {b} (jaccard {s})")
+    from .leakage import load_eval_metadata, load_seeds
+    meta, meta_problems = load_eval_metadata()
+    rep = L.run_checks(selected, cases, leak_cfg, eval_meta=meta.get("cases") or {}, seeds=load_seeds())
+    if rep.hard or meta_problems:
+        print(f"✗ leakage: {len(rep.hard)} hard finding(s){'; metadata problems ' + str(meta_problems) if meta_problems else ''}:")
+        for f in rep.hard:
+            print(f"    [{f.layer}] {f.a} ~ {f.b} ({f.score}): {f.detail}")
         return 1
 
     assignment = assign_splits(selected, split_cfg["seed"], split_cfg["validation_fraction"],
@@ -129,6 +133,13 @@ def build_release(version=None, review_policy=None, dry_run=False):
     paths = release_paths(version)
     texts = {"train": _jsonl_text(train), "validation": _jsonl_text(val), "test": _jsonl_text(test)}
     pending = sum(1 for r in selected if r["review_status"] != "approved")
+    if pending:
+        release_status, failing = "draft_unreviewed", None
+    else:
+        from .gates import evaluate, training_ready
+        results = evaluate(version, rows={"train": train, "validation": val}, events=events)
+        failing = [r.id for r in results if r.blocking and not r.passed]
+        release_status = "training_ready" if training_ready(results) else "reviewed_not_training_ready"
 
     def dist(rows, key):
         return dict(sorted(Counter(r[key] for r in rows).items()))
@@ -136,14 +147,16 @@ def build_release(version=None, review_policy=None, dry_run=False):
     manifest = {
         "dataset": "GoalJourney Dataset",
         "dataset_version": version,
-        "release_status": "draft_unreviewed" if pending else "reviewed",
+        "release_status": release_status,
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "git_commit": _git_commit(),
         "versions": vers,
         "review_policy": policy,
         "split_config": split_cfg,
-        "leakage_check": {"threshold": leak_cfg["near_duplicate_threshold"], "shingle_size": leak_cfg["shingle_size"],
-                          "near_duplicate_pairs": 0},
+        "leakage_check": {"layers": sorted({f.layer for f in rep.findings} | {"exact_input", "char_near_dup", "lexical_para"}),
+                          "thresholds": rep.thresholds, "hard_findings": 0, "warnings": len(rep.warnings),
+                          "max_scores": rep.max_scores},
+        "failing_gates": failing,
         "counts": {
             "train": len(train), "validation": len(val), "test_eval_cases": len(test),
             "train_contrastive_outputs": sum(len(r.get("contrastive") or []) for r in train),
@@ -162,21 +175,26 @@ def build_release(version=None, review_policy=None, dry_run=False):
                      for r in sorted(selected, key=lambda r: r["id"])],
     }
 
-    print(f"Release v{version} ({manifest['release_status']}, policy={policy}): "
-          f"train={len(train)} validation={len(val)} test={len(test)} excluded={dict(excluded) or 0}")
+    print(f"Release v{version} ({release_status}, policy={policy}): "
+          f"train={len(train)} validation={len(val)} test={len(test)} excluded={dict(excluded) or 0}"
+          + (f"; leakage warnings {len(rep.warnings)} (see `gj leakage`)" if rep.warnings else ""))
     if dry_run:
         print("(dry run — nothing written)")
         return 0
 
     existing = [p for p in paths.values() if p.exists()]
     if existing:
-        same = all(paths[s].exists() and paths[s].read_text(encoding="utf-8") == texts[s] for s in texts)
-        if same and paths["manifest"].exists():
-            old = {k: v for k, v in load_json(paths["manifest"]).items() if k not in VOLATILE_MANIFEST_KEYS}
-            new = {k: v for k, v in manifest.items() if k not in VOLATILE_MANIFEST_KEYS}
-            same = old == new
-        if same:
-            print(f"Release v{version} already exists with identical content — nothing to do.")
+        same_data = all(paths[s].exists() and paths[s].read_text(encoding="utf-8") == texts[s] for s in texts)
+        if same_data:
+            note = ""
+            if paths["manifest"].exists():
+                old = {k: v for k, v in load_json(paths["manifest"]).items() if k not in VOLATILE_MANIFEST_KEYS}
+                new = {k: v for k, v in manifest.items() if k not in VOLATILE_MANIFEST_KEYS}
+                diff = sorted(k for k in set(old) | set(new) if old.get(k) != new.get(k))
+                if diff:
+                    note = (f" The stored manifest was built by an earlier pipeline and differs in {diff}; it is kept as "
+                            f"built (releases are immutable). `gj gates` reports the live state.")
+            print(f"Release v{version} already exists with identical data — nothing to do.{note}")
             return 0
         print(f"✗ release v{version} already exists with different content ({', '.join(rel(p) for p in existing)}). "
               f"Releases are immutable: bump dataset_version in configs/versions.yaml.")

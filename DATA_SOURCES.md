@@ -1,12 +1,13 @@
 # Data Sources, Provenance and Licensing
 
-Last updated: 2026-09-27 (dataset v0.1.0)
+Last updated: 2026-09-27 (dataset v0.1.0, pipeline 0.2.0)
 
 ## Summary
 
 | Source | Used in v0.1.0 | Licence / terms | Commercial use | Notes |
 |---|---|---|---|---|
-| Agent-authored synthetic examples (`data/raw/examples/`) | 93 examples | Proprietary to the project (`proprietary-internal` in each record) | See "LLM-authored content" below | Written by an AI coding agent (Claude Code) under `DATASET_SPEC.md`; not human-reviewed yet |
+| Agent-authored synthetic examples (`data/raw/examples/`) | 93 examples | Proprietary to the project (`proprietary-internal` in each record) | See "LLM-authored content" below | Written by an AI coding agent (Claude Code) under `DATASET_SPEC.md`; not human-reviewed yet; audited in `docs/DATASET_AUDIT_v0.1.0.md` |
+| Human review decisions (`data/reviewed/`) | none yet | Project records | See LIC-005 | Reviewers' decisions, notes and rewrites; rights must be assigned by reviewer agreements |
 | Agent-authored evaluation cases (`evaluation/cases/v0.1.0/`) | 30 cases | Proprietary to the project | See below | Authored separately from training examples |
 | Scenario seeds (`generation/scenarios/`) | 30 seeds | Proprietary to the project | Yes | Input to future synthetic generation |
 | External datasets | **None** | — | — | No external dataset, benchmark or prompt set was used |
@@ -32,7 +33,10 @@ hashes and review status.
 All v0.1.0 examples and evaluation cases were written by an AI model, and the scale-up pipeline
 uses a teacher LLM. **Before training a model on this data for commercial use, verify the terms of
 service of every model provider used to create it** — some providers restrict using their outputs
-to develop competing models. This has not been assessed legally yet; record the conclusion here.
+to develop competing models. This has not been assessed legally yet. The open questions (teacher-model
+terms, ownership of AI-authored content, base-model licence, third-party names, rights to reviewer
+decisions) are tracked in [`configs/licensing_status.yaml`](configs/licensing_status.yaml); the release
+gate `licensing_resolved` blocks any training-ready release until each is resolved and recorded there.
 
 ## Simulated facts
 

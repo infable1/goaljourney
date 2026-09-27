@@ -5,8 +5,11 @@
     python scripts/gj.py stats               # dataset distribution
     python scripts/gj.py coverage            # current pool vs. scale-up targets
     python scripts/gj.py generate ...        # synthetic candidates via a teacher LLM (needs credentials)
-    python scripts/gj.py review export|apply|status
+    python scripts/gj.py review sample|list|show|template|approve|revise|reject|apply|history|stats|export|verify-log
+    python scripts/gj.py audit               # heuristic audits (Problems 1-9) + known issues register
+    python scripts/gj.py leakage             # layered train/eval/seed leakage report
     python scripts/gj.py split               # immutable train/validation/test release + manifest
+    python scripts/gj.py gates               # is the release training_ready? (configs/release_gates.yaml)
     python scripts/gj.py export --format sft|preference|eval
     python scripts/gj.py eval run --predictor reference|naive|model
     python scripts/gj.py eval score --predictions file.jsonl
@@ -80,14 +83,48 @@ def cmd_generate(args):
 
 
 def cmd_review(args):
-    from generation.pipelines import review
-    if args.review_cmd == "export":
-        return review.export_sheet(args.out, status=args.status, ids=args.id)
-    if args.review_cmd == "apply":
-        return review.apply_reviews(args.file, reviewer=args.reviewer)
-    if args.review_cmd == "status":
-        return review.print_status()
+    from generation.pipelines import review, sampling
+    c = args.review_cmd
+    if c == "sample":
+        return sampling.run(write=args.write, check=args.check, as_json=args.json)
+    if c == "list":
+        return review.cmd_list(status=args.status, tier=args.tier, task_type=args.task_type, language=args.language,
+                               manifest_only=args.manifest, as_json=args.json)
+    if c == "show":
+        return review.cmd_show(args.id, show_automated=args.show_automated)
+    if c == "template":
+        return review.cmd_template(args.id, out=args.out)
+    if c in ("approve", "revise", "reject"):
+        return review.cmd_decide(c, args.id, args.reviewer, decision_file=args.from_file, rates=args.rate or [],
+                                 overall=args.overall, notes=args.notes, issues=args.issue or [],
+                                 acknowledge=args.acknowledge_findings, item_id=args.item)
+    if c == "apply":
+        return review.cmd_apply(args.file, reviewer=args.reviewer, acknowledge=args.acknowledge_findings)
+    if c == "history":
+        return review.cmd_history(args.id, diff=not args.no_diff)
+    if c in ("stats", "status"):
+        return review.cmd_stats(as_json=getattr(args, "json", False))
+    if c == "export":
+        return review.cmd_export(args.format, args.out, status=args.status, ids=args.id, manifest_only=args.manifest,
+                                 with_automated=args.with_automated)
+    if c == "verify-log":
+        return review.cmd_verify_log()
     return 2
+
+
+def cmd_audit(args):
+    from generation.pipelines import audit
+    return audit.run(write=args.write, as_json=args.json, record=args.record)
+
+
+def cmd_leakage(args):
+    from generation.pipelines import leakage
+    return leakage.run(as_json=args.json, distribution=args.distribution, out=args.out)
+
+
+def cmd_gates(args):
+    from generation.pipelines import gates
+    return gates.run(version=args.version, purpose=args.purpose, as_json=args.json)
 
 
 def cmd_split(args):
@@ -97,7 +134,8 @@ def cmd_split(args):
 
 def cmd_export(args):
     from generation.pipelines.export import export
-    return export(fmt=args.format, version=args.version, out_dir=args.out)
+    return export(fmt=args.format, version=args.version, out_dir=args.out, review_policy=args.review_policy,
+                  allow_draft=args.allow_draft)
 
 
 def cmd_eval(args):
@@ -144,17 +182,76 @@ def main(argv=None):
     g.add_argument("--run-id")
     g.set_defaults(func=cmd_generate)
 
-    r = sub.add_parser("review", help="human review workflow")
+    r = sub.add_parser("review", help="human review workflow (docs/HUMAN_REVIEW_GUIDE.md)")
     rs = r.add_subparsers(dest="review_cmd", required=True)
-    re_ = rs.add_parser("export", help="write a review sheet (YAML) for pending examples")
-    re_.add_argument("--out", required=True)
-    re_.add_argument("--status", default="pending", choices=["pending", "stale", "all"])
-    re_.add_argument("--id", action="append")
-    ra = rs.add_parser("apply", help="append a filled review sheet to the review log")
+    rsa = rs.add_parser("sample", help="deterministic review sample -> review/review_manifest_v<ver>.json")
+    rsa.add_argument("--write", action="store_true", help="write the manifest (refuses to change an existing one)")
+    rsa.add_argument("--check", action="store_true", help="verify the committed manifest equals a fresh regeneration")
+    rsa.add_argument("--json", action="store_true")
+    rl = rs.add_parser("list", help="examples with tier, required qualifications and status")
+    rl.add_argument("--status", choices=["pending", "stale", "approved", "approved_pending_expert", "needs_revision", "rejected"])
+    rl.add_argument("--tier", choices=["human_review_required", "expert_review_required"])
+    rl.add_argument("--task-type")
+    rl.add_argument("--language", choices=["ru", "en"])
+    rl.add_argument("--manifest", action="store_true", help="only the review sample, in manifest order")
+    rl.add_argument("--json", action="store_true")
+    rsh = rs.add_parser("show", help="one example for review")
+    rsh.add_argument("id")
+    rsh.add_argument("--show-automated", action="store_true",
+                     help="also show validator results, audit findings, known issues and author notes (after rating!)")
+    rt = rs.add_parser("template", help="decision file (YAML) with the applicable rubric criteria")
+    rt.add_argument("id")
+    rt.add_argument("--out")
+    for name, helptext in (("approve", "approve the current content"), ("revise", "request a revision"),
+                           ("reject", "reject the current content")):
+        d = rs.add_parser(name, help=helptext)
+        d.add_argument("id")
+        d.add_argument("--reviewer", required=True, help="your id in review/reviewers.yaml")
+        d.add_argument("--from", dest="from_file", help="decision file from `gj review template`")
+        d.add_argument("--rate", action="append", help="criterion=rating (repeatable)")
+        d.add_argument("--overall", choices=["excellent", "acceptable", "needs_revision", "incorrect"])
+        d.add_argument("--notes")
+        d.add_argument("--issue", action="append", help="criterion:severity:description[:proposed fix] (repeatable)")
+        d.add_argument("--item", help="review item id (defaults to the manifest's)")
+        d.add_argument("--acknowledge-findings", action="store_true",
+                       help="approve although high-severity findings are open (after reading them)")
+    ra = rs.add_parser("apply", help="record every filled entry of a review sheet")
     ra.add_argument("file")
     ra.add_argument("--reviewer", required=True)
-    rs.add_parser("status", help="review status per example")
+    ra.add_argument("--acknowledge-findings", action="store_true")
+    rh = rs.add_parser("history", help="decisions on an example and diffs between reviewed versions")
+    rh.add_argument("id")
+    rh.add_argument("--no-diff", action="store_true")
+    rst = rs.add_parser("stats", help="status counts, reviewers, agreement, pipeline funnel")
+    rst.add_argument("--json", action="store_true")
+    rs.add_parser("status", help="alias of stats")
+    rex = rs.add_parser("export", help="md reading packet | sheet (batch YAML) | json (statuses + events)")
+    rex.add_argument("--format", required=True, choices=["md", "sheet", "json"])
+    rex.add_argument("--out", required=True)
+    rex.add_argument("--status", choices=["pending", "stale", "approved", "approved_pending_expert", "needs_revision", "rejected"])
+    rex.add_argument("--id", action="append")
+    rex.add_argument("--manifest", action="store_true", help="only the review sample, in manifest order")
+    rex.add_argument("--with-automated", action="store_true", help="md only: include audit findings (breaks independence)")
+    rs.add_parser("verify-log", help="check the review log hash chain and snapshots")
     r.set_defaults(func=cmd_review)
+
+    au = sub.add_parser("audit", help="heuristic audits (Problems 1-9) + known issues register")
+    au.add_argument("--write", action="store_true", help="write review/audit_findings_v<ver>.json")
+    au.add_argument("--json", action="store_true")
+    au.add_argument("--record", help="only findings for this example/case id (prefix match)")
+    au.set_defaults(func=cmd_audit)
+
+    lk = sub.add_parser("leakage", help="layered leakage report (exits 1 on hard findings)")
+    lk.add_argument("--json", action="store_true")
+    lk.add_argument("--distribution", action="store_true", help="also print similarity distributions")
+    lk.add_argument("--out", help="write the JSON report to this path")
+    lk.set_defaults(func=cmd_leakage)
+
+    gt = sub.add_parser("gates", help="release gates: is the release training_ready? (exit 1 if not)")
+    gt.add_argument("--version")
+    gt.add_argument("--purpose", choices=["sft", "preference"], default="sft")
+    gt.add_argument("--json", action="store_true")
+    gt.set_defaults(func=cmd_gates)
 
     sp = sub.add_parser("split", help="build an immutable train/validation/test release")
     sp.add_argument("--version", help="dataset version (default: configs/versions.yaml)")
@@ -166,6 +263,10 @@ def main(argv=None):
     ex.add_argument("--format", required=True, choices=["sft", "preference", "eval"])
     ex.add_argument("--version")
     ex.add_argument("--out")
+    ex.add_argument("--review-policy", choices=["require_approved", "allow_pending"], default="require_approved",
+                    help="training formats: only currently approved rows (default) or all rows (draft only)")
+    ex.add_argument("--allow-draft", action="store_true",
+                    help="export although release gates fail; output is marked training_eligible: false")
     ex.set_defaults(func=cmd_export)
 
     e = sub.add_parser("eval", help="evaluation suite")
@@ -191,9 +292,15 @@ def main(argv=None):
     from gjcore.env import MissingCredentialsError
     from gjcore.records import RecordFileError
     from generation.generators.providers import ProviderError
+    from generation.pipelines.review_store import ReviewError
     try:
         return args.func(args)
-    except (RecordFileError, MissingCredentialsError, ProviderError) as e:
+    except BrokenPipeError:
+        # Output piped into a command that stopped reading early (e.g. `| head`): exit quietly.
+        import os
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        return 0
+    except (RecordFileError, MissingCredentialsError, ProviderError, ReviewError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2
 

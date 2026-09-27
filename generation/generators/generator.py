@@ -13,7 +13,7 @@ from gjcore import schemas
 from gjcore.config import load_config, versions
 from generation.validators.records import validate_example
 from generation.validators import semantic
-from generation.pipelines.pool import load_pool, load_review_log, review_status
+from generation.pipelines.pool import load_pool, load_review_events, review_status
 from evaluation.metrics.scoring import extract_json
 
 from . import prompting
@@ -61,9 +61,9 @@ def pick_few_shot(operation, domain):
     cfg = load_config("generation")["few_shot"]
     if cfg["max_examples"] < 1:
         return None
-    log = load_review_log()
+    events = load_review_events()
     candidates = [r for r, _, origin in load_pool(include_generated=False) if r["task_type"] == operation
-                  and (not cfg["require_approved"] or review_status(r, log) == "approved")]
+                  and (not cfg["require_approved"] or review_status(r, events) == "approved")]
     candidates.sort(key=lambda r: (r["domain"] == domain, r["id"]))  # prefer a different domain
     return candidates[0] if candidates else None
 

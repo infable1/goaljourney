@@ -1,0 +1,1147 @@
+{
+  "manifest_version": "1.0",
+  "sample_id": "rs-v0.1.0-a",
+  "dataset_version": "0.1.0",
+  "generated_by": "gj review sample --write",
+  "seed": 20260927,
+  "pool": {
+    "size": 93,
+    "fingerprint": "25f21acd9bd632d144494911d3bd17e4f77d60ccbdee20ad0e79105607fc58d6"
+  },
+  "sample_size": 30,
+  "strata": [
+    {
+      "name": "random",
+      "share": 0.4,
+      "count": 12,
+      "rationale": "Seeded uniform draw from the whole pool, taken first so it stays unbiased: it estimates how often a reviewer finds problems in an arbitrary example (with n=12 only roughly — ±25 points)."
+    },
+    {
+      "name": "highest_risk",
+      "share": 0.3,
+      "count": 9,
+      "rationale": "Highest risk score (automated audit findings, known issues, expert tier, hard difficulty, mixed input). Finds the worst problems fast; details are hidden from the manifest to keep ratings independent."
+    },
+    {
+      "name": "contrastive",
+      "share": 0.2,
+      "count": 6,
+      "rationale": "Examples with rejected outputs, chosen to cover as many distinct failure modes as possible — rejected outputs become preference pairs, so their labels and plausibility must be right."
+    },
+    {
+      "name": "edge",
+      "share": 0.1,
+      "count": 3,
+      "rationale": "Rare situations (mixed language, memory isolation, retries, tiny goals, restricted safety, rare operations) that get the least author attention and are easy to get subtly wrong."
+    }
+  ],
+  "selection_order": [
+    "random",
+    "highest_risk",
+    "contrastive",
+    "edge",
+    "coverage_repair",
+    "calibration"
+  ],
+  "coverage": {
+    "goal_clarification": [
+      "rv-0.1.0-10",
+      "rv-0.1.0-17",
+      "rv-0.1.0-26",
+      "rv-0.1.0-29"
+    ],
+    "feasibility": [
+      "rv-0.1.0-01",
+      "rv-0.1.0-23"
+    ],
+    "journey": [
+      "rv-0.1.0-14",
+      "rv-0.1.0-20",
+      "rv-0.1.0-22"
+    ],
+    "task_generation": [
+      "rv-0.1.0-13",
+      "rv-0.1.0-16"
+    ],
+    "verification_protocol": [
+      "rv-0.1.0-15",
+      "rv-0.1.0-25"
+    ],
+    "verification_decision": [
+      "rv-0.1.0-24"
+    ],
+    "verification_retry": [
+      "rv-0.1.0-27"
+    ],
+    "route_adaptation": [
+      "rv-0.1.0-04",
+      "rv-0.1.0-05"
+    ],
+    "navigator": [
+      "rv-0.1.0-07",
+      "rv-0.1.0-18"
+    ],
+    "daily_prioritization": [
+      "rv-0.1.0-12"
+    ],
+    "time_adaptation": [
+      "rv-0.1.0-06",
+      "rv-0.1.0-19",
+      "rv-0.1.0-21"
+    ],
+    "goal_change": [
+      "rv-0.1.0-08"
+    ],
+    "web_research": [
+      "rv-0.1.0-09",
+      "rv-0.1.0-11"
+    ],
+    "decision_summary": [
+      "rv-0.1.0-04",
+      "rv-0.1.0-05",
+      "rv-0.1.0-06",
+      "rv-0.1.0-08",
+      "rv-0.1.0-14",
+      "rv-0.1.0-18",
+      "rv-0.1.0-19",
+      "rv-0.1.0-20",
+      "rv-0.1.0-21",
+      "rv-0.1.0-22",
+      "rv-0.1.0-24",
+      "rv-0.1.0-27"
+    ],
+    "memory": [
+      "rv-0.1.0-07"
+    ],
+    "progress": [
+      "rv-0.1.0-03"
+    ],
+    "safety": [
+      "rv-0.1.0-02",
+      "rv-0.1.0-28",
+      "rv-0.1.0-30"
+    ],
+    "russian": [
+      "rv-0.1.0-01",
+      "rv-0.1.0-04",
+      "rv-0.1.0-07",
+      "rv-0.1.0-08",
+      "rv-0.1.0-09",
+      "rv-0.1.0-11",
+      "rv-0.1.0-13",
+      "rv-0.1.0-14",
+      "rv-0.1.0-15",
+      "rv-0.1.0-16",
+      "rv-0.1.0-17",
+      "rv-0.1.0-18",
+      "rv-0.1.0-19",
+      "rv-0.1.0-22",
+      "rv-0.1.0-24",
+      "rv-0.1.0-27",
+      "rv-0.1.0-28",
+      "rv-0.1.0-29",
+      "rv-0.1.0-30"
+    ],
+    "english": [
+      "rv-0.1.0-02",
+      "rv-0.1.0-03",
+      "rv-0.1.0-05",
+      "rv-0.1.0-06",
+      "rv-0.1.0-10",
+      "rv-0.1.0-12",
+      "rv-0.1.0-20",
+      "rv-0.1.0-21",
+      "rv-0.1.0-23",
+      "rv-0.1.0-25",
+      "rv-0.1.0-26"
+    ],
+    "mixed_language": [
+      "rv-0.1.0-29"
+    ],
+    "contrastive": [
+      "rv-0.1.0-01",
+      "rv-0.1.0-02",
+      "rv-0.1.0-05",
+      "rv-0.1.0-06",
+      "rv-0.1.0-09",
+      "rv-0.1.0-11",
+      "rv-0.1.0-12",
+      "rv-0.1.0-17",
+      "rv-0.1.0-18",
+      "rv-0.1.0-19",
+      "rv-0.1.0-20",
+      "rv-0.1.0-22",
+      "rv-0.1.0-23",
+      "rv-0.1.0-24",
+      "rv-0.1.0-25",
+      "rv-0.1.0-26",
+      "rv-0.1.0-27",
+      "rv-0.1.0-30"
+    ],
+    "expert_tier": [
+      "rv-0.1.0-02",
+      "rv-0.1.0-28",
+      "rv-0.1.0-30"
+    ]
+  },
+  "uncovered": [],
+  "coverage_repairs": [
+    {
+      "category": "expert_tier",
+      "added": "gj-safe-006",
+      "removed": "gj-nav-011",
+      "stratum": "edge"
+    },
+    {
+      "category": "expert_tier",
+      "added": "gj-safe-002",
+      "removed": "gj-clar-004",
+      "stratum": "edge"
+    }
+  ],
+  "calibration": {
+    "size": 8,
+    "items": [
+      "rv-0.1.0-02",
+      "rv-0.1.0-06",
+      "rv-0.1.0-07",
+      "rv-0.1.0-09",
+      "rv-0.1.0-12",
+      "rv-0.1.0-20",
+      "rv-0.1.0-29",
+      "rv-0.1.0-30"
+    ],
+    "rationale": "Every reviewer reviews these first, independently; agreement on them (Cohen's kappa) is a release gate. Chosen for diversity: >=3 RU, >=3 EN, mixed input, >=2 expert-tier, >=2 with rejected outputs, distinct operations."
+  },
+  "inputs": {
+    "audit_findings_sha256": "38a2bc5b195aa1ff3bf76671c347a83d9916124508c34b61b54f876772a7db9d",
+    "known_issues_sha256": "9ade94b32596d54f0bda630548442e6f935552b7ea0c7d3e7f4c5fa4ca22516e",
+    "risk_weights": {
+      "audit_finding": {
+        "high": 3,
+        "medium": 2,
+        "low": 1,
+        "info": 0
+      },
+      "known_issue": {
+        "high": 5,
+        "medium": 3,
+        "low": 1
+      },
+      "expert_tier": 3,
+      "hard_difficulty": 1,
+      "mixed_input_language": 1
+    },
+    "sampling_config": {
+      "seed": 20260927,
+      "size": 30,
+      "strata": [
+        {
+          "name": "random",
+          "share": 0.4
+        },
+        {
+          "name": "highest_risk",
+          "share": 0.3
+        },
+        {
+          "name": "contrastive",
+          "share": 0.2
+        },
+        {
+          "name": "edge",
+          "share": 0.1
+        }
+      ],
+      "max_per_task_type_in_targeted_strata": 2,
+      "calibration_size": 8,
+      "coverage_categories": [
+        "goal_clarification",
+        "feasibility",
+        "journey",
+        "task_generation",
+        "verification_protocol",
+        "verification_decision",
+        "verification_retry",
+        "route_adaptation",
+        "navigator",
+        "daily_prioritization",
+        "time_adaptation",
+        "goal_change",
+        "web_research",
+        "decision_summary",
+        "memory",
+        "progress",
+        "safety",
+        "russian",
+        "english",
+        "mixed_language",
+        "contrastive",
+        "expert_tier"
+      ],
+      "coverage_minimums": {
+        "expert_tier": 3
+      }
+    }
+  },
+  "items": [
+    {
+      "review_item_id": "rv-0.1.0-01",
+      "example_id": "gj-feas-005",
+      "content_hash": "27ed3f4af507d1402ed0acfb77536683d2178dbc000c60e9aed2f404d27edf7a",
+      "source_file": "data/raw/examples/b_feasibility.yaml",
+      "task_type": "feasibility_assessment",
+      "behavior": [
+        "feasibility",
+        "web_research",
+        "source_awareness"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #1 of 93",
+      "risk_score": 1,
+      "coverage": [
+        "contrastive",
+        "feasibility",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-02",
+      "example_id": "gj-safe-003",
+      "content_hash": "d421870aa132e687835b461bbe8601374d0c72202bd11660c7a67531287eb002",
+      "source_file": "data/raw/examples/s_safety.yaml",
+      "task_type": "safety_classification",
+      "behavior": [
+        "safety",
+        "user_agency"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "high_risk",
+      "tier": "expert_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [
+        "medical",
+        "physical_safety"
+      ],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #2 of 93",
+      "risk_score": 5,
+      "coverage": [
+        "contrastive",
+        "english",
+        "expert_tier",
+        "safety"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-03",
+      "example_id": "gj-prog-003",
+      "content_hash": "e343978a6d2ed6098493ac2601ec4b57b7f25de315665d80de8e23c4516edffe",
+      "source_file": "data/raw/examples/p_progress.yaml",
+      "task_type": "progress_update",
+      "behavior": [
+        "progress"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #3 of 93",
+      "risk_score": 0,
+      "coverage": [
+        "english",
+        "progress"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-04",
+      "example_id": "gj-route-006",
+      "content_hash": "fb1ab4eb1b7893da55366f6a402d21fc33e3ff1118a905beb6c012927c45cc1e",
+      "source_file": "data/raw/examples/h_route_adaptation.yaml",
+      "task_type": "route_adaptation",
+      "behavior": [
+        "route_adaptation",
+        "decision_summary",
+        "user_agency"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #4 of 93",
+      "risk_score": 2,
+      "coverage": [
+        "decision_summary",
+        "route_adaptation",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-05",
+      "example_id": "gj-route-003",
+      "content_hash": "9c9a84f6694b16b3df37ac9f5e985558642025a3518901994ce57ad42a0d6d6f",
+      "source_file": "data/raw/examples/h_route_adaptation.yaml",
+      "task_type": "route_adaptation",
+      "behavior": [
+        "route_adaptation",
+        "decision_summary",
+        "source_awareness"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #5 of 93",
+      "risk_score": 1,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "english",
+        "route_adaptation"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-06",
+      "example_id": "gj-time-001",
+      "content_hash": "f82c0fc070edc834ae47b1de4fa3de2bf098ffd3050098ecf4e848386246aded",
+      "source_file": "data/raw/examples/k_time_adaptation.yaml",
+      "task_type": "route_adaptation",
+      "behavior": [
+        "time_adaptation",
+        "route_adaptation",
+        "decision_summary",
+        "user_agency"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #6 of 93",
+      "risk_score": 6,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "english",
+        "time_adaptation"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-07",
+      "example_id": "gj-mem-004",
+      "content_hash": "3073971dd8365cd6e20ac9f930b19bba4c82734cfd4884723dd237566f38cc1b",
+      "source_file": "data/raw/examples/m_memory.yaml",
+      "task_type": "navigator_response",
+      "behavior": [
+        "memory",
+        "navigator"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #7 of 93",
+      "risk_score": 0,
+      "coverage": [
+        "memory",
+        "navigator",
+        "russian"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-08",
+      "example_id": "gj-goalchg-004",
+      "content_hash": "da4220541c7217df695f2bc9db724ea16bf85524294f638e2bc6e147d14cb274",
+      "source_file": "data/raw/examples/l_goal_change.yaml",
+      "task_type": "goal_change",
+      "behavior": [
+        "goal_change",
+        "decision_summary",
+        "web_research",
+        "source_awareness"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #8 of 93",
+      "risk_score": 1,
+      "coverage": [
+        "decision_summary",
+        "goal_change",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-09",
+      "example_id": "gj-web-001",
+      "content_hash": "9623fb94508bcac058803e4bb24a12cb9e57d1c3b089a837906d18a4c636cc01",
+      "source_file": "data/raw/examples/n_web_research.yaml",
+      "task_type": "web_research_decision",
+      "behavior": [
+        "web_research",
+        "source_awareness"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #9 of 93",
+      "risk_score": 0,
+      "coverage": [
+        "contrastive",
+        "russian",
+        "web_research"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-10",
+      "example_id": "gj-clar-008",
+      "content_hash": "0c2bcacde3c2dc9a6fba752e3cc051af0a17e462f89c9d5a462ff6766b7c0997",
+      "source_file": "data/raw/examples/a_clarification.yaml",
+      "task_type": "goal_clarification",
+      "behavior": [
+        "clarification"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #10 of 93",
+      "risk_score": 0,
+      "coverage": [
+        "english",
+        "goal_clarification"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-11",
+      "example_id": "gj-web-004",
+      "content_hash": "e3db3ea14595d4f7ee09ef89b17bf22299483fdbe1ed635d0f3c5c93e97e8508",
+      "source_file": "data/raw/examples/n_web_research.yaml",
+      "task_type": "web_research_decision",
+      "behavior": [
+        "web_research",
+        "source_awareness"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #11 of 93",
+      "risk_score": 1,
+      "coverage": [
+        "contrastive",
+        "russian",
+        "web_research"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-12",
+      "example_id": "gj-daily-001",
+      "content_hash": "c0d635a0698000dd6d4707f5576fe32bf3c7c0e65d7393d41fc433f508694ee3",
+      "source_file": "data/raw/examples/j_daily_plan.yaml",
+      "task_type": "daily_plan",
+      "behavior": [
+        "daily_prioritization"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "random",
+      "selection_reason": "seeded uniform draw #12 of 93",
+      "risk_score": 1,
+      "coverage": [
+        "contrastive",
+        "daily_prioritization",
+        "english"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-13",
+      "example_id": "gj-task-004",
+      "content_hash": "36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e",
+      "source_file": "data/raw/examples/d_tasks.yaml",
+      "task_type": "task_generation",
+      "behavior": [
+        "task",
+        "source_awareness"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 14 (signals hidden until after rating: gj review show gj-task-004 --show-automated)",
+      "risk_score": 14,
+      "coverage": [
+        "russian",
+        "task_generation"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-14",
+      "example_id": "gj-jour-001",
+      "content_hash": "77906c26aadd8e8ccdf42ac6b24e7869d505894c1738fcac39e999798066d56e",
+      "source_file": "data/raw/examples/c_journey.yaml",
+      "task_type": "journey_generation",
+      "behavior": [
+        "journey",
+        "decision_summary",
+        "progress"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 12 (signals hidden until after rating: gj review show gj-jour-001 --show-automated)",
+      "risk_score": 12,
+      "coverage": [
+        "decision_summary",
+        "journey",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-15",
+      "example_id": "gj-vprot-004",
+      "content_hash": "b812376629ecf9629af8cb9969d560d6834ccdd0058ef10f8c8496cc2d164be7",
+      "source_file": "data/raw/examples/e_verification_protocol.yaml",
+      "task_type": "verification_protocol_design",
+      "behavior": [
+        "verification_protocol"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 10 (signals hidden until after rating: gj review show gj-vprot-004 --show-automated)",
+      "risk_score": 10,
+      "coverage": [
+        "russian",
+        "verification_protocol"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-16",
+      "example_id": "gj-task-002",
+      "content_hash": "96f0bfce3713ad203a46cce8ea6aeffca329c91c46d64187df27176d6c314bac",
+      "source_file": "data/raw/examples/d_tasks.yaml",
+      "task_type": "task_generation",
+      "behavior": [
+        "task",
+        "verification_protocol"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 10 (signals hidden until after rating: gj review show gj-task-002 --show-automated)",
+      "risk_score": 10,
+      "coverage": [
+        "russian",
+        "task_generation"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-17",
+      "example_id": "gj-clar-007",
+      "content_hash": "a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2",
+      "source_file": "data/raw/examples/a_clarification.yaml",
+      "task_type": "goal_clarification",
+      "behavior": [
+        "clarification",
+        "web_research"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 9 (signals hidden until after rating: gj review show gj-clar-007 --show-automated)",
+      "risk_score": 9,
+      "coverage": [
+        "contrastive",
+        "goal_clarification",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-18",
+      "example_id": "gj-nav-006",
+      "content_hash": "5c93d67245033ae10a2ebbb7a618afc6c108cbf8490bf241074d65ac381bff2b",
+      "source_file": "data/raw/examples/i_navigator.yaml",
+      "task_type": "navigator_response",
+      "behavior": [
+        "navigator",
+        "user_agency",
+        "decision_summary"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 8 (signals hidden until after rating: gj review show gj-nav-006 --show-automated)",
+      "risk_score": 8,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "navigator",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-19",
+      "example_id": "gj-time-003",
+      "content_hash": "b5cc77aecc850b92ee447709898db0d9d7f2760666600a9799d6a008a64b46ef",
+      "source_file": "data/raw/examples/k_time_adaptation.yaml",
+      "task_type": "route_adaptation",
+      "behavior": [
+        "time_adaptation",
+        "route_adaptation",
+        "decision_summary",
+        "user_agency"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 7 (signals hidden until after rating: gj review show gj-time-003 --show-automated)",
+      "risk_score": 7,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "russian",
+        "time_adaptation"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-20",
+      "example_id": "gj-jour-003",
+      "content_hash": "360c792cb6a4e278b238241f749acd13c5b851d970f7faa8afdd299fc96dbb13",
+      "source_file": "data/raw/examples/c_journey.yaml",
+      "task_type": "journey_generation",
+      "behavior": [
+        "journey",
+        "source_awareness"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 7 (signals hidden until after rating: gj review show gj-jour-003 --show-automated)",
+      "risk_score": 7,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "english",
+        "journey"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-21",
+      "example_id": "gj-time-004",
+      "content_hash": "83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984",
+      "source_file": "data/raw/examples/k_time_adaptation.yaml",
+      "task_type": "route_adaptation",
+      "behavior": [
+        "time_adaptation",
+        "route_adaptation",
+        "decision_summary"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "highest_risk",
+      "selection_reason": "risk score 7 (signals hidden until after rating: gj review show gj-time-004 --show-automated)",
+      "risk_score": 7,
+      "coverage": [
+        "decision_summary",
+        "english",
+        "time_adaptation"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-22",
+      "example_id": "gj-jour-004",
+      "content_hash": "875498360a039cba9c3b29cc3c837d8f051b1f9739d5cddc40f835122aa68468",
+      "source_file": "data/raw/examples/c_journey.yaml",
+      "task_type": "journey_generation",
+      "behavior": [
+        "journey",
+        "verification_protocol"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "contrastive",
+      "selection_reason": "covers failure modes ['generic_plan', 'photo_as_proof', 'vague_tasks']",
+      "risk_score": 7,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "journey",
+        "russian"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-23",
+      "example_id": "gj-feas-006",
+      "content_hash": "67e429ff1f363cbcd65528a4451ec282af2e77a71cbf2c828536ce4f9bb60e6a",
+      "source_file": "data/raw/examples/b_feasibility.yaml",
+      "task_type": "feasibility_assessment",
+      "behavior": [
+        "feasibility",
+        "web_research",
+        "user_agency"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "contrastive",
+      "selection_reason": "covers failure modes ['blind_compliance', 'over_refusal', 'overrode_user_decision']",
+      "risk_score": 1,
+      "coverage": [
+        "contrastive",
+        "english",
+        "feasibility"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-24",
+      "example_id": "gj-vres-004",
+      "content_hash": "2cbbbe61bbc211ae95da412c38f59ddf6493639d1a4651bcd9a7d166645b35db",
+      "source_file": "data/raw/examples/f_verification_result.yaml",
+      "task_type": "verification_result",
+      "behavior": [
+        "verification_decision"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "contrastive",
+      "selection_reason": "covers failure modes ['premature_rejection', 'rejected_reasonable_self_report']",
+      "risk_score": 0,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "russian",
+        "verification_decision"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-25",
+      "example_id": "gj-vprot-005",
+      "content_hash": "67b754a0b472f5e1fab5bddc3f8c215ad16397fb65ff30b9fb600170e509ea43",
+      "source_file": "data/raw/examples/e_verification_protocol.yaml",
+      "task_type": "verification_protocol_design",
+      "behavior": [
+        "verification_protocol"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "contrastive",
+      "selection_reason": "covers failure modes ['assumed_user_info', 'ignored_preferences']",
+      "risk_score": 0,
+      "coverage": [
+        "contrastive",
+        "english",
+        "verification_protocol"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-26",
+      "example_id": "gj-clar-006",
+      "content_hash": "3a26332252776d4cc7ddb7c8fc44c618aa17d6f57de8067e5b462f5b1934b744",
+      "source_file": "data/raw/examples/a_clarification.yaml",
+      "task_type": "goal_clarification",
+      "behavior": [
+        "clarification"
+      ],
+      "language": "en",
+      "input_language": "en",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en"
+      ],
+      "required_expert_domains": [],
+      "stratum": "contrastive",
+      "selection_reason": "covers failure modes ['missed_critical_question', 'unnecessary_questions']",
+      "risk_score": 0,
+      "coverage": [
+        "contrastive",
+        "english",
+        "goal_clarification"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-27",
+      "example_id": "gj-vretry-002",
+      "content_hash": "9690cc62754bcd26a76c7edab41955ddf400a5b9910e13859910d8f138cd1adc",
+      "source_file": "data/raw/examples/g_verification_retry.yaml",
+      "task_type": "verification_result",
+      "behavior": [
+        "verification_retry",
+        "verification_decision",
+        "user_agency"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "contrastive",
+      "selection_reason": "covers failure modes ['accepted_unsupported_proof']",
+      "risk_score": 0,
+      "coverage": [
+        "contrastive",
+        "decision_summary",
+        "russian",
+        "verification_retry"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-28",
+      "example_id": "gj-safe-002",
+      "content_hash": "5d0d0c50921356f13caebd62c097090ca055ee3f2709c6860611d1a9cbfe9084",
+      "source_file": "data/raw/examples/s_safety.yaml",
+      "task_type": "safety_classification",
+      "behavior": [
+        "safety"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "sensitive",
+      "tier": "expert_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [
+        "financial"
+      ],
+      "stratum": "edge",
+      "selection_reason": "coverage repair: adds 'expert_tier' (replaced gj-clar-004)",
+      "risk_score": 4,
+      "coverage": [
+        "expert_tier",
+        "russian",
+        "safety"
+      ],
+      "calibration": false
+    },
+    {
+      "review_item_id": "rv-0.1.0-29",
+      "example_id": "gj-clar-005",
+      "content_hash": "2dee468203f9b687c688d6dad1eb0a7e29e68deee85aea938093b9fb073c02cf",
+      "source_file": "data/raw/examples/a_clarification.yaml",
+      "task_type": "goal_clarification",
+      "behavior": [
+        "clarification",
+        "language"
+      ],
+      "language": "ru",
+      "input_language": "mixed",
+      "safety_category": "allowed",
+      "tier": "human_review_required",
+      "required_languages": [
+        "en",
+        "ru"
+      ],
+      "required_expert_domains": [],
+      "stratum": "edge",
+      "selection_reason": "edge features ['mixed_language']",
+      "risk_score": 1,
+      "coverage": [
+        "goal_clarification",
+        "mixed_language",
+        "russian"
+      ],
+      "calibration": true
+    },
+    {
+      "review_item_id": "rv-0.1.0-30",
+      "example_id": "gj-safe-006",
+      "content_hash": "37ae70c416be9252f68e9c838bfdbdd67cac3301624224b249d42c0ab833c302",
+      "source_file": "data/raw/examples/s_safety.yaml",
+      "task_type": "safety_classification",
+      "behavior": [
+        "safety"
+      ],
+      "language": "ru",
+      "input_language": "ru",
+      "safety_category": "restricted",
+      "tier": "expert_review_required",
+      "required_languages": [
+        "ru"
+      ],
+      "required_expert_domains": [
+        "legal"
+      ],
+      "stratum": "edge",
+      "selection_reason": "coverage repair: adds 'expert_tier' (replaced gj-nav-011)",
+      "risk_score": 3,
+      "coverage": [
+        "contrastive",
+        "expert_tier",
+        "russian",
+        "safety"
+      ],
+      "calibration": true
+    }
+  ]
+}

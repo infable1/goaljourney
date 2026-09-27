@@ -7,7 +7,9 @@ are reviewed, split, versioned and exported. The architectural rationale is in
 
 **Status of v0.1.0:** 93 agent-authored synthetic examples and 30 evaluation cases, all passing
 automated validation, **none human-reviewed yet** (release `draft_unreviewed`). Synthetic data is
-not ground truth — see §12.
+not ground truth — see §12. **Milestone 1.5** added the human-review system, audits, layered
+leakage checks and release gates; the audit found concrete defects in examples that pass every
+validator ([`docs/DATASET_AUDIT_v0.1.0.md`](docs/DATASET_AUDIT_v0.1.0.md)). v0.1.0 is not training-ready.
 
 ---
 
@@ -30,12 +32,14 @@ release manifest and generation run.
 | `schema_version` | 0.1.0 | `schemas/*.json` (`$id` contains `v0.1.0`), `schema_version` in every record |
 | `navigator_prompt_version` | 0.1.0 | `prompts/navigator/v0.1.0/system.md` (runtime prompt used in SFT export and eval) |
 | `generation_prompt_version` | 0.1.0 | `prompts/generation/v0.1.0/` (teacher prompts) |
-| `pipeline_version` | 0.1.0 | `gjcore/`, `generation/` code |
+| `pipeline_version` | 0.2.0 | `gjcore/`, `generation/` code (0.2.0: review log v0.2, audit, leakage layers, release gates) |
 | `evaluation_version` | 0.1.0 | `evaluation/cases/v0.1.0/` + check semantics |
 | `base_model` | unset | chosen later; recorded here, never hard-coded |
 
 Releases are immutable: `gj split` refuses to overwrite an existing dataset version with different
-content (identical rebuilds are a no-op). Change content → bump `dataset_version`.
+data (identical data files are a no-op; the stored manifest is kept as built even if a newer pipeline
+would describe it differently). Change content → bump `dataset_version`. The review rubric has its own
+version (`evaluation/rubrics/dataset_review_rubric.yaml`, 0.2.0), stamped into every review decision.
 
 ## 3. Layout
 
@@ -43,19 +47,24 @@ content (identical rebuilds are a no-op). Change content → bump `dataset_versi
 schemas/                   JSON Schema 2020-12 (entities, 14 operation outputs, record envelopes)
 data/raw/examples/         authored examples, YAML, one file per behaviour family
 data/generated/<run_id>/   pipeline candidates + rejected + run manifest (committed, reviewable)
-data/reviewed/reviews.jsonl  append-only human review log (keyed by content hash)
+data/reviewed/review_events.jsonl   append-only, hash-chained human review log (decisions per content hash)
+data/reviewed/snapshots/   exact reviewed content, one file per content hash (never overwritten)
+review/                    reviewer registry, review sample manifest, known issues, audit findings
 data/{train,validation,test}/goaljourney-v<ver>.jsonl   immutable releases
 data/manifests/goaljourney-v<ver>.json                  release manifest (hashes, counts, versions)
 generation/scenarios/      scenario seeds for synthetic scale-up
 generation/validators/     schema/semantic/record/similarity validators
 generation/generators/     providers, teacher prompt rendering, candidate generator
-generation/pipelines/      validate, stats, coverage, review, split, export, generate
+generation/pipelines/      validate, stats, coverage, generate, review(+store, sampling), audit, leakage, gates, split, export
 evaluation/cases/v0.1.0/   evaluation cases with automated checks
-evaluation/rubrics/        dataset-quality rubric and model-output rubric (human review)
+evaluation/leakage/        evaluation-side leakage metadata (scenario groups, templates, reviewed overlaps)
+evaluation/rubrics/        dataset review rubric (v0.2.0), legacy v0.1 rubric, model-output rubric
 evaluation/metrics/        check implementations and aggregation
 evaluation/runners/        predictors (reference, naive, model), runner, case validator
 prompts/                   navigator runtime prompt and teacher prompts (versioned)
-configs/                   versions, dataset, generation, evaluation, export, coverage targets
+configs/                   versions, dataset, generation, evaluation, export, coverage targets,
+                           review, release gates, licensing status
+docs/                      architecture, dataset audit, human review guide, leakage checks, eval expansion plan
 ```
 
 ## 4. Example record
@@ -228,19 +237,58 @@ Errors block; warnings are surfaced for review (`--strict` makes them blocking).
 (language script ratio, vagueness patterns, professional-authority phrases) catch clear cases, not
 style — style is a human-review criterion.
 
+**Audit heuristics** (`gj audit`, `generation/pipelines/audit.py`) are separate from lint: they flag
+*candidates* for reviewers (Problems 1–9 of Milestone 1.5 plus weekday/date consistency — generic
+tasks, user-entered data rated as objective, product-capability assumptions, milestone dates changed
+without consent, unsupported generalisations, retrieved-memory leaks, Russian gendered forms, …) and
+never block. A rule graduates to lint only once its precision is established on reviewed data.
+
 ## 14. Human review
 
-Rubric: [`evaluation/rubrics/dataset_quality_rubric.yaml`](evaluation/rubrics/dataset_quality_rubric.yaml)
-— 12 criteria (correctness, relevance, minimality, actionability, realism, dependency
-correctness, verification validity, non-hallucination, user agency, safety, language quality,
-contrastive quality), 1–4 anchors, applicability per operation. **Approval requires every
-applicable score ≥ 3 and the hard gates `safety` and `non_hallucination` = 4.**
+Full workflow: [`docs/HUMAN_REVIEW_GUIDE.md`](docs/HUMAN_REVIEW_GUIDE.md). Principle: *would we be
+comfortable teaching a model this behaviour?*
+
+**Pipeline stages.** raw → validated (`gj validate`) → human review (`gj review …`) → approved →
+split (`gj split`) → training export (`gj export`, gated). Only `approved` content can reach a
+training file (§16).
+
+**Rubric** ([`evaluation/rubrics/dataset_review_rubric.yaml`](evaluation/rubrics/dataset_review_rubric.yaml), v0.2.0):
+categorical ratings (`good | minor_issues | major_issues | unacceptable | not_applicable`) on
+A product usefulness, B goal understanding, C question minimality, D actionability, E realism,
+F dependency correctness, G verification quality, H evidence interpretation, I user agency,
+J adaptation quality, K explanation quality, L external-fact discipline *(hard gate)*, M safety
+*(hard gate)*, N language quality, plus P contrastive quality and Q privacy & memory, and an
+**overall** verdict O (`excellent | acceptable | needs_revision | incorrect`). No summed score.
+Approval requires overall excellent/acceptable, no major/unacceptable rating, hard gates good or n/a,
+and every applicable criterion rated. The v0.1 numeric rubric is kept only for reference.
+
+**Log.** Decisions are appended to `data/reviewed/review_events.jsonl` (schema
+`schemas/review_event.json`): example id, content hash, reviewer id + snapshot of their roles and
+languages, timestamp, action (approve / revise / reject), old and new status, rubric ratings,
+overall, issues, notes, acknowledged findings, snapshot path, previous-event hash and own hash. The
+chain makes edits, deletions and reordering detectable (`gj review verify-log`). The reviewed
+content is preserved in `data/reviewed/snapshots/<hash>.json`.
+
+**Status** (derived, never authored): `pending`, `stale` (content changed since the last decision),
+`approved`, `approved_pending_expert`, `needs_revision`, `rejected`. Latest decision per reviewer
+counts; the most conservative wins; an adjudicator's decision is final.
+
+**Qualifications and tiers** (`configs/review.yaml`): reviewers are registered in
+`review/reviewers.yaml` and must be human. Approval requires a reviewer who reads the example's
+languages (RU; mixed input needs RU+EN). Examples with a non-`allowed` safety category or a risk tag
+are `expert_review_required` and need sign-off from `domain_expert`s covering their expert domains.
+No example is ever approved automatically.
+
+**Sample.** `gj review sample` builds a deterministic 30-item manifest
+(`review/review_manifest_v<ver>.json`, schema `schemas/review_manifest.json`): 40% random (drawn first,
+unbiased), 30% highest risk, 20% contrastive, 10% edge; coverage repair (every operation/behaviour,
+RU, EN, mixed, contrastive, ≥ 3 expert-tier); 8 calibration items reviewed by everyone first.
 
 ```
-gj review export --out sheet.yaml     # pending examples with rendering + empty rubric
-# reviewer fills decision / scores / notes
-gj review apply sheet.yaml --reviewer NAME   # validates against the rubric, appends to the log
-gj review status
+gj review list --manifest           gj review show ID [--show-automated]
+gj review template ID --out f.yaml  gj review approve|revise|reject ID --reviewer ME --from f.yaml
+gj review export --format md|sheet|json --manifest --out …    gj review apply sheet.yaml --reviewer ME
+gj review history ID                gj review stats             gj review verify-log
 ```
 
 ## 15. Splits and releases
@@ -248,15 +296,30 @@ gj review status
 * **train / validation:** deterministic split by `scenario_group`, stratified by task type
   (seeded hash ordering, `validation_fraction` 0.15, strata with ≥ 4 examples contribute).
 * **test:** the evaluation cases (authored separately), frozen into the release.
-* **Leakage guard:** no training input may be a near-duplicate of an evaluation input (5-char
-  shingle Jaccard ≥ 0.55 aborts the build). v0.1.0 maximum: 0.22.
+* **Leakage guard** (layers and limits: [`docs/LEAKAGE_CHECKS.md`](docs/LEAKAGE_CHECKS.md)): the build
+  aborts on any hard finding — identical input, character near-duplicate (5-char shingle Jaccard ≥ 0.55),
+  lexical paraphrase (TF-IDF cosine ≥ 0.50), shared scenario group, reused seed id. Template overlaps
+  and seed similarity are warnings that need a human disposition (release gate). These checks can show
+  that leakage exists; they cannot show that it does not.
 * **Review policy:** `require_approved` (only approved content) or `allow_pending` (pending
   *authored* examples allowed, release marked `draft_unreviewed`). Generated candidates enter a
-  release only when approved, under either policy.
+  release only when approved, under either policy. `stale`, `needs_revision`, `rejected` and
+  `approved_pending_expert` content is always excluded.
+* **Release status:** `draft_unreviewed` (pending rows) → `reviewed_not_training_ready` (all rows
+  approved but a release gate fails) → `training_ready` (every gate in
+  [`configs/release_gates.yaml`](configs/release_gates.yaml) passes: strict validation, 100% approval,
+  acknowledged findings, no open medium/high known issues, ≥ 2 reviewers, calibration agreement,
+  leakage clean and dispositioned, coverage minimums, evaluation readiness, licensing resolved).
+  `gj gates` evaluates them live.
 
 ## 16. Export formats
 
-`gj export --format sft|preference|eval` writes to `exports/v<ver>/` (derivable, git-ignored):
+`gj export --format sft|preference|eval` writes to `exports/v<ver>/` (derivable, git-ignored).
+Training formats are gated: by default (`--review-policy require_approved`) only rows whose exact
+content is approved *now* are written, and only if `gj gates` passes. `--allow-draft` writes to
+`exports/v<ver>-draft/` with `training_eligible: false` on every record and a `DRAFT_NOT_FOR_TRAINING`
+marker (for tooling smoke tests); `--review-policy allow_pending` always implies a draft. The eval
+format is not gated.
 
 * **sft**: `{"messages": [system, user, assistant], "metadata": {...}}` — system = navigator prompt,
   user = the request JSON, assistant = the output JSON. Chat templates are applied by the training
@@ -287,6 +350,11 @@ a separate sheet (`gj eval review-sheet`); human scores are never merged into au
 Sanity instruments: the `reference` predictor must pass every check; the `naive` baseline (always
 English, fixed questionnaire, verifies everything, never researches, everything "allowed") is
 schema-valid on every case and must fail most behavioural checks.
+
+Known weaknesses of eval v0.1.0 (same author as the training data, 27 reviewed behavioural overlaps,
+1–4 cases per operation, single-turn) and the path to 200–500 independent cases are in
+[`docs/EVALUATION_EXPANSION_PLAN.md`](docs/EVALUATION_EXPANSION_PLAN.md). Evaluation-side provenance
+(scenario group, behaviour template, seed origin) lives in `evaluation/leakage/v<ver>.yaml`.
 
 ## 18. Synthetic generation and scale-up (Milestone 2)
 
@@ -321,9 +389,18 @@ parallel, authored separately and leakage-checked.
 
 ## 20. Known limitations (v0.1.0)
 
-* Examples were written by an AI agent under this spec; they need human review before training.
-* Language and vagueness checks are heuristics; semantic lint cannot judge whether a plan is
-  generic or a tone is right — those are human-review criteria.
-* Near-duplicate detection is O(n²) character-shingle Jaccard; move to MinHash/LSH beyond ~20k items.
-* Evaluation cases (30) are below the 200–500 target; they are a first suite, not a benchmark.
-* `memory_extraction` (2) and `progress_update` (3) have few training examples.
+* Examples were written by an AI agent under this spec. The Milestone-1.5 audit found 6 examples with
+  high-severity defects and 35 more with medium or low issues, all passing validation. Proposed fixes
+  are in `review/known_issues_v0.1.0.yaml`, unapplied until confirmed by human reviewers.
+* Open policy questions (block revisions of ~10 examples): the product capability list; confidence
+  ceilings for user-entered structured data; consent for milestone-date changes; Russian identity
+  labels in levels and achievements.
+* Language, vagueness, gender-form and date checks are heuristics; semantic lint cannot judge
+  whether a plan is generic, whether arithmetic claims hold, or whether a tone is right. Those are
+  human-review criteria.
+* Near-duplicate and paraphrase detection is O(n²) and same-language only. Cross-lingual overlaps
+  (8 reviewed) are invisible to automation; move to MinHash/LSH and multilingual embeddings at scale.
+* Evaluation cases (30) are far below the 200–500 target and not independent of the training data.
+* Every scenario group has one example; `memory_extraction` (2) and `progress_update` (3) are thin;
+  mixed-language input is 3%.
+* Licensing questions in `configs/licensing_status.yaml` are unresolved.

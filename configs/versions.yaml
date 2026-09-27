@@ -5,7 +5,7 @@ dataset_version: "0.1.0"        # data/{train,validation,test}/goaljourney-v<dat
 schema_version: "0.1.0"         # schemas/*.json ($id contains v0.1.0)
 navigator_prompt_version: "0.1.0"   # prompts/navigator/v<ver>/system.md (runtime model prompt)
 generation_prompt_version: "0.1.0"  # prompts/generation/v<ver>/ (teacher prompts)
-pipeline_version: "0.1.0"       # generation/ + gjcore/ code
+pipeline_version: "0.2.0"       # generation/ + gjcore/ code (0.2.0: review log v0.2, audit, leakage layers, release gates)
 evaluation_version: "0.1.0"     # evaluation/cases/v<ver>/ + check semantics
 base_model:
   # Deliberately unset: the base model is chosen later and recorded here, not hard-coded.

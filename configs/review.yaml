@@ -1,0 +1,83 @@
+# Human review configuration (Milestone 1.5). The workflow is described in docs/HUMAN_REVIEW_GUIDE.md.
+# Nothing here contains personal data: reviewers are registered by id in review/reviewers.yaml.
+
+rubric: evaluation/rubrics/dataset_review_rubric.yaml
+
+paths:
+  events: data/reviewed/review_events.jsonl          # append-only, hash-chained decision log
+  snapshots: data/reviewed/snapshots                  # exact reviewed content, one file per content hash
+  # v0.1 review records (numeric rubric). None were ever written; if this file appears with content,
+  # review commands stop and ask for a migration instead of silently ignoring decisions.
+  legacy_log: data/reviewed/reviews.jsonl
+  reviewers: review/reviewers.yaml
+  known_issues: review/known_issues_v{version}.yaml   # issues found by inspection, with proposed revisions
+  audit_findings: review/audit_findings_v{version}.json
+  manifest: review/review_manifest_v{version}.json
+
+# Who may do what. A reviewer's roles, languages and expert domains are copied into every event so
+# that a later registry edit cannot change the meaning of a past decision.
+roles:
+  dataset_reviewer: Approves, revises or rejects examples written in a language they list.
+  domain_expert: Signs off expert-tier examples in their expert_domains (in addition to or instead of a dataset reviewer).
+  adjudicator: Resolves disagreements; the adjudicator's latest decision on a content hash is final.
+
+approval:
+  # An approval counts only if the reviewer is a registered, active human with the example's languages.
+  require_language_match: true
+  # Expert-tier examples stay `approved_pending_expert` until approvals from experts cover every
+  # required expert domain.
+  expert_tier_requires_expert: true
+  # Approving an example that has open automated findings or known issues of these severities requires
+  # --acknowledge-findings (after rating independently; see the guide). The acknowledged ids are logged.
+  acknowledge_severities: [high]
+
+# Example-level review tiers. Property-level classification (what can be checked automatically, what
+# needs a human, what needs an expert) lives in the rubric (`automation` per criterion) and in
+# docs/HUMAN_REVIEW_GUIDE.md §3. No example can be approved automatically.
+tiers:
+  # Triggered by risk: a non-'allowed' safety category or one of the risk tags below. record_domains
+  # and safety_output_domains only decide which expert domains must sign off.
+  expert_review_required:
+    safety_categories: [sensitive, high_risk, needs_professional_support, restricted]
+    record_domains: {health: medical, legal_admin: legal, finance: financial}
+    tags: {mental_health: mental_health, medical_symptom: medical, emotional_support_boundary: mental_health,
+           weight_cut: medical, sensitive_goal: medical, third_party_data: privacy}
+    safety_output_domains: {medical: medical, mental_health: mental_health, legal: legal, financial: financial,
+                            dangerous_activity: physical_safety, illegal_activity: legal, privacy: privacy}
+    fallback_expert_domain: safety_policy
+  default: human_review_required
+
+expert_domains: [medical, mental_health, legal, financial, physical_safety, privacy, safety_policy]
+
+sampling:
+  seed: 20260927
+  size: 30
+  # Order matters: `random` is drawn first from the whole pool, so it stays an unbiased sample that
+  # estimates the pool's overall defect rate. The targeted strata are then drawn from the remainder.
+  strata:
+    - {name: random, share: 0.40}
+    - {name: highest_risk, share: 0.30}
+    - {name: contrastive, share: 0.20}
+    - {name: edge, share: 0.10}
+  # Keeps targeted strata from collapsing onto one operation.
+  max_per_task_type_in_targeted_strata: 2
+  calibration_size: 8
+  # Every category must be covered by at least one sampled item; gaps are repaired in the targeted
+  # strata only (never in `random`) and each repair is recorded in the manifest.
+  coverage_categories: [goal_clarification, feasibility, journey, task_generation, verification_protocol,
+                        verification_decision, verification_retry, route_adaptation, navigator,
+                        daily_prioritization, time_adaptation, goal_change, web_research, decision_summary,
+                        memory, progress, safety, russian, english, mixed_language, contrastive, expert_tier]
+  # Categories that need more than one item. expert_tier: its proportional share of 30 (10 of 93 examples)
+  # — safety-critical examples must not depend on the luck of the random draw.
+  coverage_minimums: {expert_tier: 3}
+
+# Risk score used by the `highest_risk` stratum. Weights are ordinal, not calibrated probabilities:
+# a manual (known) issue outranks a heuristic hit of the same severity because a person or agent
+# looked at it; expert tier and hard difficulty add a little because mistakes there cost more.
+risk_weights:
+  audit_finding: {high: 3, medium: 2, low: 1, info: 0}
+  known_issue: {high: 5, medium: 3, low: 1}
+  expert_tier: 3
+  hard_difficulty: 1
+  mixed_input_language: 1
