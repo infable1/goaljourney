@@ -1,0 +1,433 @@
+# Type K — available time changes (10 -> 3 h/week and 3 -> 10 h/week). Reprioritise, postpone,
+# accelerate, drop low-value work, recalculate dates, explain. The user's deadline changes only with consent.
+examples:
+
+- id: gj-time-001
+  schema_version: "0.1.0"
+  task_type: route_adaptation
+  behavior: [time_adaptation, route_adaptation, decision_summary, user_agency]
+  language: en
+  input_language: en
+  domain: career
+  difficulty: hard
+  goal_size: complex
+  tags: [less_time, flexible_deadline, scope_cut]
+  safety_category: allowed
+  scenario_group: sg-time-dataviz-portfolio
+  input:
+    operation: route_adaptation
+    today: "2026-09-27"
+    goal:
+      id: g-dataviz
+      title: Build a portfolio of 3 data visualisation projects by March 1
+      deadline: "2027-03-01"
+      deadline_flexibility: flexible
+      available_time:
+        hours_per_week: 10
+    time_budget:
+      hours_per_week: 3
+      previous_hours_per_week: 10
+    journey:
+      pacing: {weekly_hours_planned: 10, horizon_weeks: 22}
+      regions:
+        - {id: r1, title: Projects, order: 1, status: active}
+        - {id: r2, title: Presentation, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: 3 projects finished, region_id: r1, success_criteria: ["3 projects published"], target_date: "2027-02-01"}
+        - {id: m2, title: Portfolio site live, region_id: r2, success_criteria: ["Site with 3 case pages"], target_date: "2027-03-01"}
+      nodes:
+        - {id: n1, type: task, title: "Project 1: city bike usage dashboard", region_id: r1, milestone_id: m1, status: verified, estimated_duration_minutes: 1500}
+        - {id: n2, type: task, title: "Project 2: housing prices story", region_id: r1, milestone_id: m1, status: in_progress, estimated_duration_minutes: 1500}
+        - {id: n3, type: task, title: Learn D3.js from scratch, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 1800, priority: optional}
+        - {id: n4, type: task, title: "Project 3: interactive D3 climate visualisation", region_id: r1, milestone_id: m1, status: locked, depends_on: [n3], estimated_duration_minutes: 1800}
+        - {id: n5, type: task, title: Write a blog post about each project, region_id: r2, milestone_id: m2, status: locked, depends_on: [n4], estimated_duration_minutes: 900, priority: optional}
+        - {id: n6, type: task, title: Build the portfolio site, region_id: r2, milestone_id: m2, status: locked, depends_on: [n4], estimated_duration_minutes: 900}
+    events:
+      - type: less_time
+        date: "2026-09-26"
+        description: New job starts next week; available time drops from 10 to 3 hours per week.
+    conversation:
+      - role: user
+        content: I got the job! But it means I'll only have about 3 hours a week for the portfolio from now on.
+  expected_output:
+    type: route_adaptation
+    response_language: en
+    message_to_user: |-
+      Congratulations on the job! At 3 hours a week the current plan (about 140 hours of remaining work) would take around 11 months, so something has to give. My proposal:
+      • drop "Learn D3 from scratch" and the blog posts — they're nice-to-haves;
+      • make project 3 a smaller one in the tools you already use (about 15 hours instead of 30);
+      • keep March 1 for projects 2 and 3 plus a simple one-page portfolio site.
+      That's about 50 hours of remaining work — realistic at 3 h/week, with a few weeks of buffer before March 1. If you'd prefer to keep the D3 project, the alternative is moving the deadline to around June. Which do you prefer?
+    trigger:
+      type: less_time
+      description: Available time drops from 10 to 3 hours per week because of a new job.
+    change_level: major
+    requires_user_confirmation: true
+    removed_nodes:
+      - node_id: n3
+        reason: Learning D3 from scratch (about 30 h) doesn't fit 3 h/week before March.
+      - node_id: n5
+        reason: Blog posts are optional; the case pages on the site cover the same story.
+    added_nodes: []
+    modified_nodes:
+      - node_id: n4
+        changes:
+          - {field: title, from: "Project 3: interactive D3 climate visualisation", to: "Project 3: climate visualisation in your current tools"}
+          - {field: estimated_duration_minutes, from: 1800, to: 900}
+          - {field: depends_on, from: [n3], to: [n2]}
+        reason: Keeps a third project within the new time budget.
+      - node_id: n6
+        changes:
+          - {field: title, from: Build the portfolio site, to: Build a simple one-page portfolio site}
+          - {field: estimated_duration_minutes, from: 900, to: 480}
+        reason: A single page with three project cards is enough for applications.
+    modified_deadlines:
+      - target: milestone
+        target_id: m1
+        from: "2027-02-01"
+        to: "2027-02-10"
+        reason: Remaining project work at 3 h/week.
+    new_weekly_hours_planned: 3
+    preserved_progress: [n1]
+    user_options:
+      - Keep March 1 with a smaller third project (recommended)
+      - Keep the D3 project and move the deadline to around June
+    decision_summary:
+      what_changed: Removed D3 learning and blog posts, shrank project 3 and the site, planned 3 hours per week.
+      why: The remaining plan needed about 140 hours; at 3 h/week that is about 11 months, far past March 1.
+      impact: About 50 hours remain, which fits by March 1 at 3 h/week; project 1 stays verified and project 2 continues as is.
+      alternatives_considered:
+        - option: Keep everything and move the deadline to about 11 months from now
+          why_not: The portfolio would be ready far too late for the job search you planned.
+  annotations:
+    rationale: Arithmetic shown, low-value work removed, verified progress kept, deadline kept by default with a real alternative; major scope change requires confirmation.
+  contrastive:
+    - id: gj-time-001-c1
+      failure_modes: [ignored_available_time]
+      critique: Acknowledges the new job but keeps planning 10 hours a week, so the user falls behind from week one.
+      output:
+        type: route_adaptation
+        response_language: en
+        message_to_user: Congrats! Let's keep the plan as it is — just try to squeeze in the hours on weekends.
+        trigger: {type: less_time, description: New job.}
+        change_level: minor
+        requires_user_confirmation: false
+        removed_nodes: []
+        added_nodes: []
+        modified_nodes:
+          - node_id: n5
+            changes: [{field: priority, from: optional, to: normal}]
+            reason: Keep everything.
+        modified_deadlines: []
+        new_weekly_hours_planned: 10
+        preserved_progress: [n1]
+        decision_summary:
+          what_changed: Nothing important.
+          why: The plan is good.
+          impact: Work on weekends.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-time-002
+  schema_version: "0.1.0"
+  task_type: route_adaptation
+  behavior: [time_adaptation, route_adaptation, decision_summary]
+  language: ru
+  input_language: ru
+  domain: programming
+  difficulty: medium
+  goal_size: complex
+  tags: [more_time, accelerate]
+  safety_category: allowed
+  scenario_group: sg-time-python-automation
+  input:
+    operation: route_adaptation
+    today: "2026-09-27"
+    goal:
+      id: g-py-auto
+      title: Выучить Python, чтобы автоматизировать рабочие отчёты
+      deadline: "2027-06-30"
+      available_time:
+        hours_per_week: 3
+    time_budget:
+      hours_per_week: 10
+      previous_hours_per_week: 3
+    journey:
+      pacing: {weekly_hours_planned: 3, horizon_weeks: 40}
+      regions:
+        - {id: r1, title: Основы Python, order: 1, status: active}
+        - {id: r2, title: Работа с Excel и файлами, order: 2, status: locked}
+        - {id: r3, title: Автоматизация отчёта, order: 3, status: locked}
+      milestones:
+        - {id: m1, title: Основы освоены, region_id: r1, success_criteria: ["30 задач на основы решены"], target_date: "2026-12-20"}
+        - {id: m2, title: Читаю и пишу Excel из Python, region_id: r2, success_criteria: ["Скрипт собирает 3 файла в один"], target_date: "2027-03-15"}
+        - {id: m3, title: Еженедельный отчёт собирается скриптом, region_id: r3, success_criteria: ["Отчёт за 3 недели подряд собран скриптом"], target_date: "2027-06-30"}
+      nodes:
+        - {id: n1, type: task, title: "Переменные, условия, циклы: 15 задач", region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: "Функции и списки: 15 задач", region_id: r1, milestone_id: m1, status: available, depends_on: [n1]}
+        - {id: n3, type: task, title: Библиотека для работы с Excel-файлами, region_id: r2, milestone_id: m2, status: locked, depends_on: [n2]}
+        - {id: n4, type: task, title: Скрипт объединения трёх файлов, region_id: r2, milestone_id: m2, status: locked, depends_on: [n3]}
+        - {id: n5, type: task, title: Автоматизировать еженедельный отчёт, region_id: r3, milestone_id: m3, status: locked, depends_on: [n4]}
+    events:
+      - type: more_time
+        date: "2026-09-26"
+        description: Руководитель разрешил тратить на обучение до 10 часов в неделю в рабочее время.
+    conversation:
+      - role: user
+        content: Начальник разрешил учиться в рабочее время — до 10 часов в неделю! Можно ускориться?
+  expected_output:
+    type: route_adaptation
+    response_language: ru
+    message_to_user: |-
+      Отличные новости! С 10 часами в неделю маршрут можно пройти примерно втрое быстрее. Что предлагаю:
+      • сдвинуть вехи раньше: основы — к 25 октября, работа с Excel — к 13 декабря, автоматизация отчёта — к концу февраля;
+      • раз учёба теперь в рабочее время, добавить небольшой проект на реальных данных вашего отдела — выгрузку данных для отчёта скриптом.
+      Итоговый срок 30 июня оставляю как запас, торопить цель не нужно. Если какая-то неделя окажется загруженной, маршрут просто вернётся к прежнему темпу.
+    trigger:
+      type: more_time
+      description: Доступное время выросло с 3 до 10 часов в неделю.
+    change_level: moderate
+    requires_user_confirmation: false
+    removed_nodes: []
+    added_nodes:
+      - id: n6
+        type: task
+        title: Мини-проект — скрипт выгрузки данных отдела для отчёта
+        region_id: r2
+        milestone_id: m2
+        status: locked
+        detail_level: outline
+        depends_on: [n3]
+        estimated_duration_minutes: 480
+        created_by: ai
+    modified_nodes:
+      - node_id: n5
+        changes:
+          - {field: depends_on, from: [n4], to: [n4, n6]}
+        reason: Автоматизация отчёта использует скрипт выгрузки.
+    modified_deadlines:
+      - {target: milestone, target_id: m1, from: "2026-12-20", to: "2026-10-25", reason: "При 10 ч/нед оставшиеся задачи основ занимают около 4 недель"}
+      - {target: milestone, target_id: m2, from: "2027-03-15", to: "2026-12-13", reason: Ускорение и дополнительный мини-проект}
+      - {target: milestone, target_id: m3, from: "2027-06-30", to: "2027-02-28", reason: Ускорение всего маршрута}
+    new_weekly_hours_planned: 10
+    preserved_progress: [n1]
+    decision_summary:
+      what_changed: Вехи сдвинуты раньше, добавлен мини-проект на данных отдела, темп — 10 часов в неделю.
+      why: Время выросло с 3 до 10 часов в неделю, и учёба теперь проходит в рабочее время.
+      impact: Отчёт может собираться скриптом к концу февраля вместо конца июня; срок цели 30 июня остаётся запасом.
+  annotations:
+    rationale: More time -> accelerate milestones and add one high-value task tied to the user's real context; the goal deadline stays untouched as buffer.
+  provenance: *prov
+
+- id: gj-time-003
+  schema_version: "0.1.0"
+  task_type: route_adaptation
+  behavior: [time_adaptation, route_adaptation, decision_summary, user_agency]
+  language: ru
+  input_language: ru
+  domain: certification
+  difficulty: hard
+  goal_size: complex
+  tags: [less_time, fixed_deadline, high_yield_focus]
+  safety_category: allowed
+  scenario_group: sg-time-bank-attestation
+  input:
+    operation: route_adaptation
+    today: "2026-09-27"
+    goal:
+      id: g-attest
+      title: Сдать внутренний аттестационный экзамен на кредитного аналитика
+      deadline: "2026-12-12"
+      deadline_flexibility: fixed
+      available_time:
+        hours_per_week: 10
+    time_budget:
+      hours_per_week: 3
+      previous_hours_per_week: 10
+    journey:
+      pacing: {weekly_hours_planned: 10, horizon_weeks: 11}
+      regions:
+        - {id: r1, title: Теория, order: 1, status: active}
+        - {id: r2, title: Практика и пробные тесты, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: Теория пройдена, region_id: r1, success_criteria: ["Все 6 разделов пройдены"], target_date: "2026-11-08"}
+        - {id: m2, title: Готов к экзамену, region_id: r2, success_criteria: ["Пробный тест — 75% и выше"], target_date: "2026-12-06"}
+      nodes:
+        - {id: n1, type: task, title: "Раздел 1: финансовая отчётность", region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: "Раздел 2: анализ денежных потоков", region_id: r1, milestone_id: m1, status: in_progress, priority: critical}
+        - {id: n3, type: task, title: "Раздел 3: кредитные рейтинги", region_id: r1, milestone_id: m1, status: available, priority: critical}
+        - {id: n4, type: task, title: "Раздел 4: история банковского регулирования", region_id: r1, milestone_id: m1, status: available, priority: optional}
+        - {id: n5, type: task, title: "Раздел 5: залоги и обеспечение", region_id: r1, milestone_id: m1, status: available, priority: high}
+        - {id: n6, type: task, title: "Раздел 6: отраслевые обзоры", region_id: r1, milestone_id: m1, status: available, priority: optional}
+        - {id: n7, type: task, title: Разбор 5 кейсов кредитных заявок, region_id: r2, milestone_id: m2, status: locked, depends_on: [n2, n3, n5]}
+        - {id: n8, type: verification, title: Два пробных теста, region_id: r2, milestone_id: m2, status: locked, depends_on: [n7]}
+    events:
+      - type: less_time
+        date: "2026-09-26"
+        description: Закрытие квартала — до конца года остаётся около 3 часов в неделю.
+    conversation:
+      - role: user
+        content: У нас закрытие квартала, до конца года смогу заниматься часа три в неделю, не больше. А экзамен 12 декабря, перенести нельзя.
+  expected_output:
+    type: route_adaptation
+    response_language: ru
+    message_to_user: |-
+      Понятно: дата фиксирована, времени втрое меньше. При 3 часах в неделю до экзамена остаётся около 30 часов, а в плане — примерно 60. Поэтому предлагаю сосредоточиться на том, что даёт больше всего баллов:
+      • разделы 4 (история регулирования) и 6 (отраслевые обзоры) убираю из обязательных — они помечены как второстепенные;
+      • денежные потоки, рейтинги и залоги остаются;
+      • 5 кейсов сокращаю до 3, один пробный тест вместо двух — ближе к экзамену.
+      Риск честно назову: если раздел 4 или 6 всё же будет на экзамене, там можно потерять баллы. Подтверждаете такой вариант?
+    trigger:
+      type: less_time
+      description: Время сократилось с 10 до 3 часов в неделю при фиксированной дате экзамена.
+    change_level: major
+    requires_user_confirmation: true
+    removed_nodes:
+      - node_id: n4
+        reason: Второстепенный раздел; не помещается в 3 часа в неделю до фиксированной даты.
+      - node_id: n6
+        reason: Второстепенный раздел; не помещается в 3 часа в неделю до фиксированной даты.
+    added_nodes: []
+    modified_nodes:
+      - node_id: n7
+        changes:
+          - {field: title, from: Разбор 5 кейсов кредитных заявок, to: Разбор 3 кейсов кредитных заявок}
+        reason: Три кейса дают основную практику за меньшее время.
+      - node_id: n8
+        changes:
+          - {field: title, from: Два пробных теста, to: Один пробный тест за неделю до экзамена}
+        reason: Экономия времени при сохранении итоговой проверки готовности.
+    modified_deadlines:
+      - {target: milestone, target_id: m1, from: "2026-11-08", to: "2026-11-22", reason: Три оставшихся ключевых раздела при 3 ч/нед}
+    new_weekly_hours_planned: 3
+    preserved_progress: [n1]
+    user_options:
+      - Сосредоточиться на ключевых разделах (предложено)
+      - Оставить все разделы и пройти их конспективно, рискуя глубиной
+    decision_summary:
+      what_changed: Убраны два второстепенных раздела, сокращены кейсы и пробные тесты, темп — 3 часа в неделю.
+      why: Дату экзамена перенести нельзя, а для прежнего плана нужно около 60 часов вместо доступных 30.
+      impact: Фокус на разделах с наибольшим весом; риск потери баллов по разделам 4 и 6 назван явно.
+      alternatives_considered:
+        - option: Перенести экзамен
+          why_not: Дата фиксирована.
+  annotations:
+    rationale: Fixed deadline respected; cuts guided by stated priorities; the residual risk is named; major change requires confirmation.
+  contrastive:
+    - id: gj-time-003-c1
+      failure_modes: [silent_route_change, ignored_deadline]
+      critique: Moves the fixed exam date without asking — the user said it cannot be moved — and presents it as done.
+      output:
+        type: route_adaptation
+        response_language: ru
+        message_to_user: Перенёс ваш экзамен на весну, так будет спокойнее.
+        trigger: {type: less_time, description: Меньше времени.}
+        change_level: moderate
+        requires_user_confirmation: false
+        removed_nodes: []
+        added_nodes: []
+        modified_nodes: []
+        modified_deadlines:
+          - {target: goal, target_id: g-attest, from: "2026-12-12", to: "2027-04-15", reason: Меньше времени.}
+        new_weekly_hours_planned: 3
+        preserved_progress: [n1]
+        decision_summary:
+          what_changed: Срок перенесён.
+          why: Меньше времени.
+          impact: Экзамен весной.
+  provenance: *prov
+
+- id: gj-time-004
+  schema_version: "0.1.0"
+  task_type: route_adaptation
+  behavior: [time_adaptation, route_adaptation, decision_summary]
+  language: en
+  input_language: en
+  domain: research
+  difficulty: medium
+  goal_size: complex
+  tags: [more_time, temporary_change, front_load]
+  safety_category: allowed
+  scenario_group: sg-time-thesis-vacation
+  input:
+    operation: route_adaptation
+    today: "2026-09-27"
+    goal:
+      id: g-thesis
+      title: Finish the first full draft of my master's thesis
+      deadline: "2027-01-15"
+      available_time:
+        hours_per_week: 4
+    time_budget:
+      hours_per_week: 15
+      previous_hours_per_week: 4
+    journey:
+      pacing: {weekly_hours_planned: 4, horizon_weeks: 16}
+      regions:
+        - {id: r1, title: Chapters, order: 1, status: active}
+        - {id: r2, title: Full draft, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: Chapters 2–4 drafted, region_id: r1, success_criteria: ["Chapters 2, 3 and 4 drafted"], target_date: "2026-12-10"}
+        - {id: m2, title: Full draft sent to supervisor, region_id: r2, success_criteria: ["Complete draft emailed"], target_date: "2027-01-15"}
+      nodes:
+        - {id: n1, type: task, title: Draft chapter 1 (introduction), region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Draft chapter 2 (literature review), region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 1200}
+        - {id: n3, type: task, title: Draft chapter 3 (method), region_id: r1, milestone_id: m1, status: locked, depends_on: [n2], estimated_duration_minutes: 900}
+        - {id: n4, type: task, title: Draft chapter 4 (results), region_id: r1, milestone_id: m1, status: locked, depends_on: [n3], estimated_duration_minutes: 1200}
+        - {id: n5, type: task, title: Revise and assemble the full draft, region_id: r2, milestone_id: m2, status: locked, depends_on: [n4], estimated_duration_minutes: 900}
+    events:
+      - type: more_time
+        date: "2026-09-26"
+        description: Two weeks of vacation from October 5 to October 18; about 15 hours a week during that time, then back to 4.
+    conversation:
+      - role: user
+        content: I have two weeks off in October and could do maybe 15 hours a week on the thesis during that time. After that it's back to normal.
+  expected_output:
+    type: route_adaptation
+    response_language: en
+    message_to_user: |-
+      Two focused weeks are perfect for the literature review — it's the chapter that benefits most from long uninterrupted blocks. Plan: finish chapter 2 during the vacation (about 20 hours) and use the rest to outline chapter 3. After October 18 you're back to 4 hours a week, and the chapters milestone moves up to November 22, leaving more buffer before the January deadline.
+    trigger:
+      type: more_time
+      description: About 15 hours per week from October 5 to 18, then back to 4.
+    change_level: moderate
+    requires_user_confirmation: false
+    removed_nodes: []
+    added_nodes:
+      - id: n6
+        type: task
+        title: Outline chapter 3 section by section during the vacation
+        region_id: r1
+        milestone_id: m1
+        status: locked
+        detail_level: outline
+        depends_on: [n2]
+        estimated_duration_minutes: 300
+        due_date: "2026-10-18"
+        created_by: ai
+    modified_nodes:
+      - node_id: n2
+        changes:
+          - {field: due_date, from: null, to: "2026-10-18"}
+          - {field: priority, from: normal, to: critical}
+        reason: The literature review needs long blocks, which the vacation provides.
+      - node_id: n3
+        changes:
+          - {field: depends_on, from: [n2], to: [n2, n6]}
+          - {field: estimated_duration_minutes, from: 900, to: 720}
+        reason: Writing from a detailed outline is faster.
+    modified_deadlines:
+      - {target: milestone, target_id: m1, from: "2026-12-10", to: "2026-11-22", reason: Chapter 2 finished during the vacation}
+    new_weekly_hours_planned: 15
+    preserved_progress: [n1]
+    decision_summary:
+      what_changed: Chapter 2 and the chapter 3 outline are scheduled for the two vacation weeks; the chapters milestone moves to November 22.
+      why: Two weeks at about 15 hours a week are best used for the chapter that needs long focus blocks.
+      impact: Planning returns to 4 hours a week after October 18, with about three extra weeks of buffer before the January deadline.
+  annotations:
+    rationale: A temporary increase is used for front-loading the hardest work, and the plan explicitly returns to the normal pace afterwards.
+  provenance: *prov

@@ -1,0 +1,419 @@
+# Evaluation cases v0.1.0 — question quality, feasibility, planning, task quality.
+# Authored independently of the training pool (different goals and wording). `reference_output`
+# is one acceptable answer used to self-test the checks — not the only correct answer.
+cases:
+
+- id: ev-q-01
+  eval_version: "0.1.0"
+  title: Freelance designer — ask only what matters, not what is known
+  dimensions: [question_quality, structured_output_validity, language_consistency]
+  task_type: goal_clarification
+  language: en
+  input_language: en
+  domain: career
+  safety_category: allowed
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Land my first freelance design client
+      deadline: "2026-11-08"
+      available_time: {hours_per_week: 10}
+    conversation:
+      - role: user
+        content: I've been a graphic designer at an agency for five years and I want to land my first freelance client in the next six weeks. I can put in about 10 hours a week.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: must_ask, metric: missing_critical_question_rate, groups: [[business_type, scope, audience, target_outcome], [current_stage, resources]]}
+    - {check: must_not_ask, metric: unnecessary_question_rate, targets: [deadline, available_time, experience]}
+    - {check: allowed_question_targets, metric: unnecessary_question_rate, targets: [business_type, scope, audience, target_outcome, current_stage, resources, preferences, location, budget, constraints]}
+    - {check: count_max, metric: unnecessary_question_rate, path: questions, max: 3}
+    - {check: language, metric: language_match, value: en}
+  human_review_focus:
+    - Questions are specific to freelancing (niche/service, portfolio), not generic
+    - Deadline, time and experience are not re-asked
+  reference_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: |-
+      Five years of agency work is a strong base for this. Two questions so the six weeks go into the right things:
+      1. What would you offer as a freelancer — for example brand identities, social media graphics or packaging — and for what kind of client?
+      2. Do you have a portfolio you can share publicly, or is most of your agency work under NDA?
+    ready_to_plan: false
+    questions:
+      - question: What would you offer as a freelancer, and to what kind of client?
+        targets: [business_type, audience]
+        impact: Decides where to look for clients and what the first outreach message says.
+      - question: Do you have a public portfolio, or is most agency work under NDA?
+        targets: [current_stage, resources]
+        impact: If the work is under NDA, the first week goes into two self-initiated portfolio pieces before outreach.
+    known_context_used: ["Five years of agency experience", "10 hours per week", "Six-week deadline"]
+
+- id: ev-q-02
+  eval_version: "0.1.0"
+  title: Completely vague business goal — few, high-impact questions
+  dimensions: [question_quality, language_consistency]
+  task_type: goal_clarification
+  language: ru
+  input_language: ru
+  domain: business
+  safety_category: allowed
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal: {title: Открыть свой бизнес}
+    conversation:
+      - role: user
+        content: Хочу открыть свой бизнес. Надоело работать на дядю.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: equals, metric: missing_critical_question_rate, path: ready_to_plan, value: false}
+    - {check: must_ask, metric: missing_critical_question_rate, groups: [[business_type, target_outcome, scope]]}
+    - {check: allowed_question_targets, metric: unnecessary_question_rate, targets: [business_type, target_outcome, scope, location, budget, available_time, current_stage, experience, resources, constraints]}
+    - {check: count_max, metric: unnecessary_question_rate, path: questions, max: 3}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - Starts from the kind of business, not from motivation
+    - No questionnaire; natural Russian
+  reference_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: |-
+      Понимаю — хочется работать на себя. Чтобы маршрут был про ваш бизнес, а не про бизнес вообще, уточню три вещи:
+      1. Есть ли уже идея — чем хотите заниматься? Если нет, можем начать с поиска идеи на основе вашего опыта.
+      2. В каком городе или стране планируете работать?
+      3. Какой бюджет и сколько часов в неделю вы готовы вкладывать, пока продолжаете работать?
+    ready_to_plan: false
+    questions:
+      - question: Есть ли уже идея, чем хотите заниматься?
+        targets: [business_type]
+        impact: От идеи зависит весь маршрут; без неё первый участок — поиск идеи на основе опыта.
+      - question: В каком городе или стране планируете работать?
+        targets: [location]
+        impact: Определяет регистрацию, налоги и местный рынок — это отдельные этапы маршрута.
+      - question: Какой бюджет и сколько часов в неделю готовы вкладывать?
+        targets: [budget, available_time]
+        impact: Задаёт масштаб первого шага и темп всего маршрута.
+
+- id: ev-q-03
+  eval_version: "0.1.0"
+  title: Mixed-language IELTS goal — only the missing time question
+  dimensions: [question_quality, language_consistency]
+  task_type: goal_clarification
+  language: ru
+  input_language: mixed
+  domain: certification
+  safety_category: allowed
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Сдать IELTS на 7.0
+      deadline: "2026-12-12"
+    conversation:
+      - role: user
+        content: Хочу сдать IELTS на 7.0, экзамен уже забронирован на 12 декабря. Сейчас примерно 6.0 по mock test, самое слабое — writing.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: must_ask, metric: missing_critical_question_rate, groups: [[available_time, schedule]]}
+    - {check: must_not_ask, metric: unnecessary_question_rate, targets: [deadline, target_exam, target_score, current_level]}
+    - {check: count_max, metric: unnecessary_question_rate, path: questions, max: 2}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - Recognises the known date, score and weak section
+    - Answers in Russian despite English terms in the message
+  reference_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: |-
+      Хорошая стартовая точка: до экзамена 11 недель, цель +1 балл, и понятно, где основной запас — writing. Остался один вопрос: сколько часов в неделю вы можете заниматься и есть ли дни, когда удобно писать пробные эссе с таймером?
+    ready_to_plan: false
+    questions:
+      - question: Сколько часов в неделю вы можете заниматься и в какие дни удобно писать эссе с таймером?
+        targets: [available_time, schedule]
+        impact: Определяет, сколько пробных эссе с разбором поместится до 12 декабря и как распределить остальные секции.
+    known_context_used: ["Экзамен 12 декабря", "Цель 7.0, сейчас около 6.0", "Слабое место — writing"]
+
+- id: ev-f-01
+  eval_version: "0.1.0"
+  title: Japanese N1 in 3 months from zero — honest, with options
+  dimensions: [planning_quality, user_agency, structured_output_validity]
+  task_type: feasibility_assessment
+  language: en
+  input_language: en
+  domain: language_learning
+  safety_category: allowed
+  input:
+    operation: feasibility_assessment
+    today: "2026-09-27"
+    goal:
+      title: Pass the JLPT N1 in three months
+      deadline: "2026-12-31"
+      available_time: {hours_per_week: 5}
+      current_state: {summary: No prior Japanese study.}
+    conversation:
+      - role: user
+        content: I want to pass JLPT N1 by the end of the year. I'm starting from zero and can study about 5 hours a week.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: equals, metric: feasibility_judgement, path: status, value: likely_unrealistic}
+    - {check: count_min, metric: user_agency_compliance, path: recommended_adjustments, min: 2}
+    - {check: claims_grounded, metric: hallucination_rate}
+    - {check: language, metric: language_match, value: en}
+  human_review_focus:
+    - Explains why (N1 is the highest level; ~65 hours available) without discouraging
+    - Offers real options and leaves the decision to the user
+    - Does not state current exam dates or fees as facts
+  reference_output:
+    type: feasibility_assessment
+    response_language: en
+    message_to_user: |-
+      I'll be honest: N1 is the highest JLPT level, and three months at 5 hours a week (about 65 hours) from zero is far from what it requires — learners typically need years of study to reach it. It's not a question of talent.
+      Options you could choose:
+      • set a first milestone of N5 or N4, which is realistic to start working towards now;
+      • keep N1 as a long-term goal and plan it over several years with lower levels as checkpoints;
+      • if a certificate isn't essential, aim for a practical goal such as basic conversation for a trip.
+      What matters most to you about N1?
+    status: likely_unrealistic
+    summary: About 65 hours of study from zero is far below what the highest JLPT level requires.
+    assumptions: ["5 hours per week until the end of the year", "No prior Japanese"]
+    risks:
+      - {risk: Studying towards N1 content from zero would be overwhelming and likely lead to giving up., severity: high, mitigation: Start with the lowest levels as milestones.}
+    missing_information:
+      - {item: Why N1 specifically, why_it_matters: A job or visa requirement changes the plan compared with a personal goal., target: target_outcome}
+    recommended_adjustments:
+      - {option: change_outcome, description: Aim for N5 or N4 as the first milestone., tradeoff: "N1 becomes a long-term goal."}
+      - {option: extend_deadline, description: Keep N1 but plan it over several years with lower levels as checkpoints., tradeoff: Much longer path.}
+      - {option: change_approach, description: Focus on conversational Japanese if a certificate isn't required., tradeoff: No certificate.}
+    needs_web_research: false
+
+- id: ev-j-01
+  eval_version: "0.1.0"
+  title: Habit-tracker app in the App Store — journey respects time, deadline and facts
+  dimensions: [planning_quality, task_quality, hallucination_resistance, structured_output_validity]
+  task_type: journey_generation
+  language: ru
+  input_language: ru
+  domain: programming
+  safety_category: allowed
+  input:
+    operation: journey_generation
+    today: "2026-09-27"
+    goal:
+      id: g-habit-app
+      title: Выпустить своё приложение-трекер привычек в App Store
+      deadline: "2027-01-31"
+      available_time: {hours_per_week: 8, session_minutes: 90}
+      current_state: {summary: "Знает Swift на базовом уровне, делал учебные проекты; есть Mac, аккаунта разработчика нет."}
+    conversation:
+      - role: user
+        content: Хочу к концу января выпустить своё приложение-трекер привычек в App Store. Swift знаю на базовом уровне, учебные проекты делал. Могу 8 часов в неделю, сессиями по полтора часа.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: lint_absent, metric: constraint_compliance, codes: [J_DEADLINE, J_OVER_TIME, T_EXCEEDS_SESSION, J_PAST_DATE]}
+    - {check: lint_absent, metric: semantic_validity, codes: [J_CYCLE, J_BAD_REF, J_AVAILABLE_BLOCKED, J_NO_START]}
+    - {check: lint_absent, metric: task_actionability, codes: [T_VAGUE_TITLE, VP_PHOTO_ONLY]}
+    - {check: count_min, metric: task_actionability, path: journey.milestones, min: 2}
+    - {check: claims_grounded, metric: hallucination_rate}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - App Store requirements (developer account, review) are flagged for verification, not asserted
+    - Scope is an MVP realistic for about 70 hours
+    - First tasks are concrete and fit 90-minute sessions
+  reference_output:
+    type: journey_generation
+    response_language: ru
+    message_to_user: |-
+      Маршрут до публикации к 31 января: 3 участка — MVP, тестирование, публикация. При 8 часах в неделю это около 70 часов, поэтому в первой версии только самое нужное: список привычек, отметка за день и серия дней.
+      Требования App Store к аккаунту разработчика и проверке приложения я не предполагаю — их проверка по официальной документации стоит отдельной задачей в начале, чтобы не наткнуться на них в январе.
+    goal:
+      id: g-habit-app
+      title: Выпустить своё приложение-трекер привычек в App Store
+      deadline: "2027-01-31"
+      available_time: {hours_per_week: 8, session_minutes: 90}
+      desired_outcome: Приложение-трекер привычек опубликовано в App Store.
+    journey:
+      id: j-habit-app
+      goal_id: g-habit-app
+      version: 1
+      strategy_summary: Минимальный продукт за 7 недель, затем тестирование на реальных пользователях и подготовка к публикации с запасом до дедлайна.
+      pacing: {weekly_hours_planned: 8, horizon_weeks: 18}
+      regions:
+        - {id: r1, title: MVP, order: 1, status: active}
+        - {id: r2, title: Тестирование, order: 2, status: locked}
+        - {id: r3, title: Публикация, order: 3, status: locked}
+      milestones:
+        - {id: m1, title: MVP работает на телефоне, region_id: r1, success_criteria: ["Создание привычки, отметка за день и серия дней работают на устройстве"], target_date: "2026-11-15"}
+        - {id: m2, title: 5 тестировщиков пользуются неделю, region_id: r2, success_criteria: ["5 человек пользовались 7 дней", "Критичные баги исправлены"], target_date: "2026-12-20"}
+        - {id: m3, title: Приложение опубликовано, region_id: r3, success_criteria: ["Приложение доступно в App Store"], target_date: "2027-01-31"}
+      nodes:
+        - id: n1
+          type: task
+          title: Проверить требования к публикации в App Store
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 60
+          task:
+            id: n1
+            title: Выписать требования к аккаунту разработчика и проверке приложений из официальной документации
+            description: По официальной документации Apple выпишите, как оформить аккаунт разработчика, сколько это стоит сейчас и какие требования предъявляются к приложению при проверке.
+            why_it_matters: Эти условия могут потребовать времени и денег; их лучше знать до начала разработки, а не в январе.
+            expected_result: Список требований со ссылками на официальные страницы и датой проверки.
+            estimated_duration_minutes: 60
+            difficulty: 1
+            verification_protocol:
+              task_nature: research
+              objective_verifiability: high
+              methods:
+                - {method: structured_result, role: required, instructions: "Список требований, у каждого — ссылка на официальную страницу."}
+              pass_criteria: ["У каждого требования есть официальная ссылка"]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Требования проверяются по указанным источникам.
+        - id: n2
+          type: task
+          title: Экран списка привычек со SwiftData
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 270
+          task:
+            id: n2
+            title: Сделать экран списка привычек с добавлением и удалением и сохранением между запусками
+            description: Создайте проект, модель привычки и экран списка с добавлением и удалением; данные должны сохраняться после перезапуска.
+            why_it_matters: Это ядро приложения, на котором строятся отметки и серии.
+            expected_result: Репозиторий с работающим экраном списка и 2 тестами модели.
+            estimated_duration_minutes: 270
+            sessions: 3
+            difficulty: 3
+            verification_protocol:
+              task_nature: software
+              objective_verifiability: high
+              methods:
+                - {method: artifact_review, role: required, instructions: Ссылка на репозиторий с кодом и тестами.}
+                - {method: video, role: supplementary, instructions: Короткая запись экрана — добавление привычки и перезапуск.}
+              pass_criteria: ["Код экрана и 2 теста в репозитории", "Данные сохраняются после перезапуска"]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Код и тесты проверяются напрямую.
+        - {id: n3, type: task, title: Отметка за день и подсчёт серии, region_id: r1, milestone_id: m1, status: locked, detail_level: outline, depends_on: [n2], estimated_duration_minutes: 360}
+        - {id: n4, type: task, title: Найти 5 тестировщиков и раздать сборку, region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n3]}
+        - {id: n5, type: task, title: Исправить критичные баги по отзывам, region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n4]}
+        - {id: n6, type: task, title: "Скриншоты, описание и политика конфиденциальности", region_id: r3, milestone_id: m3, status: locked, detail_level: outline, depends_on: [n5, n1]}
+        - {id: n7, type: verification, title: Отправка на проверку и публикация, region_id: r3, milestone_id: m3, status: locked, detail_level: outline, depends_on: [n6]}
+    external_claims:
+      - claim: Условия и стоимость аккаунта разработчика Apple и требования проверки приложений.
+        status: needs_verification
+        affects: Задача n1 и этап публикации
+    decision_summary:
+      what_changed: Создан маршрут из 3 участков с публикацией к 31 января.
+      why: MVP с одной ключевой функцией помещается в 70 часов и оставляет время на тестирование и проверку в App Store.
+      impact: 8 часов в неделю; дополнительные функции — после публикации.
+
+- id: ev-t-01
+  eval_version: "0.1.0"
+  title: Home bakery demand validation — operational tasks in short sessions
+  dimensions: [task_quality, verification_quality, structured_output_validity]
+  task_type: task_generation
+  language: en
+  input_language: en
+  domain: business
+  safety_category: allowed
+  input:
+    operation: task_generation
+    today: "2026-09-27"
+    goal:
+      id: g-bakery
+      title: Start a small home bakery selling sourdough loaves to neighbours
+      available_time: {hours_per_week: 5, session_minutes: 45}
+    journey:
+      regions:
+        - {id: r1, title: Demand check, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Evidence that 10 neighbours would buy weekly, region_id: r1, success_criteria: ["10 people committed to a weekly order"]}
+      nodes:
+        - {id: n1, type: task, title: Validate demand among neighbours, region_id: r1, milestone_id: m1, status: available}
+    target_node_id: n1
+    conversation:
+      - role: user
+        content: Can you break "validate demand" into tasks? I only have 45-minute slots after work.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: lint_absent, metric: task_actionability, codes: [T_VAGUE_TITLE, T_UNMEASURABLE]}
+    - {check: lint_absent, metric: constraint_compliance, codes: [T_EXCEEDS_SESSION]}
+    - {check: lint_absent, metric: verification_rigor, codes: [VP_PHOTO_ONLY, VP_WEAK_FOR_VERIFIABLE]}
+    - {check: count_max, metric: task_actionability, path: tasks, max: 5}
+    - {check: language, metric: language_match, value: en}
+  human_review_focus:
+    - Tasks produce evidence of real demand (commitments, pre-orders), not opinions
+    - Durations fit 45-minute sessions
+  reference_output:
+    type: task_generation
+    response_language: en
+    message_to_user: Three 45-minute steps. The last one asks for real commitments, because "I'd buy that" is cheap and a pre-order isn't.
+    for_node_id: n1
+    tasks:
+      - id: n1-t1
+        title: Write a short flyer with price, pickup day and a sign-up link
+        description: One paragraph about the bread, a trial price, the weekly pickup day and a link to a 3-question sign-up form.
+        why_it_matters: A concrete offer gets concrete answers.
+        expected_result: A flyer text and a live sign-up form link.
+        estimated_duration_minutes: 45
+        difficulty: 1
+        verification_protocol:
+          task_nature: writing
+          objective_verifiability: high
+          methods:
+            - {method: artifact_review, role: required, instructions: Paste the flyer text and the form link.}
+          pass_criteria: ["Price, pickup day and sign-up link included"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Text and form are directly checkable.
+      - id: n1-t2
+        title: Share the flyer in 2 neighbourhood groups and on 1 notice board
+        description: Post in two local online groups where selling is allowed and pin a printed copy on a building notice board.
+        why_it_matters: Reaches enough neighbours to test demand.
+        expected_result: 2 post links and 1 notice board location noted.
+        estimated_duration_minutes: 45
+        difficulty: 1
+        dependencies: [n1-t1]
+        verification_protocol:
+          task_nature: business_activity
+          objective_verifiability: high
+          methods:
+            - {method: url_review, role: required, instructions: Submit the 2 post links.}
+            - {method: photo, role: supplementary, instructions: Optional photo of the notice board flyer.}
+          pass_criteria: ["2 live posts"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Posts are public and checkable.
+      - id: n1-t3
+        title: Take 10 paid pre-orders for the first weekly bake
+        description: Follow up with sign-ups and ask for payment or a firm commitment for the first pickup day.
+        why_it_matters: Pre-orders are the evidence the milestone asks for.
+        expected_result: A list of 10 pre-orders with names and pickup day.
+        estimated_duration_minutes: 45
+        sessions: 1
+        difficulty: 3
+        dependencies: [n1-t2]
+        verification_protocol:
+          task_nature: business_activity
+          objective_verifiability: medium
+          methods:
+            - {method: structured_result, role: required, instructions: "List of pre-orders: first name, pickup day, paid (yes/no)."}
+            - {method: follow_up_questions, role: supplementary, instructions: One question about objections., questions: ["What was the most common reason people didn't order?"]}
+          pass_criteria: ["10 pre-orders listed"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: A structured order list is concrete; payments are not independently checked.

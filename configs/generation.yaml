@@ -1,0 +1,35 @@
+# Synthetic data generation. No secrets here: credentials come from the environment / .env.
+provider: anthropic            # anthropic | openai_compatible | replay
+providers:
+  anthropic:
+    # Teacher model, called through the official `anthropic` SDK (pip install anthropic).
+    api_key_env: ANTHROPIC_API_KEY
+    model: claude-opus-5       # override with --model; recorded in every run manifest
+    max_tokens: 32000          # streamed, so long journeys don't hit HTTP timeouts
+    effort: high               # output_config.effort; sampling params (temperature) are not used
+    fallbacks: default         # server-side refusal fallback; set to null to disable
+    timeout_seconds: 600
+  openai_compatible:
+    # Any OpenAI-compatible endpoint (vLLM, Ollama, ...), e.g. an open-weight teacher or the
+    # fine-tuned navigator itself.
+    api_key_env: OPENAI_COMPATIBLE_API_KEY
+    base_url_env: OPENAI_COMPATIBLE_BASE_URL
+    model: null                # must be set via --model or here
+    max_tokens: 8000
+    temperature: 0.7
+    timeout_seconds: 300
+  replay:
+    # Offline provider: returns canned responses from a JSONL file (tests, dry runs).
+    responses_path: null
+
+run:
+  max_candidates_per_run: 50   # hard cap to prevent accidental bulk generation
+  retries: 3
+  backoff_seconds: [2, 4, 8]
+
+few_shot:
+  # Few-shot examples come from *approved* examples of the same task type (falls back to
+  # validated examples only when explicitly allowed), preferring a different domain so the
+  # teacher does not copy content.
+  max_examples: 1
+  require_approved: true

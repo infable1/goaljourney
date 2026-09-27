@@ -1,0 +1,462 @@
+# Type E — task -> task-specific verification protocol. The method must fit the nature of the result.
+# Photos only in combination; self-report accepted where objective proof is impossible (confidence: limited).
+examples:
+
+- id: gj-vprot-001
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: en
+  input_language: en
+  domain: hobby
+  difficulty: medium
+  goal_size: n/a
+  tags: [skill_acquisition, practical_test]
+  safety_category: allowed
+  scenario_group: sg-vprot-rubiks-cube
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-cube
+      title: Solve a Rubik's cube without instructions
+    task:
+      id: t-solve
+      title: Solve a scrambled cube with the beginner's method, without looking at notes
+      description: Using the layer-by-layer beginner's method, solve a fully scrambled cube from memory.
+      why_it_matters: This is the skill the goal is about; everything before it was learning the steps.
+      expected_result: One complete solve from a random scramble without notes, in under 5 minutes.
+      estimated_duration_minutes: 20
+      difficulty: 3
+  expected_output:
+    type: verification_protocol_design
+    response_language: en
+    message_to_user: |-
+      For this one I'll ask for a short video of a real solve: the app gives you a random scramble, you show the scrambled cube to the camera and solve it without cutting. Then two quick questions about the last layer. A photo of a solved cube wouldn't show anything — any cube can be photographed solved.
+    task_id: t-solve
+    protocol:
+      task_nature: skill_acquisition
+      objective_verifiability: high
+      methods:
+        - method: practical_test
+          role: required
+          instructions: The app shows a random scramble. Apply it, show all sides of the scrambled cube to the camera, then solve it without notes in one continuous recording.
+          acceptance_criteria: ["Scramble matches the one issued", "No cuts in the recording", "Cube fully solved", "Solve under 5 minutes"]
+        - method: video
+          role: required
+          instructions: Upload the continuous recording of the practical test.
+        - method: follow_up_questions
+          role: required
+          instructions: Two questions about the method.
+          questions: ["Which step of the last layer did you do first, and why that order?", "What do you do when the yellow cross shows only a line?"]
+      pass_criteria: ["A continuous recording shows the issued scramble being solved in under 5 minutes", "Answers match the beginner's method"]
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: A skill is proven by performing it on an unpredictable input; the fresh scramble prevents reusing an old solve, and the questions confirm the method is understood.
+  annotations:
+    rationale: Skill acquisition -> practical test on an unpredictable input plus questions. The message explains why a photo is not enough.
+  contrastive:
+    - id: gj-vprot-001-c1
+      failure_modes: [photo_as_proof]
+      critique: A photo of a solved cube proves nothing — the cube could have been solved by someone else or never scrambled.
+      output:
+        type: verification_protocol_design
+        response_language: en
+        message_to_user: Just send a photo of your solved cube!
+        task_id: t-solve
+        protocol:
+          task_nature: skill_acquisition
+          objective_verifiability: high
+          methods:
+            - {method: photo, role: required, instructions: Upload a photo of the solved cube.}
+          pass_criteria: ["Photo shows a solved cube"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: The photo shows the result.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-vprot-002
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: ru
+  input_language: ru
+  domain: career
+  difficulty: medium
+  goal_size: n/a
+  tags: [writing, artifact_review]
+  safety_category: allowed
+  scenario_group: sg-vprot-cover-letter
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-job
+      title: Найти работу продакт-аналитиком
+    task:
+      id: t-letter
+      title: Написать сопроводительное письмо под вакансию из своего шорт-листа
+      description: Выберите вакансию из шорт-листа и напишите письмо до 250 слов, которое связывает 2 требования вакансии с вашим опытом.
+      why_it_matters: Письмо под конкретную вакансию заметно повышает шанс, что резюме прочитают внимательно.
+      expected_result: Письмо до 250 слов и ссылка на вакансию.
+      estimated_duration_minutes: 60
+      difficulty: 2
+  expected_output:
+    type: verification_protocol_design
+    response_language: ru
+    message_to_user: |-
+      Здесь проверка простая и объективная: я прочитаю само письмо рядом с текстом вакансии и задам один вопрос. Если письмо не пройдёт по какому-то критерию, я скажу, что именно поправить.
+    task_id: t-letter
+    protocol:
+      task_nature: writing
+      objective_verifiability: high
+      methods:
+        - method: artifact_review
+          role: required
+          instructions: Вставьте текст письма и ссылку на вакансию.
+          acceptance_criteria: ["Не больше 250 слов", "Упомянуты 2 конкретных требования вакансии", "К каждому требованию — пример из опыта с результатом", "Нет шаблонных фраз вроде «ваша компания — лидер рынка»"]
+        - method: follow_up_questions
+          role: supplementary
+          instructions: Один вопрос о выборе акцентов.
+          questions: ["Почему вы выбрали именно эти два требования, а не другие?"]
+      pass_criteria: ["Письмо соответствует всем критериям"]
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: Результат задачи — текст, поэтому проверяется сам текст по критериям, связанным с вакансией.
+  annotations:
+    rationale: Writing -> artifact review with task-specific criteria.
+  contrastive:
+    - id: gj-vprot-002-c1
+      failure_modes: [generic_verification]
+      critique: Asks the user to "describe what you did" for a task whose result is a text that can simply be read.
+      output:
+        type: verification_protocol_design
+        response_language: ru
+        message_to_user: Когда закончите, просто расскажите, что сделали.
+        task_id: t-letter
+        protocol:
+          task_nature: writing
+          objective_verifiability: high
+          methods:
+            - {method: structured_self_report, role: required, instructions: "Расскажите, что вы сделали."}
+          pass_criteria: ["Пользователь сообщил о выполнении"]
+          confidence_ceiling: limited
+          self_report_only: true
+          rationale: Пользователю можно доверять.
+  provenance: *prov
+
+- id: gj-vprot-003
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: en
+  input_language: en
+  domain: programming
+  difficulty: medium
+  goal_size: n/a
+  tags: [software, url_review]
+  safety_category: allowed
+  scenario_group: sg-vprot-todo-api
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-backend
+      title: Become job-ready as a junior backend developer
+    task:
+      id: t-api
+      title: Deploy a to-do REST API with create, list and delete endpoints
+      description: Build a small to-do API with POST /todos, GET /todos and DELETE /todos/{id}, write at least 3 tests, and deploy it to any free hosting.
+      why_it_matters: A deployed, tested API is the minimum portfolio piece for junior backend roles.
+      expected_result: A public URL where the 3 endpoints work, and a repository with tests and a README.
+      estimated_duration_minutes: 360
+      sessions: 4
+      difficulty: 3
+  expected_output:
+    type: verification_protocol_design
+    response_language: en
+    message_to_user: |-
+      I'll verify this the way a reviewer would: the app calls your three endpoints on the live URL, and I read the repository — tests and README included. Then one question about a design choice.
+    task_id: t-api
+    protocol:
+      task_nature: software
+      objective_verifiability: high
+      methods:
+        - method: url_review
+          role: required
+          instructions: Submit the base URL. The app sends POST /todos, GET /todos and DELETE /todos/{id} and attaches the responses for review.
+          acceptance_criteria: ["POST creates an item and returns it", "GET lists it", "DELETE removes it and a second GET no longer shows it"]
+        - method: artifact_review
+          role: required
+          instructions: Submit the repository link.
+          acceptance_criteria: ["At least 3 automated tests", "README explains how to run locally and lists the endpoints"]
+        - method: follow_up_questions
+          role: supplementary
+          instructions: One design question.
+          questions: ["What status code does DELETE return for an id that doesn't exist, and why did you choose it?"]
+      pass_criteria: ["All 3 endpoints behave as specified on the live URL", "Repository has tests and a README"]
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: Software is verified by running it and reading the code, not by screenshots or descriptions.
+  annotations:
+    rationale: Software -> URL functional checks plus repository review.
+  provenance: *prov
+
+- id: gj-vprot-004
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: ru
+  input_language: ru
+  domain: language_learning
+  difficulty: easy
+  goal_size: n/a
+  tags: [research, structured_result]
+  safety_category: allowed
+  scenario_group: sg-vprot-compare-courses
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-eng
+      title: Выйти на уровень B1 по английскому к лету
+    task:
+      id: t-compare
+      title: Сравнить 5 курсов английского для взрослых и выбрать один
+      description: Найдите 5 курсов уровня A2–B1 для взрослых, сравните их по формату, цене, длительности и наличию разговорной практики.
+      why_it_matters: Правильный курс задаёт темп всего маршрута до B1.
+      expected_result: Таблица сравнения 5 курсов и выбранный курс с обоснованием.
+      estimated_duration_minutes: 90
+      difficulty: 2
+  expected_output:
+    type: verification_protocol_design
+    response_language: ru
+    message_to_user: |-
+      Проверка будет по самой таблице: 5 курсов, одинаковые критерии и ссылка на страницу каждого курса, чтобы данные можно было перепроверить. И один вопрос о вашем выборе.
+    task_id: t-compare
+    protocol:
+      task_nature: research
+      objective_verifiability: high
+      methods:
+        - method: structured_result
+          role: required
+          instructions: Заполните таблицу сравнения.
+          fields: ["Курс", "Формат", "Цена", "Длительность", "Разговорная практика", "Ссылка"]
+          acceptance_criteria: ["5 курсов", "У каждого есть ссылка на официальную страницу", "Все столбцы заполнены"]
+        - method: url_review
+          role: supplementary
+          instructions: AI открывает 1–2 ссылки из таблицы, чтобы сверить цену и формат.
+        - method: follow_up_questions
+          role: required
+          instructions: Один вопрос о выборе.
+          questions: ["Какой критерий оказался решающим при выборе и почему?"]
+      pass_criteria: ["Таблица полная и со ссылками", "Выбор обоснован"]
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: Результат исследования — данные с источниками, их можно выборочно перепроверить.
+  annotations:
+    rationale: Research -> findings + sources + a follow-up question.
+  provenance: *prov
+
+- id: gj-vprot-005
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: en
+  input_language: en
+  domain: fitness
+  difficulty: medium
+  goal_size: n/a
+  tags: [physical_activity, self_report, context_dependent]
+  safety_category: allowed
+  scenario_group: sg-vprot-steps-no-tracker
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-walk
+      title: Build a daily walking habit
+    task:
+      id: t-steps
+      title: Walk at least 40 minutes a day for 7 days
+      description: Take a brisk walk of at least 40 minutes every day this week.
+      why_it_matters: A week of daily walks is the first proof that the habit fits your schedule.
+      expected_result: 7 days with a walk of at least 40 minutes each.
+      estimated_duration_minutes: 40
+      sessions: 7
+      difficulty: 2
+    conversation:
+      - role: user
+        content: Just so you know, I don't have a fitness tracker and I usually leave my phone at home when I walk.
+  expected_output:
+    type: verification_protocol_design
+    response_language: en
+    message_to_user: |-
+      Since you walk without a phone or tracker, there's no data to export — and that's fine. You'll log each walk in 20 seconds (date, minutes, route), and at the end of the week I'll ask one reflection question. This counts as self-reported progress, which is the honest level of proof for this kind of task.
+    task_id: t-steps
+    protocol:
+      task_nature: physical_activity
+      objective_verifiability: low
+      methods:
+        - method: structured_self_report
+          role: required
+          instructions: Log each walk on the day you do it.
+          fields: ["Date", "Minutes walked", "Route or place"]
+        - method: follow_up_questions
+          role: supplementary
+          instructions: One reflection at the end of the week.
+          questions: ["Which time of day made the walk easiest to fit in?"]
+      pass_criteria: ["7 daily entries of at least 40 minutes"]
+      confidence_ceiling: limited
+      self_report_only: true
+      rationale: Without a tracker there is no objective record; same-day structured logs are the most reliable evidence available, and confidence is marked as limited.
+  annotations:
+    rationale: Context-dependent protocol — the user stated there is no tracker, so self-report is the correct choice and is labelled limited.
+  contrastive:
+    - id: gj-vprot-005-c1
+      failure_modes: [assumed_user_info, ignored_preferences]
+      critique: Requires a GPS export the user has just said they cannot produce; the task becomes impossible to complete for reasons unrelated to walking.
+      output:
+        type: verification_protocol_design
+        response_language: en
+        message_to_user: Please export your GPS walking data for each day from your fitness app.
+        task_id: t-steps
+        protocol:
+          task_nature: physical_activity
+          objective_verifiability: high
+          methods:
+            - {method: data_export, role: required, instructions: Export GPS data for each walk from your fitness app.}
+          pass_criteria: ["7 GPS tracks of at least 40 minutes"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: GPS data is objective.
+  provenance: *prov
+
+- id: gj-vprot-006
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: ru
+  input_language: ru
+  domain: business
+  difficulty: medium
+  goal_size: n/a
+  tags: [business_activity, customer_interviews, privacy]
+  safety_category: allowed
+  scenario_group: sg-vprot-dog-walking-interviews
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-dogs
+      title: Запустить сервис выгула собак в своём районе
+    task:
+      id: t-interviews
+      title: Провести 5 интервью с владельцами собак из своего района
+      description: Поговорите с пятью владельцами собак о том, как они сейчас решают вопрос выгула, когда заняты, и что их не устраивает.
+      why_it_matters: Интервью покажут, есть ли у людей реальная проблема и сколько они готовы за её решение платить, до того как вы вложитесь в рекламу.
+      expected_result: Заметки по 5 интервью и минимум 3 повторяющиеся проблемы.
+      estimated_duration_minutes: 150
+      sessions: 5
+      difficulty: 3
+  expected_output:
+    type: verification_protocol_design
+    response_language: ru
+    message_to_user: |-
+      Записи разговоров и контакты людей я не прошу — это личные данные. Вместо этого — структурированные заметки по каждому интервью с дословными фразами и пара вопросов о выводах. Такие детали трудно придумать, и именно они нужны для следующего шага.
+    task_id: t-interviews
+    protocol:
+      task_nature: business_activity
+      objective_verifiability: medium
+      methods:
+        - method: structured_result
+          role: required
+          instructions: Заполните карточку на каждое интервью.
+          fields: ["Дата", "Кто (без имени: например, «работает в офисе, собака 2 года»)", "Как сейчас решает вопрос выгула", "2–3 дословные фразы", "Что не устраивает", "Сколько готов платить"]
+          acceptance_criteria: ["5 карточек", "В каждой есть дословные фразы"]
+        - method: follow_up_questions
+          role: required
+          instructions: Вопросы о выводах.
+          questions: ["Какие 3 проблемы повторились хотя бы у двух человек?", "Что в ответах вас удивило или противоречило вашей идее?"]
+      pass_criteria: ["5 заполненных карточек", "Названы минимум 3 повторяющиеся проблемы, подкреплённые фразами из карточек"]
+      confidence_ceiling: medium
+      self_report_only: false
+      rationale: Разговоры нельзя проверить напрямую без вторжения в приватность; структурированные заметки с цитатами и связные выводы — разумный уровень доказательства.
+  annotations:
+    rationale: Business activity with privacy constraints -> structured result + follow-up, medium confidence, no personal data requested.
+  provenance: *prov
+
+- id: gj-vprot-007
+  schema_version: "0.1.0"
+  task_type: verification_protocol_design
+  behavior: [verification_protocol]
+  language: en
+  input_language: en
+  domain: personal_development
+  difficulty: easy
+  goal_size: n/a
+  tags: [habit, self_report]
+  safety_category: allowed
+  scenario_group: sg-vprot-bedtime
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal:
+      id: g-sleep
+      title: Stop feeling exhausted every morning
+    task:
+      id: t-bedtime
+      title: Be in bed with lights off by 23:30 on 5 of 7 nights
+      description: Keep a 23:30 lights-off time on at least 5 nights this week.
+      why_it_matters: A consistent bedtime is the first lever to test before changing anything else.
+      expected_result: A 7-night log with at least 5 nights at or before 23:30.
+      estimated_duration_minutes: 5
+      sessions: 7
+      difficulty: 2
+  expected_output:
+    type: verification_protocol_design
+    response_language: en
+    message_to_user: |-
+      There's no fair way to prove a bedtime, so this one runs on a quick morning log — lights-off time and how rested you feel. If you already use a sleep tracker, you can attach its export, but it's optional. It counts as self-reported progress.
+    task_id: t-bedtime
+    protocol:
+      task_nature: habit
+      objective_verifiability: low
+      methods:
+        - method: structured_self_report
+          role: required
+          instructions: Each morning, log the previous night.
+          fields: ["Night of", "Lights-off time", "Rested (1–5)"]
+        - method: data_export
+          role: supplementary
+          instructions: Optional sleep-tracker export if you already use one.
+      pass_criteria: ["7 nights logged", "At least 5 at or before 23:30"]
+      confidence_ceiling: limited
+      self_report_only: true
+      rationale: Bedtime can't be verified objectively without intrusive measures; a same-morning log is the right level and is labelled limited.
+  annotations:
+    rationale: Habit that cannot be objectively verified -> structured self-report, limited confidence, optional data.
+  contrastive:
+    - id: gj-vprot-007-c1
+      failure_modes: [photo_as_proof]
+      critique: A nightly photo of a clock proves nothing about when the user went to bed and adds friction to a habit task.
+      output:
+        type: verification_protocol_design
+        response_language: en
+        message_to_user: Every night, send a photo of your clock showing the time before 23:30.
+        task_id: t-bedtime
+        protocol:
+          task_nature: habit
+          objective_verifiability: low
+          methods:
+            - {method: photo, role: required, instructions: Photo of a clock showing the time each night.}
+          pass_criteria: ["5 photos with times before 23:30"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Photos show the time.
+  provenance: *prov

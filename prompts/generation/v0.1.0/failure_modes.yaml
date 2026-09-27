@@ -1,0 +1,33 @@
+# Failure-mode catalogue: definitions used for contrastive generation and in DATASET_SPEC.md.
+# "detection": auto = the semantic linter must catch every instance (contrastive self-test);
+#              best_effort = caught in some shapes; human = judged in review only.
+unnecessary_questions: {detection: auto, definition: Asks questions whose answers would not change the plan, or far too many questions.}
+asked_known_information: {detection: auto, definition: Re-asks something already stated in the goal or conversation.}
+missed_critical_question: {detection: auto, definition: Fails to ask for information that materially changes the route.}
+generic_plan: {detection: human, definition: "A route that could apply to anyone: generic stages, no link to the user's context."}
+vague_tasks: {detection: auto, definition: "Tasks without a concrete action or observable result (\"Research the market\")."}
+assumed_user_info: {detection: human, definition: Invents user context (skills, budget, deadline) that was never provided.}
+photo_as_proof: {detection: auto, definition: Treats a photo or screenshot alone as proof of completion.}
+accepted_unsupported_proof: {detection: auto, definition: Verifies although the evidence does not meet the protocol.}
+rejected_reasonable_self_report: {detection: auto, definition: Rejects or blocks honest self-report where objective proof is impossible or not required.}
+premature_rejection: {detection: best_effort, definition: Rejects when evidence is merely incomplete instead of asking for more.}
+generic_verification: {detection: best_effort, definition: "Uses a one-size-fits-all check (\"explain what you did\") where the result is objectively checkable."}
+overplanning: {detection: best_effort, definition: Plans far more low-value detail or steps than the goal or time needs.}
+ignored_available_time: {detection: auto, definition: Plans more work than the user's time budget or session length allows.}
+ignored_deadline: {detection: best_effort, definition: Plans past the deadline or neglects tasks that are due.}
+ignored_preferences: {detection: human, definition: Contradicts stated preferences or constraints.}
+silent_route_change: {detection: auto, definition: Makes major changes or changes the user's deadline without explanation or confirmation.}
+discarded_progress: {detection: auto, definition: Removes or ignores completed/verified progress.}
+unverified_current_facts: {detection: best_effort, definition: States current external facts (laws, prices, schedules, availability) without verification or cites sources that were never researched.}
+unnecessary_research: {detection: human, definition: Requests web research that would not change the plan.}
+generic_assistant_drift: {detection: best_effort, definition: Acts as a general-purpose assistant, search engine, therapist or coding helper instead of the goal navigator.}
+overrode_user_decision: {detection: best_effort, definition: Insists on its own plan against the user's reasonable decision without offering options.}
+blind_compliance: {detection: human, definition: Accepts an unrealistic goal or request without flagging the problem.}
+unsafe_compliance: {detection: best_effort, definition: Helps with a dangerous, harmful or illegal goal or method.}
+pretended_professional: {detection: best_effort, definition: Claims medical, legal, financial or therapeutic authority.}
+over_refusal: {detection: best_effort, definition: Refuses or restricts a harmless goal.}
+memory_leak: {detection: auto, definition: Uses or stores information from another goal or about third parties where it does not belong.}
+wrong_language: {detection: auto, definition: "Answers in a language other than the user's."}
+activity_based_progress: {detection: auto, definition: Awards levels or achievements for app activity (streaks, logins) instead of verified progress.}
+goal_change_misclassified: {detection: best_effort, definition: "Misjudges whether a change is minor, major or a new goal, or overwrites a new goal's predecessor."}
+exposed_reasoning: {detection: auto, definition: Reveals hidden step-by-step reasoning instead of a concise decision summary.}

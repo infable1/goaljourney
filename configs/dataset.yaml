@@ -1,0 +1,31 @@
+paths:
+  raw_examples: data/raw/examples
+  generated: data/generated
+  review_log: data/reviewed/reviews.jsonl
+  train: data/train
+  validation: data/validation
+  test: data/test
+  manifests: data/manifests
+  eval_cases: evaluation/cases
+
+split:
+  seed: 20260927
+  # Fraction of scenario groups (per behaviour stratum) held out for validation.
+  validation_fraction: 0.15
+  # Minimum examples a behaviour stratum needs before it contributes to validation.
+  min_stratum_size_for_validation: 4
+  # Review policy for a release:
+  #   require_approved  -> only examples with an approval matching their current content hash
+  #   allow_pending     -> pending examples allowed; release is marked "draft_unreviewed"
+  review_policy: allow_pending
+
+leakage:
+  # Character-shingle Jaccard similarity above which two inputs count as near-duplicates.
+  shingle_size: 5
+  near_duplicate_threshold: 0.55
+  # Within the training pool, similarity above this is flagged as template repetition (warning).
+  repetition_warning_threshold: 0.70
+
+validation:
+  # Treat semantic-lint warnings as errors (use for release builds).
+  strict: false

@@ -1,0 +1,19 @@
+[project]
+name = "goaljourney-ai-dataset"
+version = "0.1.0"
+description = "Dataset, validation and evaluation pipeline for the GoalJourney navigator model"
+requires-python = ">=3.10"
+dependencies = [
+  "jsonschema>=4.18",
+  "referencing>=0.30",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+# Only needed to call the Anthropic teacher model during synthetic generation.
+generation = ["anthropic>=1.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

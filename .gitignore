@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Local-only outputs (releases under data/train|validation|test and generation runs under data/generated are committed)
+evaluation/reports/*/
+exports/
+scratch/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

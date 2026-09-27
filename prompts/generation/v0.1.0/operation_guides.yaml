@@ -1,0 +1,96 @@
+# Per-operation guidance used by the generation prompts (stage 1: input_hint, stage 2: guide).
+# Keep in sync with DATASET_SPEC.md §5 and the semantic lint rules.
+goal_clarification:
+  input_hint: goal (title only or partially known), the user's message(s) in conversation; optionally earlier turns where some questions were already answered.
+  guide: |
+    - Ask only questions whose answers change the plan, timeline, sequence, verification, resources or success criteria. Usually 1–3; zero when the goal is already clear enough (ready_to_plan=true).
+    - Never re-ask anything already known from the goal or conversation; list it in known_context_used.
+    - Every question names its targets (controlled vocabulary) and a concrete impact on the route.
+    - Combine two questions only when it is natural to answer them together.
+    - Offer default assumptions if the user skips.
+feasibility_assessment:
+  input_hint: goal with whatever deadline, time, resources and current state are known; the user's message.
+  guide: |
+    - Judge qualitatively (feasible | uncertain | likely_unrealistic) and show the key arithmetic or reasoning briefly.
+    - Name assumptions, risks (with severity and mitigation), and missing information that would change the verdict.
+    - For unrealistic or uncertain goals, offer concrete adjustment options (deadline, scope, approach, time, outcome) — the user decides; never refuse outright, never blindly agree.
+    - Flag time-sensitive external facts for web research instead of asserting them.
+journey_generation:
+  input_hint: a well-specified goal (deadline, weekly time, session length, resources, constraints, preferences, current state) and the user's last message.
+  guide: |
+    - 2–5 regions, 2–6 milestones with success criteria and target dates before the deadline; nodes with depends_on forming a DAG.
+    - Detail only the first region (detail_level full + task spec with a task-specific verification protocol); later nodes are outlines.
+    - Respect available time (pacing.weekly_hours_planned ≤ available hours), session length (split longer tasks via "sessions"), preferences and constraints.
+    - Goal-specific levels unlocked by verified milestones; achievements tied to real progress only.
+    - External facts that matter are external_claims with status needs_verification (or a research task in the route).
+    - decision_summary explains the structure and the main alternative rejected.
+task_generation:
+  input_hint: goal, compact journey, target_node_id of the node to break down, the user's request.
+  guide: |
+    - 2–5 operational tasks: concrete action, measurable expected_result, duration fitting the user's sessions, explicit dependencies.
+    - Each task carries a verification protocol that fits its nature (see verification_protocol_design).
+    - No vague titles like "Research the market" or "Learn X".
+verification_protocol_design:
+  input_hint: the task (without a protocol), the goal, optionally a user message about constraints (e.g. no tracker, privacy).
+  guide: |
+    - Choose methods by the nature of the result: skills → practical test/questions; writing → artifact review; software → URL/repository + functional checks; research → findings + sources + questions; physical activity/habits → structured self-report or data export where available; business → artifacts/structured results.
+    - A photo/screenshot is never sufficient alone; use it only in combination.
+    - When objective proof is impossible or intrusive, use structured self-report with confidence_ceiling "limited" and self_report_only true.
+    - Do not request private or third-party personal data.
+verification_result:
+  input_hint: task with its verification protocol, the submitted evidence (photos/audio as textual descriptions), optionally verification_history of previous attempts.
+  guide: |
+    - Check every pass criterion explicitly (met / not_met / unclear).
+    - verified only if all criteria are met; insufficient evidence → needs_more_evidence with specific requests; rejected only when evidence shows a criterion is not met.
+    - Self-report-only evidence → evidence_basis self_report and confidence limited. Never exceed the protocol's confidence ceiling.
+    - On retries, say whether the previous requests were satisfied.
+    - Supportive tone; when rejecting, offer a way forward (redo, split or change the task — the user decides).
+route_adaptation:
+  input_hint: goal, current journey with statuses, progress, the triggering event (events and/or time_budget and/or research_results), the user's message.
+  guide: |
+    - Change only what the trigger requires; preserve every completed/verified node (list them in preserved_progress).
+    - Removed/modified node ids must exist; added node ids must be new; dependencies must stay valid.
+    - Time changes: set new_weekly_hours_planned within the new budget; show the arithmetic; drop low-value work first.
+    - Major changes and any change to the goal deadline require user confirmation; offer alternatives in user_options.
+    - External facts may be cited as verified only from research_results.
+daily_plan:
+  input_hint: goal, compact journey with statuses/priorities/due dates, time_budget.available_minutes_today (and optionally energy), optional user message.
+  guide: |
+    - 1–3 tasks, total within the available minutes, dependencies satisfied, nothing already done.
+    - Critical-path and near-due tasks first; defer the rest with reasons; scope partial tasks with scope_note.
+    - next_action is the very first concrete step.
+navigator_response:
+  input_hint: goal, compact journey, optional decision_log/progress/time_budget, and a user request about the goal (why this task, don't want to, alternative, reschedule, remove milestone, add own task, limited time) or an off-topic request.
+  guide: |
+    - Stay in the context of the current goal; explain using the user's own route and data.
+    - Advise and push back with reasons, but let the user decide; propose changes (requires_user_confirmation for remove/replace/skip/reschedule) with a decision_summary.
+    - Off-topic requests: short, friendly redirect (in_scope=false), optionally linking back to the goal; do not act as a general assistant, search engine, therapist or coding helper.
+goal_change:
+  input_hint: current goal and journey with progress, the user's new intention.
+  guide: |
+    - Classify: minor_adjustment (same outcome refined), major_adjustment (same underlying outcome, different route/format), new_goal (different outcome → separate goal, original paused/archived with history).
+    - Account for every completed node (preserved with how_reused, or discarded with reason); never throw history away silently.
+    - Major changes and new goals require confirmation; flag location/time-sensitive facts for research.
+web_research_decision:
+  input_hint: goal and the user's message(s); possibly a claim the user heard from someone.
+  guide: |
+    - needs_research only when laws, prices, schedules, exam rules, product specs or location-specific facts materially change the route; otherwise needs_research=false with reason_categories ["none"].
+    - List specific facts_to_verify and search queries; list hearsay or memory-based claims as unsupported_claims and verify them.
+    - Say whether planning can start meanwhile (interim_guidance).
+safety_classification:
+  input_hint: the goal and the user's message.
+  guide: |
+    - allowed → full_navigator, no hedging. sensitive → full navigator with explicit boundaries. high_risk → planning_support_only + professional referral + safer reframing. needs_professional_support → named professional, urgency, planning support only (emergency guidance when symptoms warrant). restricted → declined, brief, with a legitimate alternative when one exists.
+    - Never act as a doctor, lawyer, therapist or financial adviser; never prescribe doses, diets or legal strategy.
+memory_extraction:
+  input_hint: the current goal (with id), existing user_memory/goal_memory items, and a conversation containing facts.
+  guide: |
+    - user scope: stable cross-goal facts (schedule, learning/work style, general preferences, stable constraints). goal scope: facts bound to this goal (goal_id = current goal).
+    - Update existing items instead of duplicating; temporary facts get stability temporary and expires_at.
+    - Do not store third-party information or sensitive data not needed for the goal; store only its planning consequence and list the rest in not_stored.
+progress_update:
+  input_hint: goal, journey with levels and achievements, progress (verified ids, current level, unlocked achievements, outcome metrics, app activity), optional user message.
+  guide: |
+    - Progress, levels and achievements follow verified milestones/nodes and real outcome metrics only.
+    - App activity (streaks, logins) is acknowledged as a habit but never changes level or unlocks achievements (explain in not_awarded when relevant).
+    - Every achievement cites verified evidence_refs.

@@ -1,0 +1,277 @@
+# Type J — the most useful next action(s) for today: few tasks, within the time available,
+# dependencies satisfied, deadlines respected. The user should always know what to do next.
+examples:
+
+- id: gj-daily-001
+  schema_version: "0.1.0"
+  task_type: daily_plan
+  behavior: [daily_prioritization]
+  language: en
+  input_language: en
+  domain: writing
+  difficulty: medium
+  goal_size: medium
+  tags: [limited_time, partial_task]
+  safety_category: allowed
+  scenario_group: sg-daily-gardening-newsletter
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    goal:
+      id: g-news
+      title: Launch a weekly newsletter about urban gardening
+      deadline: "2026-10-31"
+    time_budget:
+      available_minutes_today: 45
+    journey:
+      regions:
+        - {id: r1, title: Launch prep, order: 1, status: active}
+      milestones:
+        - {id: m1, title: First issue sent to 30 people, region_id: r1, success_criteria: ["Issue 1 sent to at least 30 subscribers"], target_date: "2026-10-31"}
+      nodes:
+        - {id: n1, type: task, title: Pick a newsletter platform, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Write the issue 1 draft, region_id: r1, milestone_id: m1, status: available, depends_on: [n1], estimated_duration_minutes: 50, priority: high}
+        - {id: n3, type: task, title: Design a simple header image, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 30, priority: optional}
+        - {id: n4, type: task, title: Write the welcome email, region_id: r1, milestone_id: m1, status: available, depends_on: [n1], estimated_duration_minutes: 20, priority: high}
+        - {id: n5, type: task, title: Invite 30 friends and neighbours, region_id: r1, milestone_id: m1, status: locked, depends_on: [n2, n4], estimated_duration_minutes: 40}
+        - {id: n6, type: task, title: Review 10 other gardening newsletters, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 60, priority: normal}
+        - {id: n7, type: task, title: Set up social media accounts, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 45, priority: optional}
+  expected_output:
+    type: daily_plan
+    response_language: en
+    message_to_user: |-
+      For today's 45 minutes: write the welcome email (20 min), then start the issue 1 draft — just the intro and first section (25 min). Those two unlock inviting your first 30 readers, which is what the launch depends on.
+      The header image, social accounts and newsletter research can wait; none of them blocks the launch.
+    available_minutes: 45
+    recommended_tasks:
+      - task_id: n4
+        reason: High priority, short, and one of the two tasks blocking the invitations.
+        estimated_duration_minutes: 20
+      - task_id: n2
+        reason: The other blocker for the invitations; starting it today keeps the launch on track.
+        estimated_duration_minutes: 25
+        scope_note: Write the intro and the first section; finish the rest next session.
+    total_minutes: 45
+    deferred:
+      - {task_id: n3, reason: Optional; the first issue works without a custom header.}
+      - {task_id: n6, reason: Useful but not blocking the launch.}
+      - {task_id: n7, reason: Optional and not needed for the first 30 readers.}
+    next_action: Open the platform and write a 3-sentence welcome email.
+  annotations:
+    rationale: Two items on the critical path, fitting exactly into 45 minutes; the partial task is scoped explicitly; everything else deferred with a reason.
+  contrastive:
+    - id: gj-daily-001-c1
+      failure_modes: [ignored_available_time, overplanning]
+      critique: Five tasks and more than three hours for a 45-minute window — the user can't finish and loses the sense of what matters next.
+      output:
+        type: daily_plan
+        response_language: en
+        message_to_user: Here's everything you can work on today!
+        available_minutes: 45
+        recommended_tasks:
+          - {task_id: n2, reason: Important., estimated_duration_minutes: 50}
+          - {task_id: n3, reason: Looks nice., estimated_duration_minutes: 30}
+          - {task_id: n4, reason: Needed., estimated_duration_minutes: 20}
+          - {task_id: n6, reason: Research is good., estimated_duration_minutes: 60}
+          - {task_id: n7, reason: Social media matters., estimated_duration_minutes: 45}
+        total_minutes: 205
+        next_action: Start with anything.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-daily-002
+  schema_version: "0.1.0"
+  task_type: daily_plan
+  behavior: [daily_prioritization]
+  language: ru
+  input_language: ru
+  domain: project
+  difficulty: medium
+  goal_size: medium
+  tags: [near_deadline, critical_path]
+  safety_category: allowed
+  scenario_group: sg-daily-ngo-grant
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    goal:
+      id: g-grant
+      title: Подать заявку на грант для нашего НКО
+      deadline: "2026-09-30"
+      deadline_flexibility: fixed
+    time_budget:
+      available_minutes_today: 90
+    journey:
+      regions:
+        - {id: r1, title: Заявка, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Заявка подана, region_id: r1, success_criteria: ["Заявка отправлена через портал до 30 сентября"], target_date: "2026-09-30"}
+      nodes:
+        - {id: n1, type: task, title: Собрать уставные документы, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Написать раздел «Бюджет проекта», region_id: r1, milestone_id: m1, status: available, depends_on: [n1], estimated_duration_minutes: 60, priority: critical, due_date: "2026-09-29"}
+        - {id: n3, type: task, title: Написать раздел «Ожидаемые результаты», region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 60, priority: critical, due_date: "2026-09-29"}
+        - {id: n4, type: task, title: Обновить раздел «О нас» на сайте организации, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 60, priority: optional}
+        - {id: n5, type: task, title: Финальная вычитка и подача заявки, region_id: r1, milestone_id: m1, status: locked, depends_on: [n2, n3], estimated_duration_minutes: 60, due_date: "2026-09-30"}
+  expected_output:
+    type: daily_plan
+    response_language: ru
+    message_to_user: |-
+      До подачи три дня, поэтому сегодня — только то, без чего заявку не отправить: раздел «Бюджет» целиком (60 минут) и первые 30 минут раздела «Ожидаемые результаты» — черновик трёх главных результатов с цифрами. Завтра останется дописать результаты, и 30-го — вычитка и подача.
+      Сайт подождёт до после дедлайна: на заявку он не влияет.
+    available_minutes: 90
+    recommended_tasks:
+      - task_id: n2
+        reason: Критичный раздел со сроком 29 сентября, без него заявку не подать.
+        estimated_duration_minutes: 60
+      - task_id: n3
+        reason: Второй критичный раздел с тем же сроком; начинаем сегодня, чтобы завтра был запас.
+        estimated_duration_minutes: 30
+        scope_note: Черновик трёх главных ожидаемых результатов с цифрами; формулировки — завтра.
+    total_minutes: 90
+    deferred:
+      - {task_id: n4, reason: Не влияет на заявку; после 30 сентября.}
+    next_action: Открыть шаблон бюджета и внести статьи расходов по порядку.
+  annotations:
+    rationale: Deadline-driven prioritisation along the critical path; the optional task is explicitly deferred past the deadline.
+  contrastive:
+    - id: gj-daily-002-c1
+      failure_modes: [ignored_deadline]
+      critique: Spends the day on the optional website update while the budget section due in two days is neither planned nor deferred.
+      output:
+        type: daily_plan
+        response_language: ru
+        message_to_user: Сегодня обновим сайт и начнём результаты — это приятные задачи для разгона.
+        available_minutes: 90
+        recommended_tasks:
+          - {task_id: n4, reason: Сайт — лицо организации., estimated_duration_minutes: 60}
+          - {task_id: n3, reason: Нужно для заявки., estimated_duration_minutes: 30}
+        total_minutes: 90
+        next_action: Открыть админку сайта.
+    - id: gj-daily-002-c2
+      failure_modes: [exposed_reasoning]
+      critique: Leaks a hidden reasoning trace into the answer shown to the user.
+      output:
+        type: daily_plan
+        response_language: ru
+        message_to_user: "<think>Дедлайн 30-го, значит сначала бюджет, потом результаты, сайт не важен...</think> Сегодня: бюджет и черновик результатов."
+        available_minutes: 90
+        recommended_tasks:
+          - {task_id: n2, reason: Критичный раздел., estimated_duration_minutes: 60}
+          - {task_id: n3, reason: Критичный раздел., estimated_duration_minutes: 30}
+        total_minutes: 90
+        deferred:
+          - {task_id: n4, reason: После дедлайна.}
+        next_action: Открыть шаблон бюджета.
+  provenance: *prov
+
+- id: gj-daily-003
+  schema_version: "0.1.0"
+  task_type: daily_plan
+  behavior: [daily_prioritization]
+  language: en
+  input_language: en
+  domain: language_learning
+  difficulty: easy
+  goal_size: medium
+  tags: [ten_minutes, low_energy]
+  safety_category: allowed
+  scenario_group: sg-daily-portuguese-10min
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    goal:
+      id: g-pt
+      title: Hold a simple conversation in Portuguese with my partner's family
+    time_budget:
+      available_minutes_today: 10
+      energy: low
+    journey:
+      regions:
+        - {id: r1, title: Everyday phrases, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Introduce myself and chat for 2 minutes, region_id: r1, success_criteria: ["2-minute recorded conversation"]}
+      nodes:
+        - {id: n4, type: task, title: Lesson 7 of the course, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n5, type: task, title: Record a 2-minute self-introduction, region_id: r1, milestone_id: m1, status: available, depends_on: [n4], estimated_duration_minutes: 20}
+        - {id: n6, type: task, title: Review the 20 phrases from lesson 7, region_id: r1, milestone_id: m1, status: available, depends_on: [n4], estimated_duration_minutes: 10}
+        - {id: n7, type: task, title: Lesson 8 of the course, region_id: r1, milestone_id: m1, status: available, depends_on: [n4], estimated_duration_minutes: 30}
+  expected_output:
+    type: daily_plan
+    response_language: en
+    message_to_user: |-
+      Low energy and 10 minutes — perfect for the lightest useful thing: review the 20 phrases from lesson 7, out loud if you can. It also makes the self-introduction recording easier next time.
+    available_minutes: 10
+    recommended_tasks:
+      - task_id: n6
+        reason: Fits exactly into 10 minutes, needs little energy and prepares the recording task.
+        estimated_duration_minutes: 10
+    total_minutes: 10
+    deferred:
+      - {task_id: n5, reason: Recording needs more time and energy; better on a fresher day.}
+      - {task_id: n7, reason: A new lesson needs 30 minutes of focus.}
+    next_action: Open lesson 7's phrase list and read each phrase aloud twice.
+  annotations:
+    rationale: Respects both time and energy; one task, clear first step, no guilt.
+  provenance: *prov
+
+- id: gj-daily-004
+  schema_version: "0.1.0"
+  task_type: daily_plan
+  behavior: [daily_prioritization]
+  language: ru
+  input_language: ru
+  domain: hobby
+  difficulty: easy
+  goal_size: medium
+  tags: [returning_after_break, gentle_restart]
+  safety_category: allowed
+  scenario_group: sg-daily-urban-sketching-return
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    goal:
+      id: g-sketch
+      title: Научиться делать скетчи городских зданий
+    time_budget:
+      available_minutes_today: 30
+    progress:
+      verified_node_ids: [n1, n2]
+      app_activity:
+        last_active: "2026-09-12"
+    journey:
+      regions:
+        - {id: r1, title: Основы, order: 1, status: active}
+      milestones:
+        - {id: m1, title: 10 скетчей с натуры, region_id: r1, success_criteria: ["10 скетчей зданий с натуры"]}
+      nodes:
+        - {id: n1, type: task, title: Линии и штриховка — 3 упражнения, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Скетч фасада по фото, region_id: r1, milestone_id: m1, status: verified, depends_on: [n1]}
+        - {id: n3, type: task, title: "Разминка: 5 быстрых скетчей по 5 минут", region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 25}
+        - {id: n4, type: task, title: Перспектива с одной точкой схода — 5 упражнений, region_id: r1, milestone_id: m1, status: available, depends_on: [n2], estimated_duration_minutes: 45}
+        - {id: n5, type: task, title: Первый скетч с натуры на улице, region_id: r1, milestone_id: m1, status: locked, depends_on: [n4], estimated_duration_minutes: 60}
+    conversation:
+      - role: user
+        content: Я две недели ничего не делал, как-то выпал. С чего начать?
+  expected_output:
+    type: daily_plan
+    response_language: ru
+    message_to_user: |-
+      Две недели паузы — нормально, всё, что вы уже сделали, никуда не делось. Для возвращения возьмём самое лёгкое: разминку из трёх быстрых скетчей по 5 минут — любые здания из окна или с фото. Цель сегодня — просто снова взять карандаш в руки.
+      Перспективу оставим на следующий раз, когда рука разогреется.
+    available_minutes: 30
+    recommended_tasks:
+      - task_id: n3
+        reason: Самая лёгкая задача для возвращения после перерыва.
+        estimated_duration_minutes: 15
+        scope_note: 3 скетча по 5 минут вместо 5 — мягкий старт.
+    total_minutes: 15
+    deferred:
+      - {task_id: n4, reason: Требует больше концентрации — лучше на следующем занятии.}
+    next_action: Выбрать здание из окна и поставить таймер на 5 минут.
+  annotations:
+    rationale: No guilt, past progress acknowledged, the smallest meaningful step; the plan deliberately uses less than the available time to lower the barrier.
+  provenance: *prov

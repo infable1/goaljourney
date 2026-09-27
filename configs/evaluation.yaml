@@ -1,0 +1,23 @@
+cases_dir: evaluation/cases/v0.1.0
+reports_dir: evaluation/reports
+# The runtime prompt used for model evaluation must match SFT export.
+navigator_prompt: prompts/navigator/v0.1.0/system.md
+provider: openai_compatible   # the fine-tuned open-weight model is typically served via vLLM/Ollama
+providers:
+  openai_compatible:
+    api_key_env: OPENAI_COMPATIBLE_API_KEY
+    base_url_env: OPENAI_COMPATIBLE_BASE_URL
+    model: null               # set via --model
+    max_tokens: 6000
+    temperature: 0.0
+    timeout_seconds: 300
+  anthropic:
+    # For evaluating a Claude model as a reference system with the same prompt.
+    api_key_env: ANTHROPIC_API_KEY
+    model: claude-opus-5
+    max_tokens: 16000
+    effort: high
+    fallbacks: default
+    timeout_seconds: 600
+  replay:
+    responses_path: null

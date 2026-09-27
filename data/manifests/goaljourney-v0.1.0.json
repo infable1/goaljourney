@@ -1,0 +1,776 @@
+{
+  "dataset": "GoalJourney Dataset",
+  "dataset_version": "0.1.0",
+  "release_status": "draft_unreviewed",
+  "created_at": "2026-09-27T13:08:31+00:00",
+  "git_commit": null,
+  "versions": {
+    "dataset_version": "0.1.0",
+    "schema_version": "0.1.0",
+    "navigator_prompt_version": "0.1.0",
+    "generation_prompt_version": "0.1.0",
+    "pipeline_version": "0.1.0",
+    "evaluation_version": "0.1.0",
+    "base_model": {
+      "name": null,
+      "revision": null,
+      "licence": null
+    }
+  },
+  "review_policy": "allow_pending",
+  "split_config": {
+    "seed": 20260927,
+    "validation_fraction": 0.15,
+    "min_stratum_size_for_validation": 4,
+    "review_policy": "allow_pending"
+  },
+  "leakage_check": {
+    "threshold": 0.55,
+    "shingle_size": 5,
+    "near_duplicate_pairs": 0
+  },
+  "counts": {
+    "train": 81,
+    "validation": 12,
+    "test_eval_cases": 30,
+    "train_contrastive_outputs": 54,
+    "pending_review": 93,
+    "excluded": {}
+  },
+  "distribution": {
+    "train": {
+      "task_type": {
+        "daily_plan": 5,
+        "feasibility_assessment": 5,
+        "goal_change": 3,
+        "goal_clarification": 8,
+        "journey_generation": 4,
+        "memory_extraction": 2,
+        "navigator_response": 11,
+        "progress_update": 3,
+        "route_adaptation": 9,
+        "safety_classification": 7,
+        "task_generation": 4,
+        "verification_protocol_design": 6,
+        "verification_result": 10,
+        "web_research_decision": 4
+      },
+      "language": {
+        "en": 45,
+        "ru": 36
+      }
+    },
+    "validation": {
+      "task_type": {
+        "daily_plan": 1,
+        "feasibility_assessment": 1,
+        "goal_change": 1,
+        "goal_clarification": 1,
+        "journey_generation": 1,
+        "navigator_response": 1,
+        "route_adaptation": 1,
+        "safety_classification": 1,
+        "task_generation": 1,
+        "verification_protocol_design": 1,
+        "verification_result": 1,
+        "web_research_decision": 1
+      },
+      "language": {
+        "en": 7,
+        "ru": 5
+      }
+    },
+    "test": {
+      "task_type": {
+        "daily_plan": 2,
+        "feasibility_assessment": 1,
+        "goal_change": 1,
+        "goal_clarification": 3,
+        "journey_generation": 1,
+        "memory_extraction": 1,
+        "navigator_response": 4,
+        "progress_update": 1,
+        "route_adaptation": 2,
+        "safety_classification": 4,
+        "task_generation": 1,
+        "verification_protocol_design": 2,
+        "verification_result": 4,
+        "web_research_decision": 3
+      },
+      "language": {
+        "en": 18,
+        "ru": 12
+      }
+    }
+  },
+  "files": {
+    "train": {
+      "path": "data/train/goaljourney-v0.1.0.jsonl",
+      "sha256": "3f86d22f05ce8353b8cf99298a869ee4c6a213ecc1b6cc4d589d32022a4876c7",
+      "records": 81
+    },
+    "validation": {
+      "path": "data/validation/goaljourney-v0.1.0.jsonl",
+      "sha256": "de5e69e9ab57c808e0cff946a650ef3de783ba01df44c243a56c87cdbbb29bed",
+      "records": 12
+    },
+    "test": {
+      "path": "data/test/goaljourney-v0.1.0.jsonl",
+      "sha256": "51ef4ad61c5dca07c8c5983100caf4f9c9aa22acbfe0885f6e75819f0d76a77f",
+      "records": 30
+    }
+  },
+  "examples": [
+    {
+      "id": "gj-clar-001",
+      "split": "train",
+      "scenario_group": "sg-clar-kids-art-school",
+      "content_hash": "f3b3509748637a3b8ece45444b4e7ae9797c19e8782c10d84397ef28b6a03d03",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-002",
+      "split": "train",
+      "scenario_group": "sg-clar-accountant-analyst",
+      "content_hash": "db4112eee584635f6353f02c47af4b3fd263e474d514e58711404c39365b8836",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-003",
+      "split": "train",
+      "scenario_group": "sg-clar-front-crawl",
+      "content_hash": "7f9e83e8c0026fbaf47a05be3d93481fdd4fc63a959e92c2fd5959eb1294a9fb",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-004",
+      "split": "validation",
+      "scenario_group": "sg-clar-garage-weekend",
+      "content_hash": "62532acc5793eb63e3e9bd6153f7e5fe6a6f93c54e3279200895d67b8f92a648",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-005",
+      "split": "train",
+      "scenario_group": "sg-clar-react-petproject",
+      "content_hash": "2dee468203f9b687c688d6dad1eb0a7e29e68deee85aea938093b9fb073c02cf",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-006",
+      "split": "train",
+      "scenario_group": "sg-clar-scifi-novel",
+      "content_hash": "3a26332252776d4cc7ddb7c8fc44c618aa17d6f57de8067e5b462f5b1934b744",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-007",
+      "split": "train",
+      "scenario_group": "sg-clar-relocation-germany",
+      "content_hash": "a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-008",
+      "split": "train",
+      "scenario_group": "sg-clar-senior-promotion",
+      "content_hash": "0c2bcacde3c2dc9a6fba752e3cc051af0a17e462f89c9d5a462ff6766b7c0997",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-daily-001",
+      "split": "validation",
+      "scenario_group": "sg-daily-gardening-newsletter",
+      "content_hash": "c0d635a0698000dd6d4707f5576fe32bf3c7c0e65d7393d41fc433f508694ee3",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-daily-002",
+      "split": "train",
+      "scenario_group": "sg-daily-ngo-grant",
+      "content_hash": "2b0753a0773e454d4c5de511d53bf464c954ddcb3efd7fa05a6ed66bc432bc9b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-daily-003",
+      "split": "train",
+      "scenario_group": "sg-daily-portuguese-10min",
+      "content_hash": "86c1ffa45d37e37393dc1b93e064e233321a13b1b47ab86e06e5224206d54367",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-daily-004",
+      "split": "train",
+      "scenario_group": "sg-daily-urban-sketching-return",
+      "content_hash": "ed526daa10af56f2eb212604b6991e3652e0f1225d067c3c0a9207a55a1afaca",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-001",
+      "split": "train",
+      "scenario_group": "sg-feas-senior-in-6-months",
+      "content_hash": "ac957b4f22035629bd578bd5111930286cf5eeb8cfeef45c26da014c5a02ba1a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-002",
+      "split": "train",
+      "scenario_group": "sg-feas-marathon-january",
+      "content_hash": "3fbd239b79b402de363cd0f79ef89a30f3b16f898b05420d0b42e3a6e8482636",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-003",
+      "split": "validation",
+      "scenario_group": "sg-feas-save-10k",
+      "content_hash": "93a617909cd491d1eb513b00ba0ac4529d9a1d1e1b22578ac6b3b71a33bfb957",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-004",
+      "split": "train",
+      "scenario_group": "sg-feas-ep-release",
+      "content_hash": "f5411e09e654e766b4091da9875c410c430b4a82e5a7c1e031a4c98021d9512d",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-005",
+      "split": "train",
+      "scenario_group": "sg-feas-candles-marketplace",
+      "content_hash": "27ed3f4af507d1402ed0acfb77536683d2178dbc000c60e9aed2f404d27edf7a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-006",
+      "split": "train",
+      "scenario_group": "sg-feas-cloud-exam-2-weeks",
+      "content_hash": "67e429ff1f363cbcd65528a4451ec282af2e77a71cbf2c828536ce4f9bb60e6a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-goalchg-001",
+      "split": "train",
+      "scenario_group": "sg-goalchg-10k-time",
+      "content_hash": "625b109a4a2e46236c8ce8aa533135826a335e000f2e8013c3238b12536bac0c",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-goalchg-002",
+      "split": "train",
+      "scenario_group": "sg-goalchg-bakery-to-home-cakes",
+      "content_hash": "4fb9513d5b136d8afd57a7054d89d1bf2ed91774c471bf08bdc4cc8fa294759f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-goalchg-003",
+      "split": "train",
+      "scenario_group": "sg-goalchg-webdev-to-teacher",
+      "content_hash": "f1f4846c1116b2c0e99411ccf47e67f2474007d90968f8bf7eceed7c04fb6548",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-goalchg-004",
+      "split": "validation",
+      "scenario_group": "sg-goalchg-masters-de-to-nl",
+      "content_hash": "da4220541c7217df695f2bc9db724ea16bf85524294f638e2bc6e147d14cb274",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-jour-001",
+      "split": "train",
+      "scenario_group": "sg-jour-junior-qa",
+      "content_hash": "77906c26aadd8e8ccdf42ac6b24e7869d505894c1738fcac39e999798066d56e",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-jour-002",
+      "split": "train",
+      "scenario_group": "sg-jour-ceramic-mugs-shop",
+      "content_hash": "1f3f2bfb751fd1abb85bb9dfd51115acf8a35ebf4e465a0441fb4e66a2536b51",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-jour-003",
+      "split": "train",
+      "scenario_group": "sg-jour-iberia-backpacking",
+      "content_hash": "360c792cb6a4e278b238241f749acd13c5b851d970f7faa8afdd299fc96dbb13",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-jour-004",
+      "split": "train",
+      "scenario_group": "sg-jour-cook-10-dishes",
+      "content_hash": "875498360a039cba9c3b29cc3c837d8f051b1f9739d5cddc40f835122aa68468",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-jour-005",
+      "split": "validation",
+      "scenario_group": "sg-jour-lose-8kg",
+      "content_hash": "6476a8b8b626a4627c8e5d52938095da84a3062fdae2f96131cd3b01a1424fb6",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-lang-001",
+      "split": "train",
+      "scenario_group": "sg-lang-mixed-daily-go",
+      "content_hash": "6111e852d488c53c4808104725d2a1888e20ed4d76751546cd76dfe857e4fe58",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-lang-002",
+      "split": "train",
+      "scenario_group": "sg-lang-heritage-russian",
+      "content_hash": "858c023e397fbddd08cb8ab51508226daab63e259ce08086776ec93006bf2d07",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-001",
+      "split": "train",
+      "scenario_group": "sg-mem-french-lyon",
+      "content_hash": "40d1910a9904ec133e99363852085fb0011dc61109a246d1e3eb15ed8ef02b4e",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-002",
+      "split": "train",
+      "scenario_group": "sg-mem-kitchen-renovation",
+      "content_hash": "e97a1d33e6f40a40c22e2324364acdd46229612626e476438838ec94a4441e79",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-003",
+      "split": "train",
+      "scenario_group": "sg-mem-portrait-drawing-isolation",
+      "content_hash": "2b047e804cef43a702c88fb89bcb85fc070f14f931926c269697e048bb7e3c07",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-004",
+      "split": "train",
+      "scenario_group": "sg-mem-ukulele-isolation",
+      "content_hash": "3073971dd8365cd6e20ac9f930b19bba4c82734cfd4884723dd237566f38cc1b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-001",
+      "split": "train",
+      "scenario_group": "sg-nav-travel-youtube",
+      "content_hash": "3289d3d7463fc2736d07b7fcdf4c6942640032384462860a5a0996f1d91f4b89",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-002",
+      "split": "train",
+      "scenario_group": "sg-nav-expense-tracking",
+      "content_hash": "45445628da127ed504e4aae6804bfe20c48d3b844971b2bfc3e7edc5bfa0380b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-003",
+      "split": "train",
+      "scenario_group": "sg-nav-pullups-no-gym",
+      "content_hash": "17cce1257cb6a793a25f2dbd03370b7a9d183455f484a15f99c215a9b241479b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-004",
+      "split": "validation",
+      "scenario_group": "sg-nav-ux-research-certificate",
+      "content_hash": "3eef7932cd1e944afbd1ba9ef2f8d08e6a974f605fa5a3619b3f1a8d5e40d6f6",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-005",
+      "split": "train",
+      "scenario_group": "sg-nav-portfolio-site-15min",
+      "content_hash": "c30bc9d3781692f0840ce1fa05554e14626809a334629d4b7173a735904f305d",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-006",
+      "split": "train",
+      "scenario_group": "sg-nav-calls-reschedule",
+      "content_hash": "5c93d67245033ae10a2ebbb7a618afc6c108cbf8490bf241074d65ac381bff2b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-007",
+      "split": "train",
+      "scenario_group": "sg-nav-translator-website",
+      "content_hash": "6ec9140c3158d6fd475ebdbd132a29b5832c600724a62522883042595c688b4a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-008",
+      "split": "train",
+      "scenario_group": "sg-nav-birthday-greeting",
+      "content_hash": "bbdb93870ad21d84263280a41bd0ebc5d83f05cd36d641143a2ad7aab43de535",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-009",
+      "split": "train",
+      "scenario_group": "sg-nav-lonely-learner",
+      "content_hash": "66f34b10b69f2485356202e35822c6da9558efb54e38063c47fb502ead770f7f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-010",
+      "split": "train",
+      "scenario_group": "sg-nav-speaking-club",
+      "content_hash": "040e234046359417882b93a139429392f7d7c8935d4a1d054f4fd5b5e173a07f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-011",
+      "split": "train",
+      "scenario_group": "sg-nav-news-request",
+      "content_hash": "d114beafa52971f2ae01a0e9b36426e360b770de17c67d9c85cf78f07cc56605",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-prog-001",
+      "split": "train",
+      "scenario_group": "sg-prog-leash-training",
+      "content_hash": "69c9cebc92032d062f1fabf5e4022e500235b0aeaa9a71ca130fde6a04899a4a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-prog-002",
+      "split": "train",
+      "scenario_group": "sg-prog-blender-streak",
+      "content_hash": "1d273baa9a0959201782d5054000f9d6623678b335091b18746e8f54f6e57029",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-prog-003",
+      "split": "train",
+      "scenario_group": "sg-prog-bike-repair-clients",
+      "content_hash": "e343978a6d2ed6098493ac2601ec4b57b7f25de315665d80de8e23c4516edffe",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-001",
+      "split": "train",
+      "scenario_group": "sg-route-agency-bookkeeping",
+      "content_hash": "6334cc894bece0385af5feb7f901c89dc2f70e4752788d4bbf6e57646df7b76d",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-002",
+      "split": "train",
+      "scenario_group": "sg-route-photo-exhibition",
+      "content_hash": "ad82ad29353ed674be7804884af5d83979d5f378d574bcffd8d9d12bf6426cdf",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-003",
+      "split": "train",
+      "scenario_group": "sg-route-mobile-game-art",
+      "content_hash": "9c9a84f6694b16b3df37ac9f5e985558642025a3518901994ce57ad42a0d6d6f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-004",
+      "split": "train",
+      "scenario_group": "sg-route-pitch-mentor",
+      "content_hash": "ffdf68a9d80c9d338848b7e7d17abaf5808ec8b486557b91bde5729af16cf4a6",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-005",
+      "split": "train",
+      "scenario_group": "sg-route-orgo-mock-exam",
+      "content_hash": "006fed774c8e7e8eb8de4da7801abf0f3fec561a7585a9515899a07ea5388d86",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-006",
+      "split": "train",
+      "scenario_group": "sg-route-italian-flashcards",
+      "content_hash": "fb1ab4eb1b7893da55366f6a402d21fc33e3ff1118a905beb6c012927c45cc1e",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-001",
+      "split": "train",
+      "scenario_group": "sg-safe-sourdough",
+      "content_hash": "4bc850e528f0f00262f54443773373522dc276f4e1b5d2886da5ea2c7cbdfbb5",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-002",
+      "split": "train",
+      "scenario_group": "sg-safe-credit-card-debt",
+      "content_hash": "5d0d0c50921356f13caebd62c097090ca055ee3f2709c6860611d1a9cbfe9084",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-003",
+      "split": "train",
+      "scenario_group": "sg-safe-weigh-in-cut",
+      "content_hash": "d421870aa132e687835b461bbe8601374d0c72202bd11660c7a67531287eb002",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-004",
+      "split": "validation",
+      "scenario_group": "sg-safe-chest-pain-running",
+      "content_hash": "ed471c2380407f72beff8d2b83c2898ed94e137a0939152353ecb3de1c947d09",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-005",
+      "split": "train",
+      "scenario_group": "sg-safe-deposit-dispute",
+      "content_hash": "267f63ec58433b83b45914c32b28359bb5036918a0e3c424eb5dc9c9f5e74a94",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-006",
+      "split": "train",
+      "scenario_group": "sg-safe-fake-sick-notes",
+      "content_hash": "37ae70c416be9252f68e9c838bfdbdd67cac3301624224b249d42c0ab833c302",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-007",
+      "split": "train",
+      "scenario_group": "sg-safe-free-solo",
+      "content_hash": "c4b9826cb5a6a8ad5df6bea11c1094b478c813d494d4ded449d41651b46931bc",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-008",
+      "split": "train",
+      "scenario_group": "sg-safe-feel-pointless",
+      "content_hash": "abc0fa187684572fe6e5d6cfa2160824ff1f653a87b58516476c2749489b55e6",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-001",
+      "split": "train",
+      "scenario_group": "sg-task-budget-app-beta",
+      "content_hash": "21220c58f980737f3a01521e10f47b4793fd862d7f4b4397fa0c5f1782c339fd",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-002",
+      "split": "train",
+      "scenario_group": "sg-task-conference-talk",
+      "content_hash": "96f0bfce3713ad203a46cce8ea6aeffca329c91c46d64187df27176d6c314bac",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-003",
+      "split": "validation",
+      "scenario_group": "sg-task-sql-basics",
+      "content_hash": "a6ca24e044fb90f1f04c6b310a362f20374f69642957543821b92a50576de03c",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-004",
+      "split": "train",
+      "scenario_group": "sg-task-flat-sale-prep",
+      "content_hash": "36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-005",
+      "split": "train",
+      "scenario_group": "sg-task-birdhouse",
+      "content_hash": "24c943915ff9f8a71c7adfcaabe13eb8934e7438519f2027806079fa2f271318",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-time-001",
+      "split": "train",
+      "scenario_group": "sg-time-dataviz-portfolio",
+      "content_hash": "f82c0fc070edc834ae47b1de4fa3de2bf098ffd3050098ecf4e848386246aded",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-time-002",
+      "split": "train",
+      "scenario_group": "sg-time-python-automation",
+      "content_hash": "43d22dfb1e541a2c9276c67ed1af29dc9f5bbf09f5088a4dd1d1d72c63419bd7",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-time-003",
+      "split": "validation",
+      "scenario_group": "sg-time-bank-attestation",
+      "content_hash": "b5cc77aecc850b92ee447709898db0d9d7f2760666600a9799d6a008a64b46ef",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-time-004",
+      "split": "train",
+      "scenario_group": "sg-time-thesis-vacation",
+      "content_hash": "83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-001",
+      "split": "train",
+      "scenario_group": "sg-vprot-rubiks-cube",
+      "content_hash": "1698ce56fc4deffb478e2febf4251eca74e03160d411be25e238ad25a5ead59f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-002",
+      "split": "train",
+      "scenario_group": "sg-vprot-cover-letter",
+      "content_hash": "24a82473acd3d345033bf462c1bba1b5af6afd06b9898272da35a52435bd94bd",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-003",
+      "split": "train",
+      "scenario_group": "sg-vprot-todo-api",
+      "content_hash": "c81e9e89335e56344d2113224af4967b86825f3ee4b4afe29fd69411f6f1a506",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-004",
+      "split": "train",
+      "scenario_group": "sg-vprot-compare-courses",
+      "content_hash": "b812376629ecf9629af8cb9969d560d6834ccdd0058ef10f8c8496cc2d164be7",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-005",
+      "split": "train",
+      "scenario_group": "sg-vprot-steps-no-tracker",
+      "content_hash": "67b754a0b472f5e1fab5bddc3f8c215ad16397fb65ff30b9fb600170e509ea43",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-006",
+      "split": "train",
+      "scenario_group": "sg-vprot-dog-walking-interviews",
+      "content_hash": "091e01eb58f9a4adf2156858b924b1f6d49fbd9de3cabf730092b5d808671cc9",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-007",
+      "split": "validation",
+      "scenario_group": "sg-vprot-bedtime",
+      "content_hash": "dde477bddf3f786b00f51b8bd7a2b34035370af74dbf2bf818a2c1e3f4560f6c",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-001",
+      "split": "train",
+      "scenario_group": "sg-vres-product-brief",
+      "content_hash": "ab9da314dd1b99b8ea30692ceac4450c3d2e06db6698a0673a8f19613d3593be",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-002",
+      "split": "train",
+      "scenario_group": "sg-vres-probability-problems",
+      "content_hash": "a95a311b190953f74f4344df0757addbf8843720438abd06cd7da91af7531659",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-003",
+      "split": "train",
+      "scenario_group": "sg-vres-pitch-recording",
+      "content_hash": "9c85f217b0cbdf6d4b3c4cac7d20e7f83f9e51d6080b171bdb158766318790d8",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-004",
+      "split": "validation",
+      "scenario_group": "sg-vres-stretching",
+      "content_hash": "2cbbbe61bbc211ae95da412c38f59ddf6493639d1a4651bcd9a7d166645b35db",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-005",
+      "split": "train",
+      "scenario_group": "sg-vres-case-study-url",
+      "content_hash": "b315c5122d90b3f1d2b30fd2c84eb3fefc1431c22d4a4bf18ea5d7dc5b38759b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-006",
+      "split": "train",
+      "scenario_group": "sg-vres-paint-wall",
+      "content_hash": "a7dee044cde2fe51260f2cbddf04612cdea4b78a58ee36b06d3176db48f3c2a1",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-007",
+      "split": "train",
+      "scenario_group": "sg-vres-book-ideas",
+      "content_hash": "0dadf511071aed03b97d26a376a9bf9b2e485ec295679cb51765f206ed9aa9d8",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vretry-001",
+      "split": "train",
+      "scenario_group": "sg-vretry-weather-app-tests",
+      "content_hash": "5bb22b53e904ff584f777e3b6d91a859e7d532019d3f6190a721b465784164d1",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vretry-002",
+      "split": "train",
+      "scenario_group": "sg-vretry-blog-posts",
+      "content_hash": "9690cc62754bcd26a76c7edab41955ddf400a5b9910e13859910d8f138cd1adc",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vretry-003",
+      "split": "train",
+      "scenario_group": "sg-vretry-excel-course",
+      "content_hash": "f6363cedfaac9e89644c0bfefe8d93f662d3d732a76cb5d9dba83537cd5bb220",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vretry-004",
+      "split": "train",
+      "scenario_group": "sg-vretry-bookkeeping-interviews",
+      "content_hash": "69516730fe6afddd07a1718c3454a407b3dae7325c32771b17e3dca7734bb69f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-001",
+      "split": "train",
+      "scenario_group": "sg-web-portugal-nomad-visa",
+      "content_hash": "9623fb94508bcac058803e4bb24a12cb9e57d1c3b089a837906d18a4c636cc01",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-002",
+      "split": "train",
+      "scenario_group": "sg-web-touch-typing",
+      "content_hash": "1795a124a791128d953fe0edaa7c54d876df381eb582fcbef0766cea609bb3bc",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-003",
+      "split": "train",
+      "scenario_group": "sg-web-cpr-course",
+      "content_hash": "c43e12cfcce3a2f294572d95204fba3f77a44f7594e82364a3c5b5a85167ba63",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-004",
+      "split": "validation",
+      "scenario_group": "sg-web-short-term-rental-hearsay",
+      "content_hash": "e3db3ea14595d4f7ee09ef89b17bf22299483fdbe1ed635d0f3c5c93e97e8508",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-005",
+      "split": "train",
+      "scenario_group": "sg-web-best-man-speech",
+      "content_hash": "26e0affa978181aa4207001ef4d79041f45986085e8d3b3beac962d6b5344c55",
+      "review_status": "pending"
+    }
+  ]
+}

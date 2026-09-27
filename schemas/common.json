@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.0/common.json",
+  "title": "GoalJourney shared definitions",
+  "description": "Reusable primitives referenced by every other schema. Keys and enums are English and language-independent; user-facing strings are written in the user's language.",
+  "$defs": {
+    "language": {
+      "type": "string",
+      "enum": [
+        "ru",
+        "en"
+      ]
+    },
+    "input_language": {
+      "type": "string",
+      "enum": [
+        "ru",
+        "en",
+        "mixed"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_.-]{0,63}$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "datetime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?(Z|[+-][0-9]{2}:[0-9]{2})?$"
+    },
+    "short_text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1500
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "text_list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/text"
+      },
+      "maxItems": 12
+    },
+    "id_list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "uniqueItems": true,
+      "maxItems": 40
+    },
+    "minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1440
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https?://[^\\s]+$",
+      "maxLength": 2000
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "education",
+        "career",
+        "business",
+        "programming",
+        "language_learning",
+        "fitness",
+        "health",
+        "creative",
+        "writing",
+        "finance",
+        "travel",
+        "certification",
+        "project",
+        "personal_development",
+        "hobby",
+        "research",
+        "productivity",
+        "legal_admin",
+        "home",
+        "other"
+      ]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "goal_clarification",
+        "feasibility_assessment",
+        "journey_generation",
+        "task_generation",
+        "verification_protocol_design",
+        "verification_result",
+        "route_adaptation",
+        "daily_plan",
+        "navigator_response",
+        "goal_change",
+        "web_research_decision",
+        "safety_classification",
+        "memory_extraction",
+        "progress_update"
+      ]
+    },
+    "safety_category": {
+      "type": "string",
+      "enum": [
+        "allowed",
+        "sensitive",
+        "high_risk",
+        "needs_professional_support",
+        "restricted"
+      ]
+    },
+    "clarification_target": {
+      "description": "Controlled vocabulary for what a clarifying question is trying to learn. Lets evaluation measure unnecessary and missing questions.",
+      "type": "string",
+      "enum": [
+        "location",
+        "budget",
+        "deadline",
+        "available_time",
+        "schedule",
+        "current_level",
+        "experience",
+        "current_stage",
+        "business_type",
+        "target_outcome",
+        "success_criteria",
+        "target_role",
+        "target_exam",
+        "target_score",
+        "resources",
+        "equipment",
+        "constraints",
+        "health_status",
+        "preferences",
+        "learning_style",
+        "motivation",
+        "team",
+        "audience",
+        "scope",
+        "external_dependencies",
+        "prior_attempts",
+        "other"
+      ]
+    },
+    "change_trigger": {
+      "type": "string",
+      "enum": [
+        "less_time",
+        "more_time",
+        "hypothesis_wrong",
+        "external_fact_changed",
+        "preference_changed",
+        "task_impossible",
+        "milestone_achieved_early",
+        "task_failed",
+        "new_resource",
+        "resource_lost",
+        "user_request",
+        "deadline_changed",
+        "verification_outcome",
+        "other"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "url"
+      ],
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/short_text"
+        },
+        "url": {
+          "$ref": "#/$defs/url"
+        },
+        "publisher": {
+          "$ref": "#/$defs/short_text"
+        },
+        "retrieved_at": {
+          "$ref": "#/$defs/date"
+        }
+      }
+    },
+    "external_claim": {
+      "description": "Any statement about the outside world that materially affects the plan. 'verified_with_source' is only allowed when the source was supplied in the input context (research_results).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim",
+        "status"
+      ],
+      "properties": {
+        "claim": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "verified_with_source",
+            "needs_verification",
+            "general_knowledge"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "affects": {
+          "$ref": "#/$defs/short_text"
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "verified_with_source"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "source"
+        ]
+      }
+    },
+    "external_claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/external_claim"
+      },
+      "maxItems": 10
+    },
+    "failure_mode": {
+      "description": "Catalogue of behavioural failures used to tag contrastive (rejected) outputs.",
+      "type": "string",
+      "enum": [
+        "unnecessary_questions",
+        "asked_known_information",
+        "missed_critical_question",
+        "generic_plan",
+        "vague_tasks",
+        "assumed_user_info",
+        "photo_as_proof",
+        "accepted_unsupported_proof",
+        "rejected_reasonable_self_report",
+        "premature_rejection",
+        "generic_verification",
+        "overplanning",
+        "ignored_available_time",
+        "ignored_deadline",
+        "ignored_preferences",
+        "silent_route_change",
+        "discarded_progress",
+        "unverified_current_facts",
+        "unnecessary_research",
+        "generic_assistant_drift",
+        "overrode_user_decision",
+        "blind_compliance",
+        "unsafe_compliance",
+        "pretended_professional",
+        "over_refusal",
+        "memory_leak",
+        "wrong_language",
+        "activity_based_progress",
+        "goal_change_misclassified",
+        "exposed_reasoning"
+      ]
+    }
+  }
+}

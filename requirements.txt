@@ -1,0 +1,5 @@
+# Runtime + test dependencies (pinned for reproducibility).
+jsonschema==4.26.0
+referencing==0.37.0
+PyYAML==6.0.1
+pytest==9.1.1

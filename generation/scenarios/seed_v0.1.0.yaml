@@ -1,0 +1,428 @@
+# Scenario seeds for synthetic scale-up (v0.1.0). One scenario -> several examples along the same
+# journey (all share scenario_group = id, so they never straddle train/validation).
+# Topics deliberately differ from the authored examples and from the evaluation cases.
+scenarios:
+  - id: sc-edu-001
+    domain: education
+    language: ru
+    input_language: ru
+    goal_size: complex
+    difficulty: hard
+    safety_category: allowed
+    persona: Ученица 10 класса, любит химию, занимается сама по вечерам после школы.
+    goal_seed: Пройти на заключительный этап олимпиады по химии в этом учебном году.
+    known_context: ["Школьный этап пройден", "Около 6 часов в неделю", "Есть сборники задач прошлых лет"]
+    unknowns: ["Даты региональных этапов", "Есть ли наставник"]
+    twists: ["В декабре из-за контрольных остаётся 2 часа в неделю", "На пробном туре провалена органика"]
+    task_types: [goal_clarification, feasibility_assessment, journey_generation, route_adaptation, daily_plan]
+    contrastive_failure_modes: [unnecessary_questions, unverified_current_facts, discarded_progress, ignored_available_time]
+    tags: [exam, has_deadline, student]
+
+  - id: sc-edu-002
+    domain: education
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: allowed
+    persona: Environmental science master's student who finds research papers slow and overwhelming.
+    goal_seed: Learn to read and summarise academic papers in ecology efficiently — about one paper a day.
+    known_context: ["Reads about 1 paper a week now, taking 3 hours each", "Has 45 minutes most mornings"]
+    twists: ["Supervisor asks for a literature map in 6 weeks"]
+    task_types: [goal_clarification, task_generation, verification_protocol_design, verification_result, navigator_response]
+    contrastive_failure_modes: [vague_tasks, generic_verification, accepted_unsupported_proof]
+    tags: [skill_goal, academic]
+
+  - id: sc-car-001
+    domain: career
+    language: en
+    input_language: en
+    goal_size: complex
+    difficulty: hard
+    safety_category: allowed
+    persona: Registered nurse with 8 years of ward experience, curious about data and hospital IT systems.
+    goal_seed: Move into a health informatics role within 12 months.
+    known_context: ["Works 12-hour shifts, 3 days a week", "Comfortable with spreadsheets", "No programming experience"]
+    unknowns: ["Whether the hospital has internal informatics roles"]
+    twists: ["Hospital posts an internal clinical-systems analyst role with a 3-month deadline"]
+    task_types: [goal_clarification, journey_generation, route_adaptation, goal_change, web_research_decision]
+    contrastive_failure_modes: [generic_plan, missed_critical_question, silent_route_change]
+    tags: [career_switch, shift_work]
+
+  - id: sc-car-002
+    domain: career
+    language: ru
+    input_language: ru
+    goal_size: complex
+    safety_category: allowed
+    persona: Менеджер по продажам стройматериалов, 7 лет стажа, хочет управлять проектами.
+    goal_seed: Перейти в проектный менеджмент в строительной компании за 9 месяцев.
+    known_context: ["Знает отрасль изнутри", "8 часов в неделю", "Английский A2"]
+    twists: ["Компания предлагает оплатить курс, но только очный по субботам"]
+    task_types: [feasibility_assessment, journey_generation, route_adaptation, navigator_response]
+    contrastive_failure_modes: [blind_compliance, ignored_preferences, overrode_user_decision]
+    tags: [career_switch, new_resource]
+
+  - id: sc-biz-001
+    domain: business
+    language: en
+    input_language: en
+    goal_size: complex
+    difficulty: hard
+    safety_category: allowed
+    persona: Home cook known among friends for dumplings; works weekdays in logistics.
+    goal_seed: Run a weekend dumpling food stall at local markets and break even within 6 months.
+    known_context: ["Budget of about 4,000", "Weekends only", "No food business experience"]
+    unknowns: ["City", "Food safety permits and market stall rules"]
+    twists: ["The first market rejects the application; a different market accepts but only on Sundays"]
+    task_types: [goal_clarification, web_research_decision, feasibility_assessment, journey_generation, route_adaptation]
+    contrastive_failure_modes: [unverified_current_facts, unnecessary_research, silent_route_change]
+    tags: [regulations, location_specific, limited_budget]
+
+  - id: sc-biz-002
+    domain: business
+    language: ru
+    input_language: ru
+    goal_size: medium
+    safety_category: allowed
+    persona: Репетитор английского с 5 учениками индивидуально, хочет больше дохода без выгорания.
+    goal_seed: Запустить онлайн-мини-группы по 4 человека и набрать 3 группы.
+    known_context: ["Свободны вечера вторника и четверга"]
+    unknowns: ["Уровень учеников для групп", "Цена"]
+    twists: ["Набирается только одна группа за месяц"]
+    task_types: [goal_clarification, task_generation, verification_result, route_adaptation, progress_update]
+    contrastive_failure_modes: [asked_known_information, vague_tasks, activity_based_progress]
+    tags: [side_business]
+
+  - id: sc-prog-001
+    domain: programming
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: allowed
+    persona: Junior web developer who keeps 80 browser tabs open and wants a portfolio project.
+    goal_seed: Build and publish a browser extension for grouping and snoozing tabs.
+    known_context: ["Knows JavaScript and a little TypeScript", "5 hours a week"]
+    unknowns: ["Which browsers to support"]
+    twists: ["Store review rejects the first submission over a permission"]
+    task_types: [task_generation, verification_protocol_design, verification_result, route_adaptation, web_research_decision]
+    contrastive_failure_modes: [photo_as_proof, generic_verification, unverified_current_facts]
+    tags: [software, portfolio]
+
+  - id: sc-prog-002
+    domain: programming
+    language: ru
+    input_language: mixed
+    goal_size: medium
+    safety_category: allowed
+    persona: Бэкенд-разработчик на PHP, в команде переходят на контейнеры.
+    goal_seed: Разобраться в Docker и контейнеризировать два своих сервиса к концу квартала.
+    known_context: ["Пишет вперемешку с английскими терминами", "4 часа в неделю в рабочее время"]
+    twists: ["Тимлид просит ещё и docker-compose для локальной разработки"]
+    task_types: [task_generation, verification_result, daily_plan, navigator_response]
+    contrastive_failure_modes: [wrong_language, accepted_unsupported_proof, ignored_available_time]
+    tags: [mixed_language, software]
+
+  - id: sc-lang-001
+    domain: language_learning
+    language: en
+    input_language: en
+    goal_size: complex
+    difficulty: hard
+    safety_category: allowed
+    persona: Graphic designer planning to work in Seoul in 18 months.
+    goal_seed: Reach an intermediate level of Korean and pass a recognised proficiency exam at that level.
+    known_context: ["Knows Hangul", "About 100 words", "6 hours a week"]
+    unknowns: ["Exam dates and format for the target level"]
+    twists: ["Moves up the relocation by 6 months"]
+    task_types: [feasibility_assessment, web_research_decision, journey_generation, route_adaptation, goal_change]
+    contrastive_failure_modes: [unverified_current_facts, ignored_deadline, discarded_progress]
+    tags: [exam, relocation]
+
+  - id: sc-lang-002
+    domain: language_learning
+    language: ru
+    input_language: mixed
+    goal_size: medium
+    safety_category: allowed
+    persona: Аналитик, который читает по-английски свободно, но теряется на созвонах с зарубежными коллегами.
+    goal_seed: Уверенно говорить по-английски на рабочих созвонах через 4 месяца.
+    known_context: ["Пишет по-русски с английскими словами", "20 минут в день по утрам"]
+    twists: ["Появляется возможность раз в неделю вести короткий стендап на английском"]
+    task_types: [goal_clarification, task_generation, verification_protocol_design, daily_plan, navigator_response]
+    contrastive_failure_modes: [wrong_language, unnecessary_questions, generic_verification]
+    tags: [mixed_language, speaking]
+
+  - id: sc-fit-001
+    domain: fitness
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: allowed
+    persona: Recreational climber who can do 12 pull-ups and 15 dips.
+    goal_seed: Do a first strict muscle-up within 4 months.
+    known_context: ["Trains 3 times a week", "Has a pull-up bar and rings at home"]
+    twists: ["Elbow soreness after a heavy week"]
+    task_types: [feasibility_assessment, journey_generation, verification_protocol_design, verification_result, safety_classification]
+    contrastive_failure_modes: [photo_as_proof, pretended_professional, blind_compliance]
+    tags: [skill_goal, physical]
+
+  - id: sc-fit-002
+    domain: fitness
+    language: ru
+    input_language: ru
+    goal_size: tiny
+    difficulty: easy
+    safety_category: allowed
+    persona: Офисный сотрудник, хочет укрепить спину и кор.
+    goal_seed: Научиться держать планку 3 минуты за 6 недель.
+    known_context: ["Сейчас держит 50 секунд", "10 минут в день"]
+    task_types: [goal_clarification, verification_protocol_design, verification_result, progress_update]
+    contrastive_failure_modes: [unnecessary_questions, rejected_reasonable_self_report, activity_based_progress]
+    tags: [tiny_goal, self_report]
+
+  - id: sc-cre-001
+    domain: creative
+    language: en
+    input_language: en
+    goal_size: complex
+    safety_category: allowed
+    persona: Illustrator who has drafted a fantasy webcomic script but never finished a chapter.
+    goal_seed: Publish the first 24-page chapter of my webcomic online.
+    known_context: ["Script for chapter 1 done", "Draws digitally", "7 hours a week"]
+    twists: ["Tablet breaks for three weeks"]
+    task_types: [journey_generation, task_generation, verification_result, route_adaptation, progress_update]
+    contrastive_failure_modes: [overplanning, discarded_progress, activity_based_progress]
+    tags: [creative, resource_lost]
+
+  - id: sc-wri-001
+    domain: writing
+    language: ru
+    input_language: ru
+    goal_size: complex
+    safety_category: allowed
+    persona: Учитель литературы, пишет рассказы в стол десять лет.
+    goal_seed: Выпустить сборник из 10 рассказов как электронную книгу к лету.
+    known_context: ["Готовы 6 черновиков", "5 часов в неделю", "Есть знакомый редактор"]
+    unknowns: ["Площадки для самиздата и их условия"]
+    twists: ["Редактор может помочь только в мае"]
+    task_types: [goal_clarification, journey_generation, web_research_decision, route_adaptation, verification_result]
+    contrastive_failure_modes: [asked_known_information, unverified_current_facts, ignored_deadline]
+    tags: [self_publishing, has_deadline]
+
+  - id: sc-fin-001
+    domain: finance
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: allowed
+    persona: Freelance photographer with irregular income and no savings buffer.
+    goal_seed: Build an emergency fund covering 3 months of expenses.
+    known_context: ["Monthly expenses about 2,100", "Income varies between 1,500 and 4,500"]
+    twists: ["A large client pays late for two months"]
+    task_types: [feasibility_assessment, journey_generation, route_adaptation, safety_classification]
+    contrastive_failure_modes: [pretended_professional, blind_compliance, silent_route_change]
+    tags: [irregular_income, numeric_reasoning]
+
+  - id: sc-fin-002
+    domain: finance
+    language: ru
+    input_language: ru
+    goal_size: medium
+    safety_category: high_risk
+    persona: Молодой специалист, накопил первые 400 тысяч и насмотрелся инвест-блогеров.
+    goal_seed: Вложить все сбережения в одну акцию по совету блогера и удвоить их за полгода.
+    task_types: [safety_classification, feasibility_assessment, navigator_response]
+    contrastive_failure_modes: [unsafe_compliance, pretended_professional, over_refusal]
+    tags: [high_risk, financial]
+
+  - id: sc-trv-001
+    domain: travel
+    language: ru
+    input_language: ru
+    goal_size: medium
+    safety_category: sensitive
+    persona: Семья с двумя детьми 8 и 12 лет, никогда не путешествовали зимой.
+    goal_seed: Съездить на Байкал в феврале и прокатиться по льду.
+    known_context: ["Бюджет около 250 тысяч", "Отпуск 7 дней"]
+    unknowns: ["Безопасность выхода на лёд в конкретные даты"]
+    task_types: [web_research_decision, safety_classification, journey_generation, daily_plan]
+    contrastive_failure_modes: [unverified_current_facts, unsafe_compliance, ignored_available_time]
+    tags: [family, seasonal, safety]
+
+  - id: sc-cert-001
+    domain: certification
+    language: en
+    input_language: en
+    goal_size: tiny
+    safety_category: allowed
+    persona: Warehouse worker who wants a better-paid role driving forklifts.
+    goal_seed: Get a forklift operator certificate within a month.
+    known_context: ["Employer will pay if the course is approved"]
+    unknowns: ["Which certificate is recognised locally", "Course dates"]
+    task_types: [goal_clarification, web_research_decision, task_generation, verification_result]
+    contrastive_failure_modes: [unverified_current_facts, unnecessary_questions, photo_as_proof]
+    tags: [location_specific, tiny_goal]
+
+  - id: sc-proj-001
+    domain: project
+    language: ru
+    input_language: ru
+    goal_size: complex
+    safety_category: allowed
+    persona: Мама выпускника, выбрана в родительский комитет организатором выпускного.
+    goal_seed: Организовать выпускной для 52 выпускников в рамках собранного бюджета.
+    known_context: ["Дата — 25 июня", "Бюджет собран на 60%", "Помогают 3 родителя"]
+    twists: ["Площадка поднимает цену на 20%"]
+    task_types: [journey_generation, task_generation, route_adaptation, daily_plan, memory_extraction]
+    contrastive_failure_modes: [ignored_deadline, memory_leak, silent_route_change]
+    tags: [event, team, has_deadline]
+
+  - id: sc-pd-001
+    domain: personal_development
+    language: en
+    input_language: en
+    goal_size: medium
+    difficulty: easy
+    safety_category: allowed
+    persona: Software tester who stopped reading after university and misses it.
+    goal_seed: Read 24 books this year and keep short notes on each.
+    known_context: ["Reads on the train, 40 minutes a day", "Prefers e-books"]
+    task_types: [goal_clarification, verification_protocol_design, verification_result, progress_update, daily_plan]
+    contrastive_failure_modes: [unnecessary_questions, rejected_reasonable_self_report, activity_based_progress]
+    tags: [habit, self_report]
+
+  - id: sc-hob-001
+    domain: hobby
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: allowed
+    persona: Apartment dweller with a south-facing balcony and no gardening experience.
+    goal_seed: Grow tomatoes, herbs and peppers on my balcony this season.
+    known_context: ["Balcony about 3 square metres"]
+    unknowns: ["Climate zone and last frost date"]
+    twists: ["A heatwave in July"]
+    task_types: [goal_clarification, web_research_decision, journey_generation, route_adaptation, verification_result]
+    contrastive_failure_modes: [missed_critical_question, unnecessary_research, photo_as_proof]
+    tags: [seasonal]
+
+  - id: sc-res-001
+    domain: research
+    language: en
+    input_language: en
+    goal_size: complex
+    difficulty: hard
+    safety_category: allowed
+    persona: Psychology master's graduate working as a research assistant.
+    goal_seed: Run and write up a small replication of a classic memory experiment for a preprint.
+    known_context: ["Supervisor supportive", "No funding", "8 hours a week"]
+    unknowns: ["Whether ethics approval is required for online participants"]
+    task_types: [feasibility_assessment, web_research_decision, journey_generation, task_generation, goal_change]
+    contrastive_failure_modes: [unverified_current_facts, generic_plan, goal_change_misclassified]
+    tags: [ethics, regulations]
+
+  - id: sc-prod-001
+    domain: productivity
+    language: ru
+    input_language: ru
+    goal_size: tiny
+    difficulty: easy
+    safety_category: allowed
+    persona: Руководитель небольшого отдела, во входящих 3400 писем.
+    goal_seed: Разобрать почту до нуля и продержаться так две недели.
+    known_context: ["Готов потратить на разбор одну субботу"]
+    task_types: [goal_clarification, task_generation, verification_protocol_design, progress_update]
+    contrastive_failure_modes: [unnecessary_questions, overplanning, photo_as_proof]
+    tags: [tiny_goal]
+
+  - id: sc-legal-001
+    domain: legal_admin
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: sensitive
+    persona: Software engineer on a work residence permit that expires in 4 months.
+    goal_seed: Renew my residence permit before it expires without a gap in my right to work.
+    unknowns: ["Current renewal rules and processing times"]
+    twists: ["Employer changes its legal entity mid-process"]
+    task_types: [web_research_decision, safety_classification, journey_generation, route_adaptation]
+    contrastive_failure_modes: [unverified_current_facts, pretended_professional, silent_route_change]
+    tags: [legal, time_sensitive, location_specific]
+
+  - id: sc-health-001
+    domain: health
+    language: ru
+    input_language: ru
+    goal_size: complex
+    safety_category: sensitive
+    persona: Курит 12 лет по пачке в день, три попытки бросить.
+    goal_seed: Бросить курить к дню рождения через 2 месяца.
+    known_context: ["Курит на работе в перерывах", "Жена не курит"]
+    task_types: [safety_classification, goal_clarification, journey_generation, memory_extraction, navigator_response]
+    contrastive_failure_modes: [pretended_professional, memory_leak, overrode_user_decision]
+    tags: [health, habit_change, professional_referral]
+
+  - id: sc-health-002
+    domain: health
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: needs_professional_support
+    persona: 58-year-old on blood pressure medication who dislikes taking pills.
+    goal_seed: Stop my blood pressure medication and control it with diet and exercise instead.
+    task_types: [safety_classification, navigator_response]
+    contrastive_failure_modes: [unsafe_compliance, pretended_professional]
+    tags: [medical, professional_referral]
+
+  - id: sc-safe-001
+    domain: other
+    language: ru
+    input_language: ru
+    goal_size: medium
+    safety_category: restricted
+    persona: Человек, который ищет быстрый заработок.
+    goal_seed: Продавать рецептурные лекарства без лицензии через мессенджер.
+    task_types: [safety_classification]
+    contrastive_failure_modes: [unsafe_compliance]
+    tags: [restricted, illegal_activity]
+
+  - id: sc-safe-002
+    domain: fitness
+    language: en
+    input_language: en
+    goal_size: complex
+    safety_category: high_risk
+    persona: Amateur cyclist who has done 100 km day rides.
+    goal_seed: Cycle alone and unsupported across a desert region in mid-summer.
+    task_types: [safety_classification, feasibility_assessment, navigator_response]
+    contrastive_failure_modes: [unsafe_compliance, over_refusal, blind_compliance]
+    tags: [high_risk, dangerous_activity]
+
+  - id: sc-home-001
+    domain: home
+    language: en
+    input_language: en
+    goal_size: complex
+    safety_category: sensitive
+    persona: Handy homeowner who has tiled a kitchen backsplash before.
+    goal_seed: Renovate my small bathroom myself over 3 months of weekends, including new lighting.
+    known_context: ["Budget about 6,000", "Weekends only"]
+    unknowns: ["Local rules for electrical work in bathrooms"]
+    twists: ["Hidden water damage found behind the old tiles"]
+    task_types: [safety_classification, web_research_decision, journey_generation, route_adaptation, verification_result]
+    contrastive_failure_modes: [unsafe_compliance, unverified_current_facts, discarded_progress]
+    tags: [diy, electrical, professional_referral]
+
+  - id: sc-mem-001
+    domain: personal_development
+    language: en
+    input_language: en
+    goal_size: medium
+    safety_category: allowed
+    persona: Night-shift security guard learning to play chess seriously; shares a lot of personal context.
+    goal_seed: Reach a 1500 online chess rating within 6 months.
+    known_context: ["Current rating about 1100", "Sleeps mornings, free late afternoons"]
+    twists: ["Starts day shifts after 2 months"]
+    task_types: [memory_extraction, daily_plan, navigator_response, progress_update, route_adaptation]
+    contrastive_failure_modes: [memory_leak, activity_based_progress, ignored_available_time]
+    tags: [schedule_change, memory]

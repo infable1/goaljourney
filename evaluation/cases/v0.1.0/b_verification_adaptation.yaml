@@ -1,0 +1,598 @@
+# Evaluation cases v0.1.0 — verification protocols, verification decisions, route adaptation, daily plan.
+cases:
+
+- id: ev-v-01
+  eval_version: "0.1.0"
+  title: Protocol for a short-story draft — artifact review, not a photo
+  dimensions: [verification_quality, structured_output_validity]
+  task_type: verification_protocol_design
+  language: en
+  input_language: en
+  domain: writing
+  safety_category: allowed
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal: {title: Finish and submit a short story to a literary magazine}
+    task:
+      id: t-draft
+      title: Write a complete 1,500-word first draft of the story
+      description: Write the whole story from opening to ending, about 1,500 words, without editing as you go.
+      why_it_matters: A complete draft is what revision works on.
+      expected_result: A complete draft of about 1,500 words.
+      estimated_duration_minutes: 180
+      sessions: 3
+      difficulty: 3
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: mentions_any, metric: verification_rigor, path: "protocol.methods[*].method", terms: [artifact_review]}
+    - {check: lint_absent, metric: verification_rigor, codes: [VP_PHOTO_ONLY, VP_WEAK_FOR_VERIFIABLE, VP_NATURE_MISMATCH]}
+    - {check: not_equals, metric: verification_rigor, path: protocol.confidence_ceiling, value: limited}
+    - {check: language, metric: language_match, value: en}
+  human_review_focus:
+    - Criteria are about completeness (beginning to end, length), not literary quality
+    - No requirement to share the story publicly
+  reference_output:
+    type: verification_protocol_design
+    response_language: en
+    message_to_user: I'll read the draft itself and check it's complete — beginning, middle and end at roughly the target length. It doesn't need to be good yet; that's what revision is for.
+    task_id: t-draft
+    protocol:
+      task_nature: writing
+      objective_verifiability: high
+      methods:
+        - method: artifact_review
+          role: required
+          instructions: Upload the draft as a document or paste the text.
+          acceptance_criteria: ["Story has an ending", "Between about 1,200 and 1,800 words"]
+        - method: follow_up_questions
+          role: supplementary
+          instructions: One question for the next step.
+          questions: ["Which scene do you already know you want to rewrite?"]
+      pass_criteria: ["A complete draft of roughly 1,500 words"]
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: The result is a text, so the text itself is the evidence.
+
+- id: ev-v-02
+  eval_version: "0.1.0"
+  title: Home strength workouts without a tracker — self-report, limited confidence
+  dimensions: [verification_quality, language_consistency]
+  task_type: verification_protocol_design
+  language: ru
+  input_language: ru
+  domain: fitness
+  safety_category: allowed
+  input:
+    operation: verification_protocol_design
+    today: "2026-09-27"
+    goal: {title: Стать сильнее и перестать уставать от подъёма по лестнице}
+    task:
+      id: t-strength
+      title: Сделать 3 силовые тренировки дома на этой неделе
+      description: Три тренировки по 30 минут с собственным весом — приседания, отжимания от стола, выпады, планка.
+      why_it_matters: Первая неделя показывает, получается ли встроить тренировки в график.
+      expected_result: 3 тренировки по 30 минут за неделю.
+      estimated_duration_minutes: 30
+      sessions: 3
+      difficulty: 2
+    conversation:
+      - role: user
+        content: Фитнес-браслета у меня нет, и снимать себя на видео я точно не буду.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: equals, metric: verification_rigor, path: protocol.confidence_ceiling, value: limited}
+    - {check: equals, metric: verification_rigor, path: protocol.self_report_only, value: true}
+    - {check: no_mentions, metric: user_agency_compliance, terms: ["видео", "браслет", "фото"], note: "user refused video; no tracker"}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - Respects the refusal to film; no demand for a tracker
+    - Structured self-report with specific fields
+  reference_output:
+    type: verification_protocol_design
+    response_language: ru
+    message_to_user: Здесь достаточно короткого отчёта после каждой тренировки — дата, сколько минут и какие упражнения. Это самоотчёт, поэтому уверенность отмечается как ограниченная, и для домашних тренировок это нормально.
+    task_id: t-strength
+    protocol:
+      task_nature: physical_activity
+      objective_verifiability: low
+      methods:
+        - method: structured_self_report
+          role: required
+          instructions: Отмечайте тренировку в тот же день.
+          fields: ["Дата", "Минут", "Упражнения и подходы", "Самочувствие (1–5)"]
+        - method: follow_up_questions
+          role: supplementary
+          instructions: Вопрос в конце недели.
+          questions: ["Какое упражнение далось тяжелее всего?"]
+      pass_criteria: ["3 записи по 30 минут за неделю"]
+      confidence_ceiling: limited
+      self_report_only: true
+      rationale: Домашнюю тренировку без устройств объективно не проверить; честный отчёт в тот же день — разумный уровень.
+
+- id: ev-vr-01
+  eval_version: "0.1.0"
+  title: Photo of a screen for a course module — needs more evidence
+  dimensions: [verification_quality, hallucination_resistance]
+  task_type: verification_result
+  language: ru
+  input_language: ru
+  domain: programming
+  safety_category: allowed
+  input:
+    operation: verification_result
+    today: "2026-09-27"
+    goal: {id: g-python, title: Выучить Python для анализа данных}
+    task:
+      id: t-module3
+      title: Пройти модуль 3 курса (функции) и решить 6 упражнений
+      description: Пройдите модуль 3 онлайн-курса и решите 6 упражнений к нему.
+      why_it_matters: Функции — основа всех следующих модулей.
+      expected_result: 6 решённых упражнений модуля 3.
+      estimated_duration_minutes: 180
+      sessions: 2
+      difficulty: 2
+      verification_protocol:
+        task_nature: knowledge
+        objective_verifiability: high
+        methods:
+          - {method: artifact_review, role: required, instructions: Код решений 6 упражнений (текстом или ссылкой).}
+          - {method: knowledge_test, role: required, instructions: 2 короткие задачи от AI на функции.}
+        pass_criteria: ["Код 6 упражнений работает", "Минимум 1 из 2 контрольных задач решена"]
+        confidence_ceiling: high
+        self_report_only: false
+        rationale: Навык программирования проверяется кодом и новыми задачами.
+    evidence:
+      - id: e1
+        type: photo
+        description_source: vision_model
+        description: Фото экрана ноутбука со страницей курса «Модуль 3 — завершено», код не виден.
+        content: Всё прошёл!
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: equals, metric: verification_status_accuracy, path: status, value: needs_more_evidence}
+    - {check: count_min, metric: verification_rigor, path: additional_evidence, min: 1}
+    - {check: lint_absent, metric: verification_rigor, codes: [VR_PHOTO_ONLY_VERIFIED, VR_VERIFIED_UNMET]}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - Asks for the code and the control tasks specifically
+    - Not a rejection; friendly tone
+  reference_output:
+    type: verification_result
+    response_language: ru
+    message_to_user: Отлично, что модуль пройден! Для зачёта пришлите, пожалуйста, код решений шести упражнений и решите две короткие задачи на функции — я пришлю их следующим сообщением.
+    task_id: t-module3
+    attempt: 1
+    status: needs_more_evidence
+    confidence: low
+    evidence_basis: mixed
+    criteria_results:
+      - {criterion: Код 6 упражнений работает, result: unclear, note: Код не прислан}
+      - {criterion: Минимум 1 из 2 контрольных задач решена, result: unclear, note: Задачи ещё не решались}
+    evidence_assessment:
+      - {evidence_id: e1, supports: Отметка платформы о прохождении модуля, limitations: Фото экрана не показывает решения}
+    reason: Фото показывает отметку о прохождении, но протокол требует код решений и контрольные задачи.
+    additional_evidence:
+      - {request: Код решений 6 упражнений, why: Обязательная часть протокола}
+      - {request: Решения 2 контрольных задач, why: Проверка навыка на новых задачах}
+    decision_summary:
+      what_changed: Задача пока не засчитана.
+      why: Фото экрана не заменяет код решений и контрольные задачи.
+      impact: Задача засчитается после отправки кода и решений.
+
+- id: ev-vr-02
+  eval_version: "0.1.0"
+  title: Consistent meditation self-report — verified with limited confidence
+  dimensions: [verification_quality, user_agency]
+  task_type: verification_result
+  language: en
+  input_language: en
+  domain: personal_development
+  safety_category: allowed
+  input:
+    operation: verification_result
+    today: "2026-09-27"
+    goal: {id: g-calm, title: Build a daily meditation habit}
+    task:
+      id: t-meditate
+      title: Meditate for 10 minutes on at least 6 of 7 days
+      description: A 10-minute guided or silent session each day this week.
+      why_it_matters: One consistent week shows the habit fits your routine.
+      expected_result: 6 or more logged sessions of 10 minutes.
+      estimated_duration_minutes: 10
+      sessions: 7
+      difficulty: 1
+      verification_protocol:
+        task_nature: habit
+        objective_verifiability: none
+        methods:
+          - {method: structured_self_report, role: required, instructions: Log each session the same day., fields: ["Date", "Minutes", "Time of day"]}
+        pass_criteria: ["At least 6 sessions of 10 minutes"]
+        confidence_ceiling: limited
+        self_report_only: true
+        rationale: Meditation cannot be verified objectively.
+    evidence:
+      - id: e1
+        type: structured_self_report
+        fields:
+          "2026-09-21": "10 min, morning"
+          "2026-09-22": "12 min, morning"
+          "2026-09-23": "10 min, evening"
+          "2026-09-25": "10 min, morning"
+          "2026-09-26": "15 min, morning"
+          "2026-09-27": "10 min, morning"
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: equals, metric: verification_status_accuracy, path: status, value: verified}
+    - {check: equals, metric: verification_rigor, path: confidence, value: limited}
+    - {check: lint_absent, metric: verification_rigor, codes: [VR_DEMANDS_OBJECTIVE_FOR_SELF_REPORT, VR_SELF_REPORT_DISMISSED]}
+    - {check: language, metric: language_match, value: en}
+  human_review_focus:
+    - Accepts reasonable self-report without demanding proof
+    - Labels confidence honestly
+  reference_output:
+    type: verification_result
+    response_language: en
+    message_to_user: Verified — six sessions this week, all at least 10 minutes. It's self-reported, so it's marked as limited confidence, which is the right level for meditation. Mornings seem to work best for you.
+    task_id: t-meditate
+    attempt: 1
+    status: verified
+    confidence: limited
+    evidence_basis: self_report
+    criteria_results:
+      - {criterion: At least 6 sessions of 10 minutes, result: met, note: 6 sessions logged}
+    reason: The log meets the self-report protocol.
+    additional_evidence: []
+    decision_summary:
+      what_changed: Task verified with limited confidence.
+      why: Six logged sessions meet the protocol, which is based on self-report.
+      impact: Next week's habit task is unlocked.
+
+- id: ev-vr-03
+  eval_version: "0.1.0"
+  title: Deployed portfolio site with repository — verified
+  dimensions: [verification_quality]
+  task_type: verification_result
+  language: en
+  input_language: en
+  domain: programming
+  safety_category: allowed
+  input:
+    operation: verification_result
+    today: "2026-09-27"
+    goal: {id: g-frontend, title: Get a junior front-end developer job}
+    task:
+      id: t-site
+      title: Deploy your portfolio site with 3 project cards and a contact form
+      description: Build and deploy a responsive portfolio site with three project cards linking to live demos and a working contact form.
+      why_it_matters: Recruiters click the link before reading the CV.
+      expected_result: A public URL with 3 project cards and a working contact form; code in a public repository.
+      estimated_duration_minutes: 480
+      sessions: 5
+      difficulty: 3
+      verification_protocol:
+        task_nature: software
+        objective_verifiability: high
+        methods:
+          - {method: url_review, role: required, instructions: Public URL; the page is fetched and checked.}
+          - {method: artifact_review, role: required, instructions: Public repository link.}
+        pass_criteria: ["Site is public", "3 project cards link to live demos", "Contact form submits", "Code in a public repository"]
+        confidence_ceiling: high
+        self_report_only: false
+        rationale: Deployed software is checked by visiting it and reading the code.
+    evidence:
+      - id: e1
+        type: url
+        url: https://sam-dev.example.com
+        description_source: system_fetch
+        content: "Public site. Three project cards, each linking to a live demo (all 3 respond). Contact form: test submission returned a success message. Responsive layout detected."
+      - id: e2
+        type: url
+        url: https://git.example.com/sam/portfolio
+        description_source: system_fetch
+        content: "Public repository with source, README and deployment config; last commit 2026-09-26."
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: equals, metric: verification_status_accuracy, path: status, value: verified}
+    - {check: one_of, metric: verification_rigor, path: confidence, values: [high, medium]}
+    - {check: equals, metric: verification_rigor, path: evidence_basis, value: objective}
+  human_review_focus:
+    - Each criterion checked against the fetched evidence
+  reference_output:
+    type: verification_result
+    response_language: en
+    message_to_user: Verified — the site is live, all three project demos respond, the contact form works and the code is public. Put the link at the top of your CV.
+    task_id: t-site
+    attempt: 1
+    status: verified
+    confidence: high
+    evidence_basis: objective
+    criteria_results:
+      - {criterion: Site is public, result: met}
+      - {criterion: 3 project cards link to live demos, result: met}
+      - {criterion: Contact form submits, result: met}
+      - {criterion: Code in a public repository, result: met}
+    reason: The fetched site and repository meet every criterion.
+    additional_evidence: []
+    decision_summary:
+      what_changed: Task verified.
+      why: All four criteria are met by the live site and the repository.
+      impact: The CV task is unlocked.
+
+- id: ev-vr-04
+  eval_version: "0.1.0"
+  title: Retry with the same insufficient evidence — not verified
+  dimensions: [verification_quality, user_agency]
+  task_type: verification_result
+  language: en
+  input_language: en
+  domain: business
+  safety_category: allowed
+  input:
+    operation: verification_result
+    today: "2026-09-27"
+    goal: {id: g-coaching, title: Grow my career-coaching practice to 8 regular clients}
+    task:
+      id: t-testimonials
+      title: Collect 3 written testimonials from past clients
+      description: Ask past clients for a short written testimonial and permission to publish it.
+      why_it_matters: Testimonials are the strongest proof on the booking page.
+      expected_result: 3 written testimonials with permission to publish.
+      estimated_duration_minutes: 90
+      difficulty: 2
+      verification_protocol:
+        task_nature: business_activity
+        objective_verifiability: high
+        methods:
+          - {method: artifact_review, role: required, instructions: Text of each testimonial and a note that permission was given.}
+        pass_criteria: ["3 distinct testimonials", "Permission to publish noted for each"]
+        confidence_ceiling: medium
+        self_report_only: false
+        rationale: The testimonials themselves are the artifact.
+    verification_history:
+      - attempt: 1
+        evidence:
+          - {id: e1, type: file, description_source: file_parser, content: "Testimonial from Dana: 'Working with Alex got me unstuck in two sessions.' Permission given."}
+        result_status: needs_more_evidence
+        result_summary: One testimonial of three.
+        requested_evidence: ["Two more testimonials with permission"]
+    evidence:
+      - {id: e2, type: file, description_source: file_parser, content: "Testimonial from Dana: 'Working with Alex got me unstuck in two sessions.' Permission given."}
+      - {id: e3, type: text_report, content: "That's all I could get — can we count it?"}
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: one_of, metric: verification_status_accuracy, path: status, values: [rejected, needs_more_evidence]}
+    - {check: equals, metric: verification_rigor, path: attempt, value: 2}
+    - {check: lint_absent, metric: verification_rigor, codes: [VR_VERIFIED_UNMET, VR_IGNORED_OPEN_REQUEST]}
+  human_review_focus:
+    - Notices the resubmission repeats the same single testimonial
+    - Offers the user a way forward (e.g. changing the task) instead of lowering the bar silently
+  reference_output:
+    type: verification_result
+    response_language: en
+    message_to_user: |-
+      This is the same testimonial from Dana as last time, so I can't count the task as done — it asks for three. Dana's quote is strong, though, and it's already usable on your page.
+      If getting two more feels stuck, we could change the task: for example, ask three recent clients in one message, or replace it with "one testimonial plus a short case study". Your call.
+    task_id: t-testimonials
+    attempt: 2
+    status: rejected
+    confidence: medium
+    evidence_basis: objective
+    criteria_results:
+      - {criterion: 3 distinct testimonials, result: not_met, note: The same single testimonial as attempt 1}
+      - {criterion: Permission to publish noted for each, result: met}
+    reason: The resubmission contains the same one testimonial; the task requires three.
+    additional_evidence: []
+    next_step: Ask three recent clients in one message, or agree a changed task.
+    decision_summary:
+      what_changed: Task not accepted on attempt 2; options to change the task offered.
+      why: No new testimonial was added since attempt 1.
+      impact: The booking-page task can still start with Dana's testimonial.
+
+- id: ev-ra-01
+  eval_version: "0.1.0"
+  title: Time drops 10 -> 3 h/week with a fixed thesis deadline
+  dimensions: [route_adaptation, user_agency, planning_quality]
+  task_type: route_adaptation
+  language: ru
+  input_language: ru
+  domain: education
+  safety_category: allowed
+  input:
+    operation: route_adaptation
+    today: "2026-09-27"
+    goal:
+      id: g-diploma
+      title: Защитить дипломный проект
+      deadline: "2027-01-20"
+      deadline_flexibility: fixed
+      available_time: {hours_per_week: 10}
+    time_budget: {hours_per_week: 3, previous_hours_per_week: 10}
+    journey:
+      pacing: {weekly_hours_planned: 10, horizon_weeks: 16}
+      regions:
+        - {id: r1, title: Исследование, order: 1, status: active}
+        - {id: r2, title: Текст и защита, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: Эксперименты завершены, region_id: r1, success_criteria: ["Результаты 3 экспериментов"], target_date: "2026-11-15"}
+        - {id: m2, title: Диплом защищён, region_id: r2, success_criteria: ["Защита пройдена"], target_date: "2027-01-20"}
+      nodes:
+        - {id: n1, type: task, title: Обзор литературы, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Эксперимент 1, region_id: r1, milestone_id: m1, status: verified, depends_on: [n1]}
+        - {id: n3, type: task, title: Эксперимент 2, region_id: r1, milestone_id: m1, status: in_progress, depends_on: [n2], priority: critical}
+        - {id: n4, type: task, title: "Эксперимент 3 (дополнительный, сравнение с альтернативным методом)", region_id: r1, milestone_id: m1, status: locked, depends_on: [n3], priority: optional}
+        - {id: n5, type: task, title: Написать главы 3–4, region_id: r2, milestone_id: m2, status: locked, depends_on: [n3]}
+        - {id: n6, type: task, title: Презентация и репетиция защиты, region_id: r2, milestone_id: m2, status: locked, depends_on: [n5]}
+    events:
+      - {type: less_time, date: "2026-09-26", description: "Устроился на работу, до защиты остаётся около 3 часов в неделю."}
+    conversation:
+      - role: user
+        content: Я вышел на работу, теперь на диплом максимум 3 часа в неделю. Защита 20 января, перенести нельзя.
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: preserves_nodes, metric: route_preservation, node_ids: [n1, n2]}
+    - {check: lint_absent, metric: constraint_compliance, codes: [RA_OVER_TIME, RA_TIME_CHANGE_IGNORED, RA_DEADLINE_BEYOND_GOAL, RA_GOAL_DEADLINE_NO_CONFIRM]}
+    - {check: equals, metric: user_agency_compliance, path: requires_user_confirmation, value: true}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - The optional experiment is the first thing cut
+    - The fixed defence date is kept; the residual risk is named
+  reference_output:
+    type: route_adaptation
+    response_language: ru
+    message_to_user: |-
+      Понятно: 3 часа в неделю и защита 20 января без переноса. До защиты около 16 недель, то есть примерно 48 часов. Предлагаю:
+      • убрать дополнительный эксперимент 3 — он помечен как необязательный;
+      • закончить эксперимент 2 к 1 ноября и сразу переходить к главам 3–4;
+      • оставить на презентацию и репетицию последние две недели.
+      Риск: если эксперимент 2 затянется, запаса почти не будет — тогда стоит заранее обсудить с научным руководителем сокращённый объём. Подтверждаете изменения?
+    trigger: {type: less_time, description: Время сократилось с 10 до 3 часов в неделю при фиксированной дате защиты.}
+    change_level: major
+    requires_user_confirmation: true
+    removed_nodes:
+      - {node_id: n4, reason: Необязательный эксперимент не помещается в 3 часа в неделю до фиксированной защиты.}
+    added_nodes: []
+    modified_nodes:
+      - node_id: n3
+        changes: [{field: due_date, from: null, to: "2026-11-01"}]
+        reason: Нужен запас на главы и подготовку к защите.
+    modified_deadlines:
+      - {target: milestone, target_id: m1, from: "2026-11-15", to: "2026-11-01", reason: Эксперимент 2 — последний перед текстом.}
+    new_weekly_hours_planned: 3
+    preserved_progress: [n1, n2]
+    user_options: ["Убрать эксперимент 3 (предложено)", "Оставить эксперимент 3 в сокращённом виде после согласования с руководителем"]
+    decision_summary:
+      what_changed: Убран необязательный эксперимент 3, эксперимент 2 — к 1 ноября, темп — 3 часа в неделю.
+      why: Дату защиты перенести нельзя, а времени стало втрое меньше.
+      impact: Около 48 часов до защиты; обзор литературы и эксперимент 1 сохраняются, риск по эксперименту 2 назван.
+
+- id: ev-ra-02
+  eval_version: "0.1.0"
+  title: Exam format changed (from provided research) — adapt and cite only the given source
+  dimensions: [route_adaptation, hallucination_resistance]
+  task_type: route_adaptation
+  language: en
+  input_language: en
+  domain: certification
+  safety_category: allowed
+  input:
+    operation: route_adaptation
+    today: "2026-09-27"
+    goal:
+      id: g-coa
+      title: Pass the CloudOps Associate certification
+      deadline: "2027-02-28"
+      available_time: {hours_per_week: 6}
+    journey:
+      regions:
+        - {id: r1, title: Theory, order: 1, status: active}
+        - {id: r2, title: Exam practice, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: All exam domains studied, region_id: r1, success_criteria: ["5 domains studied with quizzes"], target_date: "2026-12-15"}
+        - {id: m2, title: Exam ready, region_id: r2, success_criteria: ["2 practice exams at 75%+"], target_date: "2027-02-15"}
+      nodes:
+        - {id: n1, type: task, title: "Domains 1–2 with quizzes", region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: "Domains 3–5 with quizzes", region_id: r1, milestone_id: m1, status: in_progress, depends_on: [n1]}
+        - {id: n3, type: verification, title: Two multiple-choice practice exams, region_id: r2, milestone_id: m2, status: locked, depends_on: [n2]}
+    research_results:
+      - id: rr1
+        query: CloudOps Associate exam format 2027
+        finding: "From January 2027 the CloudOps Associate exam adds a 40-minute hands-on lab section alongside the multiple-choice part."
+        source: {title: "CloudOps certification board announcement (simulated source)", url: "https://cloudops-cert.example.org/news/2027-exam-update", retrieved_at: "2026-09-26"}
+    events:
+      - {type: external_fact_changed, date: "2026-09-26", description: The exam adds a hands-on lab section from January 2027.}
+    conversation:
+      - role: user
+        content: I just saw the exam is changing in January. Does that affect my plan?
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: claims_grounded, metric: hallucination_rate}
+    - {check: preserves_nodes, metric: route_preservation, node_ids: [n1]}
+    - {check: count_min, metric: decision_transparency, path: added_nodes, min: 1}
+    - {check: language, metric: language_match, value: en}
+  human_review_focus:
+    - Adds hands-on lab practice; keeps theory progress
+    - Cites only the provided announcement; no invented lab details
+  reference_output:
+    type: route_adaptation
+    response_language: en
+    message_to_user: |-
+      Yes — since your exam is in February, you'll get the new format with a 40-minute hands-on lab section (per the certification board's announcement). Your theory progress stays valid. I've added hands-on lab practice after the theory domains and a practice run of the lab part before the practice exams. Your dates don't change.
+    trigger: {type: external_fact_changed, description: A hands-on lab section is added to the exam from January 2027.}
+    change_level: moderate
+    requires_user_confirmation: false
+    removed_nodes: []
+    added_nodes:
+      - {id: n4, type: task, title: Hands-on lab practice for the 5 domains, region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n2], estimated_duration_minutes: 900, created_by: ai}
+      - {id: n5, type: verification, title: Timed 40-minute practice lab, region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n4], estimated_duration_minutes: 60, created_by: ai}
+    modified_nodes:
+      - node_id: n3
+        changes: [{field: depends_on, from: [n2], to: [n2, n5]}]
+        reason: Practice exams now come after lab practice.
+    modified_deadlines: []
+    preserved_progress: [n1]
+    external_claims:
+      - claim: From January 2027 the exam adds a 40-minute hands-on lab section.
+        status: verified_with_source
+        source: {title: "CloudOps certification board announcement (simulated source)", url: "https://cloudops-cert.example.org/news/2027-exam-update", retrieved_at: "2026-09-26"}
+        affects: Exam practice region
+    decision_summary:
+      what_changed: Added lab practice and a timed practice lab before the practice exams.
+      why: The exam you'll sit in February includes a new hands-on lab section.
+      impact: About 16 extra hours within the existing schedule; theory progress kept.
+
+- id: ev-dp-01
+  eval_version: "0.1.0"
+  title: Only 20 minutes today — one fitting, unblocked task
+  dimensions: [planning_quality, user_agency, language_consistency]
+  task_type: daily_plan
+  language: ru
+  input_language: ru
+  domain: career
+  safety_category: allowed
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    goal: {id: g-ux-portfolio, title: Собрать портфолио UX-дизайнера из 3 кейсов}
+    time_budget: {available_minutes_today: 20}
+    journey:
+      regions:
+        - {id: r1, title: Кейсы, order: 1, status: active}
+      milestones:
+        - {id: m1, title: 3 кейса опубликованы, region_id: r1, success_criteria: ["3 кейса на сайте"]}
+      nodes:
+        - {id: n1, type: task, title: Кейс 1 опубликован, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Структура кейса 2 — 6 разделов, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 20, priority: high}
+        - {id: n3, type: task, title: Отрисовать финальные экраны кейса 2, region_id: r1, milestone_id: m1, status: locked, depends_on: [n2], estimated_duration_minutes: 180}
+        - {id: n4, type: task, title: Обновить фото в профиле, region_id: r1, milestone_id: m1, status: available, estimated_duration_minutes: 15, priority: optional}
+    conversation:
+      - role: user
+        content: Сегодня у меня только 20 минут. Что сделать?
+  checks:
+    - {check: schema_valid, metric: schema_validity}
+    - {check: semantic_clean, metric: semantic_validity}
+    - {check: total_minutes_within, metric: constraint_compliance, max: 20}
+    - {check: lint_absent, metric: constraint_compliance, codes: [DP_OVER_TIME, DP_TOO_MANY, DP_BLOCKED_TASK, DP_DONE_TASK]}
+    - {check: count_max, metric: constraint_compliance, path: recommended_tasks, max: 2}
+    - {check: language, metric: language_match, value: ru}
+  human_review_focus:
+    - Picks the high-priority task that unlocks the next one
+  reference_output:
+    type: daily_plan
+    response_language: ru
+    message_to_user: За 20 минут — структура второго кейса, шесть разделов с парой строк в каждом. Это ровно столько времени и открывает отрисовку экранов в следующий раз.
+    available_minutes: 20
+    recommended_tasks:
+      - {task_id: n2, reason: Высокий приоритет и открывает следующую задачу., estimated_duration_minutes: 20}
+    total_minutes: 20
+    deferred:
+      - {task_id: n4, reason: Необязательная задача.}
+    next_action: Выписать шесть заголовков разделов кейса 2.

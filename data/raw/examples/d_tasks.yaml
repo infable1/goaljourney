@@ -1,0 +1,839 @@
+# Type D — operational task generation for one node/milestone. Each task: concrete action,
+# observable expected result, realistic duration (fits the user's sessions), task-specific verification.
+examples:
+
+- id: gj-task-001
+  schema_version: "0.1.0"
+  task_type: task_generation
+  behavior: [task, verification_protocol]
+  language: en
+  input_language: en
+  domain: business
+  difficulty: medium
+  goal_size: medium
+  tags: [saas, customer_discovery]
+  safety_category: allowed
+  scenario_group: sg-task-budget-app-beta
+  input:
+    operation: task_generation
+    today: "2026-09-27"
+    goal:
+      id: g-budget-app
+      title: Launch the MVP of my budgeting app
+      available_time:
+        hours_per_week: 6
+        session_minutes: 60
+    journey:
+      regions:
+        - {id: r1, title: Build the MVP, order: 1, status: completed}
+        - {id: r2, title: Beta test, order: 2, status: active}
+      milestones:
+        - {id: m1, title: MVP works end to end, region_id: r1, success_criteria: ["Core flows work on a real phone"], status: verified}
+        - {id: m2, title: 3 beta testers using the app weekly, region_id: r2, success_criteria: ["3 testers active for 2 weeks"]}
+      nodes:
+        - {id: n5, type: task, title: Ship a TestFlight build, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n6, type: task, title: Recruit 3 beta testers, region_id: r2, milestone_id: m2, status: available, depends_on: [n5]}
+    target_node_id: n6
+    conversation:
+      - role: user
+        content: The TestFlight build is out. Now I need my first 3 beta testers but I have no idea where to find them. Break this down for me?
+  expected_output:
+    type: task_generation
+    response_language: en
+    message_to_user: |-
+      Here's "Recruit 3 beta testers" broken into four one-hour steps. The screener matters most: three well-matched testers who actually budget monthly will teach you more than twenty random downloads.
+    for_node_id: n6
+    tasks:
+      - id: n6-t1
+        title: Write a 5-sentence beta invite and a 3-question screener
+        description: Draft a short invite (who it's for, what they get, time commitment of 15 minutes a week for 2 weeks) and three screening questions, e.g. how they track spending today.
+        why_it_matters: The screener filters for people who actually budget, so their feedback reflects your real users.
+        expected_result: One invite text and a 3-question screener form link.
+        estimated_duration_minutes: 45
+        difficulty: 2
+        dependencies: []
+        verification_protocol:
+          task_nature: writing
+          objective_verifiability: high
+          methods:
+            - method: artifact_review
+              role: required
+              instructions: Paste the invite text and the screener link.
+              acceptance_criteria: ["Invite states the time commitment", "Screener has 3 questions that separate real budgeters from curious visitors"]
+          pass_criteria: ["Invite and screener meet the criteria"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Both are texts that can be reviewed directly.
+      - id: n6-t2
+        title: Post the invite in 3 communities where people discuss budgeting
+        description: Pick three communities (forums, subreddits, local groups) where budgeting is discussed, read each one's self-promotion rules, and post the invite only where it is allowed.
+        why_it_matters: Going where your users already talk about the problem beats generic advertising at this stage.
+        expected_result: Three live posts with links and a note of each community's rules.
+        estimated_duration_minutes: 60
+        difficulty: 2
+        dependencies: [n6-t1]
+        verification_protocol:
+          task_nature: business_activity
+          objective_verifiability: high
+          methods:
+            - method: url_review
+              role: required
+              instructions: Submit the 3 post links.
+              acceptance_criteria: ["Posts are live", "Each community's promotion rules are respected"]
+          pass_criteria: ["3 live posts"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Public posts can be opened and checked.
+      - id: n6-t3
+        title: Run a 20-minute onboarding call with each tester who passes the screener
+        description: Schedule a short call with each qualified applicant, watch them install the build and set up their first budget, and note where they hesitate.
+        why_it_matters: Watching first use reveals friction that testers rarely report in writing.
+        expected_result: Call notes for 3 testers with at least 3 observations each.
+        estimated_duration_minutes: 60
+        sessions: 1
+        difficulty: 3
+        dependencies: [n6-t2]
+        verification_protocol:
+          task_nature: business_activity
+          objective_verifiability: medium
+          methods:
+            - method: structured_result
+              role: required
+              instructions: One entry per call.
+              fields: ["Date", "Tester profile (one line)", "Where they hesitated", "3 observations"]
+            - method: follow_up_questions
+              role: supplementary
+              instructions: One question to check the notes reflect real calls.
+              questions: ["Which observation surprised you most, and what will you change first?"]
+          pass_criteria: ["3 calls logged with at least 3 concrete observations each"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: Structured, specific notes are hard to fabricate convincingly and are what the next step needs; calls themselves are not recorded, so confidence is medium.
+      - id: n6-t4
+        title: Set up a feedback form and a weekly 2-question check-in message
+        description: Create a short form for bugs and ideas, and a weekly message asking what they used the app for and what annoyed them.
+        why_it_matters: A fixed weekly rhythm keeps testers active for the two weeks the milestone requires.
+        expected_result: A form link and the check-in message text scheduled for 2 weeks.
+        estimated_duration_minutes: 30
+        difficulty: 1
+        dependencies: [n6-t1]
+        verification_protocol:
+          task_nature: business_activity
+          objective_verifiability: high
+          methods:
+            - method: url_review
+              role: required
+              instructions: Submit the form link.
+            - method: artifact_review
+              role: required
+              instructions: Paste the check-in message.
+          pass_criteria: ["Form is live", "Check-in message has exactly 2 questions"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Both artifacts are directly checkable.
+    decision_summary: null
+  annotations:
+    rationale: Every task has a concrete object and quantity, fits the 60-minute sessions, has explicit dependencies and a verification matched to its nature.
+  contrastive:
+    - id: gj-task-001-c1
+      failure_modes: [vague_tasks, generic_verification]
+      critique: '"Research the market" and "Do marketing" are not actions anyone can start or finish, and "tell me what you did" is not a verification for work that leaves checkable artifacts.'
+      output:
+        type: task_generation
+        response_language: en
+        message_to_user: Here are your tasks!
+        for_node_id: n6
+        tasks:
+          - id: n6-t1
+            title: Research the market
+            description: Look into who might use your app.
+            why_it_matters: You need to know your market.
+            expected_result: Better understanding of the market.
+            estimated_duration_minutes: 60
+            difficulty: 2
+            verification_protocol:
+              task_nature: research
+              objective_verifiability: high
+              methods:
+                - {method: structured_self_report, role: required, instructions: Tell me what you did.}
+              pass_criteria: ["User says it's done"]
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: Easy to check.
+          - id: n6-t2
+            title: Do marketing
+            description: Promote the app.
+            why_it_matters: People need to hear about it.
+            expected_result: More awareness.
+            estimated_duration_minutes: 60
+            difficulty: 2
+            verification_protocol:
+              task_nature: business_activity
+              objective_verifiability: high
+              methods:
+                - {method: structured_self_report, role: required, instructions: Tell me what you did.}
+              pass_criteria: ["User says it's done"]
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: Easy to check.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-task-002
+  schema_version: "0.1.0"
+  task_type: task_generation
+  behavior: [task, verification_protocol]
+  language: ru
+  input_language: ru
+  domain: career
+  difficulty: medium
+  goal_size: medium
+  tags: [public_speaking, has_deadline]
+  safety_category: allowed
+  scenario_group: sg-task-conference-talk
+  input:
+    operation: task_generation
+    today: "2026-09-27"
+    goal:
+      id: g-talk
+      title: Выступить с 15-минутным докладом на профессиональной конференции
+      deadline: "2026-11-05"
+      available_time:
+        hours_per_week: 4
+        session_minutes: 90
+    journey:
+      regions:
+        - {id: r1, title: Подготовка доклада, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Доклад готов и отрепетирован, region_id: r1, success_criteria: ["Два прогона уложились в 15 минут"], target_date: "2026-10-29"}
+      nodes:
+        - {id: n1, type: task, title: Тема доклада согласована с организаторами, region_id: r1, milestone_id: m1, status: completed}
+        - {id: n2, type: task, title: Подготовить доклад, region_id: r1, milestone_id: m1, status: available, depends_on: [n1]}
+    target_node_id: n2
+    conversation:
+      - role: user
+        content: Тему согласовали — «Как мы сократили время релиза с двух недель до двух дней». Разбей, пожалуйста, подготовку доклада на задачи. Выступаю 5 ноября, это мой первый доклад.
+  expected_output:
+    type: task_generation
+    response_language: ru
+    message_to_user: |-
+      Подготовка разбита на 4 шага на ближайшие 4 недели. Главное для первого доклада — не слайды, а прогоны вслух: они показывают, укладываетесь ли вы в 15 минут и где теряется мысль. Поэтому два последних шага — репетиции, и они запланированы с запасом до 29 октября.
+    for_node_id: n2
+    tasks:
+      - id: n2-t1
+        title: Сформулировать главную мысль доклада одной фразой и 3 тезиса к ней
+        description: Запишите одну фразу, которую слушатели должны унести с собой, и три тезиса-доказательства из вашего опыта сокращения времени релиза.
+        why_it_matters: Одна ясная мысль удерживает 15-минутный доклад от расползания; тезисы станут разделами.
+        expected_result: Текст из одной фразы и 3 тезисов, у каждого — пример или цифра из вашего проекта.
+        estimated_duration_minutes: 40
+        difficulty: 2
+        dependencies: []
+        verification_protocol:
+          task_nature: writing
+          objective_verifiability: high
+          methods:
+            - method: artifact_review
+              role: required
+              instructions: Вставьте главную мысль и тезисы.
+              acceptance_criteria: ["Главная мысль — одно предложение", "У каждого тезиса есть конкретный пример или цифра"]
+          pass_criteria: ["Текст соответствует критериям"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Текст проверяется напрямую.
+      - id: n2-t2
+        title: Собрать черновик слайдов — не больше 12 слайдов
+        description: По тезисам сделайте черновик слайдов, на каждом — не больше одной мысли и минимум текста; добавьте слайд с цифрами «было / стало».
+        why_it_matters: 12 слайдов на 15 минут — примерно минута с небольшим на слайд, это удобный темп для первого выступления.
+        expected_result: Файл презентации с 12 слайдами или меньше.
+        estimated_duration_minutes: 90
+        difficulty: 2
+        dependencies: [n2-t1]
+        verification_protocol:
+          task_nature: creative_work
+          objective_verifiability: high
+          methods:
+            - method: artifact_review
+              role: required
+              instructions: Загрузите файл презентации или ссылку.
+              acceptance_criteria: ["Не больше 12 слайдов", "Есть слайд «было / стало»", "Каждый слайд соответствует одному из тезисов"]
+          pass_criteria: ["Презентация соответствует критериям"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Структуру и объём слайдов видно в самом файле.
+      - id: n2-t3
+        title: Провести 2 прогона вслух с таймером и записать их на диктофон
+        description: Проговорите доклад целиком два раза, не останавливаясь. Запишите оба прогона и отметьте время каждого.
+        why_it_matters: Только прогон вслух показывает реальную длительность и места, где вы сбиваетесь.
+        expected_result: 2 аудиозаписи и время каждого прогона.
+        estimated_duration_minutes: 60
+        difficulty: 3
+        dependencies: [n2-t2]
+        verification_protocol:
+          task_nature: skill_acquisition
+          objective_verifiability: high
+          methods:
+            - method: audio
+              role: required
+              instructions: Загрузите обе записи; система расшифрует их и измерит длительность.
+              acceptance_criteria: ["Два полных прогона", "Второй прогон не длиннее 16 минут"]
+            - method: follow_up_questions
+              role: required
+              instructions: Короткие вопросы после прогонов.
+              questions: ["В каком месте вы чаще всего сбивались?", "Что вы сократили после первого прогона?"]
+          pass_criteria: ["Два полных прогона записаны", "Второй прогон укладывается примерно в 15 минут"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Запись объективно показывает длительность и полноту прогона; вопросы фиксируют выводы.
+      - id: n2-t4
+        title: Прогон перед 2 слушателями и сбор отзывов по 3 вопросам
+        description: Выступите перед двумя коллегами или друзьями и попросите ответить на три вопроса — что запомнилось, где было непонятно, что лишнее.
+        why_it_matters: Живые слушатели замечают то, что не видно на записи, — непонятные термины и провалы в логике.
+        expected_result: Ответы двух слушателей на 3 вопроса и список правок.
+        estimated_duration_minutes: 60
+        difficulty: 3
+        dependencies: [n2-t3]
+        verification_protocol:
+          task_nature: social_interaction
+          objective_verifiability: medium
+          methods:
+            - method: structured_result
+              role: required
+              instructions: Внесите ответы каждого слушателя и итоговый список правок.
+              fields: ["Слушатель (имя не обязательно)", "Что запомнилось", "Где было непонятно", "Что лишнее", "Правки"]
+          pass_criteria: ["Ответы двух слушателей внесены", "Есть список правок"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: Отзывы вносит сам пользователь, но их структура и правки показывают, что прогон состоялся.
+    decision_summary: null
+  annotations:
+    rationale: Ordered, dependency-correct steps with measurable results; the audio run-through is objective evidence for a skill task; all tasks fit 90-minute sessions and end before the milestone date.
+  provenance: *prov
+
+- id: gj-task-003
+  schema_version: "0.1.0"
+  task_type: task_generation
+  behavior: [task]
+  language: en
+  input_language: en
+  domain: programming
+  difficulty: medium
+  goal_size: medium
+  tags: [short_sessions, preferences, skill_goal]
+  safety_category: allowed
+  scenario_group: sg-task-sql-basics
+  input:
+    operation: task_generation
+    today: "2026-09-27"
+    goal:
+      id: g-sql
+      title: Learn SQL well enough to answer questions about my shop's sales data
+      available_time:
+        hours_per_week: 3
+        session_minutes: 30
+      preferences:
+        - Hands-on exercises over reading long tutorials
+      resources:
+        - A CSV export of 18 months of sales from my online shop
+    journey:
+      regions:
+        - {id: r1, title: SQL basics, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Answer 5 real business questions with SQL, region_id: r1, success_criteria: ["5 queries on own data return correct answers"]}
+      nodes:
+        - {id: n1, type: task, title: SQL basics, region_id: r1, milestone_id: m1, status: available}
+    target_node_id: n1
+    conversation:
+      - role: user
+        content: I only get 30-minute slots on weekday evenings, and I learn by doing, not by reading. Can you break down the SQL basics part?
+  expected_output:
+    type: task_generation
+    response_language: en
+    message_to_user: |-
+      Here are five 30-minute sessions, all hands-on. You'll work on your own sales CSV from the second session on, so every exercise is a question you actually care about.
+    for_node_id: n1
+    tasks:
+      - id: n1-t1
+        title: Load your sales CSV into a free browser-based SQL sandbox
+        description: Open a browser SQLite tool, import the sales CSV as a table and run SELECT COUNT(*) on it.
+        why_it_matters: Practising on your own data from day one keeps every later exercise relevant.
+        expected_result: The table loaded and the row count from COUNT(*) that matches the CSV.
+        estimated_duration_minutes: 30
+        difficulty: 1
+        dependencies: []
+        verification_protocol:
+          task_nature: software
+          objective_verifiability: high
+          methods:
+            - method: practical_test
+              role: required
+              instructions: Paste the query and its output; the navigator compares the count with the number of rows you report in the CSV.
+              acceptance_criteria: ["Query runs", "Count matches the CSV row count"]
+          pass_criteria: ["COUNT(*) output matches the CSV"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: A query and its output are directly checkable.
+      - id: n1-t2
+        title: Solve 8 SELECT and WHERE exercises on your sales table
+        description: Answer eight small questions such as "orders over 50" or "orders from March" using SELECT, WHERE, ORDER BY and LIMIT.
+        why_it_matters: Filtering and sorting cover most everyday questions about sales data.
+        expected_result: 8 queries with their outputs.
+        estimated_duration_minutes: 30
+        difficulty: 2
+        dependencies: [n1-t1]
+        verification_protocol:
+          task_nature: software
+          objective_verifiability: high
+          methods:
+            - method: practical_test
+              role: required
+              instructions: Paste each query with the first rows of its output.
+              acceptance_criteria: ["At least 7 of 8 queries answer the question asked"]
+          pass_criteria: ["7 of 8 correct"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Queries can be checked against the question they answer.
+      - id: n1-t3
+        title: Solve 6 GROUP BY exercises (totals by month and by product)
+        description: Use GROUP BY with SUM, COUNT and AVG to get revenue per month, orders per product and average order value.
+        why_it_matters: Aggregation turns raw orders into the numbers you make decisions with.
+        expected_result: 6 aggregate queries with outputs.
+        estimated_duration_minutes: 30
+        difficulty: 3
+        dependencies: [n1-t2]
+        verification_protocol:
+          task_nature: software
+          objective_verifiability: high
+          methods:
+            - method: practical_test
+              role: required
+              instructions: Paste queries and outputs.
+              acceptance_criteria: ["Grouping column matches the question", "At least 5 of 6 correct"]
+          pass_criteria: ["5 of 6 correct"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Directly checkable.
+      - id: n1-t4
+        title: Write 3 queries that combine a WHERE filter with GROUP BY
+        description: For example, best-selling product in the last 3 months or revenue per month for one category.
+        why_it_matters: Combining filters with aggregation is what most real business questions need.
+        expected_result: 3 queries with outputs.
+        estimated_duration_minutes: 30
+        difficulty: 3
+        dependencies: [n1-t3]
+        verification_protocol:
+          task_nature: software
+          objective_verifiability: high
+          methods:
+            - method: practical_test
+              role: required
+              instructions: Paste queries and outputs.
+          pass_criteria: ["3 correct queries"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Directly checkable.
+      - id: n1-t5
+        title: Answer 5 of your own business questions with SQL
+        description: Write down five questions you actually have about your shop and answer each with one query.
+        why_it_matters: This is the milestone itself — SQL applied to your own decisions.
+        expected_result: 5 questions, 5 queries, 5 answers in one note.
+        estimated_duration_minutes: 30
+        difficulty: 3
+        dependencies: [n1-t4]
+        verification_protocol:
+          task_nature: software
+          objective_verifiability: high
+          methods:
+            - method: practical_test
+              role: required
+              instructions: Paste each question, query and result.
+            - method: follow_up_questions
+              role: supplementary
+              instructions: One question about using the result.
+              questions: ["Which answer will change something you do in the shop?"]
+          pass_criteria: ["5 queries correctly answer their questions"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Correctness of queries is checkable; the follow-up ties the skill to the goal.
+    decision_summary: null
+  annotations:
+    rationale: Respects 30-minute sessions and the hands-on preference, uses the user's own data (a resource they mentioned), strict dependency chain.
+  contrastive:
+    - id: gj-task-003-c1
+      failure_modes: [ignored_available_time, ignored_preferences]
+      critique: Tasks take 2 hours in one sitting although the user only has 30-minute slots, and the first task is reading a long tutorial — the opposite of the stated preference.
+      output:
+        type: task_generation
+        response_language: en
+        message_to_user: Here's a thorough plan.
+        for_node_id: n1
+        tasks:
+          - id: n1-t1
+            title: Read chapters 1–4 of a comprehensive SQL tutorial
+            description: Read the first four chapters carefully.
+            why_it_matters: Theory first.
+            expected_result: 4 chapters read.
+            estimated_duration_minutes: 120
+            difficulty: 2
+            verification_protocol:
+              task_nature: knowledge
+              objective_verifiability: high
+              methods:
+                - method: knowledge_test
+                  role: required
+                  instructions: Answer 10 quiz questions.
+              pass_criteria: ["8 of 10 correct"]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Quiz checks reading.
+          - id: n1-t2
+            title: Complete 40 practice exercises on a sample database
+            description: Work through all 40 exercises.
+            why_it_matters: Practice makes perfect.
+            expected_result: 40 exercises solved.
+            estimated_duration_minutes: 180
+            difficulty: 3
+            dependencies: [n1-t1]
+            verification_protocol:
+              task_nature: software
+              objective_verifiability: high
+              methods:
+                - method: practical_test
+                  role: required
+                  instructions: Paste your solutions.
+              pass_criteria: ["35 of 40 correct"]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Solutions are checkable.
+  provenance: *prov
+
+- id: gj-task-004
+  schema_version: "0.1.0"
+  task_type: task_generation
+  behavior: [task, source_awareness]
+  language: ru
+  input_language: ru
+  domain: home
+  difficulty: medium
+  goal_size: medium
+  tags: [real_estate, external_professionals]
+  safety_category: allowed
+  scenario_group: sg-task-flat-sale-prep
+  input:
+    operation: task_generation
+    today: "2026-09-27"
+    goal:
+      id: g-flat
+      title: Продать квартиру до конца года
+      deadline: "2026-12-25"
+      available_time:
+        hours_per_week: 5
+        session_minutes: 120
+    journey:
+      regions:
+        - {id: r1, title: Подготовка к продаже, order: 1, status: active}
+        - {id: r2, title: Показы и сделка, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: Квартира готова к показам, region_id: r1, success_criteria: ["Дефекты устранены", "Цена определена", "Документы собраны"], target_date: "2026-10-25"}
+        - {id: m2, title: Сделка закрыта, region_id: r2, success_criteria: ["Договор подписан"], target_date: "2026-12-25"}
+      nodes:
+        - {id: n1, type: task, title: Подготовить квартиру к показам, region_id: r1, milestone_id: m1, status: available}
+        - {id: n2, type: task, title: Выставить объявление и провести показы, region_id: r2, milestone_id: m2, status: locked, depends_on: [n1]}
+    target_node_id: n1
+    conversation:
+      - role: user
+        content: Разбей подготовку квартиры к продаже на конкретные задачи. Есть около 5 часов в неделю, лучше блоками по два часа.
+  expected_output:
+    type: task_generation
+    response_language: ru
+    message_to_user: |-
+      Подготовку разбил на 4 задачи, каждую — блоками до двух часов. Первые две можно делать параллельно: список дефектов и оценка стоимости от трёх агентств. Список документов для сделки зависит от вашей ситуации, поэтому его стоит получить у риелтора или нотариуса, а не из общих советов.
+    for_node_id: n1
+    tasks:
+      - id: n1-t1
+        title: Составить список мелких дефектов по каждой комнате с приоритетом
+        description: Обойдите квартиру и запишите всё, что бросится в глаза покупателю — отклеившиеся обои, капающий кран, сколы. Отметьте приоритет «до показов» или «не критично».
+        why_it_matters: Мелкие дефекты сильнее всего портят первое впечатление на показе, а устранить их обычно недорого.
+        expected_result: Список дефектов по комнатам с приоритетом у каждого пункта.
+        estimated_duration_minutes: 60
+        difficulty: 1
+        dependencies: []
+        verification_protocol:
+          task_nature: administrative
+          objective_verifiability: medium
+          methods:
+            - method: structured_result
+              role: required
+              instructions: Внесите список в форму.
+              fields: ["Комната", "Дефект", "Приоритет"]
+            - method: photo
+              role: supplementary
+              instructions: По желанию — фото дефектов с приоритетом «до показов», чтобы потом сравнить «до / после».
+          pass_criteria: ["Список охватывает все комнаты", "У каждого пункта есть приоритет"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: Список проверяется по полноте и структуре; фото — только дополнение.
+      - id: n1-t2
+        title: Получить оценку стоимости от 3 агентств недвижимости
+        description: Запросите у трёх агентств или частных риелторов оценку стоимости квартиры и сравните диапазоны и аргументы.
+        why_it_matters: Три независимые оценки защищают от слишком высокой цены, из-за которой квартира долго не продаётся, и от слишком низкой.
+        expected_result: Таблица из 3 оценок с диапазоном цены, датой и названием агентства.
+        estimated_duration_minutes: 180
+        sessions: 2
+        difficulty: 2
+        dependencies: []
+        verification_protocol:
+          task_nature: administrative
+          objective_verifiability: high
+          methods:
+            - method: structured_result
+              role: required
+              instructions: Внесите три оценки.
+              fields: ["Агентство", "Дата", "Диапазон цены", "Главный аргумент"]
+            - method: third_party_confirmation
+              role: supplementary
+              instructions: Письмо или сообщение агентства с оценкой, если оно есть.
+          pass_criteria: ["Три оценки от разных агентств внесены"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: Оценки — конкретные данные от третьих лиц, их можно подтвердить перепиской.
+      - id: n1-t3
+        title: Устранить все дефекты с приоритетом «до показов»
+        description: По списку из первой задачи устраните дефекты с высоким приоритетом сами или с помощью мастера.
+        why_it_matters: Это то, что покупатель увидит на показе.
+        expected_result: Все пункты с приоритетом «до показов» отмечены как устранённые.
+        estimated_duration_minutes: 480
+        sessions: 4
+        difficulty: 3
+        dependencies: [n1-t1]
+        verification_protocol:
+          task_nature: administrative
+          objective_verifiability: medium
+          methods:
+            - method: structured_result
+              role: required
+              instructions: Отметьте каждый пункт списка как устранённый и коротко опишите, как.
+            - method: photo
+              role: supplementary
+              instructions: Фото «после» для пунктов, у которых есть фото «до».
+          pass_criteria: ["Все пункты «до показов» отмечены с описанием"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: Описание каждого пункта плюс фото «до / после» — разумная комбинация; одно фото ничего не доказывает.
+      - id: n1-t4
+        title: Получить у риелтора или нотариуса список документов для сделки и отметить недостающие
+        description: Запросите список документов, нужных именно в вашей ситуации (собственники, основание владения), и отметьте, что уже есть на руках.
+        why_it_matters: Нехватка документа может задержать сделку на недели; требования зависят от ситуации и правил, поэтому список нужен от специалиста.
+        expected_result: Список документов со статусом «есть / нужно получить» и сроками получения.
+        estimated_duration_minutes: 90
+        difficulty: 2
+        dependencies: []
+        verification_protocol:
+          task_nature: administrative
+          objective_verifiability: medium
+          methods:
+            - method: structured_result
+              role: required
+              instructions: Внесите список документов со статусами.
+              fields: ["Документ", "Есть / нужно получить", "Кто выдаёт", "Срок"]
+          pass_criteria: ["Список получен от специалиста", "У каждого документа есть статус"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: Сами документы не загружаются из соображений приватности; достаточно структурированного списка.
+    decision_summary: null
+  annotations:
+    rationale: Operational tasks with priorities, parallelisable first steps, long work split into 2-hour sessions, legal document requirements delegated to professionals instead of asserted.
+  provenance: *prov
+
+- id: gj-task-005
+  schema_version: "0.1.0"
+  task_type: task_generation
+  behavior: [task, verification_protocol]
+  language: en
+  input_language: en
+  domain: hobby
+  difficulty: easy
+  goal_size: tiny
+  tags: [tiny_goal, physical_artifact, photo_supplementary]
+  safety_category: allowed
+  scenario_group: sg-task-birdhouse
+  input:
+    operation: task_generation
+    today: "2026-09-27"
+    goal:
+      id: g-bird
+      title: Build a birdhouse with my kids
+      available_time:
+        hours_per_week: 4
+    journey:
+      regions:
+        - {id: r1, title: Build it, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Birdhouse mounted in the garden, region_id: r1, success_criteria: ["Birdhouse assembled and mounted"]}
+      nodes:
+        - {id: n1, type: task, title: Build and mount the birdhouse, region_id: r1, milestone_id: m1, status: available}
+    target_node_id: n1
+    conversation:
+      - role: user
+        content: I want to build a birdhouse with my two kids (7 and 10) this month. I have basic tools — saw, drill, hammer. What are the steps?
+  expected_output:
+    type: task_generation
+    response_language: en
+    message_to_user: |-
+      Four steps, each a good-sized weekend activity with kids. The sawing and drilling are adult jobs; the kids can measure, sand, assemble with glue and nails, and pick the spot.
+    for_node_id: n1
+    tasks:
+      - id: n1-t1
+        title: Pick a simple small-bird plan and write a cut list with materials
+        description: Choose a beginner plan for small garden birds and list every board with its dimensions, plus screws or nails, wood glue and sandpaper.
+        why_it_matters: A cut list prevents a second trip to the store and mid-project guesswork with kids waiting.
+        expected_result: A cut list with dimensions for each piece and a materials list.
+        estimated_duration_minutes: 30
+        difficulty: 1
+        dependencies: []
+        verification_protocol:
+          task_nature: creative_work
+          objective_verifiability: high
+          methods:
+            - method: artifact_review
+              role: required
+              instructions: Paste or upload the cut list and materials list.
+              acceptance_criteria: ["Every piece has dimensions", "Entrance hole size is specified", "Untreated wood is chosen"]
+          pass_criteria: ["Complete cut and materials list"]
+          confidence_ceiling: high
+          self_report_only: false
+          rationale: A list is directly reviewable.
+      - id: n1-t2
+        title: Cut all pieces and drill the entrance and drainage holes
+        description: Adults saw and drill; kids measure, mark and sand the edges.
+        why_it_matters: Accurate pieces make assembly quick and safe for the kids.
+        expected_result: All pieces cut to size and sanded, entrance and drainage holes drilled.
+        estimated_duration_minutes: 90
+        difficulty: 3
+        dependencies: [n1-t1]
+        verification_protocol:
+          task_nature: creative_work
+          objective_verifiability: medium
+          methods:
+            - method: photo
+              role: required
+              instructions: A photo of all pieces laid out.
+            - method: follow_up_questions
+              role: required
+              instructions: Two short questions about the build.
+              questions: ["How many drainage holes did you drill and where?", "Which piece needed recutting, if any?"]
+          pass_criteria: ["All pieces visible and matching the cut list", "Answers are consistent with the plan"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: For a physical object a photo is useful, but only combined with answers about how it was made.
+      - id: n1-t3
+        title: Assemble the birdhouse with a removable or hinged roof
+        description: Glue and nail the walls and floor, then attach the roof so it can be opened for cleaning.
+        why_it_matters: Birdhouses need cleaning between seasons; a fixed roof makes that hard.
+        expected_result: One assembled birdhouse with a roof that opens for cleaning.
+        estimated_duration_minutes: 60
+        difficulty: 2
+        dependencies: [n1-t2]
+        verification_protocol:
+          task_nature: creative_work
+          objective_verifiability: medium
+          methods:
+            - method: photo
+              role: required
+              instructions: A photo with the roof open.
+            - method: follow_up_questions
+              role: required
+              instructions: One question about assembly.
+              questions: ["How did you make the roof removable?"]
+          pass_criteria: ["Assembled with an opening roof"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: Photo plus explanation is a reasonable combination for a physical build.
+      - id: n1-t4
+        title: Mount the birdhouse at about head height, away from direct afternoon sun
+        description: Choose a spot sheltered from strong sun and wind and out of easy reach of cats, and mount it securely.
+        why_it_matters: Placement decides whether birds actually use it.
+        expected_result: Birdhouse mounted with the chosen height and direction noted.
+        estimated_duration_minutes: 30
+        difficulty: 1
+        dependencies: [n1-t3]
+        verification_protocol:
+          task_nature: other
+          objective_verifiability: medium
+          methods:
+            - method: structured_result
+              role: required
+              instructions: Note height, direction the entrance faces and why you chose the spot.
+              fields: ["Height", "Entrance faces", "Why this spot"]
+            - method: photo
+              role: supplementary
+              instructions: Optional photo of the mounted birdhouse.
+          pass_criteria: ["Placement details recorded"]
+          confidence_ceiling: medium
+          self_report_only: false
+          rationale: The placement reasoning matters more than a picture.
+    decision_summary: null
+  annotations:
+    rationale: A tiny goal kept tiny (4 tasks); safety-aware role split for children; photos only in combination with questions or structured details.
+  contrastive:
+    - id: gj-task-005-c1
+      failure_modes: [overplanning]
+      critique: Turns a one-weekend family project into six formal steps including research and documentation that add nothing for a simple birdhouse.
+      output:
+        type: task_generation
+        response_language: en
+        message_to_user: Here's a comprehensive project plan for your birdhouse.
+        for_node_id: n1
+        tasks:
+          - id: n1-t1
+            title: Research 15 bird species native to your region
+            description: Compile a report on local species and their nesting preferences.
+            why_it_matters: Thorough research leads to better outcomes.
+            expected_result: A 15-species research document.
+            estimated_duration_minutes: 180
+            difficulty: 3
+            verification_protocol: {task_nature: research, objective_verifiability: high, methods: [{method: artifact_review, role: required, instructions: Upload the report.}], pass_criteria: [Report complete], confidence_ceiling: high, self_report_only: false, rationale: Reviewable.}
+          - id: n1-t2
+            title: Compare 10 birdhouse plans in a scored decision matrix
+            description: Score each plan on 8 criteria.
+            why_it_matters: Structured decisions are better.
+            expected_result: A decision matrix of 10 plans.
+            estimated_duration_minutes: 120
+            difficulty: 2
+            verification_protocol: {task_nature: research, objective_verifiability: high, methods: [{method: artifact_review, role: required, instructions: Upload the matrix.}], pass_criteria: [Matrix complete], confidence_ceiling: high, self_report_only: false, rationale: Reviewable.}
+          - id: n1-t3
+            title: Draw a technical drawing with 3 projections
+            description: Produce front, side and top views to scale.
+            why_it_matters: Precision.
+            expected_result: A 3-view technical drawing.
+            estimated_duration_minutes: 120
+            difficulty: 3
+            verification_protocol: {task_nature: creative_work, objective_verifiability: high, methods: [{method: artifact_review, role: required, instructions: Upload the drawing.}], pass_criteria: [Drawing complete], confidence_ceiling: high, self_report_only: false, rationale: Reviewable.}
+          - id: n1-t4
+            title: Write a safety risk assessment for 5 tools
+            description: Document hazards and mitigations.
+            why_it_matters: Safety first.
+            expected_result: A 5-tool risk assessment document.
+            estimated_duration_minutes: 90
+            difficulty: 2
+            verification_protocol: {task_nature: writing, objective_verifiability: high, methods: [{method: artifact_review, role: required, instructions: Upload the document.}], pass_criteria: [Document complete], confidence_ceiling: high, self_report_only: false, rationale: Reviewable.}
+          - id: n1-t5
+            title: Build the birdhouse following the drawing
+            description: Cut, assemble and finish.
+            why_it_matters: This is the goal.
+            expected_result: One finished birdhouse.
+            estimated_duration_minutes: 180
+            difficulty: 3
+            verification_protocol: {task_nature: creative_work, objective_verifiability: medium, methods: [{method: photo, role: required, instructions: Photo of the birdhouse.}, {method: follow_up_questions, role: required, instructions: Questions., questions: ["How did you assemble it?", "Which step was hardest?"]}], pass_criteria: [Birdhouse built], confidence_ceiling: medium, self_report_only: false, rationale: Photo plus questions.}
+          - id: n1-t6
+            title: Write a project retrospective of 500 words
+            description: Reflect on lessons learned.
+            why_it_matters: Continuous improvement.
+            expected_result: A 500-word retrospective document.
+            estimated_duration_minutes: 60
+            difficulty: 1
+            verification_protocol: {task_nature: writing, objective_verifiability: high, methods: [{method: artifact_review, role: required, instructions: Upload the text.}], pass_criteria: [Text complete], confidence_ceiling: high, self_report_only: false, rationale: Reviewable.}
+  provenance: *prov

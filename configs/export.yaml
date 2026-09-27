@@ -1,0 +1,9 @@
+navigator_prompt: prompts/navigator/v0.1.0/system.md
+# Serialisation of the user turn (the context object) and the assistant turn (the output JSON).
+json_indent: null          # compact JSON keeps sequences short for a ~4B model
+ensure_ascii: false        # keep Cyrillic readable
+exports_dir: exports
+formats:
+  sft: {}                  # {"messages": [system, user, assistant], "metadata": {...}}
+  preference: {}           # {"prompt": [...], "chosen": [...], "rejected": [...], "metadata": {...}}
+  eval: {}                 # {"id", "messages": [system, user], "checks": [...]}

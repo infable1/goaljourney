@@ -1,0 +1,30 @@
+# Target composition for the scale-up (Milestone 2): ~2,000 training examples.
+# `gj coverage` compares the current pool with these targets and prints the gaps.
+target_total: 2000
+
+# Shares of the training pool per operation (sum = 1.0). Weighted towards the behaviours the
+# brief marks as most important (verification, adaptation, navigation).
+task_type_share:
+  goal_clarification: 0.09
+  feasibility_assessment: 0.06
+  journey_generation: 0.08
+  task_generation: 0.07
+  verification_protocol_design: 0.08
+  verification_result: 0.12
+  route_adaptation: 0.12
+  daily_plan: 0.07
+  navigator_response: 0.11
+  goal_change: 0.04
+  web_research_decision: 0.05
+  safety_classification: 0.05
+  memory_extraction: 0.03
+  progress_update: 0.03
+
+language_share: {ru: 0.5, en: 0.5}
+min_share:
+  mixed_input_language: 0.08        # of all examples
+  non_allowed_safety: 0.12          # sensitive + high_risk + needs_professional_support + restricted
+  with_contrastive: 0.35            # examples carrying at least one rejected output
+  tiny_goal: 0.06
+min_per_domain: 40
+min_per_failure_mode: 20             # contrastive outputs per failure mode

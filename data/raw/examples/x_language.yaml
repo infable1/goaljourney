@@ -1,0 +1,140 @@
+# Language behaviour — answer in the user's language; with mixed input, infer the preferred language
+# (predominant language of the user's messages, then stored language preference). Structure stays English.
+examples:
+
+- id: gj-lang-001
+  schema_version: "0.1.0"
+  task_type: daily_plan
+  behavior: [language, daily_prioritization, memory]
+  language: ru
+  input_language: mixed
+  domain: programming
+  difficulty: medium
+  goal_size: medium
+  tags: [mixed_language, language_preference_memory]
+  safety_category: allowed
+  scenario_group: sg-lang-mixed-daily-go
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    app_locale: en
+    goal:
+      id: g-go
+      title: Выучить Go и переписать свой pet-проект на нём
+    user_memory:
+      - scope: user
+        category: language
+        content: Предпочитает, чтобы ответы были на русском, даже если сам пишет вперемешку.
+        stability: stable
+    retrieved_memory:
+      - scope: goal
+        goal_id: g-guitar
+        category: preference
+        content: Любит разучивать песни по табулатурам.
+    time_budget:
+      available_minutes_today: 30
+    journey:
+      regions:
+        - {id: r1, title: Основы Go, order: 1, status: active}
+      milestones:
+        - {id: m1, title: CLI-утилита на Go, region_id: r1, success_criteria: ["Утилита собирается и проходит 3 теста"]}
+      nodes:
+        - {id: n1, type: task, title: "Tour of Go: основы синтаксиса", region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Слайсы и мапы — 10 упражнений, region_id: r1, milestone_id: m1, status: available, depends_on: [n1], estimated_duration_minutes: 30}
+        - {id: n3, type: task, title: Горутины и каналы — 5 упражнений, region_id: r1, milestone_id: m1, status: locked, depends_on: [n2], estimated_duration_minutes: 45}
+    conversation:
+      - role: user
+        content: Today I have maybe 30 minutes, что самое полезное можно успеть?
+  expected_output:
+    type: daily_plan
+    response_language: ru
+    message_to_user: |-
+      За 30 минут — ровно 10 упражнений на слайсы и мапы. Это последний шаг перед горутинами, так что сегодняшняя сессия откроет следующий блок. Начните с упражнения на append — на нём чаще всего спотыкаются.
+    available_minutes: 30
+    recommended_tasks:
+      - task_id: n2
+        reason: Помещается в 30 минут и открывает следующую тему.
+        estimated_duration_minutes: 30
+    total_minutes: 30
+    next_action: Открыть первое упражнение на слайсы и написать функцию с append.
+  annotations:
+    must_not_mention: ["табулатур", "гитар"]
+    rationale: "Mixed input (half English, half Russian) with a stored preference for Russian answers: the answer is in Russian regardless of the English app locale. Retrieved memory from another goal is ignored."
+  contrastive:
+    - id: gj-lang-001-c1
+      failure_modes: [wrong_language]
+      critique: Follows the English app locale and the English first half of the message, ignoring the user's stated preference for Russian.
+      output:
+        type: daily_plan
+        response_language: en
+        message_to_user: In 30 minutes you can do the 10 slices and maps exercises — that unlocks goroutines next.
+        available_minutes: 30
+        recommended_tasks:
+          - {task_id: n2, reason: Fits 30 minutes., estimated_duration_minutes: 30}
+        total_minutes: 30
+        next_action: Open the first slices exercise.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-lang-002
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [language, clarification]
+  language: en
+  input_language: mixed
+  domain: language_learning
+  difficulty: medium
+  goal_size: complex
+  tags: [mixed_language, heritage_speaker]
+  safety_category: allowed
+  scenario_group: sg-lang-heritage-russian
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Improve my Russian to talk with my grandmother
+    conversation:
+      - role: user
+        content: I want to improve my Russian so I can talk to my бабушка without switching to English all the time. I understand almost everything, but my grammar is плохая and I get stuck on падежи.
+  expected_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: |-
+      That's a lovely goal — and understanding almost everything is a big head start; for heritage speakers the gap is usually speaking and grammar, exactly as you describe. Two questions:
+      1. Can you read and write Cyrillic comfortably, or do you mostly speak?
+      2. How often could you actually talk with your grandmother — for example a weekly call?
+      Regular conversations with her can become the core practice of the route, with grammar (starting with cases) built around them.
+    ready_to_plan: false
+    questions:
+      - question: Can you read and write Cyrillic comfortably, or do you mostly speak?
+        targets: [current_level]
+        impact: Decides whether grammar practice uses written exercises or starts with spoken drills and reading basics.
+        answer_options: [Read and write fine, Read slowly, Mostly speak only]
+      - question: How often could you talk with your grandmother, for example in a weekly call?
+        targets: [resources, schedule]
+        impact: Real conversations with her can be the main practice and the natural checkpoint for progress.
+    known_context_used:
+      - Understands spoken Russian well
+      - Struggles with grammar, especially cases
+  annotations:
+    known_targets: [target_outcome]
+    critical_targets: [[current_level], [resources, schedule, available_time]]
+    irrelevant_targets: [motivation, budget, location]
+    rationale: The user writes predominantly in English with a few Russian words, so the answer is in English. The questions target what changes the route for a heritage speaker.
+  contrastive:
+    - id: gj-lang-002-c1
+      failure_modes: [wrong_language]
+      critique: Switches to Russian because the message contains Russian words, although the user writes predominantly in English and is exactly struggling with Russian.
+      output:
+        type: goal_clarification
+        response_language: ru
+        message_to_user: Отличная цель! Скажите, пожалуйста, вы умеете читать и писать по-русски? И как часто вы можете разговаривать с бабушкой?
+        ready_to_plan: false
+        questions:
+          - {question: "Умеете ли вы читать и писать по-русски?", targets: [current_level], impact: Определяет формат грамматических упражнений.}
+          - {question: "Как часто вы можете говорить с бабушкой?", targets: [schedule], impact: Разговоры станут основной практикой.}
+  provenance: *prov

@@ -1,0 +1,338 @@
+# Type L — goal change: minor adjustment / major adjustment / essentially a new goal.
+# Preserve useful progress; never throw history away automatically; confirm major changes.
+examples:
+
+- id: gj-goalchg-001
+  schema_version: "0.1.0"
+  task_type: goal_change
+  behavior: [goal_change, decision_summary]
+  language: en
+  input_language: en
+  domain: fitness
+  difficulty: easy
+  goal_size: medium
+  tags: [minor_adjustment]
+  safety_category: allowed
+  scenario_group: sg-goalchg-10k-time
+  input:
+    operation: goal_change
+    today: "2026-09-27"
+    goal:
+      id: g-10k
+      title: Run 10 km without stopping
+      deadline: "2026-12-01"
+    journey:
+      regions:
+        - {id: r1, title: Building distance, order: 1, status: active}
+      milestones:
+        - {id: m1, title: 10 km without stopping, region_id: r1, success_criteria: ["10 km continuous run logged"], target_date: "2026-12-01"}
+      nodes:
+        - {id: n1, type: task, title: Run 5 km without stopping, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Run 7 km without stopping, region_id: r1, milestone_id: m1, status: verified, depends_on: [n1]}
+        - {id: n3, type: task, title: Run 10 km without stopping, region_id: r1, milestone_id: m1, status: available, depends_on: [n2]}
+    conversation:
+      - role: user
+        content: Now that 7 km feels okay, I'd like the goal to be 10 km in under 60 minutes, not just finishing it.
+  expected_output:
+    type: goal_change
+    response_language: en
+    message_to_user: |-
+      Nice — that's a natural next step, so I'll treat it as an adjustment to the same goal. Your 5 km and 7 km runs stay exactly as they are. The route adds one easy pace session a week (short intervals) after you've run 10 km once, and the final check becomes a timed 10 km under 60 minutes. The December 1 date still works.
+    classification: minor_adjustment
+    updated_goal:
+      id: g-10k
+      title: Run 10 km in under 60 minutes
+      deadline: "2026-12-01"
+      success_criteria: ["A logged 10 km run under 60:00"]
+    preserved_progress:
+      - {node_id: n1, how_reused: Endurance base stays valid.}
+      - {node_id: n2, how_reused: Endurance base stays valid.}
+    discarded_progress: []
+    route_impact: One weekly interval session is added after the first continuous 10 km; the final verification becomes a timed run.
+    recommend_separate_goal: false
+    original_goal_handling: updated_in_place
+    requires_user_confirmation: false
+    needs_web_research: false
+    decision_summary:
+      what_changed: Goal refined from finishing 10 km to finishing it in under 60 minutes.
+      why: The distance base is on track and you asked for a time target.
+      impact: One weekly pace session added; deadline unchanged; all progress kept.
+  annotations:
+    rationale: Small refinement of the same outcome -> minor adjustment, in place, all progress kept.
+  contrastive:
+    - id: gj-goalchg-001-c1
+      failure_modes: [goal_change_misclassified]
+      critique: Treats a small refinement (adding a time target) as a brand-new goal, splitting the user's progress across two goals for no reason.
+      output:
+        type: goal_change
+        response_language: en
+        message_to_user: A time goal is a completely different goal, so I'll create a new one and pause this one.
+        classification: new_goal
+        updated_goal: {title: Run 10 km in under 60 minutes}
+        preserved_progress:
+          - {node_id: n1, how_reused: Stays in the paused goal.}
+          - {node_id: n2, how_reused: Stays in the paused goal.}
+        discarded_progress: []
+        recommend_separate_goal: true
+        original_goal_handling: paused
+        requires_user_confirmation: true
+        decision_summary:
+          what_changed: New goal created.
+          why: Different target.
+          impact: Old goal paused.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-goalchg-002
+  schema_version: "0.1.0"
+  task_type: goal_change
+  behavior: [goal_change, decision_summary, web_research]
+  language: ru
+  input_language: ru
+  domain: business
+  difficulty: hard
+  goal_size: complex
+  tags: [major_adjustment, preserve_progress]
+  safety_category: allowed
+  scenario_group: sg-goalchg-bakery-to-home-cakes
+  input:
+    operation: goal_change
+    today: "2026-09-27"
+    goal:
+      id: g-bakery
+      title: Открыть свою кондитерскую
+    journey:
+      regions:
+        - {id: r1, title: Продукт, order: 1, status: completed}
+        - {id: r2, title: Помещение и финансирование, order: 2, status: active}
+      milestones:
+        - {id: m1, title: Ассортимент и себестоимость, region_id: r1, success_criteria: ["5 рецептов отработаны, себестоимость посчитана"], status: verified}
+        - {id: m2, title: Помещение и кредит, region_id: r2, success_criteria: ["Договор аренды", "Одобренный кредит"]}
+      nodes:
+        - {id: n1, type: task, title: Отработать 5 базовых рецептов тортов, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Рассчитать себестоимость 5 тортов, region_id: r1, milestone_id: m1, status: verified, depends_on: [n1]}
+        - {id: n3, type: task, title: Подобрать 5 вариантов помещения, region_id: r2, milestone_id: m2, status: completed}
+        - {id: n4, type: task, title: Бизнес-план для кредита, region_id: r2, milestone_id: m2, status: in_progress}
+    conversation:
+      - role: user
+        content: Я посчитала аренду и кредит — это слишком рискованно. Хочу вместо кондитерской печь торты на заказ из дома.
+  expected_output:
+    type: goal_change
+    response_language: ru
+    message_to_user: |-
+      Разумное решение — вы проверили цифры и выбрали менее рискованный путь. Это крупная корректировка той же цели, а не новая цель: вы по-прежнему продаёте свои торты, меняется формат.
+      Что сохраняется: 5 отработанных рецептов и расчёт себестоимости — это основа ассортимента и цен.
+      Что больше не нужно: поиск помещения и бизнес-план для кредита. Варианты помещений останутся в истории — пригодятся, если когда-нибудь вернётесь к кондитерской.
+      Новое в маршруте: правила продажи домашней выпечки в вашем регионе — их я проверю по официальным источникам, прежде чем строить этот этап. Подтверждаете изменение цели?
+    classification: major_adjustment
+    updated_goal:
+      id: g-bakery
+      title: Продавать торты на заказ из дома
+      desired_outcome: Стабильные заказы на торты, которые готовятся дома.
+      success_criteria: ["10 оплаченных заказов за месяц"]
+      assumptions:
+        - statement: Продажа домашней выпечки в регионе пользователя требует определённого статуса и соблюдения санитарных норм.
+          basis: default_until_confirmed
+          confirmed: false
+    preserved_progress:
+      - {node_id: n1, how_reused: Рецепты становятся ассортиментом.}
+      - {node_id: n2, how_reused: Себестоимость — основа цен на заказы.}
+    discarded_progress:
+      - {node_id: n3, reason: Помещение для домашнего производства не нужно; варианты сохранены в истории.}
+      - {node_id: n4, reason: Кредит больше не нужен.}
+    route_impact: Регион «Помещение и финансирование» заменяется регионом «Оформление и первые заказы»; сначала — проверка правил продажи домашней выпечки.
+    recommend_separate_goal: false
+    original_goal_handling: updated_in_place
+    requires_user_confirmation: true
+    needs_web_research: true
+    decision_summary:
+      what_changed: Цель изменена с открытия кондитерской на продажу тортов на заказ из дома.
+      why: Аренда и кредит оказались слишком рискованными.
+      impact: Рецепты и расчёт себестоимости сохраняются; поиск помещения и кредит убираются; добавляется проверка правил продажи домашней выпечки.
+  annotations:
+    rationale: Same underlying outcome with a different format -> major adjustment in place; useful progress preserved with reasons; location-specific rules flagged for research.
+  contrastive:
+    - id: gj-goalchg-002-c1
+      failure_modes: [discarded_progress]
+      critique: Throws away the verified recipes and cost calculation, which are exactly what a home cake business needs.
+      output:
+        type: goal_change
+        response_language: ru
+        message_to_user: Хорошо, начнём новый маршрут с нуля.
+        classification: major_adjustment
+        updated_goal: {title: Продавать торты на заказ из дома}
+        preserved_progress: []
+        discarded_progress:
+          - {node_id: n1, reason: Старый маршрут.}
+          - {node_id: n2, reason: Старый маршрут.}
+          - {node_id: n3, reason: Старый маршрут.}
+        recommend_separate_goal: false
+        original_goal_handling: updated_in_place
+        requires_user_confirmation: true
+        decision_summary:
+          what_changed: Новый маршрут.
+          why: Цель изменилась.
+          impact: Начинаем заново.
+  provenance: *prov
+
+- id: gj-goalchg-003
+  schema_version: "0.1.0"
+  task_type: goal_change
+  behavior: [goal_change, decision_summary, web_research]
+  language: en
+  input_language: en
+  domain: career
+  difficulty: hard
+  goal_size: complex
+  tags: [new_goal, keep_history]
+  safety_category: allowed
+  scenario_group: sg-goalchg-webdev-to-teacher
+  input:
+    operation: goal_change
+    today: "2026-09-27"
+    goal:
+      id: g-webdev
+      title: Become a junior web developer
+    journey:
+      regions:
+        - {id: r1, title: Front-end basics, order: 1, status: active}
+      milestones:
+        - {id: m1, title: First website online, region_id: r1, success_criteria: ["Personal site deployed"]}
+      nodes:
+        - {id: n1, type: task, title: HTML and CSS basics with 3 small pages, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: JavaScript basics — 30 exercises, region_id: r1, milestone_id: m1, status: verified, depends_on: [n1]}
+        - {id: n3, type: task, title: Build and deploy a personal site, region_id: r1, milestone_id: m1, status: available, depends_on: [n2]}
+    conversation:
+      - role: user
+        content: I've been volunteering at my niece's school and I realised I actually want to become a primary school teacher, not a developer.
+  expected_output:
+    type: goal_change
+    response_language: en
+    message_to_user: |-
+      That sounds like a real discovery — thank you for telling me. Becoming a primary school teacher is a different outcome with a different route (qualifications, classroom experience), so I suggest creating it as a new goal rather than rewriting this one.
+      Your web development goal won't be deleted: I'll pause it with all its progress, and you can come back to it any time. Your HTML/CSS and JavaScript skills may even come in handy for classroom materials.
+      Teacher qualification requirements depend on the country, so the first step of the new goal will be checking the official requirements where you live. Shall I pause this goal and create the new one?
+    classification: new_goal
+    updated_goal:
+      title: Become a primary school teacher
+      domain: career
+      desired_outcome: Qualified and employed as a primary school teacher.
+      assumptions:
+        - statement: The qualification route depends on the country and must be checked in official sources.
+          basis: default_until_confirmed
+          confirmed: false
+    preserved_progress:
+      - {node_id: n1, how_reused: Kept in the paused web development goal.}
+      - {node_id: n2, how_reused: Kept in the paused web development goal.}
+    discarded_progress: []
+    route_impact: A new goal is created; the web development goal is paused with its full history.
+    recommend_separate_goal: true
+    original_goal_handling: paused
+    requires_user_confirmation: true
+    needs_web_research: true
+    decision_summary:
+      what_changed: Proposed a new goal "Become a primary school teacher" and pausing the web development goal.
+      why: The new intention is a different outcome with a different route, not an adjustment of the current one.
+      impact: Web development progress stays saved in the paused goal; the new goal starts with checking qualification requirements.
+  annotations:
+    rationale: A genuinely new goal becomes a separate goal; the old one is paused with history, not deleted or overwritten.
+  contrastive:
+    - id: gj-goalchg-003-c1
+      failure_modes: [goal_change_misclassified]
+      critique: Recognises a new goal but overwrites the web development goal in place, so its history and verified progress disappear from any goal they belong to.
+      output:
+        type: goal_change
+        response_language: en
+        message_to_user: Done — I've turned your web development goal into a teaching goal.
+        classification: new_goal
+        updated_goal: {title: Become a primary school teacher}
+        preserved_progress: []
+        discarded_progress:
+          - {node_id: n1, reason: Not relevant to teaching.}
+          - {node_id: n2, reason: Not relevant to teaching.}
+        recommend_separate_goal: false
+        original_goal_handling: updated_in_place
+        requires_user_confirmation: true
+        decision_summary:
+          what_changed: Goal replaced.
+          why: New interest.
+          impact: New route.
+  provenance: *prov
+
+- id: gj-goalchg-004
+  schema_version: "0.1.0"
+  task_type: goal_change
+  behavior: [goal_change, decision_summary, web_research, source_awareness]
+  language: ru
+  input_language: ru
+  domain: education
+  difficulty: hard
+  goal_size: complex
+  tags: [major_adjustment, location_specific, time_sensitive]
+  safety_category: allowed
+  scenario_group: sg-goalchg-masters-de-to-nl
+  input:
+    operation: goal_change
+    today: "2026-09-27"
+    goal:
+      id: g-masters
+      title: Поступить в магистратуру в Германии
+      deadline: "2027-07-15"
+    journey:
+      regions:
+        - {id: r1, title: Документы и языки, order: 1, status: active}
+        - {id: r2, title: Подача заявок, order: 2, status: locked}
+      milestones:
+        - {id: m1, title: Документы и язык готовы, region_id: r1, success_criteria: ["IELTS сдан", "Документы переведены"]}
+        - {id: m2, title: Заявки поданы, region_id: r2, success_criteria: ["5 заявок поданы"]}
+      nodes:
+        - {id: n1, type: task, title: Сдать IELTS на 7.0, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Перевести и заверить диплом и приложение, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n3, type: task, title: Список 5 программ в немецких университетах, region_id: r2, milestone_id: m2, status: completed}
+        - {id: n4, type: task, title: Мотивационное письмо под первую программу, region_id: r2, milestone_id: m2, status: in_progress}
+        - {id: n5, type: task, title: Немецкий до A2 для жизни в стране, region_id: r1, milestone_id: m1, status: in_progress}
+    conversation:
+      - role: user
+        content: Передумал насчёт Германии — хочу поступать в магистратуру в Нидерландах. Там больше программ на английском по моей специальности.
+  expected_output:
+    type: goal_change
+    response_language: ru
+    message_to_user: |-
+      Понятно — это крупная корректировка той же цели: магистратура за рубежом остаётся, меняется страна. Большая часть работы сохраняется:
+      • IELTS 7.0 и переведённый диплом, скорее всего, пригодятся — но требования к языковым тестам и заверению документов у нидерландских вузов нужно проверить по сайтам программ;
+      • мотивационное письмо перепишем под новые программы — структура и ваши аргументы останутся.
+      Список немецких программ и немецкий язык в маршруте больше не нужны; прогресс по ним сохранится в истории.
+      Важно: сроки подачи в вузах бывают ранними, поэтому первым шагом проверю актуальные дедлайны выбранных программ. Подтверждаете изменение?
+    classification: major_adjustment
+    updated_goal:
+      id: g-masters
+      title: Поступить в магистратуру в Нидерландах
+      deadline: "2027-07-15"
+      desired_outcome: Зачисление на англоязычную магистерскую программу по специальности в Нидерландах.
+      assumptions:
+        - statement: Сдача IELTS и переведённые документы подходят для нидерландских программ.
+          basis: default_until_confirmed
+          confirmed: false
+    preserved_progress:
+      - {node_id: n1, how_reused: Результат IELTS для англоязычных программ — соответствие требованиям проверим.}
+      - {node_id: n2, how_reused: Переведённые документы — требования к заверению проверим.}
+      - {node_id: n4, how_reused: Структура и аргументы письма переносятся в письма под новые программы.}
+    discarded_progress:
+      - {node_id: n3, reason: Список немецких программ больше не актуален; сохранён в истории.}
+      - {node_id: n5, reason: Немецкий язык для новой цели не нужен; прогресс сохранён в истории.}
+    route_impact: Добавляется проверка требований и дедлайнов нидерландских программ; подача заявок перестраивается под новые вузы.
+    recommend_separate_goal: false
+    original_goal_handling: updated_in_place
+    requires_user_confirmation: true
+    needs_web_research: true
+    decision_summary:
+      what_changed: Страна поступления изменена с Германии на Нидерланды.
+      why: В Нидерландах больше англоязычных программ по вашей специальности.
+      impact: IELTS, документы и письмо переиспользуются после проверки требований; немецкие программы и немецкий язык убираются из маршрута.
+  annotations:
+    rationale: Same outcome in a different country -> major adjustment; reusable progress kept with verification caveats; time-sensitive deadlines flagged for research, nothing asserted.
+  provenance: *prov

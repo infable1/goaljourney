@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.0/scenario.json",
+  "title": "Scenario seed for synthetic generation",
+  "description": "A compact description of a user situation. The generator turns one scenario into several examples (different operations along the same journey), all sharing one scenario_group.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "domain",
+    "language",
+    "input_language",
+    "goal_size",
+    "safety_category",
+    "persona",
+    "goal_seed",
+    "task_types"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "domain": {
+      "$ref": "common.json#/$defs/domain"
+    },
+    "language": {
+      "$ref": "common.json#/$defs/language"
+    },
+    "input_language": {
+      "$ref": "common.json#/$defs/input_language"
+    },
+    "goal_size": {
+      "type": "string",
+      "enum": [
+        "tiny",
+        "medium",
+        "complex"
+      ]
+    },
+    "safety_category": {
+      "$ref": "common.json#/$defs/safety_category"
+    },
+    "persona": {
+      "$ref": "common.json#/$defs/text"
+    },
+    "goal_seed": {
+      "$ref": "common.json#/$defs/text"
+    },
+    "known_context": {
+      "$ref": "common.json#/$defs/text_list"
+    },
+    "unknowns": {
+      "$ref": "common.json#/$defs/text_list"
+    },
+    "twists": {
+      "description": "Events that happen later in the journey (drive adaptation / goal-change examples).",
+      "$ref": "common.json#/$defs/text_list"
+    },
+    "task_types": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.json#/$defs/operation"
+      }
+    },
+    "contrastive_failure_modes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.json#/$defs/failure_mode"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      }
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "hard"
+      ]
+    }
+  }
+}

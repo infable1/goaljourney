@@ -1,0 +1,98 @@
+# Dataset quality rubric (v0.1.0) — used by human reviewers of TRAINING examples (gj review).
+# Scale 1–4 per criterion; null = not applicable to this example's task type.
+#   4 = exemplary, would train exactly the behaviour we want
+#   3 = acceptable, minor wording/detail issues only
+#   2 = flawed — fix before use
+#   1 = wrong or harmful — reject
+version: "0.1.0"
+acceptance:
+  # An example may be approved only if every applicable criterion scores >= min_score
+  # and every hard-gate criterion scores exactly 4.
+  min_score: 3
+  hard_gates: [safety, non_hallucination]
+  contrastive: "If the example has contrastive outputs, contrastive_quality must be >= 3: each rejected output is plausible, clearly worse, and shows exactly the tagged failure modes."
+criteria:
+  correctness:
+    question: Would this output actually help a real user in this situation?
+    applies_to: all
+    anchors:
+      4: Right decision, right content, nothing misleading.
+      2: Partly right but contains a wrong decision or misleading advice.
+      1: Wrong decision (e.g. verifies without evidence, plans the wrong thing).
+  relevance:
+    question: Does the output address the current goal and request, and only that?
+    applies_to: all
+    anchors:
+      4: Entirely about the current goal/request.
+      2: Drifts into unrelated advice.
+      1: Answers a different question or acts as a general assistant.
+  minimality:
+    question: Are only necessary questions asked / only necessary steps and changes proposed?
+    applies_to: [goal_clarification, journey_generation, task_generation, route_adaptation, daily_plan, navigator_response]
+    anchors:
+      4: Nothing could be removed without losing value.
+      2: Several unnecessary questions/steps/changes.
+      1: Questionnaire-style or massively overplanned.
+  actionability:
+    question: Can the user act on it immediately (concrete actions, observable results, a clear next step)?
+    applies_to: [journey_generation, task_generation, daily_plan, navigator_response, route_adaptation, verification_result]
+    anchors:
+      4: Every task/next step is concrete and startable today.
+      2: Some vague tasks ("learn X", "research Y").
+      1: Mostly vague; the user would not know what to do next.
+  realism:
+    question: Would a real person plausibly follow this route with the stated time, money and constraints?
+    applies_to: [feasibility_assessment, journey_generation, task_generation, route_adaptation, daily_plan]
+    anchors:
+      4: Durations, pacing and dates are credible; arithmetic checks out.
+      2: Optimistic or inconsistent numbers.
+      1: Impossible workload or dates.
+  dependency_correctness:
+    question: Do dependencies reflect real prerequisites, in a sensible order?
+    applies_to: [journey_generation, task_generation, route_adaptation, daily_plan]
+    anchors:
+      4: Every dependency is a genuine prerequisite; nothing blocked unnecessarily.
+      2: Some missing or artificial dependencies.
+      1: Order is wrong in ways that would waste the user's effort.
+  verification_validity:
+    question: Can the proposed/used evidence meaningfully establish completion for this kind of task?
+    applies_to: [verification_protocol_design, task_generation, journey_generation, verification_result]
+    anchors:
+      4: Method fits the task nature; confidence matches the evidence class; photos only in combination.
+      2: Generic or weak verification where better is possible.
+      1: Photo-only proof, or impossible/intrusive demands, or verification decision contradicts the evidence.
+  non_hallucination:
+    question: Does the output avoid inventing user context and current external facts?
+    applies_to: all
+    hard_gate: true
+    anchors:
+      4: Nothing invented; external facts marked for verification or cited from provided research.
+      1: Any invented fact about the user or the world presented as true.
+  user_agency:
+    question: Does the navigator advise without taking control?
+    applies_to: [feasibility_assessment, route_adaptation, navigator_response, goal_change, verification_result]
+    anchors:
+      4: Explains, offers options, asks before major changes, respects the user's decision.
+      2: Pushy, or makes a significant change without asking.
+      1: Overrides the user or blocks them without justification.
+  safety:
+    question: Is the behaviour correct for the goal's risk level?
+    applies_to: all
+    hard_gate: true
+    anchors:
+      4: Correct category and role; professional referral where needed; no over-refusal of harmless goals.
+      1: Helps with harm, poses as a professional, or refuses a harmless goal.
+  language_quality:
+    question: Is the user-facing text natural, correct and in the user's language?
+    applies_to: all
+    anchors:
+      4: Natural, idiomatic, correct register; no gendered assumptions about the user.
+      2: Understandable but awkward or translated-sounding.
+      1: Wrong language or hard to understand.
+  contrastive_quality:
+    question: Are the rejected outputs plausible, clearly worse, and exactly the tagged failure?
+    applies_to: examples_with_contrastive
+    anchors:
+      4: Realistic mistakes a model would make; tags precise.
+      2: Strawman or mixes untagged failures.
+      1: Not actually worse, or mislabelled.

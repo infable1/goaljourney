@@ -1,0 +1,279 @@
+# Type N — decide whether current external facts must be verified before planning.
+# Research when laws, prices, schedules, exam rules, product specs or location-specific facts
+# materially affect the route; not for simple reasoning. Hearsay is never treated as fact.
+examples:
+
+- id: gj-web-001
+  schema_version: "0.1.0"
+  task_type: web_research_decision
+  behavior: [web_research, source_awareness]
+  language: ru
+  input_language: ru
+  domain: legal_admin
+  difficulty: medium
+  goal_size: complex
+  tags: [needs_research, laws_regulations, location_specific]
+  safety_category: allowed
+  scenario_group: sg-web-portugal-nomad-visa
+  input:
+    operation: web_research_decision
+    today: "2026-09-27"
+    goal:
+      id: g-pt-visa
+      title: Переехать в Португалию по визе для удалённых работников
+    conversation:
+      - role: user
+        content: Хочу переехать в Португалию по визе для удалённых работников. Работаю удалённо на американскую компанию.
+  expected_output:
+    type: web_research_decision
+    response_language: ru
+    message_to_user: Прежде чем строить маршрут, проверю актуальные условия визы в официальных источниках — требования к доходу, документам и срокам меняются, а от них зависит весь план.
+    needs_research: true
+    reason_categories: [laws_regulations, location_specific, time_sensitive]
+    rationale: Условия визы (минимальный доход, документы, сроки рассмотрения, где подавать) определяют и сроки, и первые шаги маршрута, и могут меняться — по памяти их утверждать нельзя.
+    facts_to_verify:
+      - fact: Требование к минимальному ежемесячному доходу для визы удалённого работника
+        why_it_matters: Определяет, подходит ли пользователь под визу вообще.
+        affects: Проверка соответствия — первый этап маршрута
+      - fact: Список документов и требования к их заверению
+        why_it_matters: Подготовка документов — самый длинный участок маршрута.
+      - fact: Где подаётся заявление для граждан страны пользователя и сколько длится рассмотрение
+        why_it_matters: Задаёт сроки всего переезда.
+    queries:
+      - виза для удалённых работников Португалия требования к доходу официальный сайт
+      - виза цифрового кочевника Португалия список документов консульство
+      - срок рассмотрения визы удалённого работника Португалия
+    unsupported_claims: []
+    can_proceed_without_research: false
+    interim_guidance: Пока идёт проверка, можно собрать выписки о доходе за последние месяцы и договор с работодателем — они понадобятся почти наверняка.
+  annotations:
+    rationale: Legal, location-specific and time-sensitive facts decide the whole route -> research before planning, with specific facts and queries.
+  contrastive:
+    - id: gj-web-001-c1
+      failure_modes: [wrong_language]
+      critique: Answers a Russian-speaking user in English.
+      output:
+        type: web_research_decision
+        response_language: en
+        message_to_user: I'll check the official visa requirements before building the route.
+        needs_research: true
+        reason_categories: [laws_regulations, location_specific]
+        rationale: Visa rules decide the route.
+        facts_to_verify:
+          - {fact: Minimum income requirement, why_it_matters: Eligibility.}
+        queries: [Portugal remote work visa income requirement]
+        unsupported_claims: []
+        can_proceed_without_research: false
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-web-002
+  schema_version: "0.1.0"
+  task_type: web_research_decision
+  behavior: [web_research]
+  language: en
+  input_language: en
+  domain: productivity
+  difficulty: easy
+  goal_size: medium
+  tags: [no_research]
+  safety_category: allowed
+  scenario_group: sg-web-touch-typing
+  input:
+    operation: web_research_decision
+    today: "2026-09-27"
+    goal:
+      id: g-typing
+      title: Learn to touch type at 60 words per minute
+    conversation:
+      - role: user
+        content: I type with two fingers at about 25 WPM. I want to learn proper touch typing and get to 60.
+  expected_output:
+    type: web_research_decision
+    needs_research: false
+    reason_categories: [none]
+    rationale: Touch typing is a practice skill; no current external fact (law, price, schedule, exam rule) changes the route. Free typing trainers are interchangeable and can be picked during the first task.
+    facts_to_verify: []
+    queries: []
+    unsupported_claims: []
+    can_proceed_without_research: true
+  annotations:
+    rationale: A pure skill goal — research would add delay without changing the plan.
+  contrastive:
+    - id: gj-web-002-c1
+      failure_modes: [unnecessary_research]
+      critique: Triggers web research for a practice skill; none of the queried facts would change the route.
+      output:
+        type: web_research_decision
+        needs_research: true
+        reason_categories: [product_specifications, time_sensitive]
+        rationale: Need to find the best typing websites and statistics.
+        facts_to_verify:
+          - {fact: Best typing websites in 2026, why_it_matters: To choose the best one.}
+          - {fact: Average typing speed statistics, why_it_matters: For context.}
+        queries: ["best typing websites 2026", "average typing speed statistics"]
+        unsupported_claims: []
+        can_proceed_without_research: false
+  provenance: *prov
+
+- id: gj-web-003
+  schema_version: "0.1.0"
+  task_type: web_research_decision
+  behavior: [web_research]
+  language: en
+  input_language: en
+  domain: certification
+  difficulty: medium
+  goal_size: tiny
+  tags: [needs_research, schedules, location_specific]
+  safety_category: allowed
+  scenario_group: sg-web-cpr-course
+  input:
+    operation: web_research_decision
+    today: "2026-09-27"
+    goal:
+      id: g-cpr
+      title: Get CPR certified before starting my new job
+      deadline: "2026-10-26"
+    conversation:
+      - role: user
+        content: My new job as a swim coach starts October 26 and I need a CPR certificate before then. Can you plan it?
+  expected_output:
+    type: web_research_decision
+    response_language: en
+    message_to_user: This mostly depends on what's available near you before October 26, so I'll look up current course dates first. Which city are you in? And does your employer require a certificate from a specific organisation?
+    needs_research: true
+    reason_categories: [schedules, location_specific, current_prices]
+    rationale: The plan is essentially "book a course that finishes before the start date"; dates, locations, accepted certifying bodies and prices are current, local facts.
+    facts_to_verify:
+      - fact: CPR course dates near the user before October 26
+        why_it_matters: Decides whether the deadline can be met at all.
+      - fact: Which certifying organisations the employer accepts
+        why_it_matters: A certificate from the wrong provider may not count.
+      - fact: Course price and whether the certificate is issued on the day
+        why_it_matters: Some providers issue certificates days later.
+    queries:
+      - CPR certification course dates in the user's city October 2026
+      - swim coach CPR certificate accepted providers
+    unsupported_claims: []
+    can_proceed_without_research: false
+    interim_guidance: Ask the employer today which certificate they accept.
+  annotations:
+    rationale: A tiny goal whose whole route is a current schedule question — research plus one missing fact (city) from the user.
+  provenance: *prov
+
+- id: gj-web-004
+  schema_version: "0.1.0"
+  task_type: web_research_decision
+  behavior: [web_research, source_awareness]
+  language: ru
+  input_language: ru
+  domain: business
+  difficulty: hard
+  goal_size: medium
+  tags: [hearsay, laws_regulations]
+  safety_category: allowed
+  scenario_group: sg-web-short-term-rental-hearsay
+  input:
+    operation: web_research_decision
+    today: "2026-09-27"
+    goal:
+      id: g-rental
+      title: Начать сдавать квартиру посуточно
+    conversation:
+      - role: user
+        content: Хочу сдавать свою вторую квартиру посуточно. Друг сказал, что у нас в городе для этого теперь вообще ничего не нужно регистрировать, так что можно сразу выставлять объявление.
+  expected_output:
+    type: web_research_decision
+    response_language: ru
+    message_to_user: Возможно, друг прав, но правила посуточной аренды часто меняются и зависят от города, а ошибка здесь может стоить штрафа. Поэтому проверю это в официальных источниках, прежде чем ставить в маршрут размещение объявления. Готовить квартиру и делать фото можно уже сейчас.
+    needs_research: true
+    reason_categories: [laws_regulations, location_specific]
+    rationale: Нужна ли регистрация или уведомление для посуточной аренды — юридический и местный вопрос, от которого зависит, можно ли сразу публиковать объявление. Слова друга — не источник.
+    facts_to_verify:
+      - fact: Нужна ли регистрация или уведомление для посуточной сдачи жилья в городе пользователя
+        why_it_matters: Определяет, можно ли размещать объявление сразу.
+        affects: Этап «Размещение объявления»
+      - fact: Как нужно платить налог с дохода от посуточной аренды
+        why_it_matters: Влияет на расчёт цены и доходности.
+    queries:
+      - правила посуточной аренды квартир в городе пользователя официальный сайт
+      - налог с посуточной сдачи квартиры физическим лицом
+    unsupported_claims:
+      - claim: Для посуточной сдачи в городе теперь не нужно ничего регистрировать.
+        origin: user_hearsay
+        handling: Проверить в официальных источниках до размещения объявления.
+    can_proceed_without_research: true
+    interim_guidance: Начните с подготовки квартиры и фото; объявление — после проверки правил.
+  annotations:
+    rationale: Hearsay about regulations is listed as an unsupported claim and verified; non-legal preparation can continue meanwhile.
+  contrastive:
+    - id: gj-web-004-c1
+      failure_modes: [unverified_current_facts]
+      critique: Records the friend's claim but treats it as settled and skips research, so the user may publish a listing that breaks local rules.
+      output:
+        type: web_research_decision
+        response_language: ru
+        message_to_user: Отлично, раз регистрироваться не нужно, можно сразу выставлять объявление!
+        needs_research: false
+        reason_categories: [none]
+        rationale: Пользователь уже знает правила.
+        facts_to_verify: []
+        queries: []
+        unsupported_claims:
+          - {claim: Регистрация не нужна., origin: user_hearsay, handling: Принять как факт.}
+        can_proceed_without_research: true
+  provenance: *prov
+
+- id: gj-web-005
+  schema_version: "0.1.0"
+  task_type: web_research_decision
+  behavior: [web_research]
+  language: en
+  input_language: en
+  domain: writing
+  difficulty: easy
+  goal_size: tiny
+  tags: [no_research, has_deadline]
+  safety_category: allowed
+  scenario_group: sg-web-best-man-speech
+  input:
+    operation: web_research_decision
+    today: "2026-09-27"
+    goal:
+      id: g-speech
+      title: Write and rehearse a best man speech for my brother's wedding
+      deadline: "2026-10-17"
+    conversation:
+      - role: user
+        content: My brother's wedding is on October 17 and I'm the best man. I need to write a speech that's funny but not embarrassing, about 4 minutes.
+  expected_output:
+    type: web_research_decision
+    needs_research: false
+    reason_categories: [none]
+    rationale: The speech depends on the user's own stories and relationship with their brother, not on external facts; length and structure can be planned without research.
+    facts_to_verify: []
+    queries: []
+    unsupported_claims: []
+    can_proceed_without_research: true
+  annotations:
+    rationale: Personal writing goal with a clear deadline — no external facts change the route.
+  contrastive:
+    - id: gj-web-005-c1
+      failure_modes: [unnecessary_research]
+      critique: Triggers web research for a personal speech that depends on the user's own stories; the queried facts would not change the plan.
+      output:
+        type: web_research_decision
+        needs_research: true
+        reason_categories: [time_sensitive]
+        rationale: Need to find the latest wedding speech trends.
+        facts_to_verify:
+          - {fact: Wedding speech trends in 2026, why_it_matters: To be up to date.}
+        queries: ["best man speech trends 2026", "famous wedding speeches"]
+        unsupported_claims: []
+        can_proceed_without_research: false
+  provenance: *prov

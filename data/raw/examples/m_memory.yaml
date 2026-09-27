@@ -1,0 +1,271 @@
+# Memory — two layers: user-level (stable, cross-goal) and goal-level (bound to one goal).
+# Extraction stores facts in the right layer and does not store third-party or unnecessary
+# sensitive data. Isolation: memory from other goals (retrieval noise) must not leak into answers.
+examples:
+
+- id: gj-mem-001
+  schema_version: "0.1.0"
+  task_type: memory_extraction
+  behavior: [memory]
+  language: en
+  input_language: en
+  domain: language_learning
+  difficulty: hard
+  goal_size: n/a
+  tags: [extraction, third_party_data, privacy]
+  safety_category: allowed
+  scenario_group: sg-mem-french-lyon
+  input:
+    operation: memory_extraction
+    today: "2026-09-27"
+    goal:
+      id: g-french
+      title: Pass DELF B1 before moving to Lyon
+    conversation:
+      - role: user
+        content: I'm a morning person — 30-minute sessions before work are ideal for me. Please no flashcard apps, I hate them. My DELF B1 exam is on March 14.
+      - role: assistant
+        content: Got it — mornings, 30 minutes, no flashcards, exam on March 14. Anything else that affects how much you can study?
+      - role: user
+        content: My wife has MS, so some weeks I'm her main carer and I barely have time to study at all.
+  expected_output:
+    type: memory_extraction
+    items:
+      - scope: user
+        category: schedule
+        content: Prefers 30-minute study sessions in the morning before work.
+        stability: stable
+        sensitive: false
+        source: user_stated
+      - scope: user
+        category: learning_style
+        content: Dislikes flashcard apps; avoid them as a method.
+        stability: stable
+        sensitive: false
+        source: user_stated
+      - scope: user
+        category: constraint
+        content: Some weeks available time drops sharply because of family caregiving responsibilities.
+        stability: stable
+        sensitive: false
+        source: user_stated
+      - scope: goal
+        goal_id: g-french
+        category: fact
+        content: DELF B1 exam date is 2027-03-14.
+        stability: stable
+        sensitive: false
+        source: user_stated
+    not_stored:
+      - content: The medical condition of the user's wife
+        reason: third_party_information
+  annotations:
+    rationale: Stable preferences and the caregiving constraint go to user level (they affect every goal); the exam date is goal-level; the spouse's diagnosis is third-party health data and is not stored — only its planning consequence is.
+  contrastive:
+    - id: gj-mem-001-c1
+      failure_modes: [memory_leak]
+      critique: Stores another person's diagnosis at user level, where it would surface in every future goal.
+      output:
+        type: memory_extraction
+        items:
+          - {scope: user, category: schedule, content: Morning 30-minute sessions., stability: stable, sensitive: false}
+          - {scope: user, category: health, content: "User's wife has MS; user is her carer.", stability: stable, sensitive: true}
+          - {scope: goal, goal_id: g-french, category: fact, content: DELF B1 on 2027-03-14., stability: stable, sensitive: false}
+        not_stored: []
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-mem-002
+  schema_version: "0.1.0"
+  task_type: memory_extraction
+  behavior: [memory]
+  language: ru
+  input_language: ru
+  domain: home
+  difficulty: medium
+  goal_size: n/a
+  tags: [extraction, update, temporary]
+  safety_category: allowed
+  scenario_group: sg-mem-kitchen-renovation
+  input:
+    operation: memory_extraction
+    today: "2026-09-27"
+    goal:
+      id: g-kitchen
+      title: Сделать ремонт кухни до Нового года
+    user_memory:
+      - id: um1
+        scope: user
+        category: schedule
+        content: Работает по графику 5/2, свободен по выходным.
+        stability: stable
+    conversation:
+      - role: user
+        content: Кстати, я теперь работаю сменами два через два. Бюджет на кухню — 400 тысяч, больше не будет. И на этой неделе я в командировке до пятницы, так что ничего не успею.
+  expected_output:
+    type: memory_extraction
+    items:
+      - scope: goal
+        goal_id: g-kitchen
+        category: constraint
+        content: Бюджет на ремонт кухни — 400 000 рублей, жёсткий лимит.
+        stability: stable
+        sensitive: false
+        source: user_stated
+      - scope: user
+        category: schedule
+        content: В командировке до 2026-10-02, в это время занятия по целям не планировать.
+        stability: temporary
+        sensitive: false
+        source: user_stated
+        expires_at: "2026-10-02"
+    not_stored: []
+    updates:
+      - memory_id: um1
+        action: update
+        new_content: Работает сменами 2 через 2; свободные дни меняются каждую неделю.
+  annotations:
+    rationale: Changed stable fact updates the existing memory instead of duplicating it; budget is goal-level; the business trip is a temporary user-level constraint with an expiry date.
+  provenance: *prov
+
+- id: gj-mem-003
+  schema_version: "0.1.0"
+  task_type: daily_plan
+  behavior: [memory, daily_prioritization]
+  language: en
+  input_language: en
+  domain: creative
+  difficulty: medium
+  goal_size: medium
+  tags: [memory_isolation, retrieval_noise]
+  safety_category: allowed
+  scenario_group: sg-mem-portrait-drawing-isolation
+  input:
+    operation: daily_plan
+    today: "2026-09-27"
+    goal:
+      id: g-portrait
+      title: Learn to draw realistic portraits
+    user_memory:
+      - scope: user
+        category: schedule
+        content: Prefers evening sessions of 30–40 minutes.
+        stability: stable
+    retrieved_memory:
+      - scope: goal
+        goal_id: g-debt
+        category: fact
+        content: Monthly take-home pay is 3,200.
+        sensitive: true
+      - scope: goal
+        goal_id: g-debt
+        category: constraint
+        content: Paying off a 9,000 credit card balance; avoid non-essential purchases.
+        sensitive: true
+    time_budget:
+      available_minutes_today: 40
+    journey:
+      regions:
+        - {id: r1, title: Proportions, order: 1, status: active}
+      milestones:
+        - {id: m1, title: Accurate proportions from reference, region_id: r1, success_criteria: ["5 portraits with correct proportions"]}
+      nodes:
+        - {id: n1, type: task, title: Loomis head construction — 10 studies, region_id: r1, milestone_id: m1, status: verified}
+        - {id: n2, type: task, title: Eye placement drills — 20 quick sketches, region_id: r1, milestone_id: m1, status: available, depends_on: [n1], estimated_duration_minutes: 30}
+        - {id: n3, type: task, title: First full portrait from a photo reference, region_id: r1, milestone_id: m1, status: locked, depends_on: [n2], estimated_duration_minutes: 90}
+    conversation:
+      - role: user
+        content: I've got about 40 minutes this evening. What should I do?
+  expected_output:
+    type: daily_plan
+    response_language: en
+    message_to_user: |-
+      Tonight: 20 quick eye-placement sketches, about 90 seconds each (30 min). Place the eyes on the halfway line of the head and check the one-eye-width gap between them each time. Use the remaining 10 minutes to compare your last five sketches with the reference — that's what unlocks the first full portrait.
+    available_minutes: 40
+    recommended_tasks:
+      - task_id: n2
+        reason: The only unlocked task, and it fits your evening session.
+        estimated_duration_minutes: 30
+    total_minutes: 30
+    next_action: Set a 90-second timer and draw the first eye-placement sketch.
+  annotations:
+    must_not_mention: ["3,200", "9,000", "credit card", "debt", "take-home"]
+    rationale: Retrieval returned items from another goal (finances). The answer uses the user-level evening preference and ignores the unrelated, sensitive goal memory entirely.
+  contrastive:
+    - id: gj-mem-003-c1
+      failure_modes: [memory_leak]
+      critique: Brings the user's debt and salary from a different goal into a drawing session, exposing sensitive information where it doesn't belong.
+      output:
+        type: daily_plan
+        response_language: en
+        message_to_user: Since you're paying off your credit card, stick to the pencils you have — no new supplies. Do the eye-placement drills for 30 minutes.
+        available_minutes: 40
+        recommended_tasks:
+          - {task_id: n2, reason: Fits the session., estimated_duration_minutes: 30}
+        total_minutes: 30
+        next_action: Start the drills.
+  provenance: *prov
+
+- id: gj-mem-004
+  schema_version: "0.1.0"
+  task_type: navigator_response
+  behavior: [memory, navigator]
+  language: ru
+  input_language: ru
+  domain: hobby
+  difficulty: medium
+  goal_size: medium
+  tags: [memory_isolation, retrieval_noise]
+  safety_category: allowed
+  scenario_group: sg-mem-ukulele-isolation
+  input:
+    operation: navigator_response
+    today: "2026-09-27"
+    goal:
+      id: g-ukulele
+      title: Научиться играть на укулеле 5 песен
+    user_memory:
+      - scope: user
+        category: work_style
+        content: Лучше всего держит привычки, когда они привязаны к уже существующим ежедневным делам.
+        stability: stable
+    retrieved_memory:
+      - scope: goal
+        goal_id: g-mortgage
+        category: fact
+        content: Ежемесячный платёж по ипотеке — 48 000 рублей.
+        sensitive: true
+      - scope: goal
+        goal_id: g-mortgage
+        category: decision
+        content: Решено гасить ипотеку досрочно за 7 лет.
+    journey:
+      regions:
+        - {id: r1, title: Первые аккорды, order: 1, status: active}
+      milestones:
+        - {id: m1, title: 4 базовых аккорда без пауз, region_id: r1, success_criteria: ["Смена 4 аккордов в ритме 60 ударов в минуту"]}
+      nodes:
+        - {id: n1, type: task, title: "Аккорды C, Am, F, G — по 5 минут каждый", region_id: r1, milestone_id: m1, status: available}
+    conversation:
+      - role: user
+        content: Как мне успевать заниматься каждый день? Вечно забываю про укулеле.
+  expected_output:
+    type: navigator_response
+    response_language: ru
+    message_to_user: |-
+      Судя по тому, как вам проще держать привычки, лучше всего привязать укулеле к делу, которое вы и так делаете каждый день. Например: 10 минут после утреннего кофе или сразу после ужина. И пусть укулеле лежит на виду, а не в чехле — видимость сильно помогает не забывать.
+      Для начала хватит 10 минут: смена аккордов C, Am, F и G по кругу. Какое ежедневное дело вам подходит лучше всего?
+    intent: other
+    in_scope: true
+    proposed_changes: []
+    requires_user_confirmation: false
+    suggested_next_action: Выбрать ежедневное дело, после которого будете брать укулеле.
+    decision_summary: null
+  annotations:
+    must_not_mention: ["ипотек", "48 000", "досрочно"]
+    rationale: Uses the relevant user-level work-style memory; ignores the retrieved mortgage facts from another goal.
+  provenance: *prov

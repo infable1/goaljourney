@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.0/eval_case.json",
+  "title": "Evaluation case",
+  "description": "A behavioural test. `checks` are automated assertions (each tagged with a metric); `human_review_focus` lists what a human reviewer should judge. `reference_output` is one acceptable answer, used to self-test the checks — it is not the only correct answer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "eval_version", "dimensions", "task_type", "language", "input_language", "domain", "safety_category", "input", "checks", "human_review_focus"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ev-[a-z]+-[0-9]{2,4}$" },
+    "eval_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "title": { "$ref": "common.json#/$defs/short_text" },
+    "dimensions": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "$ref": "#/$defs/dimension" }
+    },
+    "task_type": { "$ref": "common.json#/$defs/operation" },
+    "language": { "$ref": "common.json#/$defs/language" },
+    "input_language": { "$ref": "common.json#/$defs/input_language" },
+    "domain": { "$ref": "common.json#/$defs/domain" },
+    "safety_category": { "$ref": "common.json#/$defs/safety_category" },
+    "input": { "$ref": "input_context.json" },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "human_review_focus": {
+      "type": "array", "minItems": 1,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "reference_output": { "type": "object" },
+    "notes": { "$ref": "common.json#/$defs/text" }
+  },
+  "$defs": {
+    "dimension": {
+      "type": "string",
+      "enum": [
+        "question_quality", "planning_quality", "task_quality", "verification_quality",
+        "route_adaptation", "user_agency", "hallucination_resistance", "web_research_decisions",
+        "safety_behavior", "language_consistency", "structured_output_validity", "memory_isolation"
+      ]
+    },
+    "check": {
+      "type": "object",
+      "required": ["check", "metric"],
+      "properties": {
+        "check": {
+          "type": "string",
+          "enum": [
+            "schema_valid", "semantic_clean", "lint_absent", "equals", "one_of", "not_equals",
+            "count_max", "count_min", "must_ask", "must_not_ask", "allowed_question_targets",
+            "no_mentions", "mentions_any", "preserves_nodes", "total_minutes_within",
+            "language", "claims_grounded"
+          ]
+        },
+        "metric": {
+          "type": "string",
+          "enum": [
+            "schema_validity", "semantic_validity", "unnecessary_question_rate",
+            "missing_critical_question_rate", "verification_status_accuracy",
+            "verification_rigor", "route_preservation", "hallucination_rate",
+            "web_research_decision_accuracy", "safety_policy_compliance", "language_match",
+            "memory_leak_rate", "user_agency_compliance", "constraint_compliance",
+            "task_actionability", "decision_transparency", "scope_adherence",
+            "progress_integrity", "feasibility_judgement"
+          ]
+        },
+        "dimension": { "$ref": "#/$defs/dimension" },
+        "path": { "type": "string" },
+        "value": {},
+        "values": { "type": "array" },
+        "max": { "type": "number" },
+        "min": { "type": "number" },
+        "groups": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+        "targets": { "type": "array", "items": { "type": "string" } },
+        "terms": { "type": "array", "items": { "type": "string" } },
+        "codes": { "type": "array", "items": { "type": "string" } },
+        "node_ids": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,1321 @@
+# Type C — Goal + context -> structured Journey (regions, milestones, nodes, levels, achievements).
+# Near-term region is detailed (full tasks with verification protocols); later regions are outlines.
+examples:
+
+- id: gj-jour-001
+  schema_version: "0.1.0"
+  task_type: journey_generation
+  behavior: [journey, decision_summary, progress]
+  language: ru
+  input_language: ru
+  domain: career
+  difficulty: hard
+  goal_size: complex
+  tags: [has_deadline, career_switch, limited_budget, preferences]
+  safety_category: allowed
+  scenario_group: sg-jour-junior-qa
+  input:
+    operation: journey_generation
+    today: "2026-09-27"
+    goal:
+      id: g-qa
+      title: Получить первую работу junior QA-инженером
+      domain: career
+      deadline: "2027-02-28"
+      available_time:
+        hours_per_week: 10
+        session_minutes: 90
+      current_state:
+        summary: Администратор в клинике, опыта в IT нет, уверенный пользователь ПК, английский A2.
+      preferences:
+        - Учиться по текстовым материалам и практике, а не по длинным видеокурсам
+      constraints:
+        - Бюджет на обучение — до 15 000 рублей
+    conversation:
+      - role: user
+        content: Хочу к концу февраля получить работу тестировщиком. Могу 10 часов в неделю, по полтора часа за раз. Дорогие курсы не потяну, и длинные видео мне не заходят — лучше читать и сразу пробовать.
+  expected_output:
+    type: journey_generation
+    response_language: ru
+    message_to_user: |-
+      Маршрут готов: 4 участка и 4 вехи до оффера к 28 февраля, в темпе 10 часов в неделю по полтора часа.
+      Начнём с разбора 15 реальных вакансий junior QA — так проверим, какие навыки сейчас действительно требуют, и при необходимости поправим маршрут. Параллельно — конспект по тест-дизайну, затем чек-лист, тест-кейсы и баг-репорты. Инструменты (DevTools, Postman, SQL) откроются после первой вехи.
+      Дорогие курсы не нужны: всё построено на текстах и практике, как вы хотели. Бюджет пригодится, только если после первой вехи решите взять пару сессий менторства.
+    goal:
+      id: g-qa
+      title: Получить первую работу junior QA-инженером
+      domain: career
+      desired_outcome: Оффер на позицию junior QA-инженера (ручное тестирование) в офисе или удалённо.
+      success_criteria:
+        - Получен оффер на позицию junior QA
+      deadline: "2027-02-28"
+      available_time:
+        hours_per_week: 10
+        session_minutes: 90
+      current_state:
+        summary: Администратор в клинике, опыта в IT нет, уверенный пользователь ПК, английский A2.
+      preferences:
+        - Учиться по текстовым материалам и практике, а не по длинным видеокурсам
+      constraints:
+        - Бюджет на обучение — до 15 000 рублей
+      assumptions:
+        - statement: Подходят и офисные, и удалённые вакансии.
+          basis: default_until_confirmed
+          confirmed: false
+    journey:
+      id: j-qa
+      goal_id: g-qa
+      version: 1
+      strategy_summary: Сначала проверяем требования рынка по реальным вакансиям, затем ручное тестирование и тест-дизайн, потом базовые инструменты, портфолио и активный поиск работы с разбором каждого собеседования.
+      pacing:
+        weekly_hours_planned: 10
+        horizon_weeks: 22
+      regions:
+        - {id: r1, title: Основа тестирования, order: 1, status: active}
+        - {id: r2, title: Инструменты тестировщика, order: 2, status: locked}
+        - {id: r3, title: Портфолио и резюме, order: 3, status: locked}
+        - {id: r4, title: Поиск работы и собеседования, order: 4, status: locked}
+      milestones:
+        - id: m1
+          title: Умею проектировать тесты и оформлять баги
+          region_id: r1
+          success_criteria: ["Чек-лист, 5 тест-кейсов и 3 баг-репорта прошли проверку", "Мини-собеседование по основам пройдено"]
+          target_date: "2026-10-25"
+        - id: m2
+          title: Владею базовыми инструментами
+          region_id: r2
+          success_criteria: [Баг-репорт с данными из DevTools и SQL-запросом прошёл практическую проверку]
+          target_date: "2026-12-06"
+        - id: m3
+          title: Портфолио и резюме готовы
+          region_id: r3
+          success_criteria: ["Портфолио на GitHub с тест-кейсами, баг-репортами и коллекцией Postman", "Резюме прошло разбор"]
+          target_date: "2027-01-10"
+        - id: m4
+          title: Получен оффер
+          region_id: r4
+          success_criteria: [Письменный оффер на позицию junior QA]
+          target_date: "2027-02-28"
+      nodes:
+        - id: n1
+          type: task
+          title: Проанализировать 15 вакансий junior QA
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 90
+          priority: high
+          created_by: ai
+          task:
+            id: n1
+            title: Проанализировать 15 вакансий junior QA и выписать требования
+            description: Найдите 15 актуальных вакансий junior QA (ручное тестирование) на двух любых сайтах с вакансиями. Для каждой запишите в таблицу компанию, обязательные навыки и «будет плюсом».
+            why_it_matters: Маршрут опирается на реальные требования рынка, а не на догадки. Если в вакансиях часто встречается что-то, чего нет в плане, мы добавим это сейчас, а не за месяц до поиска работы.
+            expected_result: Таблица из 15 строк и список 5 самых частых требований.
+            estimated_duration_minutes: 90
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: research
+              objective_verifiability: medium
+              methods:
+                - method: structured_result
+                  role: required
+                  instructions: Загрузите таблицу (компания, обязательные навыки, «будет плюсом») и список пяти самых частых требований.
+                  acceptance_criteria: [Не меньше 15 вакансий, Выделены 5 самых частых требований]
+                - method: follow_up_questions
+                  role: supplementary
+                  instructions: Короткие вопросы по итогам анализа.
+                  questions: ["Какое требование удивило вас больше всего?", "Что из топ-5 вы уже умеете хотя бы немного?"]
+              pass_criteria: [Таблица содержит не меньше 15 вакансий, Топ-5 требований выписан]
+              confidence_ceiling: medium
+              self_report_only: false
+              rationale: Результат — артефакт, который можно проверить по структуре и полноте; сами вакансии AI не перепроверяет, поэтому уверенность средняя.
+        - id: n2
+          type: task
+          title: Конспект по техникам тест-дизайна
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 270
+          priority: critical
+          created_by: ai
+          task:
+            id: n2
+            title: Составить конспект по 4 техникам тест-дизайна с примером на каждую
+            description: По текстовым материалам разберите классы эквивалентности, граничные значения, таблицу решений и попарное тестирование. Для каждой техники запишите определение своими словами и пример на форме регистрации.
+            why_it_matters: Тест-дизайн — основа всех следующих задач и частая тема на собеседованиях junior QA.
+            expected_result: Конспект с 4 техниками, у каждой — определение своими словами и собственный пример.
+            estimated_duration_minutes: 270
+            sessions: 3
+            difficulty: 2
+            dependencies: []
+            verification_protocol:
+              task_nature: knowledge
+              objective_verifiability: high
+              methods:
+                - method: artifact_review
+                  role: required
+                  instructions: Загрузите конспект.
+                  acceptance_criteria: ["Все 4 техники", "У каждой свой пример, а не скопированный"]
+                - method: knowledge_test
+                  role: required
+                  instructions: Решите 5 коротких задач от AI на применение техник (например, выбрать граничные значения для поля «возраст»).
+                  acceptance_criteria: [Не меньше 4 из 5 задач решены верно]
+              pass_criteria: [Конспект покрывает 4 техники, 4 из 5 задач решены верно]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Знание проверяется применением на новых задачах, а не только наличием конспекта.
+        - id: n3
+          type: task
+          title: Чек-лист проверки формы регистрации
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: full
+          depends_on: [n2]
+          estimated_duration_minutes: 90
+          priority: high
+          created_by: ai
+          task:
+            id: n3
+            title: Составить чек-лист из 15+ проверок формы регистрации на учебном сайте
+            description: Выберите учебный сайт для тестировщиков с формой регистрации и составьте чек-лист минимум из 15 проверок, используя техники из конспекта.
+            why_it_matters: Первый реальный рабочий артефакт тестировщика и основа для тест-кейсов.
+            expected_result: Чек-лист из 15 и более проверок с пометкой, какая техника использована.
+            estimated_duration_minutes: 90
+            difficulty: 2
+            dependencies: [n2]
+            verification_protocol:
+              task_nature: skill_acquisition
+              objective_verifiability: high
+              methods:
+                - method: artifact_review
+                  role: required
+                  instructions: Загрузите чек-лист и ссылку на форму, которую проверяли.
+                  acceptance_criteria: [Не меньше 15 проверок, Есть позитивные и негативные проверки, Отмечены граничные значения]
+                - method: follow_up_questions
+                  role: required
+                  instructions: Два вопроса о выборе проверок.
+                  questions: ["Почему вы выбрали именно эти граничные значения для одного из полей?", "Какую проверку вы бы сделали первой при нехватке времени и почему?"]
+              pass_criteria: [Чек-лист соответствует критериям, Ответы показывают понимание выбора проверок]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Навык проверяется по артефакту и по умению объяснить решения.
+        - id: n4
+          type: task
+          title: 5 тест-кейсов по шаблону
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: full
+          depends_on: [n3]
+          estimated_duration_minutes: 180
+          priority: high
+          created_by: ai
+          task:
+            id: n4
+            title: Написать 5 тест-кейсов для формы регистрации по стандартному шаблону
+            description: На основе чек-листа напишите 5 тест-кейсов (предусловия, шаги, ожидаемый результат, приоритет) в таблице или тест-менеджмент системе с бесплатным тарифом.
+            why_it_matters: Умение писать тест-кейсы проверяют почти на каждом собеседовании junior QA; они же войдут в портфолио.
+            expected_result: 5 тест-кейсов по шаблону, минимум 2 негативных.
+            estimated_duration_minutes: 180
+            sessions: 2
+            difficulty: 3
+            dependencies: [n3]
+            verification_protocol:
+              task_nature: writing
+              objective_verifiability: high
+              methods:
+                - method: artifact_review
+                  role: required
+                  instructions: Загрузите файл или ссылку с 5 тест-кейсами.
+                  acceptance_criteria: [Все поля шаблона заполнены, Шаги воспроизводимы другим человеком, Минимум 2 негативных кейса]
+              pass_criteria: [5 тест-кейсов соответствуют критериям]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Качество тест-кейсов полностью видно в самом документе.
+        - id: n5
+          type: task
+          title: 3 баг-репорта на учебном сайте
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: full
+          depends_on: [n2]
+          estimated_duration_minutes: 180
+          priority: high
+          created_by: ai
+          task:
+            id: n5
+            title: Найти и оформить 3 баг-репорта на учебном сайте для тестировщиков
+            description: Найдите 3 разных дефекта на учебном сайте и оформите каждый по шаблону — заголовок, шаги, фактический и ожидаемый результат, окружение, серьёзность — со скриншотом.
+            why_it_matters: Баг-репорт — главный продукт работы тестировщика; по нему судят о внимательности и умении ясно писать.
+            expected_result: 3 баг-репорта по шаблону со скриншотами.
+            estimated_duration_minutes: 180
+            sessions: 2
+            difficulty: 3
+            dependencies: [n2]
+            verification_protocol:
+              task_nature: skill_acquisition
+              objective_verifiability: high
+              methods:
+                - method: artifact_review
+                  role: required
+                  instructions: Загрузите 3 баг-репорта и ссылку на сайт.
+                  acceptance_criteria: [Шаги воспроизводимы, Фактический и ожидаемый результат различаются, Серьёзность обоснована]
+                - method: screenshot
+                  role: supplementary
+                  instructions: Скриншоты прикладываются к каждому баг-репорту как часть артефакта.
+                - method: follow_up_questions
+                  role: required
+                  instructions: Вопрос о приоритизации.
+                  questions: ["Какой из трёх багов вы бы исправили первым и почему?", "Чем серьёзность отличается от приоритета?"]
+              pass_criteria: [3 баг-репорта соответствуют критериям, Ответы на вопросы верны по сути]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Скриншот сам по себе ничего не доказывает; проверяются воспроизводимость репорта и понимание серьёзности.
+        - id: n6
+          type: ai_checkpoint
+          title: "AI-чекпоинт: мини-собеседование по основам тестирования"
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: outline
+          depends_on: [n1, n4, n5]
+          estimated_duration_minutes: 30
+          priority: critical
+        - id: n7
+          type: task
+          title: "DevTools: вкладки Network и Console на практике"
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n6]
+          estimated_duration_minutes: 360
+        - id: n8
+          type: task
+          title: "Postman: протестировать 5 запросов учебного API"
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n7]
+          estimated_duration_minutes: 450
+        - id: n9
+          type: task
+          title: "SQL: 20 задач на SELECT, JOIN и GROUP BY"
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n6]
+          estimated_duration_minutes: 540
+        - id: n10
+          type: decision_point
+          title: Держим ли темп после первой вехи?
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n6]
+          decision:
+            question: Удаётся ли держать темп 10 часов в неделю?
+            options: [Да — продолжаем самостоятельно, Нет — 2–3 сессии менторства в рамках бюджета, Нет — сдвигаем срок на месяц]
+        - id: n11
+          type: verification
+          title: "Практическая проверка: баг-репорт с данными из DevTools и SQL"
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n8, n9]
+          estimated_duration_minutes: 90
+        - id: n12
+          type: task
+          title: Собрать портфолио на GitHub из готовых артефактов
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n11]
+          estimated_duration_minutes: 270
+        - id: n13
+          type: task
+          title: Резюме junior QA и профили на двух сайтах вакансий
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n12, n1]
+          estimated_duration_minutes: 270
+        - id: n14
+          type: challenge
+          title: 20 откликов и 3 собеседования
+          region_id: r4
+          milestone_id: m4
+          status: locked
+          detail_level: outline
+          depends_on: [n13]
+        - id: n15
+          type: task
+          title: Разбор каждого собеседования и план доработки
+          region_id: r4
+          milestone_id: m4
+          status: locked
+          detail_level: outline
+          depends_on: [n14]
+      assumptions:
+        - Подходят и офисные, и удалённые вакансии (подтвердить).
+        - Учебные сайты и API для практики доступны бесплатно.
+      levels:
+        - {index: 0, title: Новичок в тестировании, unlock_criteria: Старт маршрута}
+        - {index: 1, title: Тестировщик-практикант, unlock_milestone_id: m1, unlock_criteria: Веха m1 подтверждена}
+        - {index: 2, title: Тестировщик с инструментами, unlock_milestone_id: m2, unlock_criteria: Веха m2 подтверждена}
+        - {index: 3, title: Кандидат в junior QA, unlock_milestone_id: m3, unlock_criteria: Веха m3 подтверждена}
+        - {index: 4, title: Junior QA-инженер, unlock_milestone_id: m4, unlock_criteria: Получен оффер}
+      achievements:
+        - {id: a1, title: Первый подтверждённый артефакт, unlock: {type: first_verified_task}}
+        - {id: a2, title: Первый найденный баг, description: Баг-репорт прошёл проверку, unlock: {type: capability_demonstrated, ref: n5}}
+        - {id: a3, title: Основа заложена, unlock: {type: milestone_verified, ref: m1}}
+        - {id: a4, title: Первое собеседование, unlock: {type: first_real_world_result, ref: n14}}
+        - {id: a5, title: Оффер получен, unlock: {type: goal_completed}}
+    external_claims:
+      - claim: В вакансиях junior QA часто требуют SQL и работу с API.
+        status: needs_verification
+        affects: Состав второго участка — проверяется задачей n1 по реальным вакансиям
+    decision_summary:
+      what_changed: Создан маршрут из 4 участков — основа тестирования, инструменты, портфолио, поиск работы — с 4 вехами до 28 февраля.
+      why: Такой порядок даёт первый проверяемый результат через 4 недели; разбор вакансий в начале привязывает план к реальным требованиям рынка.
+      impact: 10 часов в неделю; на поиск работы остаётся около 7 недель.
+      alternatives_considered:
+        - option: Начать сразу с автотестов на Python
+          why_not: Для первой работы важнее ручное тестирование; автоматизация удлинит путь на месяцы.
+        - option: Платный курс с трудоустройством
+          why_not: Не вписывается в бюджет и в предпочтение учиться по текстам.
+  annotations:
+    rationale: Starts from real market data (n1), respects session length (long tasks split into sessions), budget and text-first preference, deadline-aligned milestones, only region 1 detailed, levels tied to verified milestones.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-jour-002
+  schema_version: "0.1.0"
+  task_type: journey_generation
+  behavior: [journey, source_awareness, decision_summary]
+  language: en
+  input_language: en
+  domain: business
+  difficulty: hard
+  goal_size: complex
+  tags: [no_deadline, limited_budget, marketplace]
+  safety_category: allowed
+  scenario_group: sg-jour-ceramic-mugs-shop
+  input:
+    operation: journey_generation
+    today: "2026-09-27"
+    goal:
+      id: g-mugs
+      title: Open an online shop selling my ceramic mugs
+      domain: business
+      available_time:
+        hours_per_week: 8
+      resources:
+        - Community studio membership with kiln access twice a week
+        - Budget of about $500
+      current_state:
+        summary: Has made about 40 mugs in the last year, gifted most of them; never sold anything.
+    conversation:
+      - role: user
+        content: I want to start selling my handmade mugs on one of the big handmade marketplaces. No hard deadline, but I'd love a first sale within three months. I have ~8 hours a week and about $500 to start. Kiln access twice a week at my community studio.
+  expected_output:
+    type: journey_generation
+    response_language: en
+    message_to_user: |-
+      Here's your route to a first sale in about three months. It starts with the unglamorous part that decides whether the shop can work at all: what one mug really costs you, and how many you can make per month with two kiln slots a week.
+      Marketplace fees and seller rules change, so the first region includes checking them on the marketplace's official pages before you set prices — I haven't assumed any numbers.
+      Later regions (listing photos, launch, first sales) are outlines for now and will get detailed once we know your costs and capacity.
+    goal:
+      id: g-mugs
+      title: Open an online shop selling my ceramic mugs
+      domain: business
+      desired_outcome: A live marketplace shop with at least 10 listed mugs and a first sale.
+      success_criteria:
+        - Shop live with at least 10 listings
+        - First sale to a stranger
+      deadline: null
+      available_time:
+        hours_per_week: 8
+      resources:
+        - Community studio membership with kiln access twice a week
+        - Budget of about $500
+      assumptions:
+        - statement: A first sale within about 3 months is the target, not a hard deadline.
+          basis: user_stated
+          confirmed: true
+    journey:
+      id: j-mugs
+      goal_id: g-mugs
+      version: 1
+      strategy_summary: Validate unit economics and capacity first, then build a small, well-photographed first collection, launch, and learn from the first 30 days of traffic.
+      pacing:
+        weekly_hours_planned: 8
+        horizon_weeks: 13
+      regions:
+        - {id: r1, title: Costs and capacity, order: 1, status: active}
+        - {id: r2, title: First collection and shop setup, order: 2, status: locked}
+        - {id: r3, title: Launch and first sales, order: 3, status: locked}
+      milestones:
+        - id: m1
+          title: Price per mug decided from real costs
+          region_id: r1
+          success_criteria: ["Cost sheet with materials, firing, packaging and marketplace fees", "Price chosen with a margin"]
+          target_date: "2026-10-25"
+        - id: m2
+          title: Shop ready to publish
+          region_id: r2
+          success_criteria: [10 mugs photographed and described, Shop profile and policies filled in]
+          target_date: "2026-11-29"
+        - id: m3
+          title: First sale
+          region_id: r3
+          success_criteria: [First order from a stranger shipped]
+          target_date: "2026-12-27"
+      nodes:
+        - id: n1
+          type: task
+          title: Check current marketplace fees and seller rules
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 60
+          priority: critical
+          task:
+            id: n1
+            title: Write down the current fees and seller rules of 2 candidate marketplaces
+            description: On each marketplace's official seller pages, find listing fees, transaction and payment-processing fees, and any rules for handmade items and food-contact ceramics. Record each with the page link and today's date.
+            why_it_matters: Fees go straight into your price, and food-contact rules may affect what you can list. These change over time, so they must come from the official source.
+            expected_result: A short table per marketplace with fees, relevant rules and source links.
+            estimated_duration_minutes: 60
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: research
+              objective_verifiability: high
+              methods:
+                - method: structured_result
+                  role: required
+                  instructions: Submit the table with one row per fee or rule and a link to the official page for each.
+                  acceptance_criteria: [Every fee has a source link, Both marketplaces covered]
+                - method: url_review
+                  role: supplementary
+                  instructions: The navigator opens the linked pages to confirm they are official seller documentation.
+              pass_criteria: [Fees and rules recorded with official source links]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Research results are checkable against their sources.
+        - id: n2
+          type: task
+          title: Cost sheet for one mug
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 90
+          priority: critical
+          task:
+            id: n2
+            title: Build a cost sheet for one mug from your last 10 pieces
+            description: Using receipts and studio fees, calculate clay, glaze, firing share, packaging and shipping materials per mug. Add a row for your time at an hourly rate you choose.
+            why_it_matters: Without real costs you can't set a price that pays for materials, fees and some of your time.
+            expected_result: A spreadsheet with cost per mug broken down into at least 5 lines.
+            estimated_duration_minutes: 90
+            difficulty: 2
+            dependencies: []
+            verification_protocol:
+              task_nature: business_activity
+              objective_verifiability: high
+              methods:
+                - method: artifact_review
+                  role: required
+                  instructions: Upload the spreadsheet.
+                  acceptance_criteria: [At least 5 cost lines, Studio and firing costs included, Time costed explicitly]
+                - method: follow_up_questions
+                  role: supplementary
+                  instructions: A question on the biggest cost driver.
+                  questions: ["Which cost line surprised you most?"]
+              pass_criteria: [Complete cost sheet with a per-mug total]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: A spreadsheet is directly reviewable.
+        - id: n3
+          type: task
+          title: Measure monthly capacity with two kiln slots
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 30
+          priority: high
+          task:
+            id: n3
+            title: Log 2 weeks of production and estimate mugs per month
+            description: For the next two weeks, log each studio session — mugs thrown, trimmed, glazed, fired, and losses.
+            why_it_matters: Capacity decides how big the first collection can be and whether restocking is realistic.
+            expected_result: A 2-week production log and an estimate of finished mugs per month.
+            estimated_duration_minutes: 30
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: business_activity
+              objective_verifiability: medium
+              methods:
+                - method: structured_result
+                  role: required
+                  instructions: Fill in the log per session.
+                  fields: [Date, Mugs thrown, Mugs fired, Losses, Hours spent]
+              pass_criteria: [At least 4 sessions logged, Monthly estimate derived from the log]
+              confidence_ceiling: medium
+              self_report_only: false
+              rationale: A session-level log is structured and internally checkable, though entered by the user.
+        - id: n4
+          type: decision_point
+          title: Set the launch price
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: outline
+          depends_on: [n1, n2, n3]
+          decision:
+            question: Which pricing approach for launch?
+            options: [Cost plus margin, Match similar handmade mugs, Launch discount for the first 5 buyers]
+        - id: n5
+          type: task
+          title: Make and select a first collection of 10 mugs
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n4]
+        - id: n6
+          type: task
+          title: Photograph the collection in natural light (3 photos per mug)
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n5]
+        - id: n7
+          type: task
+          title: Write listings and shop policies
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n6, n1]
+        - id: n8
+          type: task
+          title: Publish the shop and share it with 30 people you know
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n7]
+        - id: n9
+          type: ai_checkpoint
+          title: 30-day review of views, favourites and sales
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n8]
+      levels:
+        - {index: 0, title: Maker, unlock_criteria: Start of the journey}
+        - {index: 1, title: Maker who knows the numbers, unlock_milestone_id: m1, unlock_criteria: Pricing milestone verified}
+        - {index: 2, title: Shop owner, unlock_milestone_id: m2, unlock_criteria: Shop ready to publish}
+        - {index: 3, title: Selling ceramicist, unlock_milestone_id: m3, unlock_criteria: First sale verified}
+      achievements:
+        - {id: a1, title: Numbers don't lie, unlock: {type: milestone_verified, ref: m1}}
+        - {id: a2, title: First sale, unlock: {type: first_real_world_result, ref: m3}}
+    external_claims:
+      - claim: Handmade marketplaces charge listing and transaction fees.
+        status: general_knowledge
+        affects: Pricing
+      - claim: Exact current fee levels and rules for food-contact ceramics on the chosen marketplace.
+        status: needs_verification
+        affects: Price per mug and what can be listed (task n1)
+    decision_summary:
+      what_changed: Created a 3-region route aimed at a first sale in about 13 weeks.
+      why: Costs and capacity come first because they decide the price and the size of the first collection.
+      impact: About 8 hours a week; the $500 budget goes to materials, packaging and possible listing fees.
+      alternatives_considered:
+        - option: Launch immediately with the mugs you already have
+          why_not: Without costs and fees you risk pricing below cost.
+  annotations:
+    rationale: Current external facts (fees, rules) are turned into a research task rather than stated. Capacity and costs before launch. No invented deadline.
+  contrastive:
+    - id: gj-jour-002-c1
+      failure_modes: [unverified_current_facts, generic_plan]
+      critique: Presents specific fee numbers as verified with a source that was never researched, and the route is generic (research, market, sell) without costs or capacity.
+      output:
+        type: journey_generation
+        response_language: en
+        message_to_user: Great! The marketplace charges a $0.20 listing fee and 6.5% per sale, so price your mugs at $25 and start selling.
+        goal: {title: Open an online shop selling my ceramic mugs}
+        journey:
+          regions: [{id: r1, title: Sell, order: 1, status: active}]
+          milestones: [{id: m1, title: Sell mugs, region_id: r1, success_criteria: [Sales made]}]
+          nodes:
+            - {id: n1, type: task, title: Do marketing, region_id: r1, milestone_id: m1, status: available, detail_level: outline}
+            - {id: n2, type: task, title: Sell mugs online, region_id: r1, milestone_id: m1, status: locked, detail_level: outline, depends_on: [n1]}
+        external_claims:
+          - claim: Listing fee is $0.20 and the transaction fee is 6.5%.
+            status: verified_with_source
+            source: {title: Seller fees, url: "https://handmade-market.example.com/fees"}
+        decision_summary:
+          what_changed: Created a plan.
+          why: To sell mugs.
+          impact: You will sell mugs.
+  provenance: *prov
+
+- id: gj-jour-003
+  schema_version: "0.1.0"
+  task_type: journey_generation
+  behavior: [journey, source_awareness]
+  language: en
+  input_language: en
+  domain: travel
+  difficulty: medium
+  goal_size: medium
+  tags: [has_deadline, fixed_budget, location_specific]
+  safety_category: allowed
+  scenario_group: sg-jour-iberia-backpacking
+  input:
+    operation: journey_generation
+    today: "2026-09-27"
+    goal:
+      id: g-trip
+      title: Two-week backpacking trip through Portugal and Spain
+      domain: travel
+      deadline: "2027-05-01"
+      available_time:
+        hours_per_week: 3
+      resources: ["Budget of $2,500 including flights"]
+      preferences: [Trains over buses, Hostels or budget guesthouses, Food markets over restaurants]
+    conversation:
+      - role: user
+        content: I want to do a two-week backpacking trip through Portugal and Spain starting May 1st. Total budget $2,500 including flights. I prefer trains and hostels. I can spend maybe 3 hours a week on planning.
+  expected_output:
+    type: journey_generation
+    response_language: en
+    message_to_user: |-
+      Your trip route has 3 stages: lock in the big decisions (route, flights), sort documents and money, then plan the days. It fits in about 3 hours a week and finishes a week before departure.
+      Entry rules for Spain and Portugal depend on your passport and may have changed recently, so the first task is to check them on official sources — I haven't assumed anything about visas or travel authorisations.
+      Flights are the biggest single cost, so they're booked early; day-by-day details come later.
+    goal:
+      id: g-trip
+      title: Two-week backpacking trip through Portugal and Spain
+      domain: travel
+      desired_outcome: A booked and budgeted 14-day trip starting May 1st, travelling by train and staying in hostels.
+      success_criteria: ["Flights and first two nights booked", "Documents confirmed valid", "Day plan within the $2,500 budget"]
+      deadline: "2027-05-01"
+      available_time:
+        hours_per_week: 3
+      resources: ["Budget of $2,500 including flights"]
+      preferences: [Trains over buses, Hostels or budget guesthouses, Food markets over restaurants]
+    journey:
+      id: j-trip
+      goal_id: g-trip
+      version: 1
+      strategy_summary: Decide the route and book flights early, confirm documents and money, then plan accommodation and days in order of how fast they sell out.
+      pacing:
+        weekly_hours_planned: 3
+        horizon_weeks: 30
+      regions:
+        - {id: r1, title: Route and flights, order: 1, status: active}
+        - {id: r2, title: Documents and money, order: 2, status: locked}
+        - {id: r3, title: Stays and day plans, order: 3, status: locked}
+      milestones:
+        - id: m1
+          title: Route chosen and flights booked
+          region_id: r1
+          success_criteria: [4–5 city route fixed, Flights booked within budget share]
+          target_date: "2026-11-15"
+        - id: m2
+          title: Documents and money sorted
+          region_id: r2
+          success_criteria: [Entry requirements confirmed for your passport, Card or cash plan for euros ready]
+          target_date: "2027-02-28"
+        - id: m3
+          title: Trip fully planned
+          region_id: r3
+          success_criteria: [All nights booked, Day plan and budget sheet complete]
+          target_date: "2027-04-24"
+      nodes:
+        - id: n1
+          type: task
+          title: Check entry requirements for your passport
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 45
+          priority: critical
+          task:
+            id: n1
+            title: Check Schengen entry requirements for your passport on 2 official sources
+            description: On your government's travel advice page and the official EU or Spanish/Portuguese government pages, check whether you need a visa or a travel authorisation for a 14-day stay, plus passport validity rules.
+            why_it_matters: If an authorisation or visa is needed, it has lead times that shape the whole schedule.
+            expected_result: A short note listing each requirement, its source link and the date checked.
+            estimated_duration_minutes: 45
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: research
+              objective_verifiability: high
+              methods:
+                - method: structured_result
+                  role: required
+                  instructions: Submit each requirement with the official link and the date you checked.
+                  acceptance_criteria: [At least 2 official sources, Passport validity rule noted]
+              pass_criteria: [Requirements recorded with official source links]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: Requirements are verifiable against the cited official pages.
+        - id: n2
+          type: task
+          title: Draft the city route
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 90
+          priority: high
+          task:
+            id: n2
+            title: Draft a 4–5 city route with train legs and nights per city
+            description: Choose 4–5 cities, the order, nights in each and the train connection between them. Keep at least 3 nights in the first and last city to absorb flight delays.
+            why_it_matters: The route determines which airports to fly into and out of, which is the biggest cost decision.
+            expected_result: A route table with cities, nights and train legs.
+            estimated_duration_minutes: 90
+            difficulty: 2
+            dependencies: []
+            verification_protocol:
+              task_nature: research
+              objective_verifiability: medium
+              methods:
+                - method: structured_result
+                  role: required
+                  instructions: Submit the route table.
+                  fields: [City, Nights, Train leg to next city, Approx. travel time]
+                  acceptance_criteria: [Nights add up to 14, Every leg has a train option]
+              pass_criteria: [Route totals 14 nights with a train connection for each leg]
+              confidence_ceiling: medium
+              self_report_only: false
+              rationale: The table is internally checkable; train availability is confirmed later during booking.
+        - id: n3
+          type: task
+          title: Book flights (open-jaw if cheaper)
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: full
+          depends_on: [n1, n2]
+          estimated_duration_minutes: 90
+          priority: critical
+          due_date: "2026-11-15"
+          task:
+            id: n3
+            title: Compare 3 flight options and book one that keeps flights under 40% of budget
+            description: Compare round-trip and open-jaw options (fly into the first city, out of the last) on at least two booking sites, then book one.
+            why_it_matters: Flights are the largest cost; booking months ahead usually keeps them within budget.
+            expected_result: A booking confirmation and a comparison of 3 options.
+            estimated_duration_minutes: 90
+            difficulty: 2
+            dependencies: [n1, n2]
+            due_date: "2026-11-15"
+            verification_protocol:
+              task_nature: administrative
+              objective_verifiability: high
+              methods:
+                - method: artifact_review
+                  role: required
+                  instructions: Upload the booking confirmation (hide payment details) and the 3-option comparison.
+                  acceptance_criteria: [Dates match the trip, Price within 40% of the budget]
+              pass_criteria: [Confirmed booking matching the trip dates]
+              confidence_ceiling: high
+              self_report_only: false
+              rationale: A booking confirmation is direct evidence.
+        - id: n4
+          type: task
+          title: Apply for any required travel authorisation or visa
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n1, n3]
+        - id: n5
+          type: task
+          title: Set up a budget sheet and a no-foreign-fee payment option
+          region_id: r2
+          milestone_id: m2
+          status: locked
+          detail_level: outline
+          depends_on: [n3]
+        - id: n6
+          type: task
+          title: Book hostels for all nights
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n3]
+        - id: n7
+          type: task
+          title: Book long-distance train legs
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n6]
+        - id: n8
+          type: task
+          title: One-page day plan per city with 2 food markets each
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n6]
+        - id: n9
+          type: ai_checkpoint
+          title: Final budget and packing check
+          region_id: r3
+          milestone_id: m3
+          status: locked
+          detail_level: outline
+          depends_on: [n5, n7, n8]
+      levels:
+        - {index: 0, title: Dreamer, unlock_criteria: Start of the journey}
+        - {index: 1, title: Committed traveller, unlock_milestone_id: m1, unlock_criteria: Flights booked}
+        - {index: 2, title: Ready to go, unlock_milestone_id: m3, unlock_criteria: Trip fully planned}
+      achievements:
+        - {id: a1, title: Tickets in hand, unlock: {type: milestone_verified, ref: m1}}
+        - {id: a2, title: Bon voyage, unlock: {type: goal_completed}}
+    external_claims:
+      - claim: Entry requirements (visa, travel authorisation, passport validity) for the user's passport.
+        status: needs_verification
+        affects: Region 2 timing (task n1)
+      - claim: Train routes and prices between the chosen cities.
+        status: needs_verification
+        affects: Route draft and budget
+    decision_summary:
+      what_changed: Created a 3-stage planning route that ends one week before departure.
+      why: Entry rules and flights have the longest lead times and the biggest budget impact, so they come first.
+      impact: About 3 hours a week; flights capped at 40% of the $2,500 budget.
+  annotations:
+    rationale: Respects 3 h/week and the May 1st deadline (all milestones before it), preferences (trains, hostels, markets). Entry rules turned into a research task instead of asserted.
+  contrastive:
+    - id: gj-jour-003-c1
+      failure_modes: [ignored_available_time, ignored_deadline]
+      critique: Plans 12 hours a week when the user has 3, and sets the planning milestone after the departure date.
+      output:
+        type: journey_generation
+        response_language: en
+        message_to_user: Here's an intensive planning schedule so everything is perfect!
+        goal: {title: Two-week backpacking trip through Portugal and Spain, deadline: "2027-05-01", available_time: {hours_per_week: 3}}
+        journey:
+          pacing: {weekly_hours_planned: 12, horizon_weeks: 30}
+          regions: [{id: r1, title: Planning, order: 1, status: active}]
+          milestones: [{id: m1, title: Everything planned, region_id: r1, success_criteria: [All booked], target_date: "2027-05-10"}]
+          nodes:
+            - {id: n1, type: task, title: Research every city in detail, region_id: r1, milestone_id: m1, status: available, detail_level: outline}
+        decision_summary:
+          what_changed: Created an intensive plan.
+          why: More planning means a better trip.
+          impact: 12 hours per week.
+  provenance: *prov
+
+- id: gj-jour-004
+  schema_version: "0.1.0"
+  task_type: journey_generation
+  behavior: [journey, verification_protocol]
+  language: ru
+  input_language: ru
+  domain: hobby
+  difficulty: medium
+  goal_size: medium
+  tags: [has_deadline, constraints, photo_supplementary]
+  safety_category: allowed
+  scenario_group: sg-jour-cook-10-dishes
+  input:
+    operation: journey_generation
+    today: "2026-09-27"
+    goal:
+      id: g-cook
+      title: Научиться готовить 10 базовых блюд
+      domain: hobby
+      deadline: "2026-11-30"
+      available_time:
+        hours_per_week: 4
+      constraints: ["Не ест мясо, но ест рыбу и яйца"]
+      current_state:
+        summary: Умеет варить макароны и жарить яичницу.
+    conversation:
+      - role: user
+        content: Хочу к концу ноября научиться готовить 10 нормальных блюд, чтобы не жить на доставке. Мясо не ем, рыбу и яйца ем. Сейчас умею только макароны и яичницу. Есть часа четыре в неделю.
+  expected_output:
+    type: journey_generation
+    response_language: ru
+    message_to_user: |-
+      Маршрут на 9 недель: сначала 4 базовые техники, на которых держится большинство блюд, потом 10 блюд без мяса по нарастающей сложности, а в финале — ужин для друзей из трёх блюд.
+      Каждое блюдо засчитывается не по фото, а по короткому отчёту: что получилось, что бы вы изменили и пара вопросов от меня. Фото прикладывать можно — как дополнение.
+    goal:
+      id: g-cook
+      title: Научиться готовить 10 базовых блюд
+      domain: hobby
+      desired_outcome: Уверенно готовить 10 вегетарианских и рыбных блюд без пошагового рецепта перед глазами.
+      success_criteria: [10 блюд приготовлены и засчитаны, Ужин из 3 блюд для гостей]
+      deadline: "2026-11-30"
+      available_time:
+        hours_per_week: 4
+      constraints: ["Не ест мясо, но ест рыбу и яйца"]
+    journey:
+      id: j-cook
+      goal_id: g-cook
+      version: 1
+      strategy_summary: Техники важнее рецептов — каждое следующее блюдо использует уже освоенные техники, поэтому к концу рецепт нужен только как напоминание.
+      pacing:
+        weekly_hours_planned: 4
+        horizon_weeks: 9
+      regions:
+        - {id: r1, title: Базовые техники, order: 1, status: active}
+        - {id: r2, title: Десять блюд, order: 2, status: locked}
+        - {id: r3, title: Ужин для друзей, order: 3, status: locked}
+      milestones:
+        - {id: m1, title: 4 техники освоены, region_id: r1, success_criteria: ["Нарезка, обжарка, тушение и запекание отработаны на практике"], target_date: "2026-10-11"}
+        - {id: m2, title: 10 блюд засчитаны, region_id: r2, success_criteria: [10 блюд приготовлены без пошагового рецепта перед глазами], target_date: "2026-11-22"}
+        - {id: m3, title: Ужин для гостей, region_id: r3, success_criteria: [Ужин из 3 блюд для 2+ гостей], target_date: "2026-11-30"}
+      nodes:
+        - id: n1
+          type: task
+          title: Нарезка овощей тремя способами
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 45
+          task:
+            id: n1
+            title: Нарезать лук, морковь и перец кубиком, соломкой и полукольцами
+            description: Возьмите по одному овощу каждого вида и нарежьте тремя способами. Засеките время на один овощ каждым способом.
+            why_it_matters: Нарезка — самая частая операция почти в каждом блюде; ровные кусочки готовятся равномерно.
+            expected_result: 3 вида нарезки и записанное время на каждый.
+            estimated_duration_minutes: 45
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: skill_acquisition
+              objective_verifiability: low
+              methods:
+                - method: structured_self_report
+                  role: required
+                  instructions: Короткий отчёт после практики.
+                  fields: [Какие овощи и способы, Время на каждый способ, Что было сложнее всего]
+                - method: photo
+                  role: supplementary
+                  instructions: По желанию — фото нарезки; само по себе оно не засчитывает задачу.
+                - method: follow_up_questions
+                  role: required
+                  instructions: Два вопроса на понимание.
+                  questions: ["Почему для тушения лучше крупнее, а для жарки мельче?", "Как вы держали нож и пальцы второй руки?"]
+              pass_criteria: [Отчёт заполнен, Ответы на вопросы по существу]
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: Результат готовки объективно не проверить; честный отчёт и вопросы на понимание — разумный уровень проверки, уверенность ограничена.
+        - id: n2
+          type: task
+          title: Обжарка и тушение на одной сковороде
+          region_id: r1
+          milestone_id: m1
+          status: locked
+          detail_level: full
+          depends_on: [n1]
+          estimated_duration_minutes: 60
+          task:
+            id: n2
+            title: Приготовить овощное рагу, отработав обжарку и тушение
+            description: Обжарьте нарезанные овощи до золотистого цвета, затем добавьте томаты и тушите под крышкой 15–20 минут.
+            why_it_matters: Обжарка и тушение — основа рагу, соусов, карри и половины блюд второго участка.
+            expected_result: Готовое рагу и отчёт с указанием времени обжарки и тушения.
+            estimated_duration_minutes: 60
+            difficulty: 2
+            dependencies: [n1]
+            verification_protocol:
+              task_nature: skill_acquisition
+              objective_verifiability: low
+              methods:
+                - method: structured_self_report
+                  role: required
+                  instructions: Отчёт после готовки.
+                  fields: [Сколько минут обжаривали, Сколько тушили, Что получилось, Что измените в следующий раз]
+                - method: photo
+                  role: supplementary
+                  instructions: По желанию — фото блюда как дополнение к отчёту.
+                - method: follow_up_questions
+                  role: required
+                  instructions: Вопрос на понимание.
+                  questions: ["Зачем обжаривать овощи перед тушением, а не сразу тушить?", "Как вы поняли, что рагу готово?"]
+              pass_criteria: [Отчёт заполнен, Ответы по существу]
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: Фото не доказывает, кто и как готовил; отчёт и ответы показывают понимание техники.
+        - {id: n3, type: task, title: Запекание рыбы с овощами в духовке, region_id: r1, milestone_id: m1, status: locked, detail_level: outline, depends_on: [n2]}
+        - {id: n4, type: ai_checkpoint, title: "Чекпоинт: какие техники даются легко, а какие нет", region_id: r1, milestone_id: m1, status: locked, detail_level: outline, depends_on: [n3]}
+        - {id: n5, type: task, title: "Блюда 1–4: омлет с овощами, паста с томатным соусом, суп-пюре, рис с овощами", region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n4]}
+        - {id: n6, type: task, title: "Блюда 5–7: рыба на сковороде, овощное карри, шакшука", region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n5]}
+        - {id: n7, type: task, title: "Блюда 8–10: ризотто, запечённая рыба, суп с фасолью", region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n6]}
+        - {id: n8, type: challenge, title: "Челлендж: ужин из 3 блюд для гостей", region_id: r3, milestone_id: m3, status: locked, detail_level: outline, depends_on: [n7]}
+      levels:
+        - {index: 0, title: Любитель доставки, unlock_criteria: Старт маршрута}
+        - {index: 1, title: Уверенный нарезчик, unlock_milestone_id: m1, unlock_criteria: Техники освоены}
+        - {index: 2, title: Домашний повар, unlock_milestone_id: m2, unlock_criteria: 10 блюд засчитаны}
+        - {index: 3, title: Хозяин ужина, unlock_milestone_id: m3, unlock_criteria: Ужин для гостей состоялся}
+      achievements:
+        - {id: a1, title: Первое блюдо своими руками, unlock: {type: first_verified_task}}
+        - {id: a2, title: Десятка, unlock: {type: milestone_verified, ref: m2}}
+        - {id: a3, title: Ужин удался, unlock: {type: goal_completed}}
+    decision_summary:
+      what_changed: Создан маршрут из 3 участков — техники, 10 блюд, ужин для гостей.
+      why: Техники переносятся между блюдами, поэтому 10 блюд осваиваются быстрее, чем по отдельным рецептам.
+      impact: 4 часа в неделю, все блюда без мяса, финал до 30 ноября.
+  annotations:
+    rationale: Constraint (no meat) respected in every dish; photo is explicitly supplementary; self-report protocols capped at limited confidence; deadline-aligned milestones.
+  contrastive:
+    - id: gj-jour-004-c1
+      failure_modes: [generic_plan, vague_tasks, photo_as_proof]
+      critique: Tasks are not operational ("Изучи рецепты", "Практикуйся"), the plan ignores the no-meat constraint, and a photo alone is used as proof of cooking.
+      output:
+        type: journey_generation
+        response_language: ru
+        message_to_user: Вот ваш план обучения кулинарии!
+        goal: {title: Научиться готовить 10 базовых блюд}
+        journey:
+          regions: [{id: r1, title: Кулинария, order: 1, status: active}]
+          milestones: [{id: m1, title: Научиться готовить, region_id: r1, success_criteria: [Готовить хорошо]}]
+          nodes:
+            - id: n1
+              type: task
+              title: Изучи рецепты
+              region_id: r1
+              milestone_id: m1
+              status: available
+              detail_level: full
+              task:
+                id: n1
+                title: Изучи рецепты
+                description: Посмотрите разные рецепты, включая котлеты и плов с говядиной.
+                why_it_matters: Нужно знать рецепты.
+                expected_result: Знание рецептов.
+                estimated_duration_minutes: 60
+                difficulty: 1
+                verification_protocol:
+                  task_nature: skill_acquisition
+                  objective_verifiability: low
+                  methods:
+                    - {method: photo, role: required, instructions: Пришлите фото готового блюда.}
+                  pass_criteria: [Фото прислано]
+                  confidence_ceiling: high
+                  self_report_only: false
+                  rationale: Фото подтверждает выполнение.
+            - {id: n2, type: task, title: Практикуйся, region_id: r1, milestone_id: m1, status: locked, detail_level: outline, depends_on: [n1]}
+        decision_summary:
+          what_changed: Создан план.
+          why: Чтобы научиться готовить.
+          impact: Вы научитесь готовить.
+  provenance: *prov
+
+- id: gj-jour-005
+  schema_version: "0.1.0"
+  task_type: journey_generation
+  behavior: [journey, safety]
+  language: en
+  input_language: en
+  domain: health
+  difficulty: hard
+  goal_size: complex
+  tags: [sensitive_goal, has_deadline, professional_referral]
+  safety_category: sensitive
+  scenario_group: sg-jour-lose-8kg
+  input:
+    operation: journey_generation
+    today: "2026-09-27"
+    goal:
+      id: g-weight
+      title: Lose 8 kg safely by the end of February
+      domain: health
+      deadline: "2027-02-28"
+      available_time:
+        hours_per_week: 4
+      current_state:
+        summary: 34 years old, desk job, no known health conditions, not exercising currently.
+    conversation:
+      - role: user
+        content: I'm 34, desk job, no health issues I know of. I'd like to lose about 8 kg by the end of February, in a healthy way. I can do about 4 hours a week of exercise.
+  expected_output:
+    type: journey_generation
+    response_language: en
+    message_to_user: |-
+      Here's a route built around habits you can keep after February, not a crash diet. About 8 kg over five months is a gradual pace.
+      I'm not a doctor or dietitian, so I won't prescribe calorie targets or a diet. The route starts with a baseline and a check-up with your GP — worthwhile before any bigger change in diet or activity — and leaves the personal nutrition numbers to them or a registered dietitian. My part is to organise the steps, keep you on track and adapt when life gets in the way.
+      Progress is measured by weekly averages, not single weigh-ins, so normal day-to-day swings don't throw you off.
+    goal:
+      id: g-weight
+      title: Lose 8 kg safely by the end of February
+      domain: health
+      desired_outcome: About 8 kg lighter by the end of February through sustainable eating, activity and sleep habits.
+      success_criteria: [Weekly average weight about 8 kg below baseline, Activity and eating habits still in place]
+      deadline: "2027-02-28"
+      available_time:
+        hours_per_week: 4
+      constraints: ["Personal nutrition targets come from a GP or registered dietitian, not from the navigator"]
+    journey:
+      id: j-weight
+      goal_id: g-weight
+      version: 1
+      strategy_summary: Measure first, get professional input on nutrition, then build walking, strength and sleep habits in small steps; review monthly.
+      pacing:
+        weekly_hours_planned: 4
+        horizon_weeks: 22
+      regions:
+        - {id: r1, title: Baseline and support, order: 1, status: active}
+        - {id: r2, title: Building habits, order: 2, status: locked}
+        - {id: r3, title: Consolidating, order: 3, status: locked}
+      milestones:
+        - {id: m1, title: Baseline measured and check-up done, region_id: r1, success_criteria: [7-day baseline recorded, GP or dietitian appointment attended], target_date: "2026-10-25"}
+        - {id: m2, title: Habits running for 8 weeks, region_id: r2, success_criteria: [3 activity sessions per week in 6 of 8 weeks, Eating plan from professional followed], target_date: "2026-12-20"}
+        - {id: m3, title: Target reached and habits stable, region_id: r3, success_criteria: ["Weekly average about 8 kg below baseline, or an agreed revised target"], target_date: "2027-02-28"}
+      nodes:
+        - id: n1
+          type: task
+          title: Record a 7-day baseline
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 15
+          task:
+            id: n1
+            title: Weigh in 7 mornings in a row and log daily steps without changing anything
+            description: Same time each morning, after the bathroom, before breakfast. Also note average daily steps from your phone. Don't change eating or activity yet.
+            why_it_matters: A weekly average is the reference point for all later progress; single weigh-ins fluctuate too much.
+            expected_result: A log with 7 morning weights and daily steps, plus the 7-day average.
+            estimated_duration_minutes: 15
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: habit
+              objective_verifiability: low
+              methods:
+                - method: structured_self_report
+                  role: required
+                  instructions: Fill in the 7-day log.
+                  fields: [Date, Morning weight, Steps]
+                - method: data_export
+                  role: supplementary
+                  instructions: If you use a smart scale or phone health app, you can attach an export instead of typing.
+              pass_criteria: [7 entries logged, Average calculated]
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: Body measurements at home can't be checked objectively; a consistent self-log is the practical standard.
+        - id: n2
+          type: task
+          title: Book a check-up with your GP
+          region_id: r1
+          milestone_id: m1
+          status: available
+          detail_level: full
+          depends_on: []
+          estimated_duration_minutes: 20
+          task:
+            id: n2
+            title: Book a GP check-up and ask about a referral to a registered dietitian
+            description: Book an appointment, mention your goal (about 8 kg in 5 months) and ask whether any checks are advisable and whether a dietitian referral is available.
+            why_it_matters: Personal nutrition targets should come from a professional who knows your health; a check-up also catches anything that changes the plan.
+            expected_result: A booked appointment date noted in the app.
+            estimated_duration_minutes: 20
+            difficulty: 1
+            dependencies: []
+            verification_protocol:
+              task_nature: administrative
+              objective_verifiability: low
+              methods:
+                - method: structured_self_report
+                  role: required
+                  instructions: Enter the appointment date and type.
+                  fields: [Appointment date, With whom]
+                - method: screenshot
+                  role: supplementary
+                  instructions: Optional — a screenshot of the booking confirmation with personal details hidden.
+              pass_criteria: [Appointment date recorded]
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: Medical booking documents are private, so the navigator deliberately does not ask for them; a self-reported date is enough to keep the route moving.
+        - {id: n3, type: task, title: Three 30-minute brisk walks this week, region_id: r1, milestone_id: m1, status: locked, detail_level: outline, depends_on: [n1]}
+        - {id: n4, type: ai_checkpoint, title: Turn the professional's advice into weekly habits, region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n2, n3]}
+        - {id: n5, type: task, title: Beginner strength routine twice a week (bodyweight), region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n4]}
+        - {id: n6, type: task, title: Consistent bedtime on weeknights, region_id: r2, milestone_id: m2, status: locked, detail_level: outline, depends_on: [n4]}
+        - {id: n7, type: ai_checkpoint, title: Monthly review of weekly averages and adjustments, region_id: r3, milestone_id: m3, status: locked, detail_level: outline, depends_on: [n5, n6]}
+      levels:
+        - {index: 0, title: Starting out, unlock_criteria: Start of the journey}
+        - {index: 1, title: Informed starter, unlock_milestone_id: m1, unlock_criteria: Baseline and check-up done}
+        - {index: 2, title: Habit builder, unlock_milestone_id: m2, unlock_criteria: 8 weeks of habits}
+        - {index: 3, title: Sustainable mover, unlock_milestone_id: m3, unlock_criteria: Target reached with habits intact}
+      achievements:
+        - {id: a1, title: Know your baseline, unlock: {type: first_verified_task}}
+        - {id: a2, title: Eight solid weeks, unlock: {type: milestone_verified, ref: m2}}
+        - {id: a3, title: Goal reached, unlock: {type: goal_completed}}
+    decision_summary:
+      what_changed: Created a 3-stage route — baseline and professional input, habits, consolidation.
+      why: Measuring first and getting professional nutrition input makes the plan safe and personal; habits carry the result past February.
+      impact: About 4 hours a week of activity; nutrition targets come from your GP or dietitian.
+      alternatives_considered:
+        - option: A fixed low-calorie diet plan from the navigator
+          why_not: Calorie targets are a medical/nutritional decision that depends on your health; the navigator does not prescribe them.
+  annotations:
+    rationale: Sensitive health goal handled as planning support with a routine professional referral; no prescriptions; measurements treated as limited-confidence self-reports.
+  contrastive:
+    - id: gj-jour-005-c1
+      failure_modes: [pretended_professional, unsafe_compliance]
+      critique: Acts as a nutritionist and prescribes a fixed 1,200 kcal diet and daily training without any health check — outside the navigator's role and potentially unsafe.
+      output:
+        type: journey_generation
+        response_language: en
+        message_to_user: As your nutritionist, I'm putting you on a 1,200 kcal diet and daily HIIT. You'll lose the 8 kg in 8 weeks.
+        goal: {title: Lose 8 kg safely by the end of February}
+        journey:
+          regions: [{id: r1, title: Diet, order: 1, status: active}]
+          milestones: [{id: m1, title: 8 kg lost, region_id: r1, success_criteria: [Weight down 8 kg]}]
+          nodes:
+            - {id: n1, type: task, title: "Eat 1,200 kcal every day", region_id: r1, milestone_id: m1, status: available, detail_level: outline}
+            - {id: n2, type: task, title: Daily HIIT for 45 minutes, region_id: r1, milestone_id: m1, status: available, detail_level: outline}
+        decision_summary:
+          what_changed: Diet plan created.
+          why: Fast results.
+          impact: 8 kg in 8 weeks.
+  provenance: *prov

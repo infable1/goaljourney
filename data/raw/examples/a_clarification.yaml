@@ -1,0 +1,504 @@
+# Type A — Goal -> only the next useful clarifying questions.
+# Each question names its `targets` (controlled vocabulary) and its `impact` on the plan.
+# annotations.known_targets / critical_targets / irrelevant_targets drive the minimality lint.
+examples:
+
+- id: gj-clar-001
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification]
+  language: ru
+  input_language: ru
+  domain: business
+  difficulty: medium
+  goal_size: complex
+  tags: [ambiguous_goal, no_deadline, first_message]
+  safety_category: allowed
+  scenario_group: sg-clar-kids-art-school
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    app_locale: ru
+    goal:
+      title: Запустить онлайн-школу рисования для детей
+    conversation:
+      - role: user
+        content: Хочу запустить свою онлайн-школу рисования для детей. Я иллюстратор, шесть лет рисую на заказ, но преподавать ещё не пробовала.
+  expected_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: |-
+      Хорошая идея, и шесть лет работы иллюстратором — сильная основа. Чтобы маршрут был реалистичным, уточню три вещи:
+      1) Что для вас будет «запуском»: первая платная группа на живых онлайн-занятиях или записанный курс, который продаётся без вашего участия?
+      2) Сколько часов в неделю вы готовы уделять школе помимо заказов?
+      3) В какой стране вы будете принимать оплату от родителей?
+      Если удобнее ответить позже — начну с живых мини-групп и 5 часов в неделю, а потом скорректирую маршрут.
+    ready_to_plan: false
+    questions:
+      - question: "Что для вас «запуск»: первая платная группа на живых онлайн-занятиях или записанный курс, который продаётся без вас?"
+        targets: [target_outcome, business_type]
+        impact: Живую группу можно открыть за 4–6 недель почти без бюджета; записанный курс требует месяцев съёмки и монтажа и совсем другой последовательности шагов.
+        answer_options: [Живые онлайн-группы, Записанный курс, Пока не знаю]
+      - question: Сколько часов в неделю вы готовы уделять школе помимо заказов?
+        targets: [available_time]
+        impact: От этого зависит темп — сколько уроков подготовить заранее и когда реально открывать набор.
+      - question: В какой стране вы будете принимать оплату от родителей?
+        targets: [location]
+        impact: От страны зависят форма регистрации и способы легально принимать платежи — это отдельный этап маршрута.
+    known_context_used:
+      - Шесть лет опыта иллюстрации на заказ
+      - Опыта преподавания пока нет
+    default_assumptions:
+      - Формат — живые мини-группы онлайн
+      - 5 часов в неделю
+  annotations:
+    known_targets: [experience]
+    critical_targets: [[target_outcome, business_type, scope], [available_time]]
+    irrelevant_targets: [motivation, preferences, learning_style]
+    rationale: Three questions, each changes route structure (format), pace (time) or adds a legal/payment stage (country). Experience is already known and not re-asked. Children's age/art style are curriculum details for later.
+  contrastive:
+    - id: gj-clar-001-c1
+      failure_modes: [unnecessary_questions, asked_known_information]
+      critique: Five questions, two of which do not change the plan (motivation, favourite style) and one re-asks the known teaching experience. The user has to fill in a questionnaire before seeing any value.
+      output:
+        type: goal_clarification
+        response_language: ru
+        message_to_user: "Отлично! Ответьте, пожалуйста, на несколько вопросов: почему вы хотите открыть школу? Какой стиль рисования вам ближе? Был ли у вас опыт преподавания? Какой у вас бюджет? Детей какого возраста вы хотите учить?"
+        ready_to_plan: false
+        questions:
+          - question: Почему вы хотите открыть школу?
+            targets: [motivation]
+            impact: Поможет понять вашу мотивацию и цели в жизни.
+          - question: Какой стиль рисования вам ближе?
+            targets: [preferences]
+            impact: Чтобы лучше понимать вас как художника.
+          - question: Был ли у вас опыт преподавания?
+            targets: [experience]
+            impact: Поможет оценить ваш опыт в обучении детей.
+          - question: Какой у вас бюджет?
+            targets: [budget]
+            impact: Бюджет влияет на маркетинг и выбор платформы.
+          - question: Детей какого возраста вы хотите учить?
+            targets: [audience]
+            impact: Поможет подобрать программу занятий.
+  provenance: &prov
+    source: synthetic
+    method: agent_authored
+    author: claude-code-agent
+    created: "2026-09-27"
+    license: proprietary-internal
+
+- id: gj-clar-002
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification]
+  language: en
+  input_language: en
+  domain: career
+  difficulty: medium
+  goal_size: complex
+  tags: [career_switch, no_deadline]
+  safety_category: allowed
+  scenario_group: sg-clar-accountant-analyst
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    app_locale: en
+    goal:
+      title: Switch from accounting to a data analyst role
+      available_time:
+        hours_per_week: 8
+    conversation:
+      - role: user
+        content: I've been an accountant for five years and I'm pretty strong in Excel. I want to move into data analytics. I can put in about 8 hours a week.
+  expected_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: |-
+      Five years of accounting plus strong Excel is a real head start — many analyst roles value exactly that domain knowledge. Two questions before I build your route:
+      1. Have you used SQL or a programming language like Python before, even briefly?
+      2. Is there a date you'd like to be in the new role by, or is "within the next year or so" fine?
+      If you'd rather skip them, I'll assume you're starting SQL from scratch with a 12-month horizon and adjust later.
+    ready_to_plan: false
+    questions:
+      - question: Have you used SQL or a programming language like Python before, even briefly?
+        targets: [current_level]
+        impact: Decides whether the first stage is SQL fundamentals (about 6 weeks at 8 h/week) or goes straight to portfolio projects.
+        answer_options: [Never, A little, Comfortable with basics]
+      - question: Is there a date you'd like to be in the new role by?
+        targets: [deadline]
+        impact: A 6-month target means applying after two projects; a 12-month target leaves room for a third, finance-focused project and networking first.
+    known_context_used:
+      - Five years in accounting
+      - Strong Excel skills
+      - About 8 hours per week
+    default_assumptions:
+      - Starting SQL from scratch
+      - 12-month horizon
+  annotations:
+    known_targets: [experience, available_time]
+    critical_targets: [[current_level], [deadline]]
+    irrelevant_targets: [motivation, learning_style]
+    rationale: Current technical level and timeline are the two unknowns that change route structure and pacing. Time and experience were stated and are not re-asked.
+  contrastive:
+    - id: gj-clar-002-c1
+      failure_modes: [missed_critical_question, assumed_user_info]
+      critique: Jumps straight to planning by inventing context the user never gave (knows SQL and Python, wants a job in 3 months). The resulting route would skip fundamentals the user may not have and set a deadline they never chose.
+      output:
+        type: goal_clarification
+        response_language: en
+        message_to_user: Great! Since you already know SQL and Python, I'll build a 3-month plan to get you hired as a data analyst.
+        ready_to_plan: true
+        questions: []
+        default_assumptions:
+          - The user already knows SQL and Python
+          - The user wants a new job within 3 months
+  provenance: *prov
+
+- id: gj-clar-003
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification, language]
+  language: ru
+  input_language: ru
+  domain: fitness
+  difficulty: easy
+  goal_size: medium
+  tags: [skill_goal, no_deadline]
+  safety_category: allowed
+  scenario_group: sg-clar-front-crawl
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    app_locale: en
+    goal:
+      title: Научиться плавать кролем
+    conversation:
+      - role: user
+        content: Хочу научиться нормально плавать кролем. Сейчас умею только брассом, минут десять без остановки.
+  expected_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: |-
+      Брасс и десять минут без остановки — хорошая база: дыхание и выносливость уже есть, осталось поставить технику. Два вопроса:
+      1. Есть ли у вас доступ к бассейну и сколько раз в неделю вы реально сможете туда ходить?
+      2. Как вы поймёте, что научились: например, 50 метров кролем без остановки или 400 метров в спокойном темпе?
+    ready_to_plan: false
+    questions:
+      - question: Есть ли у вас доступ к бассейну и сколько раз в неделю вы сможете туда ходить?
+        targets: [resources, available_time]
+        impact: Технику кроля ставят только в воде — от частоты тренировок зависит, займёт путь около 6 недель или 3 месяца.
+      - question: "Как вы поймёте, что научились: 50 м кролем без остановки или, например, 400 м в спокойном темпе?"
+        targets: [success_criteria]
+        impact: Задаёт финальную проверку и то, сколько этапов маршрута уйдёт на выносливость, а не только на технику.
+    known_context_used:
+      - Плавает брассом около 10 минут без остановки
+  annotations:
+    known_targets: [current_level]
+    critical_targets: [[resources, available_time, schedule]]
+    irrelevant_targets: [motivation, preferences, budget]
+    rationale: "App locale is English but the user writes Russian: the answer follows the user's language. Two questions that change the plan: pool access/frequency and the definition of done."
+  contrastive:
+    - id: gj-clar-003-c1
+      failure_modes: [wrong_language]
+      critique: The user wrote in Russian; the answer follows the English app locale instead of the user's own language.
+      output:
+        type: goal_clarification
+        response_language: en
+        message_to_user: "Nice base! Two questions: do you have access to a pool and how often can you go? And what does 'swimming front crawl properly' mean to you — 50 m non-stop or 400 m at an easy pace?"
+        ready_to_plan: false
+        questions:
+          - question: Do you have access to a pool and how often can you go?
+            targets: [resources, available_time]
+            impact: Technique needs water time; frequency sets whether this takes 6 weeks or 3 months.
+          - question: What distance would count as success?
+            targets: [success_criteria]
+            impact: Sets the final check and how much of the route goes into endurance.
+  provenance: *prov
+
+- id: gj-clar-004
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification]
+  language: en
+  input_language: en
+  domain: home
+  difficulty: easy
+  goal_size: tiny
+  tags: [tiny_goal, has_deadline, ready_to_plan]
+  safety_category: allowed
+  scenario_group: sg-clar-garage-weekend
+  input:
+    operation: goal_clarification
+    today: "2026-09-25"
+    app_locale: en
+    goal:
+      title: Clear out the garage this weekend
+      deadline: "2026-09-27"
+    conversation:
+      - role: user
+        content: "Goal: clear out my garage this weekend so I can park my car inside again. It's full of old boxes, a broken bike and some half-used paint cans. I have Saturday and Sunday, about 5 hours each day."
+  expected_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: |-
+      That's clear enough to plan right away — no questions needed. I'll build a two-day route: Saturday is sorting everything into keep / sell or donate / dispose, Sunday is hauling away and setting up the space so the car fits.
+      One thing the plan will include: half-used paint often can't go in regular trash, so there's a short step to check your local disposal rules before Sunday.
+    ready_to_plan: true
+    questions: []
+    known_context_used:
+      - "Deadline: this weekend"
+      - About 5 hours on Saturday and 5 hours on Sunday
+      - "Done = the car fits inside"
+      - Contents include boxes, a broken bike and paint cans
+    default_assumptions:
+      - You can use your car to drop items at a donation point or recycling centre
+  annotations:
+    known_targets: [deadline, available_time, success_criteria, current_stage, scope]
+    critical_targets: []
+    irrelevant_targets: [motivation, budget, experience, learning_style, preferences]
+    rationale: A tiny, fully specified goal. The minimal behaviour is to ask nothing and plan. The disposal remark flags a location-specific rule without asserting it.
+  contrastive:
+    - id: gj-clar-004-c1
+      failure_modes: [unnecessary_questions, asked_known_information]
+      critique: Asks for the deadline the user already gave and for motivation/budget, which change nothing about clearing a garage in two days.
+      output:
+        type: goal_clarification
+        response_language: en
+        message_to_user: "Love it! A few questions first: What's motivating you to do this now? When would you like to have it done? And what's your budget for the project?"
+        ready_to_plan: false
+        questions:
+          - question: What's motivating you to do this now?
+            targets: [motivation]
+            impact: Understanding motivation helps keep you engaged.
+          - question: When would you like to have it done?
+            targets: [deadline]
+            impact: Helps set the timeline.
+          - question: What's your budget for the project?
+            targets: [budget]
+            impact: Budget may affect the approach.
+  provenance: *prov
+
+- id: gj-clar-005
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification, language]
+  language: ru
+  input_language: mixed
+  domain: programming
+  difficulty: medium
+  goal_size: medium
+  tags: [mixed_language, portfolio]
+  safety_category: allowed
+  scenario_group: sg-clar-react-petproject
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Сделать первый pet-project на React и задеплоить его
+    conversation:
+      - role: user
+        content: Хочу сделать свой первый pet-project на React и задеплоить его на Vercel или Netlify, чтобы было что показать на собесах. HTML/CSS знаю, JS — так себе.
+  expected_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: |-
+      Хорошая цель: задеплоенный проект — сильный аргумент на собеседовании. Уточню два момента:
+      1. К какому сроку проект нужен — уже есть назначенные собеседования? И сколько часов в неделю вы можете на него тратить?
+      2. Писали ли вы на JavaScript что-то своё — например, обработку формы или запрос к API?
+      Идею проекта можно не придумывать: предложу 2–3 варианта под вакансии, на которые вы откликаетесь.
+    ready_to_plan: false
+    questions:
+      - question: К какому сроку нужен проект и сколько часов в неделю вы можете на него тратить?
+        targets: [deadline, available_time]
+        impact: "От срока и часов зависит масштаб: за 2 недели — одностраничное приложение с запросом к API, за 2 месяца — проект с роутингом, авторизацией и тестами."
+      - question: Писали ли вы на JavaScript что-то своё — например, обработку формы или запрос к API?
+        targets: [current_level]
+        impact: Если нет — маршрут начнётся с 1–2 недель базового JavaScript, иначе сразу с React.
+        answer_options: [Нет, Немного, Да, уверенно]
+    known_context_used:
+      - "Цель проекта — показать на собеседованиях"
+      - HTML/CSS знакомы, JavaScript на слабом уровне
+      - Деплой на Vercel или Netlify
+  annotations:
+    known_targets: [target_outcome]
+    critical_targets: [[deadline, available_time], [current_level]]
+    irrelevant_targets: [motivation, budget, location]
+    rationale: Mixed Russian/English input (technical terms in English) — the user predominantly writes Russian, so the answer is Russian. Time/deadline set the scope; the precise JS level decides the first region.
+  provenance: *prov
+
+- id: gj-clar-006
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification]
+  language: en
+  input_language: en
+  domain: writing
+  difficulty: medium
+  goal_size: complex
+  tags: [creative, no_deadline]
+  safety_category: allowed
+  scenario_group: sg-clar-scifi-novel
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Write my sci-fi novel
+    conversation:
+      - role: user
+        content: I want to finally write my novel. I've had the idea for a sci-fi story for years and I have about 20 pages of notes.
+  expected_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: |-
+      Twenty pages of notes means you're past the blank-page stage — good. Two questions so the route fits you:
+      1. What does "done" look like: a complete first draft, a revised manuscript ready for beta readers or agents, or a self-published book?
+      2. How much time can you realistically write each week, and is there a date you'd like to hit?
+    ready_to_plan: false
+    questions:
+      - question: "What does 'done' look like: a complete first draft, a revised manuscript for beta readers or agents, or a self-published book?"
+        targets: [target_outcome]
+        impact: A first draft is one writing phase; a submission-ready or published book adds revision, feedback and production phases that can double the timeline.
+        answer_options: [First draft, Revised manuscript, Self-published book]
+      - question: How much time can you realistically write each week, and is there a date you'd like to hit?
+        targets: [available_time, deadline]
+        impact: Sets the weekly word target and whether the plan is paced to a date or open-ended.
+    known_context_used:
+      - Sci-fi story idea
+      - About 20 pages of notes already written
+  annotations:
+    known_targets: [current_stage]
+    critical_targets: [[target_outcome, success_criteria], [available_time]]
+    irrelevant_targets: [motivation, preferences, learning_style]
+    rationale: Genre and stage are known. What changes the plan is the definition of done and the weekly time; inspiration and favourite authors do not.
+  contrastive:
+    - id: gj-clar-006-c1
+      failure_modes: [unnecessary_questions, missed_critical_question]
+      critique: Asks about inspiration and favourite authors (no effect on the route) while never asking what "done" means or how much time the user has — the two facts the plan actually depends on.
+      output:
+        type: goal_clarification
+        response_language: en
+        message_to_user: "How exciting! Tell me more: what inspired this story? Who are your favourite sci-fi authors? Do you like writing in the morning or at night?"
+        ready_to_plan: false
+        questions:
+          - question: What inspired this story?
+            targets: [motivation]
+            impact: Helps me understand your creative drive.
+          - question: Who are your favourite sci-fi authors?
+            targets: [preferences]
+            impact: Helps me understand your taste.
+          - question: Do you like writing in the morning or at night?
+            targets: [preferences]
+            impact: Helps personalise the experience.
+  provenance: *prov
+
+- id: gj-clar-007
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification, web_research]
+  language: ru
+  input_language: ru
+  domain: career
+  difficulty: hard
+  goal_size: complex
+  tags: [conversation_history, relocation, location_specific]
+  safety_category: allowed
+  scenario_group: sg-clar-relocation-germany
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Переехать в Германию и работать бэкенд-разработчиком
+    conversation:
+      - role: user
+        content: Хочу переехать в Германию и работать там бэкенд-разработчиком.
+      - role: assistant
+        content: Хорошая цель. Сколько у вас опыта в бэкенде и какой уровень английского и немецкого?
+      - role: user
+        content: Пять лет на Java, английский B2, немецкий с нуля.
+  expected_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: |-
+      Пять лет Java и английский B2 — хорошая позиция: во многих немецких IT-компаниях рабочий язык английский. Осталось два вопроса:
+      1. Гражданство какой страны у вас? От этого зависит визовый путь.
+      2. К какому сроку вы хотите переехать и едете ли вы один или с семьёй?
+      Конкретные визовые требования и сроки я проверю по актуальным официальным источникам, когда дойдём до этого этапа маршрута.
+    ready_to_plan: false
+    questions:
+      - question: Гражданство какой страны у вас?
+        targets: [location]
+        impact: Определяет визовый путь и нужные документы — это самый длинный по времени участок маршрута.
+      - question: К какому сроку вы хотите переехать и едете ли один или с семьёй?
+        targets: [deadline, constraints]
+        impact: Срок задаёт темп поиска работы, а переезд с семьёй добавляет документы, бюджет и поиск жилья побольше.
+    known_context_used:
+      - Пять лет опыта на Java
+      - Английский B2
+      - Немецкий с нуля
+  annotations:
+    known_targets: [experience, current_level, target_role]
+    critical_targets: [[location, constraints], [deadline]]
+    irrelevant_targets: [motivation, learning_style]
+    rationale: The earlier turn already collected experience and language levels — asking them again would be an error. Remaining unknowns change the visa path and pacing. Visa facts are deferred to verified research, not asserted.
+  contrastive:
+    - id: gj-clar-007-c1
+      failure_modes: [asked_known_information, unverified_current_facts]
+      critique: Re-asks experience and English level from the previous turn, and states a current visa rule (salary threshold) from memory as a fact.
+      output:
+        type: goal_clarification
+        response_language: ru
+        message_to_user: "Отлично! Для Blue Card сейчас нужна зарплата от 45 000 евро, так что всё реально. Напомните, сколько у вас опыта и какой уровень английского?"
+        ready_to_plan: false
+        questions:
+          - question: Сколько у вас лет опыта в бэкенде?
+            targets: [experience]
+            impact: Влияет на уровень вакансий.
+          - question: Какой у вас уровень английского?
+            targets: [current_level]
+            impact: Влияет на выбор компаний.
+  provenance: *prov
+
+- id: gj-clar-008
+  schema_version: "0.1.0"
+  task_type: goal_clarification
+  behavior: [clarification]
+  language: en
+  input_language: en
+  domain: career
+  difficulty: medium
+  goal_size: complex
+  tags: [has_deadline, single_question]
+  safety_category: allowed
+  scenario_group: sg-clar-senior-promotion
+  input:
+    operation: goal_clarification
+    today: "2026-09-27"
+    goal:
+      title: Get promoted to Senior Engineer
+      deadline: "2027-09-01"
+    conversation:
+      - role: user
+        content: I'm a mid-level backend engineer at a fintech company, three years there. I want to be promoted to Senior by next September. My manager is supportive.
+  expected_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: |-
+      A supportive manager and a clear date make this very workable. One question decides how the route is built:
+      Does your company have a written career ladder or promotion rubric for Senior, and when is the next promotion cycle before September?
+      If there's no written rubric, the first step will be a conversation with your manager to agree on concrete criteria.
+    ready_to_plan: false
+    questions:
+      - question: Is there a written career ladder or promotion rubric for Senior, and when is the next promotion cycle?
+        targets: [success_criteria, external_dependencies]
+        impact: The route is built backwards from the rubric's gaps and the cycle date — the evidence has to exist before the review, not just before September.
+    known_context_used:
+      - Mid-level backend engineer, three years at the company
+      - "Target: Senior by 2027-09-01"
+      - Manager is supportive
+  annotations:
+    known_targets: [deadline, current_level, experience, target_role, team]
+    critical_targets: [[success_criteria, external_dependencies]]
+    irrelevant_targets: [motivation, budget, location, learning_style]
+    rationale: A single question is the minimal, correct behaviour — promotion criteria and cycle timing determine everything else.
+  provenance: *prov
