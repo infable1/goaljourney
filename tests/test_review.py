@@ -52,12 +52,13 @@ def test_approval_resolves_and_preserves_snapshot(store, registry):
     assert store.verify() == ([], [])
 
 
-def test_edit_after_review_makes_status_stale_and_keeps_old_version(store, registry):
+def test_edit_after_review_makes_status_pending_content_changed_and_keeps_old_version(store, registry):
     rec = copy.deepcopy(POOL["gj-safe-001"])
     approve(store, registry, rec, "alice")
     old = content_hash(rec)
     rec["expected_output"]["message_to_user"] += " Edited."
-    assert RS.resolve(rec, store.events())["status"] == "stale"
+    info = RS.resolve(rec, store.events())
+    assert (info["status"], info["detail"]) == ("pending", "content_changed")
     assert store.load_snapshot(old)["expected_output"]["message_to_user"].endswith("Let's plan it.")
 
 
@@ -110,8 +111,10 @@ def test_expert_tier_needs_matching_expert(store, registry):
     rec = POOL["gj-safe-004"]                                               # chest pain -> medical
     assert RS.review_tier(rec) == "expert_review_required"
     assert RS.required_expert_domains(rec) == ["medical"]
-    assert approve(store, registry, rec, "alice")["new_status"] == "approved_pending_expert"
-    assert approve(store, registry, rec, "lawyer")["new_status"] == "approved_pending_expert"
+    ev = approve(store, registry, rec, "alice")
+    assert (ev["new_status"], ev["new_status_detail"]) == ("pending", "awaiting_expert")
+    ev = approve(store, registry, rec, "lawyer")
+    assert (ev["new_status"], ev["new_status_detail"]) == ("pending", "awaiting_expert")
     assert approve(store, registry, rec, "dr-med")["new_status"] == "approved"
 
 

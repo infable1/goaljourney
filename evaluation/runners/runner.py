@@ -4,6 +4,9 @@ Predictors:
   reference  the cases' own reference outputs (sanity: every check must pass)
   naive      evaluation/runners/baselines.py (sanity: checks must discriminate)
   model      any provider (configs/evaluation.yaml), prompted exactly like SFT export
+
+Predictions are keyed by unit id: the case id for atomic cases, `<case_id>/<step_id>` for each step
+of a composite or longitudinal case (see evaluation/metrics/scoring.py).
 """
 import json
 from datetime import datetime, timezone
@@ -15,7 +18,7 @@ from gjcore.io import dump_json, load_yaml, read_jsonl, write_jsonl
 from gjcore.paths import EVALUATION_DIR, rel, repo_path
 from gjcore.prompting import prompt_messages
 from gjcore.records import load_eval_cases
-from evaluation.metrics.scoring import aggregate, extract_json, score_case
+from evaluation.metrics.scoring import aggregate, expand_units, extract_json, score_case
 
 from .baselines import naive_output
 
@@ -25,13 +28,17 @@ def _cases(cases_dir=None):
     return [c for c, _ in load_eval_cases(repo_path(cases_dir or cfg["cases_dir"]))]
 
 
+def _units(cases):
+    return [u for c in cases for u in expand_units(c)]
+
+
 def _predict(predictor, cases, provider=None, model=None):
     preds = []
     if predictor == "model":
         from generation.generators.providers import ProviderError, make_provider
         prov = make_provider(provider, model, config_name="evaluation")
-    for case in cases:
-        row = {"case_id": case["id"], "predictor": predictor}
+    for case in _units(cases):
+        row = {"case_id": case["unit_id"], "predictor": predictor}
         if predictor == "reference":
             row["raw"] = json.dumps(case["reference_output"], ensure_ascii=False) if "reference_output" in case else None
         elif predictor == "naive":
@@ -50,8 +57,8 @@ def _predict(predictor, cases, provider=None, model=None):
 def score_predictions(preds, cases):
     by_id = {p["case_id"]: p for p in preds}
     scored = []
-    for case in cases:
-        p = by_id.get(case["id"])
+    for case in _units(cases):
+        p = by_id.get(case["unit_id"])
         if p is None or p.get("raw") is None:
             scored.append(score_case(case, None, parse_error=(p or {}).get("error") or "no prediction"))
             continue
@@ -68,17 +75,21 @@ def _write_report(run_id, predictor, scored, agg, out_dir, meta):
     dump_json(report, out / "report.json")
     lines = [f"# Evaluation report — {run_id}", "", f"Predictor: `{predictor}`  ",
              f"Evaluation version: {versions()['evaluation_version']}  ",
-             f"Cases: {agg['cases']} (passing every check: {agg['cases_passing_all_checks']})", "",
+             f"Cases: {agg['cases']} (passing every check: {agg['cases_passing_all_checks']}); "
+             f"model calls: {agg['units']} (passing: {agg['units_passing_all_checks']})", "",
              "Automated metrics only; human review is separate. No overall score by design.", "",
              "## Metrics", "", "| metric | value | direction | bad / total | failed checks | cases |", "|---|---|---|---|---|---|"]
     for name, m in agg["metrics"].items():
         val = "n/a" if m["value"] is None else f"{m['value']:.3f}"
         lines.append(f"| {name} | {val} | {m['direction'].replace('_', ' ')} | {m['numerator_bad']} / {m['denominator']} | "
                      f"{m['failed_checks']} / {m['checks']} | {m['cases']} |")
+    lines += ["", "## Case types", "", "| case type | cases passing | model calls passing |", "|---|---|---|"]
+    for name, t in agg["by_case_type"].items():
+        lines.append(f"| {name} | {t['passing']} / {t['cases']} | {t['units_passing']} / {t['units']} |")
     lines += ["", "## Dimensions (check pass rate)", "", "| dimension | pass rate | checks | cases |", "|---|---|---|---|"]
     for name, d in agg["dimensions"].items():
         lines.append(f"| {name} | {d['check_pass_rate']:.3f} | {d['checks']} | {d['cases']} |")
-    failures = [(s["case_id"], c) for s in scored for c in s["checks"] if not c["passed"]]
+    failures = [(s["unit_id"], c) for s in scored for c in s["checks"] if not c["passed"]]
     lines += ["", f"## Failed checks ({len(failures)})", ""]
     for cid, c in failures:
         lines.append(f"- `{cid}` {c['check']} → {c['metric']}: {c['detail'] or 'failed'}")
@@ -87,7 +98,9 @@ def _write_report(run_id, predictor, scored, agg, out_dir, meta):
 
 
 def _print_summary(agg, out):
-    print(f"Cases: {agg['cases']}  passing all checks: {agg['cases_passing_all_checks']}")
+    print(f"Cases: {agg['cases']}  passing all checks: {agg['cases_passing_all_checks']}  "
+          f"(model calls: {agg['units']}, passing: {agg['units_passing_all_checks']}; "
+          + ", ".join(f"{k} {t['passing']}/{t['cases']}" for k, t in agg["by_case_type"].items()) + ")")
     for name, m in agg["metrics"].items():
         val = "n/a" if m["value"] is None else f"{m['value']:.3f}"
         print(f"  {name:32s} {val:>6s}  ({m['direction'].replace('_', ' ')}; failed checks {m['failed_checks']}/{m['checks']})")
@@ -120,10 +133,10 @@ def review_sheet(predictions, cases_dir=None, out=None):
     rubric = load_yaml(EVALUATION_DIR / "rubrics" / "model_output_rubric.yaml")
     preds = {p["case_id"]: p for p in read_jsonl(repo_path(predictions))}
     entries = []
-    for case in _cases(cases_dir):
-        p = preds.get(case["id"]) or {}
+    for case in _units(_cases(cases_dir)):
+        p = preds.get(case["unit_id"]) or {}
         output, err = extract_json(p.get("raw"))
-        entries.append({"case_id": case["id"], "title": case.get("title"), "language": case["language"],
+        entries.append({"case_id": case["unit_id"], "title": case.get("title"), "language": case["language"],
                         "human_review_focus": case["human_review_focus"],
                         "user_messages": [m["content"] for m in case["input"].get("conversation", []) if m["role"] == "user"],
                         "model_output": output if output is not None else (p.get("raw") or err),

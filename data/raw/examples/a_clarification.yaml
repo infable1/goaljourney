@@ -4,7 +4,7 @@
 examples:
 
 - id: gj-clar-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification]
   language: ru
@@ -14,7 +14,8 @@ examples:
   goal_size: complex
   tags: [ambiguous_goal, no_deadline, first_message]
   safety_category: allowed
-  scenario_group: sg-clar-kids-art-school
+  scenario_group: bs-clar-ambiguous-venture-first-message
+  topic_group: sg-clar-kids-art-school
   input:
     operation: goal_clarification
     today: "2026-09-27"
@@ -58,8 +59,8 @@ examples:
     rationale: Three questions, each changes route structure (format), pace (time) or adds a legal/payment stage (country). Experience is already known and not re-asked. Children's age/art style are curriculum details for later.
   contrastive:
     - id: gj-clar-001-c1
-      failure_modes: [unnecessary_questions, asked_known_information]
-      critique: Five questions, two of which do not change the plan (motivation, favourite style) and one re-asks the known teaching experience. The user has to fill in a questionnaire before seeing any value.
+      failure_modes: [unnecessary_questions, asked_known_information, missed_critical_question]
+      critique: Five questions, two of which do not change the plan (motivation, favourite style) and one re-asks the known teaching experience, while the question that does change the plan is missing. The user has to fill in a questionnaire before seeing any value.
       output:
         type: goal_clarification
         response_language: ru
@@ -89,7 +90,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-clar-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification]
   language: en
@@ -99,7 +100,8 @@ examples:
   goal_size: complex
   tags: [career_switch, no_deadline]
   safety_category: allowed
-  scenario_group: sg-clar-accountant-analyst
+  scenario_group: bs-clar-career-switch-target-unclear
+  topic_group: sg-clar-accountant-analyst
   input:
     operation: goal_clarification
     today: "2026-09-27"
@@ -156,7 +158,7 @@ examples:
   provenance: *prov
 
 - id: gj-clar-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification, language]
   language: ru
@@ -166,7 +168,8 @@ examples:
   goal_size: medium
   tags: [skill_goal, no_deadline]
   safety_category: allowed
-  scenario_group: sg-clar-front-crawl
+  scenario_group: bs-clar-skill-goal-level-unknown
+  topic_group: sg-clar-front-crawl
   input:
     operation: goal_clarification
     today: "2026-09-27"
@@ -217,7 +220,7 @@ examples:
   provenance: *prov
 
 - id: gj-clar-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification]
   language: en
@@ -227,7 +230,8 @@ examples:
   goal_size: tiny
   tags: [tiny_goal, has_deadline, ready_to_plan]
   safety_category: allowed
-  scenario_group: sg-clar-garage-weekend
+  scenario_group: bs-clar-tiny-goal-ready
+  topic_group: sg-clar-garage-weekend
   input:
     operation: goal_clarification
     today: "2026-09-25"
@@ -280,7 +284,7 @@ examples:
   provenance: *prov
 
 - id: gj-clar-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification, language]
   language: ru
@@ -290,7 +294,8 @@ examples:
   goal_size: medium
   tags: [mixed_language, portfolio]
   safety_category: allowed
-  scenario_group: sg-clar-react-petproject
+  scenario_group: bs-clar-project-purpose-mixed-language
+  topic_group: sg-clar-react-petproject
   input:
     operation: goal_clarification
     today: "2026-09-27"
@@ -328,7 +333,7 @@ examples:
   provenance: *prov
 
 - id: gj-clar-006
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification]
   language: en
@@ -338,7 +343,8 @@ examples:
   goal_size: complex
   tags: [creative, no_deadline]
   safety_category: allowed
-  scenario_group: sg-clar-scifi-novel
+  scenario_group: bs-clar-creative-finish-line-unclear
+  topic_group: sg-clar-scifi-novel
   input:
     operation: goal_clarification
     today: "2026-09-27"
@@ -393,7 +399,7 @@ examples:
   provenance: *prov
 
 - id: gj-clar-007
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification, web_research]
   language: ru
@@ -403,7 +409,8 @@ examples:
   goal_size: complex
   tags: [conversation_history, relocation, location_specific]
   safety_category: allowed
-  scenario_group: sg-clar-relocation-germany
+  scenario_group: bs-clar-followup-after-partial-answers
+  topic_group: sg-clar-relocation-germany
   input:
     operation: goal_clarification
     today: "2026-09-27"
@@ -420,22 +427,25 @@ examples:
     type: goal_clarification
     response_language: ru
     message_to_user: |-
-      Пять лет Java и английский B2 — хорошая позиция: во многих немецких IT-компаниях рабочий язык английский. Осталось два вопроса:
+      Пять лет Java и английский B2 — хорошая основа: есть IT-компании, где рабочий язык английский, а какая доля таких вакансий в вашем стеке, станет видно на этапе поиска. Осталось два вопроса:
       1. Гражданство какой страны у вас? От этого зависит визовый путь.
-      2. К какому сроку вы хотите переехать и едете ли вы один или с семьёй?
+      2. К какому сроку вы хотите переехать и планируете переезд в одиночку или с семьёй?
       Конкретные визовые требования и сроки я проверю по актуальным официальным источникам, когда дойдём до этого этапа маршрута.
     ready_to_plan: false
     questions:
       - question: Гражданство какой страны у вас?
         targets: [location]
         impact: Определяет визовый путь и нужные документы — это самый длинный по времени участок маршрута.
-      - question: К какому сроку вы хотите переехать и едете ли один или с семьёй?
+      - question: К какому сроку вы хотите переехать и планируете переезд в одиночку или с семьёй?
         targets: [deadline, constraints]
         impact: Срок задаёт темп поиска работы, а переезд с семьёй добавляет документы, бюджет и поиск жилья побольше.
     known_context_used:
       - Пять лет опыта на Java
       - Английский B2
       - Немецкий с нуля
+    facts_used:
+      - {value: "Пять лет опыта на Java, английский B2, немецкий с нуля", source_type: user_provided, source_ref: "conversation[2]"}
+      - {value: "Гражданство, срок переезда и состав семьи", source_type: unknown}
   annotations:
     known_targets: [experience, current_level, target_role]
     critical_targets: [[location, constraints], [deadline]]
@@ -443,8 +453,8 @@ examples:
     rationale: The earlier turn already collected experience and language levels — asking them again would be an error. Remaining unknowns change the visa path and pacing. Visa facts are deferred to verified research, not asserted.
   contrastive:
     - id: gj-clar-007-c1
-      failure_modes: [asked_known_information, unverified_current_facts]
-      critique: Re-asks experience and English level from the previous turn, and states a current visa rule (salary threshold) from memory as a fact.
+      failure_modes: [asked_known_information, unverified_current_facts, missed_critical_question]
+      critique: Re-asks experience and English level from the previous turn instead of the citizenship and timing that decide the visa path, and states a current visa rule (salary threshold) from memory as a fact.
       output:
         type: goal_clarification
         response_language: ru
@@ -460,7 +470,7 @@ examples:
   provenance: *prov
 
 - id: gj-clar-008
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [clarification]
   language: en
@@ -470,7 +480,8 @@ examples:
   goal_size: complex
   tags: [has_deadline, single_question]
   safety_category: allowed
-  scenario_group: sg-clar-senior-promotion
+  scenario_group: bs-clar-single-critical-gap
+  topic_group: sg-clar-senior-promotion
   input:
     operation: goal_clarification
     today: "2026-09-27"

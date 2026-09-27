@@ -4,7 +4,7 @@
 examples:
 
 - id: gj-mem-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: memory_extraction
   behavior: [memory]
   language: en
@@ -14,7 +14,8 @@ examples:
   goal_size: n/a
   tags: [extraction, third_party_data, privacy]
   safety_category: allowed
-  scenario_group: sg-mem-french-lyon
+  scenario_group: bs-mem-extract-third-party-sensitive
+  topic_group: sg-mem-french-lyon
   input:
     operation: memory_extraction
     today: "2026-09-27"
@@ -80,7 +81,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-mem-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: memory_extraction
   behavior: [memory]
   language: ru
@@ -90,7 +91,8 @@ examples:
   goal_size: n/a
   tags: [extraction, update, temporary]
   safety_category: allowed
-  scenario_group: sg-mem-kitchen-renovation
+  scenario_group: bs-mem-update-existing-temporary
+  topic_group: sg-mem-kitchen-renovation
   input:
     operation: memory_extraction
     today: "2026-09-27"
@@ -101,7 +103,7 @@ examples:
       - id: um1
         scope: user
         category: schedule
-        content: Работает по графику 5/2, свободен по выходным.
+        content: Работает по графику 5/2, выходные свободны.
         stability: stable
     conversation:
       - role: user
@@ -112,7 +114,7 @@ examples:
       - scope: goal
         goal_id: g-kitchen
         category: constraint
-        content: Бюджет на ремонт кухни — 400 000 рублей, жёсткий лимит.
+        content: Бюджет на ремонт кухни — 400 тысяч (валюта не указана), жёсткий лимит.
         stability: stable
         sensitive: false
         source: user_stated
@@ -133,7 +135,7 @@ examples:
   provenance: *prov
 
 - id: gj-mem-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: daily_plan
   behavior: [memory, daily_prioritization]
   language: en
@@ -143,7 +145,8 @@ examples:
   goal_size: medium
   tags: [memory_isolation, retrieval_noise]
   safety_category: allowed
-  scenario_group: sg-mem-portrait-drawing-isolation
+  scenario_group: bs-daily-ignore-other-goal-memory
+  topic_group: sg-mem-portrait-drawing-isolation
   input:
     operation: daily_plan
     today: "2026-09-27"
@@ -189,8 +192,9 @@ examples:
     recommended_tasks:
       - task_id: n2
         reason: The only unlocked task, and it fits your evening session.
-        estimated_duration_minutes: 30
-    total_minutes: 30
+        estimated_duration_minutes: 40
+        scope_note: 20 sketches of about 90 seconds (30 min) plus 10 minutes comparing the last five with the reference.
+    total_minutes: 40
     next_action: Set a 90-second timer and draw the first eye-placement sketch.
   annotations:
     must_not_mention: ["3,200", "9,000", "credit card", "debt", "take-home"]
@@ -211,7 +215,7 @@ examples:
   provenance: *prov
 
 - id: gj-mem-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [memory, navigator]
   language: ru
@@ -221,7 +225,8 @@ examples:
   goal_size: medium
   tags: [memory_isolation, retrieval_noise]
   safety_category: allowed
-  scenario_group: sg-mem-ukulele-isolation
+  scenario_group: bs-nav-ignore-other-goal-memory
+  topic_group: sg-mem-ukulele-isolation
   input:
     operation: navigator_response
     today: "2026-09-27"

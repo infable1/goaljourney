@@ -1,0 +1,154 @@
+{
+  "content_hash": "69516730fe6afddd07a1718c3454a407b3dae7325c32771b17e3dca7734bb69f",
+  "example_id": "gj-vretry-004",
+  "dataset_version": "0.1.0",
+  "task_type": "verification_result",
+  "input": {
+    "evidence": [
+      {
+        "content": "Card 1 (2026-09-22, 4 chairs): uses a spreadsheet; 'I do it on Sunday nights and hate every minute'; spends 0. Card 2 (2026-09-23, 7 chairs): accountant once a quarter; 'I never know my real margin until it's too late'; about 150/month. Card 3 (2026-09-25, 2 chairs): shoebox of receipts; 'Tax time is a nightmare'; spends 0.",
+        "description": "3 interview cards.",
+        "id": "e2",
+        "type": "structured_result"
+      }
+    ],
+    "goal": {
+      "id": "g-bookkeeping",
+      "title": "Validate demand for a bookkeeping service for hair salons"
+    },
+    "operation": "verification_result",
+    "task": {
+      "description": "Talk to five salon owners and record how they handle bookkeeping, what frustrates them, and what they pay for it now.",
+      "difficulty": 3,
+      "estimated_duration_minutes": 300,
+      "expected_result": "Notes for 5 interviews with current solution, frustrations and current spend.",
+      "id": "t-salon-interviews",
+      "sessions": 5,
+      "title": "Interview 5 salon owners about how they handle bookkeeping today",
+      "verification_protocol": {
+        "confidence_ceiling": "medium",
+        "methods": [
+          {
+            "acceptance_criteria": [
+              "5 cards",
+              "Each card has at least one direct quote"
+            ],
+            "fields": [
+              "Date",
+              "Salon size",
+              "Current solution",
+              "Frustrations (quotes)",
+              "Current monthly spend"
+            ],
+            "instructions": "One card per interview.",
+            "method": "structured_result",
+            "role": "required"
+          },
+          {
+            "instructions": "One synthesis question.",
+            "method": "follow_up_questions",
+            "questions": [
+              "Which frustration came up most often?"
+            ],
+            "role": "supplementary"
+          }
+        ],
+        "objective_verifiability": "medium",
+        "pass_criteria": [
+          "5 complete interview cards"
+        ],
+        "rationale": "Structured notes with quotes are the practical evidence for interviews.",
+        "self_report_only": false,
+        "task_nature": "business_activity"
+      },
+      "why_it_matters": "Five conversations will show whether the pain is strong enough to pay for before you build anything."
+    },
+    "today": "2026-09-27",
+    "verification_history": [
+      {
+        "attempt": 1,
+        "evidence": [
+          {
+            "content": "Talked to a few salon owners, they all hate bookkeeping.",
+            "id": "e1",
+            "type": "text_report"
+          }
+        ],
+        "requested_evidence": [
+          "One card per interview with the fields from the protocol"
+        ],
+        "result_status": "needs_more_evidence",
+        "result_summary": "Only a summary sentence; no interview cards."
+      }
+    ]
+  },
+  "expected_output": {
+    "additional_evidence": [
+      {
+        "request": "2 more interview cards in the same format",
+        "why": "The protocol requires 5 interviews"
+      }
+    ],
+    "attempt": 2,
+    "confidence": "medium",
+    "criteria_results": [
+      {
+        "criterion": "5 complete interview cards",
+        "note": "3 of 5 cards so far, all complete",
+        "result": "not_met"
+      }
+    ],
+    "decision_summary": {
+      "impact": "Only two more cards are needed to complete the task.",
+      "what_changed": "Task still open after attempt 2 with a narrower request.",
+      "why": "The submission fixed the format issue from attempt 1 but covers 3 of 5 interviews."
+    },
+    "evidence_assessment": [
+      {
+        "evidence_id": "e2",
+        "limitations": "Two interviews still missing",
+        "supports": "3 complete cards with quotes, current solution and spend"
+      }
+    ],
+    "evidence_basis": "mixed",
+    "message_to_user": "Big improvement — these three cards are exactly what I was after: real quotes, current tools and spend. \"I never know my real margin until it's too late\" is a strong signal.\nTo complete the task I need two more interviews in the same format. If finding two more owners is hard, tell me and we can look at where to find them together.",
+    "next_step": "Schedule two more salon conversations this week.",
+    "reason": "The format now matches the protocol, but only 3 of the 5 required interviews are documented; the task is in progress, not failed.",
+    "response_language": "en",
+    "status": "needs_more_evidence",
+    "task_id": "t-salon-interviews",
+    "type": "verification_result"
+  },
+  "contrastive": [
+    {
+      "critique": "Rejects partial but good-quality progress; the user did what was asked after attempt 1 and only needs two more interviews.",
+      "failure_modes": [
+        "premature_rejection"
+      ],
+      "id": "gj-vretry-004-c1",
+      "output": {
+        "additional_evidence": [],
+        "attempt": 2,
+        "confidence": "medium",
+        "criteria_results": [
+          {
+            "criterion": "5 complete interview cards",
+            "result": "not_met"
+          }
+        ],
+        "decision_summary": {
+          "impact": "Start again.",
+          "what_changed": "Task rejected.",
+          "why": "Only 3 interviews."
+        },
+        "evidence_basis": "mixed",
+        "message_to_user": "Rejected — the task required 5 interviews and you only did 3.",
+        "reason": "Fewer than 5 interviews.",
+        "response_language": "en",
+        "status": "rejected",
+        "task_id": "t-salon-interviews",
+        "type": "verification_result"
+      }
+    }
+  ]
+}

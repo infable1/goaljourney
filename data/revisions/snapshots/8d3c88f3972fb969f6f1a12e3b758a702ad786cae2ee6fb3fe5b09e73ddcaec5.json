@@ -1,0 +1,141 @@
+{
+  "content_hash": "8d3c88f3972fb969f6f1a12e3b758a702ad786cae2ee6fb3fe5b09e73ddcaec5",
+  "example_id": "gj-mem-003",
+  "dataset_version": "0.1.1",
+  "task_type": "daily_plan",
+  "input": {
+    "operation": "daily_plan",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-portrait",
+      "title": "Learn to draw realistic portraits"
+    },
+    "user_memory": [
+      {
+        "scope": "user",
+        "category": "schedule",
+        "content": "Prefers evening sessions of 30–40 minutes.",
+        "stability": "stable"
+      }
+    ],
+    "retrieved_memory": [
+      {
+        "scope": "goal",
+        "goal_id": "g-debt",
+        "category": "fact",
+        "content": "Monthly take-home pay is 3,200.",
+        "sensitive": true
+      },
+      {
+        "scope": "goal",
+        "goal_id": "g-debt",
+        "category": "constraint",
+        "content": "Paying off a 9,000 credit card balance; avoid non-essential purchases.",
+        "sensitive": true
+      }
+    ],
+    "time_budget": {
+      "available_minutes_today": 40
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Proportions",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Accurate proportions from reference",
+          "region_id": "r1",
+          "success_criteria": [
+            "5 portraits with correct proportions"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Loomis head construction — 10 studies",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Eye placement drills — 20 quick sketches",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "depends_on": [
+            "n1"
+          ],
+          "estimated_duration_minutes": 30
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "First full portrait from a photo reference",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 90
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I've got about 40 minutes this evening. What should I do?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "daily_plan",
+    "response_language": "en",
+    "message_to_user": "Tonight: 20 quick eye-placement sketches, about 90 seconds each (30 min). Place the eyes on the halfway line of the head and check the one-eye-width gap between them each time. Use the remaining 10 minutes to compare your last five sketches with the reference — that's what unlocks the first full portrait.",
+    "available_minutes": 40,
+    "recommended_tasks": [
+      {
+        "task_id": "n2",
+        "reason": "The only unlocked task, and it fits your evening session.",
+        "estimated_duration_minutes": 40,
+        "scope_note": "20 sketches of about 90 seconds (30 min) plus 10 minutes comparing the last five with the reference."
+      }
+    ],
+    "total_minutes": 40,
+    "next_action": "Set a 90-second timer and draw the first eye-placement sketch."
+  },
+  "contrastive": [
+    {
+      "id": "gj-mem-003-c1",
+      "failure_modes": [
+        "memory_leak"
+      ],
+      "critique": "Brings the user's debt and salary from a different goal into a drawing session, exposing sensitive information where it doesn't belong.",
+      "output": {
+        "type": "daily_plan",
+        "response_language": "en",
+        "message_to_user": "Since you're paying off your credit card, stick to the pencils you have — no new supplies. Do the eye-placement drills for 30 minutes.",
+        "available_minutes": 40,
+        "recommended_tasks": [
+          {
+            "task_id": "n2",
+            "reason": "Fits the session.",
+            "estimated_duration_minutes": 30
+          }
+        ],
+        "total_minutes": 30,
+        "next_action": "Start the drills."
+      }
+    }
+  ]
+}

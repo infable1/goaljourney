@@ -1,0 +1,130 @@
+{
+  "content_hash": "f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1",
+  "example_id": "gj-vres-007",
+  "dataset_version": "0.1.1",
+  "task_type": "verification_result",
+  "input": {
+    "operation": "verification_result",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-mgmt",
+      "title": "Подготовиться к роли тимлида"
+    },
+    "task": {
+      "id": "t-book",
+      "title": "Прочитать главы 1–3 книги о менеджменте и выписать 5 идей для своей команды",
+      "description": "Прочитайте первые три главы выбранной книги и выпишите 5 идей своими словами — каждую с указанием главы и того, как применить её в вашей команде.",
+      "why_it_matters": "Идеи, привязанные к вашей команде, станут основой первых решений в новой роли.",
+      "expected_result": "Список из 5 идей с номером главы и способом применения.",
+      "estimated_duration_minutes": 180,
+      "sessions": 3,
+      "difficulty": 2,
+      "verification_protocol": {
+        "task_nature": "knowledge",
+        "objective_verifiability": "medium",
+        "methods": [
+          {
+            "method": "structured_result",
+            "role": "required",
+            "evidence_class": "inspectable_artifact",
+            "instructions": "Заполните список идей.",
+            "fields": [
+              "Идея своими словами",
+              "Глава",
+              "Как применю в команде"
+            ]
+          },
+          {
+            "method": "follow_up_questions",
+            "role": "supplementary",
+            "instructions": "Вопрос по одной из идей.",
+            "questions": [
+              "Какую идею вы попробуете первой и что может помешать?"
+            ]
+          }
+        ],
+        "pass_criteria": [
+          "5 идей с главой и способом применения"
+        ],
+        "confidence_ceiling": "medium",
+        "self_report_only": false,
+        "rationale": "Список идей своими словами с привязкой к команде — это и есть результат задачи; по нему видно понимание прочитанного."
+      }
+    },
+    "evidence": [
+      {
+        "id": "e1",
+        "type": "text_report",
+        "content": "Прочитал, всё сделал, очень полезная книга!"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "verification_result",
+    "response_language": "ru",
+    "message_to_user": "Здорово, что книга оказалась полезной! Чтобы засчитать задачу, не хватает самого результата — списка из пяти идей. Добавьте, пожалуйста, для каждой идеи: суть своими словами, номер главы и как вы примените её в своей команде. Это займёт минут десять, и эти идеи потом пригодятся в плане первых недель тимлидом.",
+    "task_id": "t-book",
+    "attempt": 1,
+    "status": "needs_more_evidence",
+    "confidence": "limited",
+    "evidence_basis": "self_report",
+    "criteria_results": [
+      {
+        "criterion": "5 идей с главой и способом применения",
+        "result": "unclear",
+        "note": "Список идей не приложен"
+      }
+    ],
+    "evidence_assessment": [
+      {
+        "evidence_id": "e1",
+        "supports": "Пользователь сообщает о выполнении",
+        "limitations": "Нет обязательного структурированного результата"
+      }
+    ],
+    "reason": "Протокол требует список идей; пока есть только сообщение о выполнении.",
+    "additional_evidence": [
+      {
+        "request": "Список из 5 идей с номером главы и способом применения",
+        "why": "Это обязательный результат задачи по протоколу"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Задача пока не засчитана, запрошен список идей.",
+      "why": "Прислано только сообщение о выполнении без обязательного результата.",
+      "impact": "Задача засчитается сразу после отправки списка."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-vres-007-c1",
+      "failure_modes": [
+        "premature_rejection"
+      ],
+      "critique": "Rejects the task outright although nothing shows it wasn't done — the evidence is simply incomplete, so the right answer is a specific request.",
+      "output": {
+        "type": "verification_result",
+        "response_language": "ru",
+        "message_to_user": "Задача отклонена — вы не выполнили её.",
+        "task_id": "t-book",
+        "attempt": 1,
+        "status": "rejected",
+        "confidence": "limited",
+        "evidence_basis": "self_report",
+        "criteria_results": [
+          {
+            "criterion": "5 идей с главой и способом применения",
+            "result": "unclear"
+          }
+        ],
+        "reason": "Нет списка.",
+        "additional_evidence": [],
+        "decision_summary": {
+          "what_changed": "Задача отклонена.",
+          "why": "Нет результата.",
+          "impact": "Задачу нужно выполнить заново."
+        }
+      }
+    }
+  ]
+}

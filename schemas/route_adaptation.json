@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/route_adaptation.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/route_adaptation.json",
   "title": "Operation output: route_adaptation (Types H, K)",
   "description": "Change set against the current journey. Completed/verified progress is preserved unless explicitly justified. Major changes require user confirmation. Every change is explained in decision_summary.",
   "type": "object",
@@ -91,17 +91,83 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["target", "target_id", "to", "reason"],
+        "required": ["target", "target_id", "to", "reason", "autonomy", "state"],
         "properties": {
           "target": { "type": "string", "enum": ["goal", "milestone", "node"] },
           "target_id": { "$ref": "common.json#/$defs/id" },
           "from": { "oneOf": [ { "$ref": "common.json#/$defs/date" }, { "type": "null" } ] },
           "to": { "oneOf": [ { "$ref": "common.json#/$defs/date" }, { "type": "null" } ] },
+          "reason": { "$ref": "common.json#/$defs/short_text" },
+          "autonomy": {
+            "description": "POL-C: node -> auto (adapt when justified); milestone -> adapt_with_summary (named in decision_summary); goal -> confirm_required (only proposed).",
+            "type": "string", "enum": ["auto", "adapt_with_summary", "confirm_required"]
+          },
+          "state": {
+            "description": "applied = in effect now; proposed = takes effect only after the user confirms (always the case when requires_user_confirmation is true).",
+            "type": "string", "enum": ["applied", "proposed"]
+          }
+        }
+      }
+    },
+    "new_weekly_hours_planned": {
+      "description": "Steady weekly pace after this change (temporary deviations go into workload.pace_phases).",
+      "type": "number", "minimum": 0, "maximum": 100
+    },
+    "workload": {
+      "description": "Arithmetic behind a time-related change, recomputed by the validator from node estimates (POL-C). Required when the trigger is less_time or more_time.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["weekly_hours", "remaining_minutes_before", "remaining_minutes_after", "horizon", "weeks_needed", "weeks_available", "fits"],
+      "properties": {
+        "weekly_hours": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "pace_phases": {
+          "description": "Temporary pace between two dates (inclusive), e.g. a vacation; outside them weekly_hours applies.",
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "to", "weekly_hours"],
+            "properties": {
+              "from": { "$ref": "common.json#/$defs/date" },
+              "to": { "$ref": "common.json#/$defs/date" },
+              "weekly_hours": { "type": "number", "minimum": 0, "maximum": 100 }
+            }
+          }
+        },
+        "remaining_minutes_before": { "type": "integer", "minimum": 0, "description": "Unfinished estimated work in the input journey." },
+        "remaining_minutes_after": { "type": "integer", "minimum": 0, "description": "Unfinished estimated work after this change." },
+        "unestimated_node_ids": { "$ref": "common.json#/$defs/id_list" },
+        "horizon": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["target", "target_id", "date"],
+          "properties": {
+            "target": { "type": "string", "enum": ["goal", "milestone"] },
+            "target_id": { "$ref": "common.json#/$defs/id" },
+            "date": { "$ref": "common.json#/$defs/date" }
+          }
+        },
+        "weeks_needed": { "type": "number", "minimum": 0 },
+        "weeks_available": { "type": "number" },
+        "fits": { "type": "boolean" }
+      }
+    },
+    "invalidated_progress": {
+      "description": "Completed/verified nodes whose result no longer applies (e.g. an agreement that fell through). They stay in history; they are neither preserved nor silently discarded.",
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["node_id", "reason"],
+        "properties": {
+          "node_id": { "$ref": "common.json#/$defs/id" },
           "reason": { "$ref": "common.json#/$defs/short_text" }
         }
       }
     },
-    "new_weekly_hours_planned": { "type": "number", "minimum": 0, "maximum": 100 },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" },
     "preserved_progress": {
       "description": "Completed/verified node ids that remain valid after the change.",
       "$ref": "common.json#/$defs/id_list"

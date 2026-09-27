@@ -1,0 +1,61 @@
+{
+  "content_hash": "38fbc83124116bc3ebf33720c4f835a300949fd0a3638133d1d5f6c793a7d2b3",
+  "example_id": "gj-mem-002",
+  "dataset_version": "0.1.1",
+  "task_type": "memory_extraction",
+  "input": {
+    "operation": "memory_extraction",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-kitchen",
+      "title": "Сделать ремонт кухни до Нового года"
+    },
+    "user_memory": [
+      {
+        "id": "um1",
+        "scope": "user",
+        "category": "schedule",
+        "content": "Работает по графику 5/2, выходные свободны.",
+        "stability": "stable"
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Кстати, я теперь работаю сменами два через два. Бюджет на кухню — 400 тысяч, больше не будет. И на этой неделе я в командировке до пятницы, так что ничего не успею."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "memory_extraction",
+    "items": [
+      {
+        "scope": "goal",
+        "goal_id": "g-kitchen",
+        "category": "constraint",
+        "content": "Бюджет на ремонт кухни — 400 тысяч (валюта не указана), жёсткий лимит.",
+        "stability": "stable",
+        "sensitive": false,
+        "source": "user_stated"
+      },
+      {
+        "scope": "user",
+        "category": "schedule",
+        "content": "В командировке до 2026-10-02, в это время занятия по целям не планировать.",
+        "stability": "temporary",
+        "sensitive": false,
+        "source": "user_stated",
+        "expires_at": "2026-10-02"
+      }
+    ],
+    "not_stored": [],
+    "updates": [
+      {
+        "memory_id": "um1",
+        "action": "update",
+        "new_content": "Работает сменами 2 через 2; свободные дни меняются каждую неделю."
+      }
+    ]
+  },
+  "contrastive": null
+}

@@ -1,0 +1,298 @@
+{
+  "content_hash": "66c0fbeea7ff86e414a501affcfd01d161645526d638db17faf2c3ddbb96ce13",
+  "example_id": "gj-route-005",
+  "dataset_version": "0.1.1",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-orgo",
+      "title": "Pass the organic chemistry final with at least 70%",
+      "deadline": "2026-12-14",
+      "deadline_flexibility": "fixed",
+      "available_time": {
+        "hours_per_week": 8
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Content review",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Exam practice",
+          "order": 2,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "All chapters reviewed",
+          "region_id": "r1",
+          "success_criteria": [
+            "Chapters 1–10 reviewed with problem sets"
+          ],
+          "target_date": "2026-11-01"
+        },
+        {
+          "id": "m2",
+          "title": "Exam ready",
+          "region_id": "r2",
+          "success_criteria": [
+            "Two mock exams at 70% or above"
+          ],
+          "target_date": "2026-12-07"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Review chapters 1–3 with problem sets",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Review chapters 4–6 with problem sets",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified",
+          "depends_on": [
+            "n1"
+          ]
+        },
+        {
+          "id": "n3",
+          "type": "verification",
+          "title": "Mock exam 1 (chapters 1–6)",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "completed",
+          "depends_on": [
+            "n2"
+          ]
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Review chapters 7–10 with problem sets",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "depends_on": [
+            "n3"
+          ]
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Review spectroscopy in depth",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n4"
+          ],
+          "priority": "high"
+        },
+        {
+          "id": "n6",
+          "type": "verification",
+          "title": "Full mock exams",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n5"
+          ]
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "task_failed",
+        "date": "2026-09-26",
+        "description": "Mock exam 1 scored 48%. Section scores: reaction mechanisms 2/10, stereochemistry 3/10, nomenclature 9/10, spectroscopy 8/10."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I got 48% on the mock. I'm kind of panicking. Do I need to start over?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "en",
+    "message_to_user": "No need to start over — the mock tells us exactly where the points went. Nomenclature (9/10) and spectroscopy (8/10) are already strong; almost all the lost points are in reaction mechanisms (2/10) and stereochemistry (3/10).\nSo I've added three targeted sessions on mechanisms and two on stereochemistry before chapters 7–10, lowered the in-depth spectroscopy review to normal priority, and added a second mock exam on chapters 1–6 by 14 October, right after the drills, to check the fix while it's fresh. That moves the chapter-review milestone from 1 to 10 November; your exam date stays as it is, and everything you've already reviewed counts.",
+    "trigger": {
+      "type": "task_failed",
+      "description": "Mock exam 1 scored 48%, with most points lost in mechanisms and stereochemistry."
+    },
+    "change_level": "moderate",
+    "requires_user_confirmation": false,
+    "removed_nodes": [],
+    "added_nodes": [
+      {
+        "id": "n7",
+        "type": "task",
+        "title": "Mechanisms drill: 3 sessions of 15 arrow-pushing problems each",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "available",
+        "detail_level": "outline",
+        "depends_on": [
+          "n3"
+        ],
+        "estimated_duration_minutes": 270,
+        "created_by": "ai"
+      },
+      {
+        "id": "n8",
+        "type": "task",
+        "title": "Stereochemistry drill: 2 sessions on R/S and chair conformations",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "available",
+        "detail_level": "outline",
+        "depends_on": [
+          "n3"
+        ],
+        "estimated_duration_minutes": 180,
+        "created_by": "ai"
+      },
+      {
+        "id": "n9",
+        "type": "verification",
+        "title": "Mock exam 2 (chapters 1–6, new questions)",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "locked",
+        "detail_level": "outline",
+        "depends_on": [
+          "n7",
+          "n8"
+        ],
+        "estimated_duration_minutes": 120,
+        "due_date": "2026-10-14",
+        "created_by": "ai"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "node_id": "n4",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n3"
+            ],
+            "to": [
+              "n7",
+              "n8"
+            ]
+          }
+        ],
+        "reason": "New chapters build on mechanisms, so the weak spot is fixed first."
+      },
+      {
+        "node_id": "n5",
+        "changes": [
+          {
+            "field": "priority",
+            "from": "high",
+            "to": "normal"
+          }
+        ],
+        "reason": "Spectroscopy scored 8/10 and needs less time than planned."
+      }
+    ],
+    "modified_deadlines": [
+      {
+        "target": "milestone",
+        "target_id": "m1",
+        "from": "2026-11-01",
+        "to": "2026-11-10",
+        "reason": "Five drill sessions and a second mock exam (about 9.5 hours) come before chapters 7–10.",
+        "autonomy": "adapt_with_summary",
+        "state": "applied"
+      }
+    ],
+    "preserved_progress": [
+      "n1",
+      "n2",
+      "n3"
+    ],
+    "facts_used": [
+      {
+        "value": "Mock exam 1: 48%, mechanisms 2/10, stereochemistry 3/10, nomenclature 9/10, spectroscopy 8/10",
+        "source_type": "user_provided",
+        "source_ref": "events[0]"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Added 5 targeted sessions on mechanisms and stereochemistry and a second mock exam by 14 October; lowered spectroscopy priority; moved the chapter-review milestone from 1 to 10 November.",
+      "why": "The mock shows the gap is concentrated in two topics, not across the whole course; a mock right after the drills shows whether the fix worked.",
+      "impact": "Exam date and the 7 December exam-ready milestone are unchanged; the review milestone moves by 9 days because about 9.5 hours of new work come first."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-route-005-c1",
+      "failure_modes": [
+        "discarded_progress"
+      ],
+      "critique": "Restarts from chapter 1 and removes verified reviews, although the mock shows most topics are fine — wasting weeks before a fixed exam.",
+      "output": {
+        "type": "route_adaptation",
+        "response_language": "en",
+        "message_to_user": "Let's start from scratch to make sure your foundation is solid.",
+        "trigger": {
+          "type": "task_failed",
+          "description": "Mock exam 48%."
+        },
+        "change_level": "major",
+        "requires_user_confirmation": true,
+        "removed_nodes": [
+          {
+            "node_id": "n1",
+            "reason": "Redo from scratch."
+          },
+          {
+            "node_id": "n2",
+            "reason": "Redo from scratch."
+          }
+        ],
+        "added_nodes": [
+          {
+            "id": "n7",
+            "type": "task",
+            "title": "Re-read chapters 1–6",
+            "region_id": "r1",
+            "milestone_id": "m1",
+            "status": "available",
+            "detail_level": "outline"
+          }
+        ],
+        "modified_nodes": [],
+        "modified_deadlines": [],
+        "preserved_progress": [],
+        "decision_summary": {
+          "what_changed": "Restarted the review.",
+          "why": "The mock score was low.",
+          "impact": "More review time."
+        }
+      }
+    }
+  ]
+}

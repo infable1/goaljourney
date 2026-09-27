@@ -1,0 +1,251 @@
+{
+  "content_hash": "d8536ef0c23618a7edbc8f7326a531f93d12d1f90dc0befc63d3a2e964946110",
+  "example_id": "gj-time-004",
+  "dataset_version": "0.1.1",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-thesis",
+      "title": "Finish the first full draft of my master's thesis",
+      "deadline": "2027-01-15",
+      "available_time": {
+        "hours_per_week": 4
+      }
+    },
+    "time_budget": {
+      "hours_per_week": 15,
+      "previous_hours_per_week": 4
+    },
+    "journey": {
+      "pacing": {
+        "weekly_hours_planned": 4,
+        "horizon_weeks": 16
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Chapters",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Full draft",
+          "order": 2,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Chapters 2–4 drafted",
+          "region_id": "r1",
+          "success_criteria": [
+            "Chapters 2, 3 and 4 drafted"
+          ],
+          "target_date": "2026-12-10"
+        },
+        {
+          "id": "m2",
+          "title": "Full draft sent to supervisor",
+          "region_id": "r2",
+          "success_criteria": [
+            "Complete draft emailed"
+          ],
+          "target_date": "2027-01-15"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Draft chapter 1 (introduction)",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Draft chapter 2 (literature review)",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "estimated_duration_minutes": 1200
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Draft chapter 3 (method)",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 900
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Draft chapter 4 (results)",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n3"
+          ],
+          "estimated_duration_minutes": 1200
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Revise and assemble the full draft",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n4"
+          ],
+          "estimated_duration_minutes": 900
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "more_time",
+        "date": "2026-09-26",
+        "description": "Two weeks of vacation from October 5 to October 18; about 15 hours a week during that time, then back to 4."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two weeks off in October and could do maybe 15 hours a week on the thesis during that time. After that it's back to normal."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "en",
+    "message_to_user": "Two focused weeks are perfect for the literature review — it's the chapter that benefits most from long uninterrupted blocks. Plan: finish chapter 2 during the vacation (about 20 hours), outline chapter 3 section by section (about 5 hours) and, if you do reach 15 hours a week, start writing chapter 3 with what's left. After October 18 you're back to 4 hours a week.\nOne honest note: at 4 hours a week alone, chapters 2–4 (about 55 hours) would only have been drafted in early January, past the December 10 milestone. The vacation closes that gap rather than creating spare time: with it, the chapters fit by December 10 with about 12 days to spare, and the full draft lands in late December, about 3 weeks before January 15. If the vacation weeks turn out lighter, chapter 3 simply starts after October 18 and the milestone still holds.",
+    "trigger": {
+      "type": "more_time",
+      "description": "About 15 hours per week from October 5 to 18, then back to 4."
+    },
+    "change_level": "moderate",
+    "requires_user_confirmation": false,
+    "removed_nodes": [],
+    "added_nodes": [
+      {
+        "id": "n6",
+        "type": "task",
+        "title": "Outline chapter 3 section by section during the vacation",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "locked",
+        "detail_level": "outline",
+        "depends_on": [
+          "n2"
+        ],
+        "estimated_duration_minutes": 300,
+        "due_date": "2026-10-18",
+        "created_by": "ai"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "node_id": "n2",
+        "changes": [
+          {
+            "field": "due_date",
+            "from": null,
+            "to": "2026-10-18"
+          },
+          {
+            "field": "priority",
+            "from": "normal",
+            "to": "critical"
+          }
+        ],
+        "reason": "The literature review needs long blocks, which the vacation provides."
+      },
+      {
+        "node_id": "n3",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n2"
+            ],
+            "to": [
+              "n2",
+              "n6"
+            ]
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 900,
+            "to": 720
+          }
+        ],
+        "reason": "Writing from a detailed outline is faster."
+      }
+    ],
+    "modified_deadlines": [
+      {
+        "target": "node",
+        "target_id": "n2",
+        "from": null,
+        "to": "2026-10-18",
+        "reason": "The literature review is finished during the vacation weeks.",
+        "autonomy": "auto",
+        "state": "applied"
+      }
+    ],
+    "new_weekly_hours_planned": 4,
+    "workload": {
+      "weekly_hours": 4,
+      "pace_phases": [
+        {
+          "from": "2026-10-05",
+          "to": "2026-10-18",
+          "weekly_hours": 15
+        }
+      ],
+      "remaining_minutes_before": 4200,
+      "remaining_minutes_after": 4320,
+      "horizon": {
+        "target": "goal",
+        "target_id": "g-thesis",
+        "date": "2027-01-15"
+      },
+      "weeks_needed": 12.6,
+      "weeks_available": 15.7,
+      "fits": true
+    },
+    "preserved_progress": [
+      "n1"
+    ],
+    "facts_used": [
+      {
+        "value": "About 15 hours a week during the vacation, October 5–18",
+        "source_type": "user_provided",
+        "source_ref": "events[0]"
+      },
+      {
+        "value": "Back to 4 hours a week after October 18",
+        "source_type": "user_provided",
+        "source_ref": "events[0]"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Chapter 2 is due by October 18 and a chapter 3 outline is added for the vacation weeks; writing chapter 3 from the outline is estimated at 12 hours instead of 15.",
+      "why": "Two weeks at about 15 hours a week are best used for the chapter that needs long focus blocks; at 4 hours a week alone chapters 2–4 would have been drafted only in early January.",
+      "impact": "The chapters milestone stays on December 10 and becomes reachable with about 12 days to spare; planning returns to 4 hours a week after October 18, and the full draft is expected in late December, about 3 weeks before January 15."
+    }
+  },
+  "contrastive": null
+}

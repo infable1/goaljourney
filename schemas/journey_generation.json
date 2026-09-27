@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/journey_generation.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/journey_generation.json",
   "title": "Operation output: journey_generation (Type C)",
   "type": "object",
   "additionalProperties": false,
@@ -12,6 +12,7 @@
     "goal": { "$ref": "goal.json" },
     "journey": { "$ref": "journey.json" },
     "external_claims": { "$ref": "common.json#/$defs/external_claims" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" },
     "open_questions": {
       "type": "array",
       "maxItems": 3,

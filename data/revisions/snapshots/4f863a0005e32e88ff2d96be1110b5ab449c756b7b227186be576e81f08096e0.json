@@ -1,0 +1,91 @@
+{
+  "content_hash": "4f863a0005e32e88ff2d96be1110b5ab449c756b7b227186be576e81f08096e0",
+  "example_id": "gj-vprot-007",
+  "dataset_version": "0.1.1",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "operation": "verification_protocol_design",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-sleep",
+      "title": "Stop feeling exhausted every morning"
+    },
+    "task": {
+      "id": "t-bedtime",
+      "title": "Be in bed with lights off by 23:30 on 5 of 7 nights",
+      "description": "Keep a 23:30 lights-off time on at least 5 nights this week.",
+      "why_it_matters": "A consistent bedtime is the first lever to test before changing anything else.",
+      "expected_result": "A 7-night log with at least 5 nights at or before 23:30.",
+      "estimated_duration_minutes": 5,
+      "sessions": 7,
+      "difficulty": 2
+    }
+  },
+  "expected_output": {
+    "type": "verification_protocol_design",
+    "response_language": "en",
+    "message_to_user": "There's no fair way to prove a bedtime, so this one runs on a quick morning log — lights-off time and how rested you feel. If you already use a sleep tracker, you can attach its export, but it's optional. It counts as self-reported progress.",
+    "task_id": "t-bedtime",
+    "protocol": {
+      "task_nature": "habit",
+      "objective_verifiability": "low",
+      "methods": [
+        {
+          "method": "structured_self_report",
+          "role": "required",
+          "instructions": "Each morning, log the previous night.",
+          "fields": [
+            "Night of",
+            "Lights-off time",
+            "Rested (1–5)"
+          ]
+        },
+        {
+          "method": "data_export",
+          "role": "supplementary",
+          "instructions": "Optional sleep-tracker export if you already use one."
+        }
+      ],
+      "pass_criteria": [
+        "7 nights logged",
+        "At least 5 at or before 23:30"
+      ],
+      "confidence_ceiling": "limited",
+      "self_report_only": true,
+      "rationale": "Bedtime can't be verified objectively without intrusive measures; a same-morning log is the right level and is labelled limited."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-vprot-007-c1",
+      "failure_modes": [
+        "photo_as_proof",
+        "overconfident_verification"
+      ],
+      "critique": "A nightly photo of a clock proves nothing about when the user went to bed, adds friction to a habit task, and claims more confidence than a photo can support.",
+      "output": {
+        "type": "verification_protocol_design",
+        "response_language": "en",
+        "message_to_user": "Every night, send a photo of your clock showing the time before 23:30.",
+        "task_id": "t-bedtime",
+        "protocol": {
+          "task_nature": "habit",
+          "objective_verifiability": "low",
+          "methods": [
+            {
+              "method": "photo",
+              "role": "required",
+              "instructions": "Photo of a clock showing the time each night."
+            }
+          ],
+          "pass_criteria": [
+            "5 photos with times before 23:30"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Photos show the time."
+        }
+      }
+    }
+  ]
+}

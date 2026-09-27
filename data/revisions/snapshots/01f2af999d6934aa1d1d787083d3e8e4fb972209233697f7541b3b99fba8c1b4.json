@@ -1,0 +1,106 @@
+{
+  "content_hash": "01f2af999d6934aa1d1d787083d3e8e4fb972209233697f7541b3b99fba8c1b4",
+  "example_id": "gj-vprot-001",
+  "dataset_version": "0.1.1",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "operation": "verification_protocol_design",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-cube",
+      "title": "Solve a Rubik's cube without instructions"
+    },
+    "task": {
+      "id": "t-solve",
+      "title": "Solve a scrambled cube with the beginner's method, without looking at notes",
+      "description": "Using the layer-by-layer beginner's method, solve a fully scrambled cube from memory.",
+      "why_it_matters": "This is the skill the goal is about; everything before it was learning the steps.",
+      "expected_result": "One complete solve from a random scramble without notes, in under 5 minutes.",
+      "estimated_duration_minutes": 20,
+      "difficulty": 3
+    }
+  },
+  "expected_output": {
+    "type": "verification_protocol_design",
+    "response_language": "en",
+    "message_to_user": "Video isn't available in the app, so the check combines what is. Here is a random scramble: R U2 F' L D2 B R' U F2 L'. Apply it to a solved cube and solve it without notes while a voice recording runs — read the scramble aloud as you apply it, then name each stage as you reach it. The transcript shows the order of the stages and the recording length shows your time. Then two quick questions about the last layer. A photo of a solved cube wouldn't show anything — any cube can be photographed solved. The solve itself stays your report, so it counts with medium confidence.",
+    "task_id": "t-solve",
+    "protocol": {
+      "task_nature": "skill_acquisition",
+      "objective_verifiability": "medium",
+      "methods": [
+        {
+          "method": "practical_test",
+          "role": "required",
+          "evidence_class": "self_report",
+          "instructions": "Apply the scramble from the navigator's message (R U2 F' L D2 B R' U F2 L') to a solved cube, then solve it without notes.",
+          "acceptance_criteria": [
+            "The issued scramble was used",
+            "Cube fully solved",
+            "Solve under 5 minutes"
+          ]
+        },
+        {
+          "method": "audio",
+          "role": "required",
+          "evidence_class": "self_report",
+          "instructions": "Keep a voice recording running for the whole attempt — read the scramble aloud as you apply it, then name each stage as you reach it (white cross, first layer, middle layer, yellow cross, last layer).",
+          "acceptance_criteria": [
+            "The scramble read aloud matches the one issued",
+            "Stages named in the beginner's-method order",
+            "Under 5 minutes from the end of the scramble to the last stage"
+          ]
+        },
+        {
+          "method": "knowledge_test",
+          "role": "required",
+          "instructions": "Two questions about the last layer, answered in the chat.",
+          "questions": [
+            "Which step of the last layer did you do first, and why that order?",
+            "What do you do when the yellow cross shows only a line?"
+          ]
+        }
+      ],
+      "pass_criteria": [
+        "The narrated attempt follows the issued scramble and the method's stages in under 5 minutes",
+        "Answers match the beginner's method"
+      ],
+      "confidence_ceiling": "medium",
+      "self_report_only": false,
+      "rationale": "Without video the solve itself cannot be seen, so the attempt and its recording are the user's account; the fresh scramble, the timed narration and the method questions make it credible, and only the answers are checked directly — medium, not high."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-vprot-001-c1",
+      "failure_modes": [
+        "photo_as_proof",
+        "overconfident_verification"
+      ],
+      "critique": "A photo of a solved cube proves nothing — the cube could have been solved by someone else or never scrambled.",
+      "output": {
+        "type": "verification_protocol_design",
+        "response_language": "en",
+        "message_to_user": "Just send a photo of your solved cube!",
+        "task_id": "t-solve",
+        "protocol": {
+          "task_nature": "skill_acquisition",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "photo",
+              "role": "required",
+              "instructions": "Upload a photo of the solved cube."
+            }
+          ],
+          "pass_criteria": [
+            "Photo shows a solved cube"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "The photo shows the result."
+        }
+      }
+    }
+  ]
+}

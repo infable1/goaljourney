@@ -20,6 +20,9 @@ from gjcore.config import load_config, versions
 from gjcore.io import dump_json, load_yaml
 from gjcore.paths import rel, repo_path
 from gjcore.records import load_eval_cases
+from generation.validators import calendar as CAL
+from generation.validators import policy as POL
+from generation.validators import russian as RU
 from generation.validators import text as T
 
 from .pool import load_pool
@@ -27,14 +30,14 @@ from .pool import load_pool
 RULES = {
     "vague_node_title": ("P1", "Task/outline/added node title is generic (no object or quantity); outline titles are not linted."),
     "generic_rationale": ("P1", "why_it_matters / reason uses a stock phrase that carries no task-specific reason."),
-    "user_entered_as_objective": ("P2", "Only user-entered methods are required, yet the protocol is not self-report-only and the ceiling exceeds 'limited'."),
-    "capability_assumption": ("P2", "Verification relies on a product capability (auto transcription, URL fetch, issuing scrambles, calling endpoints) that may not exist."),
+    "user_entered_as_objective": ("P2", "The protocol's ceiling exceeds what its required evidence classes support (POL-B: user-entered data is the user's word)."),
+    "capability_assumption": ("P2", "Asks for or promises a capability that configs/product_capabilities.yaml marks planned or unsupported (POL-A)."),
     "unverifiable_criterion": ("P2", "An acceptance criterion the navigator cannot actually check from the evidence it asks for."),
     "too_many_questions": ("P3", "More than 3 clarification questions, or several questions in a non-clarification answer."),
     "unsupported_feasibility_claim": ("P4", "Asserts that a date/target still works without the current-state facts needed to know it."),
     "tiny_goal_overplanned": ("P5", "A tiny goal gets more than 4 tasks/nodes."),
     "capacity_mismatch": ("P5", "Planned durations do not fit (or wildly underuse) weekly hours x horizon."),
-    "deadline_change_without_consent": ("P6", "Milestone/goal dates change while requires_user_confirmation is false."),
+    "deadline_change_without_consent": ("P6", "A deadline changes without the autonomy POL-C allows (goal dates need confirmation; every change declares its autonomy)."),
     "change_without_consent": ("P6", "Moderate/major change or removal applied without asking."),
     "applied_while_pending": ("P6", "Message says a change was already made although it still needs the user's confirmation."),
     "unsupported_generalisation": ("P7", "Confident generalisation about people/markets/institutions without a source."),
@@ -65,50 +68,13 @@ SEVERITY = {
 }
 
 # ---------------------------------------------------------------------------------------------
-# Russian gendered forms
+# Russian gendered forms: shared with the v0.1.1 lint (generation/validators/russian.py).
 
-_AI_VERB_STEMS = [
-    "разбил", "составил", "подготовил", "добавил", "убрал", "изменил", "проверил", "сделал", "понял", "предложил",
-    "сохранил", "сократил", "заменил", "посмотрел", "обновил", "сдвинул", "собрал", "перестроил", "пересчитал",
-    "отметил", "записал", "засчитал", "создал", "удалил", "разделил", "оставил", "включил", "спланировал",
-    "построил", "выбрал", "увидел", "прочитал", "решил", "подобрал", "распределил", "учитывал", "рассчитал",
-    "посчитал", "перенастроил", "проанализировал", "подумал", "запланировал", "поставил", "исправил", "уточнил",
-]
-_AI_VERB_IRREGULAR = ["перенёс", "перенес", "перенесла", "учёл", "учел", "учла", "нашёл", "нашел", "нашла", "смог", "смогла",
-                      "пришёл", "пришла", "зачёл", "зачла"]
-_AI_VERBS = set(_AI_VERB_STEMS) | {s + "а" for s in _AI_VERB_STEMS} | set(_AI_VERB_IRREGULAR)
-_SELF_ADJ = r"(рад|рада|готов|готова|уверен|уверена|должен|должна|благодарен|благодарна|согласен|согласна|обязан|обязана)"
-_RU_SELF_ADJ_RE = re.compile(r"\bя\s+(?:\w+\s+){0,2}?" + _SELF_ADJ + r"\b", re.IGNORECASE)
-_THIRD_PARTY_SUBJ = {"вы", "ты", "он", "она", "пользователь", "ментор", "руководитель", "друг", "тренер", "коллега",
-                     "кто", "который", "которая", "начальник", "врач", "клиент", "каждый"}
-_WORD_RE = re.compile(r"[А-Яа-яЁёA-Za-z]+")
-_USER_ADJ = (r"(один|одна|сам|сама|готов|готова|уверен|уверена|должен|должна|рад|рада|свободен|свободна|занят|занята|"
-             r"способен|способна|согласен|согласна|знаком|знакома|доволен|довольна|устал|устала)")
-_RU_USER_ADDR_RE = re.compile(r"\b(?:вы|ли)\s+(?:\w+\s+){0,1}?" + _USER_ADJ + r"\b", re.IGNORECASE)
-_RU_INFORMAL_RE = re.compile(r"\b(ты|тебе|тебя|тобой|твой|твоя|твоё|твои|твоих)\b", re.IGNORECASE)
-_RU_MEMORY_ADJ_RE = re.compile(r"\b(свободен|свободна|сам|сама|занят|занята|один|одна|готов|готова|должен|должна)\b",
-                               re.IGNORECASE)
-_RU_PAST_SG_RE = re.compile(r"\b\w{3,}(?:ал|ил|ял|ел|ул|ыл)(?:а|ся|ась)?\b", re.IGNORECASE)
-_RU_THIRD_PARTY_NOUNS = {"врач", "врача", "тренер", "друг", "подруга", "коллега", "руководитель", "начальник",
-                         "начальница", "мама", "папа", "жена", "муж", "партнёр", "партнер", "брат", "сестра", "сын",
-                         "дочь", "ментор", "преподаватель", "учитель", "он", "она", "кто", "который", "которая"}
-
-
-def _ru_memory_gendered(s):
-    """A gendered form describing the user in stored memory (memory is written without a subject,
-    so an unattributed singular past-tense verb or short adjective refers to the user)."""
-    m = _RU_MEMORY_ADJ_RE.search(s)
-    if m:
-        return m
-    for m in _RU_PAST_SG_RE.finditer(s):
-        before = [w.lower() for w in _WORD_RE.findall(s[:m.start()])][-3:]
-        if not set(before) & _RU_THIRD_PARTY_NOUNS:
-            return m
-    return None
-_RU_AGENT_NOUN_RE = re.compile(
-    r"\b(\w+(?:ый|ий|ой))\s+(\w+(?:чик|щик|тель|ник|ист|ер|ор|ец|ин|ок|ар))\b|"
-    r"\b(хозяин|повар|нарезчик|моделлер|новичок|любитель|знаток|путешественник|кулинар|бегун|пловец|ученик|студент|"
-    r"водитель|писатель|читатель|исследователь|сладкоежка)\b", re.IGNORECASE)
+_ru_self_reference = RU.self_reference
+_ru_memory_gendered = RU.memory_gendered
+_RU_USER_ADDR_RE = RU.USER_ADDRESS_RE
+_RU_INFORMAL_RE = RU.INFORMAL_RE
+_RU_AGENT_NOUN_RE = RU.AGENT_NOUN_RE
 _EN_PRONOUN_RE = re.compile(r"\b(he|she|him|his|hers|himself|herself)\b", re.IGNORECASE)
 
 # ---------------------------------------------------------------------------------------------
@@ -117,12 +83,6 @@ _EN_PRONOUN_RE = re.compile(r"\b(he|she|him|his|hers|himself|herself)\b", re.IGN
 _GENERIC_RATIONALE = re.compile(
     r"^(practice makes perfect|this is important|it'?s important|you need (to|this)|needed|important|"
     r"это важно|нужно знать|это нужно|так надо|для практики|theory first|precision|safety first|consistency)\.?$",
-    re.IGNORECASE)
-_CAPABILITY_RE = re.compile(
-    r"\bthe app (sends|calls|gives|shows|issues|attaches|fetches|checks|times|records)\b|"
-    r"\b(transcribed|timed|fetched|summari[sz]ed) (and \w+ )?automatically\b|\bthe page is fetched\b|"
-    r"\bсистема (расшифрует|измерит|проверит|откроет|пришлёт|пришлет)\b|\bAI открывает\b|"
-    r"\bприложение (выдаст|покажет|проверит|пришлёт|пришлет|отправит)\b|\bapp gives you a random\b",
     re.IGNORECASE)
 _UNVERIFIABLE_CRIT = re.compile(r"(rules? (are|is) respected|правила соблюдены|honestly|честно)", re.IGNORECASE)
 _FEASIBLE_CLAIM = re.compile(r"(still works|is realistic|fits comfortably|you'?ll (easily )?make it|"
@@ -143,31 +103,6 @@ _LATER_MSG = re.compile(r"(я пришлю|пришлю (их|вам)|сразу
                         r"in my next message|в следующем сообщении)", re.IGNORECASE)
 _WEEKEND_INPUT = re.compile(r"\b(this weekend|на этих выходных|в эти выходные|на этой неделе в выходные)\b", re.IGNORECASE)
 _SATURDAY = re.compile(r"\b(saturday|суббот\w*)\b", re.IGNORECASE)
-
-_WEEKDAYS = {
-    0: ("monday", "понедельник"), 1: ("tuesday", "вторник"), 2: ("wednesday", "сред"), 3: ("thursday", "четверг"),
-    4: ("friday", "пятниц"), 5: ("saturday", "суббот"), 6: ("sunday", "воскресен"),
-}
-_MONTHS = {
-    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6, "july": 7, "august": 8,
-    "september": 9, "october": 10, "november": 11, "december": 12,
-    "январ": 1, "феврал": 2, "март": 3, "апрел": 4, "ма": 5, "июн": 6, "июл": 7, "август": 8, "сентябр": 9,
-    "октябр": 10, "ноябр": 11, "декабр": 12,
-}
-_WD_NAMES = "|".join(sorted({n for pair in _WEEKDAYS.values() for n in pair}, key=len, reverse=True))
-_MONTH_NAMES = (r"(?:january|february|march|april|may|june|july|august|september|october|november|december|"
-                r"jan|feb|mar|apr|jun|jul|aug|sept?|oct|nov|dec|"
-                r"январ[яеь]|феврал[яеь]|март[аеь]?|апрел[яеь]|ма[яйе]|июн[яеь]|июл[яеь]|август[аеь]?|"
-                r"сентябр[яеь]|октябр[яеь]|ноябр[яеь]|декабр[яеь])")
-_ORD = r"(?P<suf>-?(?:го|е|th|st|nd|rd))?"
-# A weekday counts as tied to a date only with a month name or an ordinal marker ("5-го", "5th"),
-# so "Saturday and 5 hours" is not read as a date.
-_WD_DATE_RE = re.compile(
-    r"\b(?P<wd>" + _WD_NAMES + r")\w*,?\s+(?:the\s+)?(?:(?P<mon1>" + _MONTH_NAMES + r")\s+)?(?P<day>\d{1,2})" + _ORD +
-    r"(?!\d)(?:\s+(?P<mon2>" + _MONTH_NAMES + r")\b)?", re.IGNORECASE)
-_DATE_WD_RE = re.compile(
-    r"\b(?P<day>\d{1,2})" + _ORD + r"(?:\s+(?P<mon>" + _MONTH_NAMES + r"))?\s*[,(]?\s*(?:в\s+|on\s+|—\s+)?(?P<wd>" + _WD_NAMES + r")",
-    re.IGNORECASE)
 
 USER_TEXT_KEYS = {"message_to_user", "question", "reason", "next_action", "suggested_next_action", "what_changed",
                   "why", "impact", "why_not", "option", "request", "scope_note", "note", "interim_guidance",
@@ -245,9 +180,6 @@ def rule_p1(c, rid, scope, tt, inp, out, lang, meta):
             c.add("generic_rationale", scope, rid, loc, s)
 
 
-_USER_ENTERED = {"structured_result", "structured_self_report", "follow_up_questions"}
-
-
 def _protocols(out, inp):
     if out.get("protocol"):
         yield "protocol", out["protocol"]
@@ -263,18 +195,20 @@ def _protocols(out, inp):
 def rule_p2(c, rid, scope, tt, inp, out, lang, meta):
     for loc, p in _protocols(out, inp):
         req = [m.get("method") for m in p.get("methods") or [] if m.get("role") == "required"]
-        if req and set(req) <= _USER_ENTERED and not p.get("self_report_only") and p.get("confidence_ceiling") in ("medium", "high"):
+        support, classes = POL.protocol_support(p)
+        ceiling = p.get("confidence_ceiling")
+        if req and ceiling in POL.RANK and POL.RANK[ceiling] > POL.RANK[support]:
             c.add("user_entered_as_objective", scope, rid, loc,
-                  f"required={req}, ceiling={p.get('confidence_ceiling')}, self_report_only={p.get('self_report_only')}")
+                  f"required={req} ({', '.join(classes)}), ceiling={ceiling}, supported={support}")
         for j, m in enumerate(p.get("methods") or []):
             for crit in m.get("acceptance_criteria") or []:
                 mm = _UNVERIFIABLE_CRIT.search(crit)
                 if mm:
                     c.add("unverifiable_criterion", scope, rid, f"{loc}.methods[{j}].acceptance_criteria", crit)
     for loc, s in _strings(out, keys=USER_TEXT_KEYS):
-        m = _CAPABILITY_RE.search(s)
-        if m:
-            c.add("capability_assumption", scope, rid, loc, _snippet(s, m))
+        for cap, status, m in POL.capability_promises(s):
+            c.add("capability_assumption", scope, rid, loc, f"{cap} ({status}): {_snippet(s, m)}")
+            break
         m = _LATER_MSG.search(s)
         if m:
             c.add("promises_later_message", scope, rid, loc, _snippet(s, m))
@@ -285,8 +219,10 @@ def rule_p3(c, rid, scope, tt, inp, out, lang, meta):
     if len(qs) > 3:
         c.add("too_many_questions", scope, rid, "questions", f"{len(qs)} questions")
     msg = out.get("message_to_user") or ""
-    if tt != "goal_clarification" and msg.count("?") > 2:
-        c.add("too_many_questions", scope, rid, "message_to_user", f"{msg.count('?')} question marks")
+    # lines that enumerate test items («а) …?», «1) …?») are exercises, not questions to the user
+    asked = "\n".join(l for l in msg.split("\n") if not re.match(r"^\s*(?:[а-яa-z]|\d{1,2})\)", l, re.IGNORECASE))
+    if tt != "goal_clarification" and asked.count("?") > 2:
+        c.add("too_many_questions", scope, rid, "message_to_user", f"{asked.count('?')} question marks")
 
 
 def rule_p4(c, rid, scope, tt, inp, out, lang, meta):
@@ -343,8 +279,11 @@ def rule_p6(c, rid, scope, tt, inp, out, lang, meta):
     msg = out.get("message_to_user") or ""
     if tt == "route_adaptation":
         confirm = out.get("requires_user_confirmation")
-        if out.get("modified_deadlines") and not confirm:
-            ds = "; ".join(f"{d.get('target')} {d.get('target_id')}: {d.get('from')}→{d.get('to')}" for d in out["modified_deadlines"])
+        allowed = {"node": "auto", "milestone": "adapt_with_summary"}
+        bad = [d for d in out.get("modified_deadlines") or []
+               if not confirm and allowed.get(d.get("target")) != d.get("autonomy")]
+        if bad:
+            ds = "; ".join(f"{d.get('target')} {d.get('target_id')}: {d.get('from')}→{d.get('to')}" for d in bad)
             c.add("deadline_change_without_consent", scope, rid, "modified_deadlines", ds)
         if out.get("change_level") in ("moderate", "major") and not confirm and out.get("removed_nodes"):
             c.add("change_without_consent", scope, rid, "removed_nodes",
@@ -408,22 +347,6 @@ def rule_p8(c, rid, scope, tt, inp, out, lang, meta):
                 c.add("sensitive_memory_unflagged", scope, rid, f"items[{i}]", it.get("content", ""))
 
 
-def _ru_self_reference(s):
-    words = _WORD_RE.findall(s)
-    low = [w.lower() for w in words]
-    for i, w in enumerate(low):
-        if w in _AI_VERBS:
-            prev = set(low[max(0, i - 3):i])
-            if prev & _THIRD_PARTY_SUBJ:
-                continue
-            # a capitalised proper noun right before the verb is a third-party subject ("Ментор предложил")
-            if i > 0 and words[i - 1][:1].isupper() and i - 1 > 0:
-                continue
-            yield w
-    for m in _RU_SELF_ADJ_RE.finditer(s):
-        yield m.group(0)
-
-
 def rule_p9(c, rid, scope, tt, inp, out, lang, meta):
     if lang == "ru" or scope == "input":
         for loc, s in _strings(out, keys=USER_TEXT_KEYS - {"critique"}):
@@ -465,63 +388,14 @@ def rule_memory_input(c, rid, inp):
                     c.add("ru_gendered_memory_input", "input", rid, f"input.{key}[{i}].content", _snippet(s, mm))
 
 
-def _month_from(token, default):
-    if not token:
-        return default
-    t = token.lower()
-    for name, num in sorted(_MONTHS.items(), key=lambda kv: -len(kv[0])):
-        if len(name) >= 3 and t.startswith(name):
-            return num
-        if name == "ма" and t in ("мая", "май", "мае"):
-            return num
-    return default
-
-
-def _weekday_of(name):
-    n = name.lower()
-    for wd, (en, ru) in _WEEKDAYS.items():
-        if n.startswith(en) or n.startswith(ru):
-            return wd
-    return None
-
-
-def _candidate_dates(today, day, month):
-    out = []
-    for add in range(0, 4):
-        y, mth = today.year, today.month + add
-        while mth > 12:
-            mth -= 12
-            y += 1
-        if month and mth != month:
-            continue
-        try:
-            d = date(y, mth, day)
-        except ValueError:
-            continue
-        if today - timedelta(days=1) <= d <= today + timedelta(days=120):
-            out.append(d)
-    return out
-
-
 def rule_temporal(c, rid, scope, tt, inp, out, lang, meta):
     try:
         today = date.fromisoformat(inp.get("today"))
     except (TypeError, ValueError):
         return
     for loc, s in _strings(out, keys=USER_TEXT_KEYS):
-        for rx in (_WD_DATE_RE, _DATE_WD_RE):
-            for m in rx.finditer(s):
-                wd = _weekday_of(m.group("wd"))
-                day = int(m.group("day"))
-                gd = m.groupdict()
-                month_token = gd.get("mon1") or gd.get("mon2") or gd.get("mon")
-                if wd is None or not 1 <= day <= 31 or not (month_token or gd.get("suf")):
-                    continue
-                mon = _month_from(month_token, None)
-                cands = _candidate_dates(today, day, mon)
-                if cands and not any(d.weekday() == wd for d in cands):
-                    c.add("weekday_date_mismatch", scope, rid, loc,
-                          f"{_snippet(s, m)} — {', '.join(d.isoformat() + ' is ' + d.strftime('%A') for d in cands)}")
+        for mm in CAL.weekday_mismatches(s, today):
+            c.add("weekday_date_mismatch", scope, rid, loc, mm.message())
     user_text = " ".join(m.get("content", "") for m in inp.get("conversation") or [] if m.get("role") == "user")
     user_text += " " + ((inp.get("goal") or {}).get("title") or "")
     if today.weekday() == 6 and _WEEKEND_INPUT.search(user_text):
@@ -550,11 +424,13 @@ def run_audit(records, cases=()):
         for k in r.get("contrastive") or []:
             audit_output(c, k["id"], "contrastive", r["task_type"], r["input"], k["output"], r["language"], meta)
         rule_memory_input(c, r["id"], r["input"])
+    from evaluation.metrics.scoring import expand_units
     for case in sorted(cases, key=lambda x: x["id"]):
-        if case.get("reference_output"):
-            audit_output(c, case["id"], "eval_reference", case["task_type"], case["input"], case["reference_output"],
-                         case.get("language"), {})
-            rule_memory_input(c, case["id"], case["input"])
+        for unit in expand_units(case):
+            if unit.get("reference_output"):
+                audit_output(c, unit["unit_id"], "eval_reference", unit["task_type"], unit["input"], unit["reference_output"],
+                             unit.get("language"), {})
+                rule_memory_input(c, unit["unit_id"], unit["input"])
     return c.findings
 
 
@@ -606,7 +482,8 @@ def build_report(version=None):
     cases = [c for c, _ in load_eval_cases(repo_path(load_config("evaluation")["cases_dir"]))]
     findings = run_audit(records, cases)
     known = load_known_issues(version)
-    case_ids = {c["id"] for c in cases}
+    # known issues may name cases of any (including frozen) evaluation version
+    case_ids = {c["id"] for c, _ in load_eval_cases(repo_path("evaluation/cases"))}
     problems = []
     for ki in known:
         unknown = [r for r in ki.get("records", []) if r not in ids and r not in case_ids]

@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-daily-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: daily_plan
   behavior: [daily_prioritization]
   language: en
@@ -13,7 +13,8 @@ examples:
   goal_size: medium
   tags: [limited_time, partial_task]
   safety_category: allowed
-  scenario_group: sg-daily-gardening-newsletter
+  scenario_group: bs-daily-partial-task-scope
+  topic_group: sg-daily-gardening-newsletter
   input:
     operation: daily_plan
     today: "2026-09-27"
@@ -84,7 +85,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-daily-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: daily_plan
   behavior: [daily_prioritization]
   language: ru
@@ -94,7 +95,8 @@ examples:
   goal_size: medium
   tags: [near_deadline, critical_path]
   safety_category: allowed
-  scenario_group: sg-daily-ngo-grant
+  scenario_group: bs-daily-due-soon-critical-path
+  topic_group: sg-daily-ngo-grant
   input:
     operation: daily_plan
     today: "2026-09-27"
@@ -169,7 +171,7 @@ examples:
   provenance: *prov
 
 - id: gj-daily-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: daily_plan
   behavior: [daily_prioritization]
   language: en
@@ -179,7 +181,8 @@ examples:
   goal_size: medium
   tags: [ten_minutes, low_energy]
   safety_category: allowed
-  scenario_group: sg-daily-portuguese-10min
+  scenario_group: bs-daily-tiny-window-low-energy
+  topic_group: sg-daily-portuguese-10min
   input:
     operation: daily_plan
     today: "2026-09-27"
@@ -219,7 +222,7 @@ examples:
   provenance: *prov
 
 - id: gj-daily-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: daily_plan
   behavior: [daily_prioritization]
   language: ru
@@ -229,7 +232,8 @@ examples:
   goal_size: medium
   tags: [returning_after_break, gentle_restart]
   safety_category: allowed
-  scenario_group: sg-daily-urban-sketching-return
+  scenario_group: bs-daily-gentle-restart
+  topic_group: sg-daily-urban-sketching-return
   input:
     operation: daily_plan
     today: "2026-09-27"

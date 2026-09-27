@@ -4,7 +4,7 @@ import copy
 import pytest
 
 from gjcore import schemas
-from gjcore.config import load_config
+from gjcore.config import load_config, versions
 from gjcore.io import load_json
 from gjcore.paths import repo_path
 from gjcore.records import load_eval_cases
@@ -194,4 +194,8 @@ def test_training_export_is_refused_and_draft_is_marked(tmp_path):
 
 
 def test_existing_release_is_idempotent():
+    # Never build a release from a test: only re-run the build when the current version is already released.
+    paths = split.release_paths(versions()["dataset_version"])
+    if not all(p.exists() for p in paths.values()):
+        pytest.skip("current dataset version not released yet")
     assert split.build_release() == 0

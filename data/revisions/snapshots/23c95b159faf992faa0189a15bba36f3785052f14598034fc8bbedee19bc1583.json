@@ -1,0 +1,223 @@
+{
+  "content_hash": "23c95b159faf992faa0189a15bba36f3785052f14598034fc8bbedee19bc1583",
+  "example_id": "gj-task-002",
+  "dataset_version": "0.1.1",
+  "task_type": "task_generation",
+  "input": {
+    "operation": "task_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-talk",
+      "title": "Выступить с 15-минутным докладом на профессиональной конференции",
+      "deadline": "2026-11-05",
+      "available_time": {
+        "hours_per_week": 4,
+        "session_minutes": 90
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Подготовка доклада",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Доклад готов и отрепетирован",
+          "region_id": "r1",
+          "success_criteria": [
+            "Два прогона уложились в 15 минут"
+          ],
+          "target_date": "2026-10-29"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Тема доклада согласована с организаторами",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "completed"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Подготовить доклад",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "depends_on": [
+            "n1"
+          ]
+        }
+      ]
+    },
+    "target_node_id": "n2",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Тему согласовали — «Как мы сократили время релиза с двух недель до двух дней». Разбей, пожалуйста, подготовку доклада на задачи. Выступаю 5 ноября, это мой первый доклад."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "task_generation",
+    "response_language": "ru",
+    "message_to_user": "Подготовка разбита на 4 шага на ближайшие 4 недели. Главное для первого доклада — не слайды, а прогоны вслух: они показывают, укладываетесь ли вы в 15 минут и где теряется мысль. Поэтому два последних шага — репетиции, и они запланированы с запасом до 29 октября.",
+    "for_node_id": "n2",
+    "tasks": [
+      {
+        "id": "n2-t1",
+        "title": "Сформулировать главную мысль доклада одной фразой и 3 тезиса к ней",
+        "description": "Запишите одну фразу, которую слушатели должны унести с собой, и три тезиса-доказательства из вашего опыта сокращения времени релиза.",
+        "why_it_matters": "Одна ясная мысль удерживает 15-минутный доклад от расползания; тезисы станут разделами.",
+        "expected_result": "Текст из одной фразы и 3 тезисов, у каждого — пример или цифра из вашего проекта.",
+        "estimated_duration_minutes": 40,
+        "difficulty": 2,
+        "dependencies": [],
+        "verification_protocol": {
+          "task_nature": "writing",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "artifact_review",
+              "role": "required",
+              "instructions": "Вставьте главную мысль и тезисы.",
+              "acceptance_criteria": [
+                "Главная мысль — одно предложение",
+                "У каждого тезиса есть конкретный пример или цифра"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Текст соответствует критериям"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Текст проверяется напрямую."
+        }
+      },
+      {
+        "id": "n2-t2",
+        "title": "Собрать черновик слайдов — не больше 12 слайдов",
+        "description": "По тезисам сделайте черновик слайдов, на каждом — не больше одной мысли и минимум текста; добавьте слайд с цифрами «было / стало».",
+        "why_it_matters": "12 слайдов на 15 минут — примерно минута с небольшим на слайд, это удобный темп для первого выступления.",
+        "expected_result": "Файл презентации с 12 слайдами или меньше.",
+        "estimated_duration_minutes": 90,
+        "difficulty": 2,
+        "dependencies": [
+          "n2-t1"
+        ],
+        "verification_protocol": {
+          "task_nature": "creative_work",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "artifact_review",
+              "role": "required",
+              "instructions": "Загрузите файл презентации или ссылку.",
+              "acceptance_criteria": [
+                "Не больше 12 слайдов",
+                "Есть слайд «было / стало»",
+                "Каждый слайд соответствует одному из тезисов"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Презентация соответствует критериям"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Структуру и объём слайдов видно в самом файле."
+        }
+      },
+      {
+        "id": "n2-t3",
+        "title": "Провести 2 прогона вслух с таймером и записать их на диктофон",
+        "description": "Проговорите доклад целиком два раза, не останавливаясь. Запишите оба прогона и отметьте время каждого.",
+        "why_it_matters": "Только прогон вслух показывает реальную длительность и места, где вы сбиваетесь.",
+        "expected_result": "2 аудиозаписи и время каждого прогона.",
+        "estimated_duration_minutes": 60,
+        "difficulty": 3,
+        "dependencies": [
+          "n2-t2"
+        ],
+        "verification_protocol": {
+          "task_nature": "skill_acquisition",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "audio",
+              "role": "required",
+              "instructions": "Загрузите обе записи; система расшифрует их и измерит длительность.",
+              "acceptance_criteria": [
+                "Два полных прогона",
+                "Второй прогон не длиннее 16 минут"
+              ]
+            },
+            {
+              "method": "follow_up_questions",
+              "role": "required",
+              "instructions": "Короткие вопросы после прогонов.",
+              "questions": [
+                "В каком месте вы чаще всего сбивались?",
+                "Что вы сократили после первого прогона?"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Два полных прогона записаны",
+            "Второй прогон укладывается примерно в 15 минут"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Запись объективно показывает длительность и полноту прогона; вопросы фиксируют выводы."
+        }
+      },
+      {
+        "id": "n2-t4",
+        "title": "Прогон перед 2 слушателями и сбор отзывов по 3 вопросам",
+        "description": "Выступите перед двумя коллегами или друзьями и попросите ответить на три вопроса — что запомнилось, где было непонятно, что лишнее.",
+        "why_it_matters": "Живые слушатели замечают то, что не видно на записи, — непонятные термины и провалы в логике.",
+        "expected_result": "Ответы двух слушателей на 3 вопроса и список правок.",
+        "estimated_duration_minutes": 60,
+        "difficulty": 3,
+        "dependencies": [
+          "n2-t3"
+        ],
+        "verification_protocol": {
+          "task_nature": "social_interaction",
+          "objective_verifiability": "low",
+          "methods": [
+            {
+              "method": "structured_result",
+              "role": "required",
+              "instructions": "Внесите ответы каждого слушателя и итоговый список правок.",
+              "fields": [
+                "Слушатель (имя не обязательно)",
+                "Что запомнилось",
+                "Где было непонятно",
+                "Что лишнее",
+                "Правки"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Ответы двух слушателей внесены",
+            "Есть список правок"
+          ],
+          "confidence_ceiling": "limited",
+          "self_report_only": true,
+          "rationale": "Отзывы слушателей вносит сам пользователь — это его слова, поэтому уверенность ограниченная, как бы подробно они ни были записаны; для следующего шага — правок — этого достаточно."
+        }
+      }
+    ],
+    "decision_summary": null
+  },
+  "contrastive": null
+}

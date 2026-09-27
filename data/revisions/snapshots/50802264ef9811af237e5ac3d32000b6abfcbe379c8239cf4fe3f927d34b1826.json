@@ -1,0 +1,79 @@
+{
+  "content_hash": "50802264ef9811af237e5ac3d32000b6abfcbe379c8239cf4fe3f927d34b1826",
+  "example_id": "gj-vprot-003",
+  "dataset_version": "0.1.1",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "operation": "verification_protocol_design",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-backend",
+      "title": "Become job-ready as a junior backend developer"
+    },
+    "task": {
+      "id": "t-api",
+      "title": "Deploy a to-do REST API with create, list and delete endpoints",
+      "description": "Build a small to-do API with POST /todos, GET /todos and DELETE /todos/{id}, write at least 3 tests, and deploy it to any free hosting.",
+      "why_it_matters": "A deployed, tested API is the minimum portfolio piece for junior backend roles.",
+      "expected_result": "A public URL where the 3 endpoints work, and a repository with tests and a README.",
+      "estimated_duration_minutes": 360,
+      "sessions": 4,
+      "difficulty": 3
+    }
+  },
+  "expected_output": {
+    "type": "verification_protocol_design",
+    "response_language": "en",
+    "message_to_user": "I'll verify this the way a reviewer would, within what the app can do: it fetches GET /todos from your live URL once, I read the repository you upload — tests and README included — and you paste the output of a short curl session for POST, GET and DELETE, because the app can't send those requests itself. Then one question about a design choice.",
+    "task_id": "t-api",
+    "protocol": {
+      "task_nature": "software",
+      "objective_verifiability": "high",
+      "methods": [
+        {
+          "method": "url_review",
+          "role": "required",
+          "instructions": "Submit the base URL. The app fetches GET /todos once (a public GET, no login) and passes the response on for review.",
+          "acceptance_criteria": [
+            "GET /todos responds with a JSON list"
+          ]
+        },
+        {
+          "method": "artifact_review",
+          "role": "required",
+          "instructions": "Upload the repository as a .zip (or the test files and the README).",
+          "acceptance_criteria": [
+            "At least 3 automated tests covering create, list and delete",
+            "README explains how to run locally and lists the endpoints"
+          ]
+        },
+        {
+          "method": "structured_result",
+          "role": "required",
+          "instructions": "Paste the commands and responses of a short curl session against the live URL: POST /todos, GET /todos, DELETE /todos/{id}, then GET /todos again.",
+          "acceptance_criteria": [
+            "POST returns the created item",
+            "The second GET no longer shows the deleted item"
+          ]
+        },
+        {
+          "method": "follow_up_questions",
+          "role": "supplementary",
+          "instructions": "One design question.",
+          "questions": [
+            "What status code does DELETE return for an id that doesn't exist, and why did you choose it?"
+          ]
+        }
+      ],
+      "pass_criteria": [
+        "The live URL answers GET /todos",
+        "Repository tests cover the three endpoints and the README lists them",
+        "The pasted session shows create and delete working on the live URL"
+      ],
+      "confidence_ceiling": "medium",
+      "self_report_only": false,
+      "rationale": "Software is verified by running it and reading the code, not by screenshots. The live GET and the repository are checked directly; create and delete on the live service reach the navigator only as the user's pasted output, which the app cannot reproduce, so confidence is medium rather than high."
+    }
+  },
+  "contrastive": null
+}

@@ -38,7 +38,16 @@ def test_pool_diversity_minimums():
     assert sum(r["input_language"] == "mixed" for r in EXAMPLES) >= 3
     assert {r["safety_category"] for r in EXAMPLES} == {"allowed", "sensitive", "high_risk", "needs_professional_support", "restricted"}
     assert len({r["domain"] for r in EXAMPLES}) >= 15
-    assert len({r["scenario_group"] for r in EXAMPLES}) == len(EXAMPLES)
+    assert len({r["topic_group"] for r in EXAMPLES}) == len(EXAMPLES)
+
+
+def test_scenario_groups_are_registered_behavioural_training_scenarios():
+    from gjcore.io import load_yaml
+    reg = {s["id"]: s for s in load_yaml(repo_path("data/scenarios/behavioural_scenarios.yaml"))["scenarios"]}
+    for r in EXAMPLES:
+        s = reg.get(r["scenario_group"])
+        assert s is not None, r["id"]
+        assert s["side"] == "train" and s["operation"] == r["task_type"], r["id"]
 
 
 def test_important_failure_modes_have_several_contrastive_examples():

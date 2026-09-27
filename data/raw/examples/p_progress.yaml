@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-prog-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: progress_update
   behavior: [progress]
   language: en
@@ -13,7 +13,8 @@ examples:
   goal_size: medium
   tags: [level_up, milestone_verified]
   safety_category: allowed
-  scenario_group: sg-prog-leash-training
+  scenario_group: bs-prog-milestone-verified-level-up
+  topic_group: sg-prog-leash-training
   input:
     operation: progress_update
     today: "2026-09-27"
@@ -103,7 +104,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-prog-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: progress_update
   behavior: [progress]
   language: ru
@@ -113,7 +114,8 @@ examples:
   goal_size: complex
   tags: [streak_without_progress, no_level_up]
   safety_category: allowed
-  scenario_group: sg-prog-blender-streak
+  scenario_group: bs-prog-streak-no-level
+  topic_group: sg-prog-blender-streak
   input:
     operation: progress_update
     today: "2026-09-27"
@@ -193,7 +195,7 @@ examples:
   provenance: *prov
 
 - id: gj-prog-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: progress_update
   behavior: [progress]
   language: en
@@ -203,7 +205,8 @@ examples:
   goal_size: complex
   tags: [goal_exceeded, goal_completed]
   safety_category: allowed
-  scenario_group: sg-prog-bike-repair-clients
+  scenario_group: bs-prog-goal-exceeded
+  topic_group: sg-prog-bike-repair-clients
   input:
     operation: progress_update
     today: "2026-09-27"

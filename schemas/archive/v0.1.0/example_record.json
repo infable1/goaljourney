@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.0/example_record.json",
+  "title": "Training example record",
+  "description": "Envelope for one training example. `expected_output` is validated separately against the schema of `task_type`; `contrastive[].output` against the same schema. `annotations` are author knowledge for validators/reviewers and are never shown to the model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "schema_version", "task_type", "behavior", "language", "input_language", "domain", "difficulty", "goal_size", "safety_category", "scenario_group", "input", "expected_output", "provenance"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^gj-[a-z]+-[0-9]{3,5}$" },
+    "schema_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "task_type": { "$ref": "common.json#/$defs/operation" },
+    "behavior": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/behavior" }
+    },
+    "language": { "$ref": "common.json#/$defs/language" },
+    "input_language": { "$ref": "common.json#/$defs/input_language" },
+    "domain": { "$ref": "common.json#/$defs/domain" },
+    "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+    "goal_size": { "type": "string", "enum": ["tiny", "medium", "complex", "n/a"] },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 12,
+      "items": { "type": "string", "pattern": "^[a-z0-9_]+$" }
+    },
+    "safety_category": { "$ref": "common.json#/$defs/safety_category" },
+    "scenario_group": { "$ref": "common.json#/$defs/id" },
+    "input": { "$ref": "input_context.json" },
+    "expected_output": { "type": "object" },
+    "contrastive": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "failure_modes", "output", "critique"],
+        "properties": {
+          "id": { "$ref": "common.json#/$defs/id" },
+          "failure_modes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "$ref": "common.json#/$defs/failure_mode" }
+          },
+          "output": { "type": "object" },
+          "critique": { "$ref": "common.json#/$defs/text" }
+        }
+      }
+    },
+    "annotations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "known_targets": {
+          "description": "Clarification targets already known from context: asking about them is an error.",
+          "type": "array", "uniqueItems": true,
+          "items": { "$ref": "common.json#/$defs/clarification_target" }
+        },
+        "critical_targets": {
+          "description": "Clarification targets that materially change the plan and must be asked (at least one question per inner group).",
+          "type": "array",
+          "items": {
+            "type": "array", "minItems": 1,
+            "items": { "$ref": "common.json#/$defs/clarification_target" }
+          }
+        },
+        "irrelevant_targets": {
+          "description": "Clarification targets whose answers would not change this plan: asking only about them is an unnecessary question.",
+          "type": "array", "uniqueItems": true,
+          "items": { "$ref": "common.json#/$defs/clarification_target" }
+        },
+        "must_not_mention": {
+          "description": "Terms from unrelated goals/memory that must not appear in the output (memory isolation).",
+          "type": "array", "items": { "type": "string", "minLength": 2 }
+        },
+        "rationale": { "$ref": "common.json#/$defs/text" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "method", "author", "created", "license"],
+      "properties": {
+        "source": { "type": "string", "enum": ["synthetic", "human_authored", "licensed_external"] },
+        "method": { "type": "string", "enum": ["agent_authored", "pipeline_generated", "human_written", "human_edited"] },
+        "author": { "type": "string", "minLength": 1 },
+        "created": { "$ref": "common.json#/$defs/date" },
+        "license": { "type": "string", "minLength": 1 },
+        "generation_run_id": { "type": "string" },
+        "prompt_version": { "type": "string" },
+        "generator_model": { "type": "string" },
+        "external_source_id": { "type": "string" }
+      }
+    },
+    "review_status": {
+      "description": "Computed at release time from the review log (data/reviewed/review_events.jsonl). Not authored in raw files.",
+      "type": "string",
+      "enum": ["pending", "approved", "approved_pending_expert", "rejected", "needs_revision", "stale"]
+    },
+    "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "$defs": {
+    "behavior": {
+      "type": "string",
+      "enum": [
+        "clarification", "feasibility", "journey", "task", "verification_protocol",
+        "verification_decision", "verification_retry", "route_adaptation", "navigator",
+        "daily_prioritization", "time_adaptation", "goal_change", "decision_summary",
+        "web_research", "source_awareness", "safety", "memory", "progress", "scope",
+        "language", "user_agency"
+      ]
+    }
+  }
+}

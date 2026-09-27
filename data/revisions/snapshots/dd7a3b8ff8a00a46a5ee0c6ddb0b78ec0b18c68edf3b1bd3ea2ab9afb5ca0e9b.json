@@ -1,0 +1,456 @@
+{
+  "content_hash": "dd7a3b8ff8a00a46a5ee0c6ddb0b78ec0b18c68edf3b1bd3ea2ab9afb5ca0e9b",
+  "example_id": "gj-jour-004",
+  "dataset_version": "0.1.1",
+  "task_type": "journey_generation",
+  "input": {
+    "operation": "journey_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-cook",
+      "title": "Научиться готовить 10 базовых блюд",
+      "domain": "hobby",
+      "deadline": "2026-11-30",
+      "available_time": {
+        "hours_per_week": 4
+      },
+      "constraints": [
+        "Не ест мясо, но ест рыбу и яйца"
+      ],
+      "current_state": {
+        "summary": "Умеет варить макароны и жарить яичницу."
+      }
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Хочу к концу ноября научиться готовить 10 нормальных блюд, чтобы не жить на доставке. Мясо не ем, рыбу и яйца ем. Сейчас умею только макароны и яичницу. Есть часа четыре в неделю."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "journey_generation",
+    "response_language": "ru",
+    "message_to_user": "Маршрут на 9 недель: сначала 4 базовые техники, на которых держится большинство блюд, потом 10 блюд без мяса по нарастающей сложности, а в финале — ужин для друзей из трёх блюд.\nКаждое блюдо засчитывается не по фото, а по короткому отчёту: что получилось, что бы вы изменили и пара вопросов от меня. Фото прикладывать можно — как дополнение.",
+    "goal": {
+      "id": "g-cook",
+      "title": "Научиться готовить 10 базовых блюд",
+      "domain": "hobby",
+      "desired_outcome": "Уверенно готовить 10 вегетарианских и рыбных блюд без пошагового рецепта перед глазами.",
+      "success_criteria": [
+        "10 блюд приготовлены и засчитаны",
+        "Ужин из 3 блюд для гостей"
+      ],
+      "deadline": "2026-11-30",
+      "available_time": {
+        "hours_per_week": 4
+      },
+      "constraints": [
+        "Не ест мясо, но ест рыбу и яйца"
+      ]
+    },
+    "journey": {
+      "id": "j-cook",
+      "goal_id": "g-cook",
+      "version": 1,
+      "strategy_summary": "Техники важнее рецептов — каждое следующее блюдо использует уже освоенные техники, поэтому к концу рецепт нужен только как напоминание.",
+      "pacing": {
+        "weekly_hours_planned": 4,
+        "horizon_weeks": 9
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Базовые техники",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Десять блюд",
+          "order": 2,
+          "status": "locked"
+        },
+        {
+          "id": "r3",
+          "title": "Ужин для друзей",
+          "order": 3,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "4 техники освоены",
+          "region_id": "r1",
+          "success_criteria": [
+            "Нарезка, обжарка, тушение и запекание отработаны на практике"
+          ],
+          "target_date": "2026-10-11"
+        },
+        {
+          "id": "m2",
+          "title": "10 блюд засчитаны",
+          "region_id": "r2",
+          "success_criteria": [
+            "10 блюд приготовлены без пошагового рецепта перед глазами"
+          ],
+          "target_date": "2026-11-22"
+        },
+        {
+          "id": "m3",
+          "title": "Ужин для гостей",
+          "region_id": "r3",
+          "success_criteria": [
+            "Ужин из 3 блюд для 2+ гостей"
+          ],
+          "target_date": "2026-11-30"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Нарезка овощей тремя способами",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 45,
+          "task": {
+            "id": "n1",
+            "title": "Нарезать лук, морковь и перец кубиком, соломкой и полукольцами",
+            "description": "Возьмите по одному овощу каждого вида и нарежьте тремя способами. Засеките время на один овощ каждым способом.",
+            "why_it_matters": "Нарезка — самая частая операция почти в каждом блюде; ровные кусочки готовятся равномерно.",
+            "expected_result": "3 вида нарезки и записанное время на каждый.",
+            "estimated_duration_minutes": 45,
+            "difficulty": 1,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "skill_acquisition",
+              "objective_verifiability": "low",
+              "methods": [
+                {
+                  "method": "structured_self_report",
+                  "role": "required",
+                  "instructions": "Короткий отчёт после практики.",
+                  "fields": [
+                    "Какие овощи и способы",
+                    "Время на каждый способ",
+                    "Что было сложнее всего"
+                  ]
+                },
+                {
+                  "method": "photo",
+                  "role": "supplementary",
+                  "instructions": "По желанию — фото нарезки; само по себе оно не засчитывает задачу."
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "required",
+                  "instructions": "Два вопроса на понимание.",
+                  "questions": [
+                    "Почему для тушения лучше крупнее, а для жарки мельче?",
+                    "Как вы держали нож и пальцы второй руки?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Отчёт заполнен",
+                "Ответы на вопросы по существу"
+              ],
+              "confidence_ceiling": "limited",
+              "self_report_only": true,
+              "rationale": "Результат готовки объективно не проверить; честный отчёт и вопросы на понимание — разумный уровень проверки, уверенность ограничена."
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Обжарка и тушение на одной сковороде",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "full",
+          "depends_on": [
+            "n1"
+          ],
+          "estimated_duration_minutes": 60,
+          "task": {
+            "id": "n2",
+            "title": "Приготовить овощное рагу, отработав обжарку и тушение",
+            "description": "Обжарьте нарезанные овощи до золотистого цвета, затем добавьте томаты и тушите под крышкой 15–20 минут.",
+            "why_it_matters": "Обжарка и тушение — основа рагу, соусов, карри и половины блюд второго участка.",
+            "expected_result": "Готовое рагу и отчёт с указанием времени обжарки и тушения.",
+            "estimated_duration_minutes": 60,
+            "difficulty": 2,
+            "dependencies": [
+              "n1"
+            ],
+            "verification_protocol": {
+              "task_nature": "skill_acquisition",
+              "objective_verifiability": "low",
+              "methods": [
+                {
+                  "method": "structured_self_report",
+                  "role": "required",
+                  "instructions": "Отчёт после готовки.",
+                  "fields": [
+                    "Сколько минут обжаривали",
+                    "Сколько тушили",
+                    "Что получилось",
+                    "Что измените в следующий раз"
+                  ]
+                },
+                {
+                  "method": "photo",
+                  "role": "supplementary",
+                  "instructions": "По желанию — фото блюда как дополнение к отчёту."
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "required",
+                  "instructions": "Вопрос на понимание.",
+                  "questions": [
+                    "Зачем обжаривать овощи перед тушением, а не сразу тушить?",
+                    "Как вы поняли, что рагу готово?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Отчёт заполнен",
+                "Ответы по существу"
+              ],
+              "confidence_ceiling": "limited",
+              "self_report_only": true,
+              "rationale": "Фото не доказывает, кто и как готовил; отчёт и ответы показывают понимание техники."
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Запекание рыбы с овощами в духовке",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n2"
+          ]
+        },
+        {
+          "id": "n4",
+          "type": "ai_checkpoint",
+          "title": "Чекпоинт: какие техники даются легко, а какие нет",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n3"
+          ]
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Блюда 1–4: омлет с овощами, паста с томатным соусом, суп-пюре, рис с овощами",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n4"
+          ]
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Блюда 5–7: рыба на сковороде, овощное карри, шакшука",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n5"
+          ]
+        },
+        {
+          "id": "n7",
+          "type": "task",
+          "title": "Блюда 8–10: ризотто, запечённая рыба, суп с фасолью",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6"
+          ]
+        },
+        {
+          "id": "n8",
+          "type": "challenge",
+          "title": "Челлендж: ужин из 3 блюд для гостей",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n7"
+          ]
+        }
+      ],
+      "levels": [
+        {
+          "index": 0,
+          "title": "Любитель доставки",
+          "unlock_criteria": "Старт маршрута"
+        },
+        {
+          "index": 1,
+          "title": "Уверенный нарезчик",
+          "unlock_milestone_id": "m1",
+          "unlock_criteria": "Техники освоены"
+        },
+        {
+          "index": 2,
+          "title": "Домашний повар",
+          "unlock_milestone_id": "m2",
+          "unlock_criteria": "10 блюд засчитаны"
+        },
+        {
+          "index": 3,
+          "title": "Хозяин ужина",
+          "unlock_milestone_id": "m3",
+          "unlock_criteria": "Ужин для гостей состоялся"
+        }
+      ],
+      "achievements": [
+        {
+          "id": "a1",
+          "title": "Первая техника освоена",
+          "unlock": {
+            "type": "first_verified_task"
+          }
+        },
+        {
+          "id": "a2",
+          "title": "Десятка",
+          "unlock": {
+            "type": "milestone_verified",
+            "ref": "m2"
+          }
+        },
+        {
+          "id": "a3",
+          "title": "Ужин удался",
+          "unlock": {
+            "type": "goal_completed"
+          }
+        }
+      ]
+    },
+    "decision_summary": {
+      "what_changed": "Создан маршрут из 3 участков — техники, 10 блюд, ужин для гостей.",
+      "why": "Техники переносятся между блюдами, поэтому 10 блюд осваиваются быстрее, чем по отдельным рецептам.",
+      "impact": "4 часа в неделю, все блюда без мяса, финал до 30 ноября."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-jour-004-c1",
+      "failure_modes": [
+        "generic_plan",
+        "vague_tasks",
+        "photo_as_proof",
+        "overconfident_verification"
+      ],
+      "critique": "Tasks are not operational (\"Изучи рецепты\", \"Практикуйся\"), the plan ignores the no-meat constraint, and a photo alone is used as proof of cooking — with more confidence than a photo can support.",
+      "output": {
+        "type": "journey_generation",
+        "response_language": "ru",
+        "message_to_user": "Вот ваш план обучения кулинарии!",
+        "goal": {
+          "title": "Научиться готовить 10 базовых блюд",
+          "deadline": "2026-11-30"
+        },
+        "journey": {
+          "regions": [
+            {
+              "id": "r1",
+              "title": "Кулинария",
+              "order": 1,
+              "status": "active"
+            }
+          ],
+          "milestones": [
+            {
+              "id": "m1",
+              "title": "Научиться готовить",
+              "region_id": "r1",
+              "success_criteria": [
+                "Готовить хорошо"
+              ]
+            }
+          ],
+          "nodes": [
+            {
+              "id": "n1",
+              "type": "task",
+              "title": "Изучи рецепты",
+              "region_id": "r1",
+              "milestone_id": "m1",
+              "status": "available",
+              "detail_level": "full",
+              "task": {
+                "id": "n1",
+                "title": "Изучи рецепты",
+                "description": "Посмотрите разные рецепты, включая котлеты и плов с говядиной.",
+                "why_it_matters": "Нужно знать рецепты.",
+                "expected_result": "Знание рецептов.",
+                "estimated_duration_minutes": 60,
+                "difficulty": 1,
+                "verification_protocol": {
+                  "task_nature": "skill_acquisition",
+                  "objective_verifiability": "low",
+                  "methods": [
+                    {
+                      "method": "photo",
+                      "role": "required",
+                      "instructions": "Пришлите фото готового блюда."
+                    }
+                  ],
+                  "pass_criteria": [
+                    "Фото прислано"
+                  ],
+                  "confidence_ceiling": "high",
+                  "self_report_only": false,
+                  "rationale": "Фото подтверждает выполнение."
+                }
+              }
+            },
+            {
+              "id": "n2",
+              "type": "task",
+              "title": "Практикуйся",
+              "region_id": "r1",
+              "milestone_id": "m1",
+              "status": "locked",
+              "detail_level": "outline",
+              "depends_on": [
+                "n1"
+              ]
+            }
+          ]
+        },
+        "decision_summary": {
+          "what_changed": "Создан план.",
+          "why": "Чтобы научиться готовить.",
+          "impact": "Вы научитесь готовить."
+        }
+      }
+    }
+  ]
+}

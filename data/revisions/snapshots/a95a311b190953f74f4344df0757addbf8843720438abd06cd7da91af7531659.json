@@ -1,0 +1,145 @@
+{
+  "content_hash": "a95a311b190953f74f4344df0757addbf8843720438abd06cd7da91af7531659",
+  "example_id": "gj-vres-002",
+  "dataset_version": "0.1.0",
+  "task_type": "verification_result",
+  "input": {
+    "evidence": [
+      {
+        "content": "Всё решил!",
+        "description": "Страница тетради в клетку, видны решения задач 3.1–3.4 с формулами; остальные страницы не видны.",
+        "description_source": "vision_model",
+        "id": "e1",
+        "type": "photo"
+      }
+    ],
+    "goal": {
+      "id": "g-exam",
+      "title": "Сдать экзамен по теории вероятностей на «хорошо»"
+    },
+    "operation": "verification_result",
+    "task": {
+      "description": "Решите задачи 3.1–3.20 из сборника, записывая ход решения, а не только ответы.",
+      "difficulty": 3,
+      "estimated_duration_minutes": 240,
+      "expected_result": "20 решённых задач с ходом решения.",
+      "id": "t-problems",
+      "sessions": 4,
+      "title": "Решить 20 задач из третьей главы сборника с ходом решения",
+      "verification_protocol": {
+        "confidence_ceiling": "high",
+        "methods": [
+          {
+            "acceptance_criteria": [
+              "Видны все 20 задач",
+              "У каждой есть ход решения"
+            ],
+            "instructions": "Загрузите фото или скан всех страниц с решениями либо набранный текст.",
+            "method": "artifact_review",
+            "role": "required"
+          },
+          {
+            "acceptance_criteria": [
+              "Не меньше 2 из 3 решены верно"
+            ],
+            "instructions": "Решите 3 новые задачи от AI на ту же тему.",
+            "method": "knowledge_test",
+            "role": "required"
+          }
+        ],
+        "objective_verifiability": "high",
+        "pass_criteria": [
+          "20 задач с ходом решения",
+          "2 из 3 контрольных задач решены верно"
+        ],
+        "rationale": "Знание проверяется и по решениям, и по новым задачам.",
+        "self_report_only": false,
+        "task_nature": "knowledge"
+      },
+      "why_it_matters": "Третья глава — условная вероятность, на неё приходится значительная часть экзаменационных задач."
+    },
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "additional_evidence": [
+      {
+        "request": "Фото или скан страниц с решениями задач 3.5–3.20",
+        "why": "По протоколу нужны все 20 решений с ходом решения"
+      },
+      {
+        "request": "Решения 3 контрольных задач",
+        "why": "Обязательная часть протокола — проверка на новых задачах"
+      }
+    ],
+    "attempt": 1,
+    "confidence": "low",
+    "criteria_results": [
+      {
+        "criterion": "20 задач с ходом решения",
+        "note": "На фото только задачи 3.1–3.4",
+        "result": "unclear"
+      },
+      {
+        "criterion": "2 из 3 контрольных задач решены верно",
+        "note": "Контрольные задачи ещё не решались",
+        "result": "unclear"
+      }
+    ],
+    "decision_summary": {
+      "impact": "Задача останется открытой, пока не придут остальные страницы и контрольные решения.",
+      "what_changed": "Задача пока не засчитана, запрошены недостающие доказательства.",
+      "why": "На фото только 4 из 20 задач, контрольные задачи не решены."
+    },
+    "evidence_assessment": [
+      {
+        "evidence_id": "e1",
+        "limitations": "Остальные 16 задач не видны; одно фото не подтверждает выполнение всей задачи",
+        "supports": "Решения задач 3.1–3.4 с ходом решения"
+      }
+    ],
+    "evidence_basis": "mixed",
+    "message_to_user": "Отличное начало — на фото аккуратные решения задач 3.1–3.4. Но пока я вижу только одну страницу, а для зачёта нужны все 20 задач и 3 короткие контрольные задачи.\nПришлите, пожалуйста:\n1) фото или скан остальных страниц (задачи 3.5–3.20);\n2) решения трёх контрольных задач — я пришлю их сразу после этого сообщения.",
+    "reason": "Доказательства покрывают только 4 из 20 задач, а обязательная контрольная часть ещё не выполнена.",
+    "response_language": "ru",
+    "status": "needs_more_evidence",
+    "task_id": "t-problems",
+    "type": "verification_result"
+  },
+  "contrastive": [
+    {
+      "critique": "Accepts one photo of one page plus \"всё решил\" as proof of 20 solved problems and skips the mandatory control test.",
+      "failure_modes": [
+        "photo_as_proof",
+        "accepted_unsupported_proof"
+      ],
+      "id": "gj-vres-002-c1",
+      "output": {
+        "additional_evidence": [],
+        "attempt": 1,
+        "confidence": "high",
+        "criteria_results": [
+          {
+            "criterion": "20 задач с ходом решения",
+            "result": "met"
+          },
+          {
+            "criterion": "2 из 3 контрольных задач решены верно",
+            "result": "met"
+          }
+        ],
+        "decision_summary": {
+          "impact": "Следующая задача открыта.",
+          "what_changed": "Задача засчитана.",
+          "why": "Есть фото."
+        },
+        "evidence_basis": "objective",
+        "message_to_user": "Отлично, задача засчитана! Молодец!",
+        "reason": "Пользователь прислал фото решений.",
+        "response_language": "ru",
+        "status": "verified",
+        "task_id": "t-problems",
+        "type": "verification_result"
+      }
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "content_hash": "36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e",
+  "example_id": "gj-task-004",
+  "dataset_version": "0.1.0",
+  "task_type": "task_generation",
+  "input": {
+    "conversation": [
+      {
+        "content": "Разбей подготовку квартиры к продаже на конкретные задачи. Есть около 5 часов в неделю, лучше блоками по два часа.",
+        "role": "user"
+      }
+    ],
+    "goal": {
+      "available_time": {
+        "hours_per_week": 5,
+        "session_minutes": 120
+      },
+      "deadline": "2026-12-25",
+      "id": "g-flat",
+      "title": "Продать квартиру до конца года"
+    },
+    "journey": {
+      "milestones": [
+        {
+          "id": "m1",
+          "region_id": "r1",
+          "success_criteria": [
+            "Дефекты устранены",
+            "Цена определена",
+            "Документы собраны"
+          ],
+          "target_date": "2026-10-25",
+          "title": "Квартира готова к показам"
+        },
+        {
+          "id": "m2",
+          "region_id": "r2",
+          "success_criteria": [
+            "Договор подписан"
+          ],
+          "target_date": "2026-12-25",
+          "title": "Сделка закрыта"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "available",
+          "title": "Подготовить квартиру к показам",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n1"
+          ],
+          "id": "n2",
+          "milestone_id": "m2",
+          "region_id": "r2",
+          "status": "locked",
+          "title": "Выставить объявление и провести показы",
+          "type": "task"
+        }
+      ],
+      "regions": [
+        {
+          "id": "r1",
+          "order": 1,
+          "status": "active",
+          "title": "Подготовка к продаже"
+        },
+        {
+          "id": "r2",
+          "order": 2,
+          "status": "locked",
+          "title": "Показы и сделка"
+        }
+      ]
+    },
+    "operation": "task_generation",
+    "target_node_id": "n1",
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "decision_summary": null,
+    "for_node_id": "n1",
+    "message_to_user": "Подготовку разбил на 4 задачи, каждую — блоками до двух часов. Первые две можно делать параллельно: список дефектов и оценка стоимости от трёх агентств. Список документов для сделки зависит от вашей ситуации, поэтому его стоит получить у риелтора или нотариуса, а не из общих советов.",
+    "response_language": "ru",
+    "tasks": [
+      {
+        "dependencies": [],
+        "description": "Обойдите квартиру и запишите всё, что бросится в глаза покупателю — отклеившиеся обои, капающий кран, сколы. Отметьте приоритет «до показов» или «не критично».",
+        "difficulty": 1,
+        "estimated_duration_minutes": 60,
+        "expected_result": "Список дефектов по комнатам с приоритетом у каждого пункта.",
+        "id": "n1-t1",
+        "title": "Составить список мелких дефектов по каждой комнате с приоритетом",
+        "verification_protocol": {
+          "confidence_ceiling": "medium",
+          "methods": [
+            {
+              "fields": [
+                "Комната",
+                "Дефект",
+                "Приоритет"
+              ],
+              "instructions": "Внесите список в форму.",
+              "method": "structured_result",
+              "role": "required"
+            },
+            {
+              "instructions": "По желанию — фото дефектов с приоритетом «до показов», чтобы потом сравнить «до / после».",
+              "method": "photo",
+              "role": "supplementary"
+            }
+          ],
+          "objective_verifiability": "medium",
+          "pass_criteria": [
+            "Список охватывает все комнаты",
+            "У каждого пункта есть приоритет"
+          ],
+          "rationale": "Список проверяется по полноте и структуре; фото — только дополнение.",
+          "self_report_only": false,
+          "task_nature": "administrative"
+        },
+        "why_it_matters": "Мелкие дефекты сильнее всего портят первое впечатление на показе, а устранить их обычно недорого."
+      },
+      {
+        "dependencies": [],
+        "description": "Запросите у трёх агентств или частных риелторов оценку стоимости квартиры и сравните диапазоны и аргументы.",
+        "difficulty": 2,
+        "estimated_duration_minutes": 180,
+        "expected_result": "Таблица из 3 оценок с диапазоном цены, датой и названием агентства.",
+        "id": "n1-t2",
+        "sessions": 2,
+        "title": "Получить оценку стоимости от 3 агентств недвижимости",
+        "verification_protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "fields": [
+                "Агентство",
+                "Дата",
+                "Диапазон цены",
+                "Главный аргумент"
+              ],
+              "instructions": "Внесите три оценки.",
+              "method": "structured_result",
+              "role": "required"
+            },
+            {
+              "instructions": "Письмо или сообщение агентства с оценкой, если оно есть.",
+              "method": "third_party_confirmation",
+              "role": "supplementary"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "Три оценки от разных агентств внесены"
+          ],
+          "rationale": "Оценки — конкретные данные от третьих лиц, их можно подтвердить перепиской.",
+          "self_report_only": false,
+          "task_nature": "administrative"
+        },
+        "why_it_matters": "Три независимые оценки защищают от слишком высокой цены, из-за которой квартира долго не продаётся, и от слишком низкой."
+      },
+      {
+        "dependencies": [
+          "n1-t1"
+        ],
+        "description": "По списку из первой задачи устраните дефекты с высоким приоритетом сами или с помощью мастера.",
+        "difficulty": 3,
+        "estimated_duration_minutes": 480,
+        "expected_result": "Все пункты с приоритетом «до показов» отмечены как устранённые.",
+        "id": "n1-t3",
+        "sessions": 4,
+        "title": "Устранить все дефекты с приоритетом «до показов»",
+        "verification_protocol": {
+          "confidence_ceiling": "medium",
+          "methods": [
+            {
+              "instructions": "Отметьте каждый пункт списка как устранённый и коротко опишите, как.",
+              "method": "structured_result",
+              "role": "required"
+            },
+            {
+              "instructions": "Фото «после» для пунктов, у которых есть фото «до».",
+              "method": "photo",
+              "role": "supplementary"
+            }
+          ],
+          "objective_verifiability": "medium",
+          "pass_criteria": [
+            "Все пункты «до показов» отмечены с описанием"
+          ],
+          "rationale": "Описание каждого пункта плюс фото «до / после» — разумная комбинация; одно фото ничего не доказывает.",
+          "self_report_only": false,
+          "task_nature": "administrative"
+        },
+        "why_it_matters": "Это то, что покупатель увидит на показе."
+      },
+      {
+        "dependencies": [],
+        "description": "Запросите список документов, нужных именно в вашей ситуации (собственники, основание владения), и отметьте, что уже есть на руках.",
+        "difficulty": 2,
+        "estimated_duration_minutes": 90,
+        "expected_result": "Список документов со статусом «есть / нужно получить» и сроками получения.",
+        "id": "n1-t4",
+        "title": "Получить у риелтора или нотариуса список документов для сделки и отметить недостающие",
+        "verification_protocol": {
+          "confidence_ceiling": "medium",
+          "methods": [
+            {
+              "fields": [
+                "Документ",
+                "Есть / нужно получить",
+                "Кто выдаёт",
+                "Срок"
+              ],
+              "instructions": "Внесите список документов со статусами.",
+              "method": "structured_result",
+              "role": "required"
+            }
+          ],
+          "objective_verifiability": "medium",
+          "pass_criteria": [
+            "Список получен от специалиста",
+            "У каждого документа есть статус"
+          ],
+          "rationale": "Сами документы не загружаются из соображений приватности; достаточно структурированного списка.",
+          "self_report_only": false,
+          "task_nature": "administrative"
+        },
+        "why_it_matters": "Нехватка документа может задержать сделку на недели; требования зависят от ситуации и правил, поэтому список нужен от специалиста."
+      }
+    ],
+    "type": "task_generation"
+  },
+  "contrastive": null
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/verification_protocol.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/verification_protocol.json",
   "title": "Verification protocol",
   "description": "Task-specific description of how completion will be checked. Photos/video are allowed only as part of a combination; a protocol whose only required evidence is a photo is rejected by semantic validation (VP_PHOTO_ONLY). Pure self-report protocols must cap confidence at 'limited'.",
   "type": "object",
@@ -40,6 +40,14 @@
           },
           "role": { "type": "string", "enum": ["required", "supplementary"] },
           "instructions": { "$ref": "common.json#/$defs/text" },
+          "evidence_class": {
+            "description": "Override of the method's default evidence class (configs/evidence_policy.yaml) when the default is wrong for this task, e.g. a structured_result that is itself the deliverable.",
+            "$ref": "common.json#/$defs/evidence_class"
+          },
+          "references_required": {
+            "description": "structured_result / third_party_confirmation: every entry must carry a checkable reference (URL, document, message) that a url_review can spot-check (POL-B).",
+            "type": "boolean"
+          },
           "acceptance_criteria": {
             "type": "array",
             "items": { "$ref": "common.json#/$defs/short_text" },

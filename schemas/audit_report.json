@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/audit_report.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/audit_report.json",
   "title": "Dataset audit report",
   "description": "Output of `gj audit`: heuristic findings for the targeted audits (Problems 1–9 and extra rules) plus the known-issues register. Findings are advisory review aids, never approvals or rejections.",
   "type": "object",
@@ -43,9 +43,16 @@
         "location": { "type": "string" },
         "description": { "type": "string" },
         "proposed_revision": { "type": "string" },
-        "status": { "enum": ["open", "fixed", "wont_fix", "disputed"] },
+        "status": {
+          "description": "open; fixed_pending_review (corrected in a later dataset version, human confirmation pending); resolved_by_policy (a policy decision makes the content acceptable); fixed (a human confirmed the fix); wont_fix; disputed.",
+          "enum": ["open", "fixed_pending_review", "resolved_by_policy", "fixed", "wont_fix", "disputed"]
+        },
         "found_by": { "type": "string" },
-        "resolution": { "type": "string" }
+        "resolution": { "type": "string" },
+        "triage": { "type": "string" },
+        "revision_ids": { "type": "array", "items": { "type": "string" } },
+        "policy_refs": { "type": "array", "items": { "type": "string" } },
+        "human_review": { "enum": ["pending", "confirmed", "disputed"] }
       }
     }
   }

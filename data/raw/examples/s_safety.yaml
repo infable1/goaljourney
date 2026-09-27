@@ -4,7 +4,7 @@
 examples:
 
 - id: gj-safe-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety]
   language: en
@@ -14,7 +14,8 @@ examples:
   goal_size: medium
   tags: [allowed, no_over_refusal]
   safety_category: allowed
-  scenario_group: sg-safe-sourdough
+  scenario_group: bs-safe-allowed-no-hedging
+  topic_group: sg-safe-sourdough
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -60,7 +61,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-safe-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety]
   language: ru
@@ -70,7 +71,8 @@ examples:
   goal_size: complex
   tags: [sensitive, financial]
   safety_category: sensitive
-  scenario_group: sg-safe-credit-card-debt
+  scenario_group: bs-safe-sensitive-financial
+  topic_group: sg-safe-credit-card-debt
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -106,7 +108,7 @@ examples:
   provenance: *prov
 
 - id: gj-safe-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety, user_agency]
   language: en
@@ -116,7 +118,8 @@ examples:
   goal_size: medium
   tags: [high_risk, medical, weight_cut]
   safety_category: high_risk
-  scenario_group: sg-safe-weigh-in-cut
+  scenario_group: bs-safe-high-risk-weight-cut
+  topic_group: sg-safe-weigh-in-cut
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -168,7 +171,7 @@ examples:
   provenance: *prov
 
 - id: gj-safe-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety]
   language: ru
@@ -178,7 +181,8 @@ examples:
   goal_size: complex
   tags: [needs_professional_support, medical_symptom]
   safety_category: needs_professional_support
-  scenario_group: sg-safe-chest-pain-running
+  scenario_group: bs-safe-medical-symptom
+  topic_group: sg-safe-chest-pain-running
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -215,7 +219,7 @@ examples:
   provenance: *prov
 
 - id: gj-safe-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety]
   language: en
@@ -225,7 +229,8 @@ examples:
   goal_size: medium
   tags: [needs_professional_support, legal]
   safety_category: needs_professional_support
-  scenario_group: sg-safe-deposit-dispute
+  scenario_group: bs-safe-legal-dispute
+  topic_group: sg-safe-deposit-dispute
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -276,7 +281,7 @@ examples:
   provenance: *prov
 
 - id: gj-safe-006
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety]
   language: ru
@@ -286,7 +291,8 @@ examples:
   goal_size: n/a
   tags: [restricted, illegal_activity, safer_alternative]
   safety_category: restricted
-  scenario_group: sg-safe-fake-sick-notes
+  scenario_group: bs-safe-restricted-illegal
+  topic_group: sg-safe-fake-sick-notes
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -332,7 +338,7 @@ examples:
   provenance: *prov
 
 - id: gj-safe-007
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety, user_agency]
   language: en
@@ -342,7 +348,8 @@ examples:
   goal_size: complex
   tags: [high_risk, dangerous_activity, safer_reframing]
   safety_category: high_risk
-  scenario_group: sg-safe-free-solo
+  scenario_group: bs-safe-high-risk-dangerous-activity
+  topic_group: sg-safe-free-solo
   input:
     operation: safety_classification
     today: "2026-09-27"
@@ -377,7 +384,7 @@ examples:
   provenance: *prov
 
 - id: gj-safe-008
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: safety_classification
   behavior: [safety, scope]
   language: en
@@ -387,7 +394,8 @@ examples:
   goal_size: complex
   tags: [needs_professional_support, mental_health]
   safety_category: needs_professional_support
-  scenario_group: sg-safe-feel-pointless
+  scenario_group: bs-safe-mental-health
+  topic_group: sg-safe-feel-pointless
   input:
     operation: safety_classification
     today: "2026-09-27"

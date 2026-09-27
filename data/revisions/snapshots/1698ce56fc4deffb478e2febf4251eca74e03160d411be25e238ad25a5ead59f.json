@@ -1,0 +1,99 @@
+{
+  "content_hash": "1698ce56fc4deffb478e2febf4251eca74e03160d411be25e238ad25a5ead59f",
+  "example_id": "gj-vprot-001",
+  "dataset_version": "0.1.0",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "goal": {
+      "id": "g-cube",
+      "title": "Solve a Rubik's cube without instructions"
+    },
+    "operation": "verification_protocol_design",
+    "task": {
+      "description": "Using the layer-by-layer beginner's method, solve a fully scrambled cube from memory.",
+      "difficulty": 3,
+      "estimated_duration_minutes": 20,
+      "expected_result": "One complete solve from a random scramble without notes, in under 5 minutes.",
+      "id": "t-solve",
+      "title": "Solve a scrambled cube with the beginner's method, without looking at notes",
+      "why_it_matters": "This is the skill the goal is about; everything before it was learning the steps."
+    },
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "message_to_user": "For this one I'll ask for a short video of a real solve: the app gives you a random scramble, you show the scrambled cube to the camera and solve it without cutting. Then two quick questions about the last layer. A photo of a solved cube wouldn't show anything — any cube can be photographed solved.",
+    "protocol": {
+      "confidence_ceiling": "high",
+      "methods": [
+        {
+          "acceptance_criteria": [
+            "Scramble matches the one issued",
+            "No cuts in the recording",
+            "Cube fully solved",
+            "Solve under 5 minutes"
+          ],
+          "instructions": "The app shows a random scramble. Apply it, show all sides of the scrambled cube to the camera, then solve it without notes in one continuous recording.",
+          "method": "practical_test",
+          "role": "required"
+        },
+        {
+          "instructions": "Upload the continuous recording of the practical test.",
+          "method": "video",
+          "role": "required"
+        },
+        {
+          "instructions": "Two questions about the method.",
+          "method": "follow_up_questions",
+          "questions": [
+            "Which step of the last layer did you do first, and why that order?",
+            "What do you do when the yellow cross shows only a line?"
+          ],
+          "role": "required"
+        }
+      ],
+      "objective_verifiability": "high",
+      "pass_criteria": [
+        "A continuous recording shows the issued scramble being solved in under 5 minutes",
+        "Answers match the beginner's method"
+      ],
+      "rationale": "A skill is proven by performing it on an unpredictable input; the fresh scramble prevents reusing an old solve, and the questions confirm the method is understood.",
+      "self_report_only": false,
+      "task_nature": "skill_acquisition"
+    },
+    "response_language": "en",
+    "task_id": "t-solve",
+    "type": "verification_protocol_design"
+  },
+  "contrastive": [
+    {
+      "critique": "A photo of a solved cube proves nothing — the cube could have been solved by someone else or never scrambled.",
+      "failure_modes": [
+        "photo_as_proof"
+      ],
+      "id": "gj-vprot-001-c1",
+      "output": {
+        "message_to_user": "Just send a photo of your solved cube!",
+        "protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "instructions": "Upload a photo of the solved cube.",
+              "method": "photo",
+              "role": "required"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "Photo shows a solved cube"
+          ],
+          "rationale": "The photo shows the result.",
+          "self_report_only": false,
+          "task_nature": "skill_acquisition"
+        },
+        "response_language": "en",
+        "task_id": "t-solve",
+        "type": "verification_protocol_design"
+      }
+    }
+  ]
+}

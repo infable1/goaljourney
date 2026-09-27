@@ -30,6 +30,13 @@ METRIC_DIMENSION = {
     "scope_adherence": "user_agency",
     "progress_integrity": "planning_quality",
     "feasibility_judgement": "planning_quality",
+    # evaluation v0.2.0
+    "state_consistency": "state_consistency",
+    "numeric_consistency": "numeric_consistency",
+    "evidence_integrity": "evidence_integrity",
+    "capability_compliance": "hallucination_resistance",
+    "fact_provenance": "hallucination_resistance",
+    "deadline_autonomy": "user_agency",
 }
 
 # For these metrics the reported value is bad/total (lower is better); for all others 1 - bad/total.
@@ -42,6 +49,7 @@ CHECK_PARAMS = {
     "must_ask": ["groups"], "must_not_ask": ["targets"], "allowed_question_targets": ["targets"],
     "no_mentions": ["terms"], "mentions_any": ["terms"], "preserves_nodes": ["node_ids"],
     "total_minutes_within": ["max"], "language": ["value"], "claims_grounded": [],
+    "value_between": ["path", "min", "max"],
 }
 
 
@@ -173,6 +181,18 @@ def run_check(chk: dict, output, schema_ok: bool, lint_issues) -> CheckResult:
         msg = output.get("message_to_user", "")
         ok = output.get("response_language") == lang and (not msg or T.matches_language(msg, lang))
         return res(ok, detail=f"response_language={output.get('response_language')!r}, cyrillic ratio {T.cyrillic_ratio(msg):.2f}")
+    if kind == "value_between":
+        vals = get_path(output, chk["path"])
+        lo, hi = chk["min"], chk["max"]
+
+        def within(v):
+            if isinstance(v, bool) or v is None:
+                return False
+            if isinstance(v, str) != isinstance(lo, str):
+                return False
+            return lo <= v <= hi
+        ok = bool(vals) and all(within(v) for v in vals)
+        return res(ok, detail=f"{chk['path']}={vals!r}, expected within [{lo}, {hi}]")
     if kind == "claims_grounded":
         hit = sorted(codes & {"CLAIM_SOURCE_NOT_IN_CONTEXT", "WR_UNSUPPORTED_IGNORED"})
         return res(not hit, detail=", ".join(hit))

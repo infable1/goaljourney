@@ -1,0 +1,197 @@
+{
+  "content_hash": "ffdf68a9d80c9d338848b7e7d17abaf5808ec8b486557b91bde5729af16cf4a6",
+  "example_id": "gj-route-004",
+  "dataset_version": "0.1.0",
+  "task_type": "route_adaptation",
+  "input": {
+    "conversation": [
+      {
+        "content": "Классные новости — знакомый, который сам поднимал раунд, предложил мне три сессии менторства в октябре. Как это встроить в план?",
+        "role": "user"
+      }
+    ],
+    "events": [
+      {
+        "date": "2026-09-26",
+        "description": "Бывший основатель стартапа предложил 3 бесплатные менторские сессии в октябре.",
+        "type": "new_resource"
+      }
+    ],
+    "goal": {
+      "available_time": {
+        "hours_per_week": 6
+      },
+      "deadline": "2026-11-15",
+      "id": "g-pitch-deck",
+      "title": "Подготовить стартап к питчу перед инвесторами"
+    },
+    "journey": {
+      "milestones": [
+        {
+          "id": "m1",
+          "region_id": "r1",
+          "success_criteria": [
+            "Дек из 10–12 слайдов прошёл разбор"
+          ],
+          "target_date": "2026-10-25",
+          "title": "Финальный дек готов"
+        },
+        {
+          "id": "m2",
+          "region_id": "r2",
+          "success_criteria": [
+            "3 прогона уложились в 5 минут"
+          ],
+          "target_date": "2026-11-10",
+          "title": "Питч отрепетирован"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "completed",
+          "title": "Черновик питч-дека",
+          "type": "task"
+        },
+        {
+          "estimated_duration_minutes": 600,
+          "id": "n2",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "available",
+          "title": "Разобрать 20 успешных питч-деков и выписать приёмы",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n1",
+            "n2"
+          ],
+          "id": "n3",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "locked",
+          "title": "Финальная версия дека",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n3"
+          ],
+          "id": "n4",
+          "milestone_id": "m2",
+          "region_id": "r2",
+          "status": "locked",
+          "title": "3 прогона перед знакомыми",
+          "type": "task"
+        }
+      ],
+      "regions": [
+        {
+          "id": "r1",
+          "order": 1,
+          "status": "active",
+          "title": "Питч-дек"
+        },
+        {
+          "id": "r2",
+          "order": 2,
+          "status": "locked",
+          "title": "Репетиции"
+        }
+      ]
+    },
+    "operation": "route_adaptation",
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "added_nodes": [
+      {
+        "created_by": "ai",
+        "depends_on": [
+          "n1"
+        ],
+        "detail_level": "outline",
+        "estimated_duration_minutes": 60,
+        "id": "n5",
+        "milestone_id": "m1",
+        "region_id": "r1",
+        "status": "available",
+        "title": "Сессия с ментором №1: разбор черновика дека",
+        "type": "task"
+      },
+      {
+        "created_by": "ai",
+        "depends_on": [
+          "n4"
+        ],
+        "detail_level": "outline",
+        "estimated_duration_minutes": 60,
+        "id": "n6",
+        "milestone_id": "m2",
+        "region_id": "r2",
+        "status": "locked",
+        "title": "Сессия с ментором №2: репетиция питча",
+        "type": "task"
+      }
+    ],
+    "change_level": "minor",
+    "decision_summary": {
+      "impact": "Экономия около 7 часов, сроки не меняются, третья сессия в резерве.",
+      "what_changed": "Добавлены две менторские сессии, разбор чужих деков сокращён с 20 до 5.",
+      "why": "Обратная связь опытного основателя по вашему деку полезнее, чем самостоятельный разбор 20 чужих."
+    },
+    "message_to_user": "Отличная новость — разбор от человека, который сам поднимал раунд, ценнее любого количества чужих деков. Вот как сессии встроены в маршрут:\n• разбор 20 деков сокращаю до 5 — хватит, чтобы увидеть структуру, остальное даст ментор (экономия около 7 часов);\n• 1-я сессия — разбор вашего черновика до финальной версии;\n• 2-я — репетиция питча после ваших прогонов;\n• 3-ю оставляю в резерве — например, на вопросы инвесторов.\nСроки не меняются.",
+    "modified_deadlines": [],
+    "modified_nodes": [
+      {
+        "changes": [
+          {
+            "field": "title",
+            "from": "Разобрать 20 успешных питч-деков и выписать приёмы",
+            "to": "Разобрать 5 успешных питч-деков и выписать приёмы"
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 600,
+            "to": 150
+          }
+        ],
+        "node_id": "n2",
+        "reason": "Разбор с ментором заменяет большую часть самостоятельного анализа."
+      },
+      {
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n1",
+              "n2"
+            ],
+            "to": [
+              "n1",
+              "n2",
+              "n5"
+            ]
+          }
+        ],
+        "node_id": "n3",
+        "reason": "Финальная версия учитывает замечания ментора."
+      }
+    ],
+    "preserved_progress": [
+      "n1"
+    ],
+    "removed_nodes": [],
+    "requires_user_confirmation": false,
+    "response_language": "ru",
+    "trigger": {
+      "description": "Три бесплатные менторские сессии в октябре.",
+      "type": "new_resource"
+    },
+    "type": "route_adaptation"
+  },
+  "contrastive": null
+}

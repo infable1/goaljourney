@@ -1,0 +1,154 @@
+{
+  "content_hash": "14bf6ca2fac993d73b369bf829ce4186ab39845d6389e4dd5eb5fd60b151a6a9",
+  "example_id": "gj-vretry-004",
+  "dataset_version": "0.1.1",
+  "task_type": "verification_result",
+  "input": {
+    "operation": "verification_result",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-bookkeeping",
+      "title": "Validate demand for a bookkeeping service for hair salons"
+    },
+    "task": {
+      "id": "t-salon-interviews",
+      "title": "Interview 5 salon owners about how they handle bookkeeping today",
+      "description": "Talk to five salon owners and record how they handle bookkeeping, what frustrates them, and what they pay for it now.",
+      "why_it_matters": "Five conversations will show whether the pain is strong enough to pay for before you build anything.",
+      "expected_result": "Notes for 5 interviews with current solution, frustrations and current spend.",
+      "estimated_duration_minutes": 300,
+      "sessions": 5,
+      "difficulty": 3,
+      "verification_protocol": {
+        "task_nature": "business_activity",
+        "objective_verifiability": "low",
+        "methods": [
+          {
+            "method": "structured_result",
+            "role": "required",
+            "instructions": "One card per interview.",
+            "fields": [
+              "Date",
+              "Salon size",
+              "Current solution",
+              "Frustrations (quotes)",
+              "Current monthly spend"
+            ],
+            "acceptance_criteria": [
+              "5 cards",
+              "Each card has at least one direct quote"
+            ]
+          },
+          {
+            "method": "follow_up_questions",
+            "role": "supplementary",
+            "instructions": "One synthesis question.",
+            "questions": [
+              "Which frustration came up most often?"
+            ]
+          }
+        ],
+        "pass_criteria": [
+          "5 complete interview cards"
+        ],
+        "confidence_ceiling": "limited",
+        "self_report_only": true,
+        "rationale": "Interviews cannot be checked without intruding on the owners' privacy, so the cards are the user's own account and confidence stays limited however detailed they are; they are still exactly what the demand decision needs."
+      }
+    },
+    "verification_history": [
+      {
+        "attempt": 1,
+        "evidence": [
+          {
+            "id": "e1",
+            "type": "text_report",
+            "content": "Talked to a few salon owners, they all hate bookkeeping."
+          }
+        ],
+        "result_status": "needs_more_evidence",
+        "result_summary": "Only a summary sentence; no interview cards.",
+        "requested_evidence": [
+          "One card per interview with the fields from the protocol"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e2",
+        "type": "structured_result",
+        "description": "3 interview cards.",
+        "content": "Card 1 (2026-09-22, 4 chairs): uses a spreadsheet; 'I do it on Sunday nights and hate every minute'; spends 0. Card 2 (2026-09-23, 7 chairs): accountant once a quarter; 'I never know my real margin until it's too late'; about 150/month. Card 3 (2026-09-25, 2 chairs): shoebox of receipts; 'Tax time is a nightmare'; spends 0."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "verification_result",
+    "response_language": "en",
+    "message_to_user": "Big improvement — these three cards are exactly what I was after: real quotes, current tools and spend. \"I never know my real margin until it's too late\" is a strong signal.\nTo complete the task I need two more interviews in the same format. If finding two more owners is hard, tell me and we can look at where to find them together.",
+    "task_id": "t-salon-interviews",
+    "attempt": 2,
+    "status": "needs_more_evidence",
+    "confidence": "limited",
+    "evidence_basis": "self_report",
+    "criteria_results": [
+      {
+        "criterion": "5 complete interview cards",
+        "result": "not_met",
+        "note": "3 of 5 cards so far, all complete"
+      }
+    ],
+    "evidence_assessment": [
+      {
+        "evidence_id": "e2",
+        "supports": "3 complete cards with quotes, current solution and spend",
+        "limitations": "Two interviews still missing"
+      }
+    ],
+    "reason": "The format now matches the protocol, but only 3 of the 5 required interviews are documented; the task is in progress, not failed.",
+    "additional_evidence": [
+      {
+        "request": "2 more interview cards in the same format",
+        "why": "The protocol requires 5 interviews"
+      }
+    ],
+    "next_step": "Schedule two more salon conversations this week.",
+    "decision_summary": {
+      "what_changed": "Task still open after attempt 2 with a narrower request.",
+      "why": "The submission fixed the format issue from attempt 1 but covers 3 of 5 interviews.",
+      "impact": "Only two more cards are needed to complete the task."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-vretry-004-c1",
+      "failure_modes": [
+        "premature_rejection"
+      ],
+      "critique": "Rejects partial but good-quality progress; the user did what was asked after attempt 1 and only needs two more interviews.",
+      "output": {
+        "type": "verification_result",
+        "response_language": "en",
+        "message_to_user": "Rejected — the task required 5 interviews and you only did 3.",
+        "task_id": "t-salon-interviews",
+        "attempt": 2,
+        "status": "rejected",
+        "confidence": "limited",
+        "evidence_basis": "self_report",
+        "criteria_results": [
+          {
+            "criterion": "5 complete interview cards",
+            "result": "not_met"
+          }
+        ],
+        "reason": "Fewer than 5 interviews.",
+        "additional_evidence": [],
+        "decision_summary": {
+          "what_changed": "Task rejected.",
+          "why": "Only 3 interviews.",
+          "impact": "Start again."
+        }
+      }
+    }
+  ]
+}

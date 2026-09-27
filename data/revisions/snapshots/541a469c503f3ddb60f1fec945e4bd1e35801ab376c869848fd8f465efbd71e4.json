@@ -1,0 +1,467 @@
+{
+  "content_hash": "541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4",
+  "example_id": "gj-jour-003",
+  "dataset_version": "0.1.1",
+  "task_type": "journey_generation",
+  "input": {
+    "operation": "journey_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-trip",
+      "title": "Two-week backpacking trip through Portugal and Spain",
+      "domain": "travel",
+      "deadline": "2027-05-01",
+      "available_time": {
+        "hours_per_week": 3
+      },
+      "resources": [
+        "Budget of $2,500 including flights"
+      ],
+      "preferences": [
+        "Trains over buses",
+        "Hostels or budget guesthouses",
+        "Food markets over restaurants"
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I want to do a two-week backpacking trip through Portugal and Spain starting May 1st. Total budget $2,500 including flights. I prefer trains and hostels. I can spend maybe 3 hours a week on planning."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "journey_generation",
+    "response_language": "en",
+    "message_to_user": "Your trip route has 3 stages: lock in the big decisions (route, flights), sort documents and money, then plan the days. It fits in about 3 hours a week and finishes a week before departure.\nEntry rules for Spain and Portugal depend on your passport and may have changed recently, so the first task is to check them on official sources — I haven't assumed anything about visas or travel authorisations.\nFlights are the biggest single cost, so they're booked early; day-by-day details come later.",
+    "goal": {
+      "id": "g-trip",
+      "title": "Two-week backpacking trip through Portugal and Spain",
+      "domain": "travel",
+      "desired_outcome": "A booked and budgeted 14-day trip starting May 1st, travelling by train and staying in hostels.",
+      "success_criteria": [
+        "Flights and first two nights booked",
+        "Documents confirmed valid",
+        "Day plan within the $2,500 budget"
+      ],
+      "deadline": "2027-05-01",
+      "available_time": {
+        "hours_per_week": 3
+      },
+      "resources": [
+        "Budget of $2,500 including flights"
+      ],
+      "preferences": [
+        "Trains over buses",
+        "Hostels or budget guesthouses",
+        "Food markets over restaurants"
+      ]
+    },
+    "journey": {
+      "id": "j-trip",
+      "goal_id": "g-trip",
+      "version": 1,
+      "strategy_summary": "Decide the route and book flights early, confirm documents and money, then plan accommodation and days in order of how fast they sell out.",
+      "pacing": {
+        "weekly_hours_planned": 3,
+        "horizon_weeks": 30
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Route and flights",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Documents and money",
+          "order": 2,
+          "status": "locked"
+        },
+        {
+          "id": "r3",
+          "title": "Stays and day plans",
+          "order": 3,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Route chosen and flights booked",
+          "region_id": "r1",
+          "success_criteria": [
+            "4–5 city route fixed",
+            "Flights booked within budget share"
+          ],
+          "target_date": "2026-11-15"
+        },
+        {
+          "id": "m2",
+          "title": "Documents and money sorted",
+          "region_id": "r2",
+          "success_criteria": [
+            "Entry requirements confirmed for your passport",
+            "Card or cash plan for euros ready"
+          ],
+          "target_date": "2027-02-28"
+        },
+        {
+          "id": "m3",
+          "title": "Trip fully planned",
+          "region_id": "r3",
+          "success_criteria": [
+            "All nights booked",
+            "Day plan and budget sheet complete"
+          ],
+          "target_date": "2027-04-24"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Check entry requirements for your passport",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 45,
+          "priority": "critical",
+          "task": {
+            "id": "n1",
+            "title": "Check Schengen entry requirements for your passport on 2 official sources",
+            "description": "On your government's travel advice page and the official EU or Spanish/Portuguese government pages, check whether you need a visa or a travel authorisation for a 14-day stay, plus passport validity rules.",
+            "why_it_matters": "If an authorisation or visa is needed, it has lead times that shape the whole schedule.",
+            "expected_result": "A short note listing each requirement, its source link and the date checked.",
+            "estimated_duration_minutes": 45,
+            "difficulty": 1,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "structured_result",
+                  "role": "required",
+                  "references_required": true,
+                  "instructions": "Submit each requirement with the official link and the date you checked.",
+                  "acceptance_criteria": [
+                    "At least 2 official sources",
+                    "Passport validity rule noted"
+                  ]
+                },
+                {
+                  "method": "url_review",
+                  "role": "required",
+                  "instructions": "The navigator opens each linked official page and checks that it states the recorded requirement."
+                }
+              ],
+              "pass_criteria": [
+                "Requirements recorded with official source links",
+                "Each linked page confirms the recorded requirement"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "The note is the user's summary; confidence comes from checking every cited official page, not from the note itself."
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Draft the city route",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 90,
+          "priority": "high",
+          "task": {
+            "id": "n2",
+            "title": "Draft a 4–5 city route with train legs and nights per city",
+            "description": "Choose 4–5 cities, the order, nights in each and the train connection between them. Keep at least 3 nights in the first and last city to absorb flight delays.",
+            "why_it_matters": "The route determines which airports to fly into and out of, which is the biggest cost decision.",
+            "expected_result": "A route table with cities, nights and train legs.",
+            "estimated_duration_minutes": 90,
+            "difficulty": 2,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "medium",
+              "methods": [
+                {
+                  "method": "structured_result",
+                  "role": "required",
+                  "evidence_class": "inspectable_artifact",
+                  "instructions": "Submit the route table.",
+                  "fields": [
+                    "City",
+                    "Nights",
+                    "Train leg to next city",
+                    "Approx. travel time"
+                  ],
+                  "acceptance_criteria": [
+                    "Nights add up to 14",
+                    "Every leg has a train option"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Route totals 14 nights with a train connection for each leg"
+              ],
+              "confidence_ceiling": "medium",
+              "self_report_only": false,
+              "rationale": "The route table is the deliverable itself, so nights and legs are checked directly; train availability is only confirmed later during booking, hence medium."
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Book flights (open-jaw if cheaper)",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "full",
+          "depends_on": [
+            "n1",
+            "n2"
+          ],
+          "estimated_duration_minutes": 90,
+          "priority": "critical",
+          "due_date": "2026-11-15",
+          "task": {
+            "id": "n3",
+            "title": "Compare 3 flight options and book one that keeps flights under 40% of budget",
+            "description": "Compare round-trip and open-jaw options (fly into the first city, out of the last) on at least two booking sites, then book one.",
+            "why_it_matters": "Flights are the largest cost; booking months ahead usually keeps them within budget.",
+            "expected_result": "A booking confirmation and a comparison of 3 options.",
+            "estimated_duration_minutes": 90,
+            "difficulty": 2,
+            "dependencies": [
+              "n1",
+              "n2"
+            ],
+            "due_date": "2026-11-15",
+            "verification_protocol": {
+              "task_nature": "administrative",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the booking confirmation (hide payment details) and the 3-option comparison.",
+                  "acceptance_criteria": [
+                    "Dates match the trip",
+                    "Price within 40% of the budget"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Confirmed booking matching the trip dates"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "A booking confirmation is direct evidence."
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Apply for any required travel authorisation or visa",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n1",
+            "n3"
+          ]
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Set up a budget sheet and a no-foreign-fee payment option",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n3"
+          ]
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Book hostels for all nights",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n3"
+          ]
+        },
+        {
+          "id": "n7",
+          "type": "task",
+          "title": "Book long-distance train legs",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6"
+          ]
+        },
+        {
+          "id": "n8",
+          "type": "task",
+          "title": "One-page day plan per city with 2 food markets each",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6"
+          ]
+        },
+        {
+          "id": "n9",
+          "type": "ai_checkpoint",
+          "title": "Final budget and packing check",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n5",
+            "n7",
+            "n8"
+          ]
+        }
+      ],
+      "levels": [
+        {
+          "index": 0,
+          "title": "Dreamer",
+          "unlock_criteria": "Start of the journey"
+        },
+        {
+          "index": 1,
+          "title": "Committed traveller",
+          "unlock_milestone_id": "m1",
+          "unlock_criteria": "Flights booked"
+        },
+        {
+          "index": 2,
+          "title": "Ready to go",
+          "unlock_milestone_id": "m3",
+          "unlock_criteria": "Trip fully planned"
+        }
+      ],
+      "achievements": [
+        {
+          "id": "a1",
+          "title": "Tickets in hand",
+          "unlock": {
+            "type": "milestone_verified",
+            "ref": "m1"
+          }
+        },
+        {
+          "id": "a2",
+          "title": "Bon voyage",
+          "unlock": {
+            "type": "goal_completed"
+          }
+        }
+      ]
+    },
+    "external_claims": [
+      {
+        "claim": "Entry requirements (visa, travel authorisation, passport validity) for the user's passport.",
+        "status": "needs_verification",
+        "affects": "Region 2 timing (task n1)"
+      },
+      {
+        "claim": "Train routes and prices between the chosen cities.",
+        "status": "needs_verification",
+        "affects": "Route draft and budget"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Created a 3-stage planning route that ends one week before departure.",
+      "why": "Entry rules and flights have the longest lead times and the biggest budget impact, so they come first.",
+      "impact": "About 3 hours a week; flights capped at 40% of the $2,500 budget."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-jour-003-c1",
+      "failure_modes": [
+        "ignored_available_time",
+        "ignored_deadline"
+      ],
+      "critique": "Plans 12 hours a week when the user has 3, and sets the planning milestone after the departure date.",
+      "output": {
+        "type": "journey_generation",
+        "response_language": "en",
+        "message_to_user": "Here's an intensive planning schedule so everything is perfect!",
+        "goal": {
+          "title": "Two-week backpacking trip through Portugal and Spain",
+          "deadline": "2027-05-01",
+          "available_time": {
+            "hours_per_week": 3
+          }
+        },
+        "journey": {
+          "pacing": {
+            "weekly_hours_planned": 12,
+            "horizon_weeks": 30
+          },
+          "regions": [
+            {
+              "id": "r1",
+              "title": "Planning",
+              "order": 1,
+              "status": "active"
+            }
+          ],
+          "milestones": [
+            {
+              "id": "m1",
+              "title": "Everything planned",
+              "region_id": "r1",
+              "success_criteria": [
+                "All booked"
+              ],
+              "target_date": "2027-05-10"
+            }
+          ],
+          "nodes": [
+            {
+              "id": "n1",
+              "type": "task",
+              "title": "Research every city in detail",
+              "region_id": "r1",
+              "milestone_id": "m1",
+              "status": "available",
+              "detail_level": "outline"
+            }
+          ]
+        },
+        "decision_summary": {
+          "what_changed": "Created an intensive plan.",
+          "why": "More planning means a better trip.",
+          "impact": "12 hours per week."
+        }
+      }
+    }
+  ]
+}

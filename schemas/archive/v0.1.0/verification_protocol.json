@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.0/verification_protocol.json",
+  "title": "Verification protocol",
+  "description": "Task-specific description of how completion will be checked. Photos/video are allowed only as part of a combination; a protocol whose only required evidence is a photo is rejected by semantic validation (VP_PHOTO_ONLY). Pure self-report protocols must cap confidence at 'limited'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_nature", "objective_verifiability", "methods", "pass_criteria", "confidence_ceiling", "self_report_only", "rationale"],
+  "properties": {
+    "task_nature": {
+      "type": "string",
+      "enum": [
+        "skill_acquisition", "knowledge", "writing", "software", "research",
+        "physical_activity", "habit", "business_activity", "creative_work",
+        "administrative", "social_interaction", "other"
+      ]
+    },
+    "objective_verifiability": {
+      "description": "How far completion can be established objectively for this kind of task.",
+      "type": "string",
+      "enum": ["high", "medium", "low", "none"]
+    },
+    "methods": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["method", "role", "instructions"],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "structured_self_report", "follow_up_questions", "knowledge_test",
+              "practical_test", "artifact_review", "url_review", "structured_result",
+              "photo", "video", "audio", "screenshot", "third_party_confirmation",
+              "data_export"
+            ]
+          },
+          "role": { "type": "string", "enum": ["required", "supplementary"] },
+          "instructions": { "$ref": "common.json#/$defs/text" },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": { "$ref": "common.json#/$defs/short_text" },
+            "maxItems": 6
+          },
+          "questions": {
+            "type": "array",
+            "items": { "$ref": "common.json#/$defs/short_text" },
+            "maxItems": 5
+          },
+          "fields": {
+            "description": "For structured_self_report / structured_result: the fields the user fills in.",
+            "type": "array",
+            "items": { "$ref": "common.json#/$defs/short_text" },
+            "maxItems": 8
+          }
+        }
+      }
+    },
+    "pass_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "confidence_ceiling": {
+      "description": "The highest confidence this protocol can ever justify. 'limited' = self-report class evidence.",
+      "type": "string",
+      "enum": ["high", "medium", "limited"]
+    },
+    "self_report_only": { "type": "boolean" },
+    "rationale": { "type": "string", "minLength": 1, "maxLength": 500 }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/review_event.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/review_event.json",
   "title": "Human review event (review log v0.2)",
   "description": "One line of the append-only, hash-chained review log data/reviewed/review_events.jsonl. A decision applies only to the exact content it names (content_hash); the reviewed content is preserved under data/reviewed/snapshots/<content_hash>.json.",
   "type": "object",
@@ -10,7 +10,7 @@
                "review_tier", "snapshot", "prev_event_hash", "event_hash"],
   "properties": {
     "event_id": { "type": "string", "pattern": "^rev-[0-9a-f]{12}$" },
-    "log_version": { "const": "0.2.0" },
+    "log_version": { "description": "0.3.0 (Milestone 1.6): canonical statuses. No 0.2.0 events were ever written.", "const": "0.3.0" },
     "example_id": { "type": "string", "minLength": 1 },
     "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "reviewer_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,40}$" },
@@ -56,6 +56,10 @@
         }
       }
     },
+    "new_status_detail": {
+      "description": "Why a pending example is pending: not_reviewed, content_changed (decided on an earlier version) or awaiting_expert.",
+      "enum": ["not_reviewed", "content_changed", "awaiting_expert", "decided"]
+    },
     "review_tier": { "enum": ["human_review_required", "expert_review_required"] },
     "required_languages": { "type": "array", "items": { "type": "string" } },
     "required_expert_domains": { "type": "array", "items": { "type": "string" } },
@@ -70,6 +74,6 @@
     "event_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
   },
   "$defs": {
-    "status": { "enum": ["pending", "stale", "approved", "approved_pending_expert", "needs_revision", "rejected"] }
+    "status": { "enum": ["pending", "approved", "needs_revision", "rejected"] }
   }
 }

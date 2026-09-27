@@ -1,4 +1,9 @@
-"""JSON Schema registry: loads every schema in schemas/ and validates by name or operation."""
+"""JSON Schema registry: loads every schema of one schema version and validates by name or operation.
+
+The current version lives in schemas/*.json; older versions are frozen under
+schemas/archive/v<version>/ (see schemas/archive/README.md). Records carry `schema_version` and are
+validated against the schema set of their own version, so old releases stay reproducible.
+"""
 from functools import lru_cache
 
 from jsonschema import Draft202012Validator
@@ -8,7 +13,7 @@ from referencing.jsonschema import DRAFT202012
 from .io import load_json
 from .paths import SCHEMAS_DIR
 
-BASE_URI = "https://schemas.goaljourney.invalid/v0.1.0/"
+BASE = "https://schemas.goaljourney.invalid/v{version}/"
 
 OPERATION_SCHEMAS = {
     "goal_clarification": "goal_clarification",
@@ -31,29 +36,54 @@ OPERATION_SCHEMAS = {
 USER_FACING_OPERATIONS = {op for op in OPERATION_SCHEMAS if op not in {"memory_extraction", "web_research_decision"}}
 
 
-@lru_cache(maxsize=1)
-def _load_all():
-    schemas = {}
-    resources = []
-    for path in sorted(SCHEMAS_DIR.glob("*.json")):
-        schema = load_json(path)
-        expected_id = BASE_URI + path.name
-        if schema.get("$id") != expected_id:
-            raise ValueError(f"{path.name}: $id must be {expected_id!r}, got {schema.get('$id')!r}")
-        Draft202012Validator.check_schema(schema)
-        schemas[path.stem] = schema
-        resources.append((expected_id, Resource.from_contents(schema, default_specification=DRAFT202012)))
-    registry = Registry().with_resources(resources)
-    return schemas, registry
+def current_version() -> str:
+    from .config import versions
+    return versions()["schema_version"]
 
 
-def schema_names():
-    return sorted(_load_all()[0])
+def version_key(version: str) -> tuple:
+    return tuple(int(p) for p in str(version).split("."))
+
+
+def available_versions() -> list:
+    archived = [p.name[1:] for p in (SCHEMAS_DIR / "archive").glob("v*") if p.is_dir()]
+    return sorted(set(archived) | {current_version()}, key=version_key)
+
+
+def _resolve(version):
+    cur = current_version()
+    version = cur if version is None else str(version)
+    if version == cur:
+        return version, SCHEMAS_DIR
+    d = SCHEMAS_DIR / "archive" / f"v{version}"
+    if not d.is_dir():
+        raise KeyError(f"no schemas for version {version!r}; known: {available_versions()}")
+    return version, d
 
 
 @lru_cache(maxsize=None)
-def validator(name: str) -> Draft202012Validator:
-    schemas, registry = _load_all()
+def _load_all(version=None):
+    version, directory = _resolve(version)
+    base = BASE.format(version=version)
+    schemas, resources = {}, []
+    for path in sorted(directory.glob("*.json")):
+        schema = load_json(path)
+        expected_id = base + path.name
+        if schema.get("$id") != expected_id:
+            raise ValueError(f"{path}: $id must be {expected_id!r}, got {schema.get('$id')!r}")
+        Draft202012Validator.check_schema(schema)
+        schemas[path.stem] = schema
+        resources.append((expected_id, Resource.from_contents(schema, default_specification=DRAFT202012)))
+    return schemas, Registry().with_resources(resources)
+
+
+def schema_names(version=None):
+    return sorted(_load_all(version)[0])
+
+
+@lru_cache(maxsize=None)
+def validator(name: str, version=None) -> Draft202012Validator:
+    schemas, registry = _load_all(version)
     if name not in schemas:
         raise KeyError(f"Unknown schema {name!r}; known: {sorted(schemas)}")
     return Draft202012Validator(schemas[name], registry=registry)
@@ -67,16 +97,16 @@ def _format_error(err) -> str:
     return f"{loc}: {msg}"
 
 
-def validate(name: str, instance) -> list:
+def validate(name: str, instance, version=None) -> list:
     """Return a list of human-readable error strings (empty if valid)."""
-    errors = sorted(validator(name).iter_errors(instance), key=lambda e: list(e.absolute_path))
+    errors = sorted(validator(name, version).iter_errors(instance), key=lambda e: list(e.absolute_path))
     return [_format_error(e) for e in errors]
 
 
-def validate_output(operation: str, output) -> list:
+def validate_output(operation: str, output, version=None) -> list:
     if operation not in OPERATION_SCHEMAS:
         return [f"<root>: unknown operation {operation!r}"]
-    errors = validate(OPERATION_SCHEMAS[operation], output)
+    errors = validate(OPERATION_SCHEMAS[operation], output, version)
     if isinstance(output, dict) and output.get("type") != operation:
         errors.insert(0, f"type: expected {operation!r}, got {output.get('type')!r}")
     return errors

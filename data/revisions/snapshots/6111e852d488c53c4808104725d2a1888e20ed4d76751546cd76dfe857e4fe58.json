@@ -1,0 +1,133 @@
+{
+  "content_hash": "6111e852d488c53c4808104725d2a1888e20ed4d76751546cd76dfe857e4fe58",
+  "example_id": "gj-lang-001",
+  "dataset_version": "0.1.0",
+  "task_type": "daily_plan",
+  "input": {
+    "app_locale": "en",
+    "conversation": [
+      {
+        "content": "Today I have maybe 30 minutes, что самое полезное можно успеть?",
+        "role": "user"
+      }
+    ],
+    "goal": {
+      "id": "g-go",
+      "title": "Выучить Go и переписать свой pet-проект на нём"
+    },
+    "journey": {
+      "milestones": [
+        {
+          "id": "m1",
+          "region_id": "r1",
+          "success_criteria": [
+            "Утилита собирается и проходит 3 теста"
+          ],
+          "title": "CLI-утилита на Go"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "verified",
+          "title": "Tour of Go: основы синтаксиса",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n1"
+          ],
+          "estimated_duration_minutes": 30,
+          "id": "n2",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "available",
+          "title": "Слайсы и мапы — 10 упражнений",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 45,
+          "id": "n3",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "locked",
+          "title": "Горутины и каналы — 5 упражнений",
+          "type": "task"
+        }
+      ],
+      "regions": [
+        {
+          "id": "r1",
+          "order": 1,
+          "status": "active",
+          "title": "Основы Go"
+        }
+      ]
+    },
+    "operation": "daily_plan",
+    "retrieved_memory": [
+      {
+        "category": "preference",
+        "content": "Любит разучивать песни по табулатурам.",
+        "goal_id": "g-guitar",
+        "scope": "goal"
+      }
+    ],
+    "time_budget": {
+      "available_minutes_today": 30
+    },
+    "today": "2026-09-27",
+    "user_memory": [
+      {
+        "category": "language",
+        "content": "Предпочитает, чтобы ответы были на русском, даже если сам пишет вперемешку.",
+        "scope": "user",
+        "stability": "stable"
+      }
+    ]
+  },
+  "expected_output": {
+    "available_minutes": 30,
+    "message_to_user": "За 30 минут — ровно 10 упражнений на слайсы и мапы. Это последний шаг перед горутинами, так что сегодняшняя сессия откроет следующий блок. Начните с упражнения на append — на нём чаще всего спотыкаются.",
+    "next_action": "Открыть первое упражнение на слайсы и написать функцию с append.",
+    "recommended_tasks": [
+      {
+        "estimated_duration_minutes": 30,
+        "reason": "Помещается в 30 минут и открывает следующую тему.",
+        "task_id": "n2"
+      }
+    ],
+    "response_language": "ru",
+    "total_minutes": 30,
+    "type": "daily_plan"
+  },
+  "contrastive": [
+    {
+      "critique": "Follows the English app locale and the English first half of the message, ignoring the user's stated preference for Russian.",
+      "failure_modes": [
+        "wrong_language"
+      ],
+      "id": "gj-lang-001-c1",
+      "output": {
+        "available_minutes": 30,
+        "message_to_user": "In 30 minutes you can do the 10 slices and maps exercises — that unlocks goroutines next.",
+        "next_action": "Open the first slices exercise.",
+        "recommended_tasks": [
+          {
+            "estimated_duration_minutes": 30,
+            "reason": "Fits 30 minutes.",
+            "task_id": "n2"
+          }
+        ],
+        "response_language": "en",
+        "total_minutes": 30,
+        "type": "daily_plan"
+      }
+    }
+  ]
+}

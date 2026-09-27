@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-vretry-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_retry, verification_decision]
   language: en
@@ -13,7 +13,8 @@ examples:
   goal_size: n/a
   tags: [retry_success, software]
   safety_category: allowed
-  scenario_group: sg-vretry-weather-app-tests
+  scenario_group: bs-vretry-fixed-after-request
+  topic_group: sg-vretry-weather-app-tests
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -102,7 +103,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-vretry-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_retry, verification_decision, user_agency]
   language: ru
@@ -112,7 +113,8 @@ examples:
   goal_size: n/a
   tags: [retry_still_rejected, scope_option]
   safety_category: allowed
-  scenario_group: sg-vretry-blog-posts
+  scenario_group: bs-vretry-still-failing-scope-option
+  topic_group: sg-vretry-blog-posts
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -219,7 +221,7 @@ examples:
   provenance: *prov
 
 - id: gj-vretry-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_retry, verification_decision]
   language: ru
@@ -229,7 +231,8 @@ examples:
   goal_size: n/a
   tags: [retry_success, certificate, screenshot]
   safety_category: allowed
-  scenario_group: sg-vretry-excel-course
+  scenario_group: bs-vretry-certificate-plus-test
+  topic_group: sg-vretry-excel-course
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -312,7 +315,7 @@ examples:
   provenance: *prov
 
 - id: gj-vretry-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_retry, verification_decision]
   language: en
@@ -322,7 +325,8 @@ examples:
   goal_size: n/a
   tags: [retry_partial, still_needs_more]
   safety_category: allowed
-  scenario_group: sg-vretry-bookkeeping-interviews
+  scenario_group: bs-vretry-partial-progress
+  topic_group: sg-vretry-bookkeeping-interviews
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -340,7 +344,7 @@ examples:
       difficulty: 3
       verification_protocol:
         task_nature: business_activity
-        objective_verifiability: medium
+        objective_verifiability: low
         methods:
           - method: structured_result
             role: required
@@ -352,9 +356,9 @@ examples:
             instructions: One synthesis question.
             questions: ["Which frustration came up most often?"]
         pass_criteria: ["5 complete interview cards"]
-        confidence_ceiling: medium
-        self_report_only: false
-        rationale: Structured notes with quotes are the practical evidence for interviews.
+        confidence_ceiling: limited
+        self_report_only: true
+        rationale: Interviews cannot be checked without intruding on the owners' privacy, so the cards are the user's own account and confidence stays limited however detailed they are; they are still exactly what the demand decision needs.
     verification_history:
       - attempt: 1
         evidence:
@@ -379,8 +383,8 @@ examples:
     task_id: t-salon-interviews
     attempt: 2
     status: needs_more_evidence
-    confidence: medium
-    evidence_basis: mixed
+    confidence: limited
+    evidence_basis: self_report
     criteria_results:
       - criterion: 5 complete interview cards
         result: not_met
@@ -411,8 +415,8 @@ examples:
         task_id: t-salon-interviews
         attempt: 2
         status: rejected
-        confidence: medium
-        evidence_basis: mixed
+        confidence: limited
+        evidence_basis: self_report
         criteria_results:
           - {criterion: 5 complete interview cards, result: not_met}
         reason: Fewer than 5 interviews.

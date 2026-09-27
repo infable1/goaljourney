@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/verification_result.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/verification_result.json",
   "title": "Operation output: verification_result (Types F, G)",
   "description": "Decision on submitted evidence against the task's protocol. Insufficient evidence => needs_more_evidence (not rejection). 'verified' requires every pass criterion to be met. Self-report-only evidence caps confidence at 'limited'.",
   "type": "object",
@@ -58,6 +58,21 @@
         "properties": {
           "request": { "$ref": "common.json#/$defs/short_text" },
           "why": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "contradictions": {
+      "description": "Disagreements the navigator noticed between what the user claims and what the evidence shows (POL-B). A result with contradictions cannot be verified.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_ids", "user_claim", "evidence_shows"],
+        "properties": {
+          "evidence_ids": { "$ref": "common.json#/$defs/id_list" },
+          "user_claim": { "$ref": "common.json#/$defs/short_text" },
+          "evidence_shows": { "$ref": "common.json#/$defs/short_text" }
         }
       }
     },

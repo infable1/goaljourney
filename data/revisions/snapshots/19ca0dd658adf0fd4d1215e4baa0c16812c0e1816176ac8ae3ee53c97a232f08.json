@@ -1,0 +1,253 @@
+{
+  "content_hash": "19ca0dd658adf0fd4d1215e4baa0c16812c0e1816176ac8ae3ee53c97a232f08",
+  "example_id": "gj-time-002",
+  "dataset_version": "0.1.1",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-py-auto",
+      "title": "Выучить Python, чтобы автоматизировать рабочие отчёты",
+      "deadline": "2027-06-30",
+      "available_time": {
+        "hours_per_week": 3
+      }
+    },
+    "time_budget": {
+      "hours_per_week": 10,
+      "previous_hours_per_week": 3
+    },
+    "journey": {
+      "pacing": {
+        "weekly_hours_planned": 3,
+        "horizon_weeks": 40
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Основы Python",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Работа с Excel и файлами",
+          "order": 2,
+          "status": "locked"
+        },
+        {
+          "id": "r3",
+          "title": "Автоматизация отчёта",
+          "order": 3,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Основы освоены",
+          "region_id": "r1",
+          "success_criteria": [
+            "30 задач на основы решены"
+          ],
+          "target_date": "2026-12-20"
+        },
+        {
+          "id": "m2",
+          "title": "Читаю и пишу Excel из Python",
+          "region_id": "r2",
+          "success_criteria": [
+            "Скрипт собирает 3 файла в один"
+          ],
+          "target_date": "2027-03-15"
+        },
+        {
+          "id": "m3",
+          "title": "Еженедельный отчёт собирается скриптом",
+          "region_id": "r3",
+          "success_criteria": [
+            "Отчёт за 3 недели подряд собран скриптом"
+          ],
+          "target_date": "2027-06-30"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Переменные, условия, циклы: 15 задач",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Функции и списки: 15 задач",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "depends_on": [
+            "n1"
+          ],
+          "estimated_duration_minutes": 1500
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Библиотека для работы с Excel-файлами",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 1500
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Скрипт объединения трёх файлов",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n3"
+          ],
+          "estimated_duration_minutes": 1200
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Автоматизировать еженедельный отчёт",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "depends_on": [
+            "n4"
+          ],
+          "estimated_duration_minutes": 1800
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "more_time",
+        "date": "2026-09-26",
+        "description": "Руководитель разрешил тратить на обучение до 10 часов в неделю в рабочее время."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Начальник разрешил учиться в рабочее время — до 10 часов в неделю! Можно ускориться?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "ru",
+    "message_to_user": "Отличные новости! Темп вырастает с 3 до 10 часов в неделю — втрое с лишним. Вместе с новым мини-проектом останется около 108 часов работы, это примерно 11 недель. Что предлагаю:\n• сдвинуть вехи раньше, но с запасом — «до 10 часов» будут не каждую неделю: основы — к 25 октября, работа с Excel — к 13 декабря, автоматизация отчёта — к 28 февраля;\n• раз учёба теперь в рабочее время, добавить небольшой проект на реальных данных вашего отдела — выгрузку данных для отчёта скриптом.\nИтоговый срок 30 июня остаётся запасом, торопить цель не нужно. Если какая-то неделя окажется загруженной, маршрут просто вернётся к прежнему темпу.",
+    "trigger": {
+      "type": "more_time",
+      "description": "Доступное время выросло с 3 до 10 часов в неделю."
+    },
+    "change_level": "moderate",
+    "requires_user_confirmation": false,
+    "removed_nodes": [],
+    "added_nodes": [
+      {
+        "id": "n6",
+        "type": "task",
+        "title": "Мини-проект — скрипт выгрузки данных отдела для отчёта",
+        "region_id": "r2",
+        "milestone_id": "m2",
+        "status": "locked",
+        "detail_level": "outline",
+        "depends_on": [
+          "n3"
+        ],
+        "estimated_duration_minutes": 480,
+        "created_by": "ai"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "node_id": "n5",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n4"
+            ],
+            "to": [
+              "n4",
+              "n6"
+            ]
+          }
+        ],
+        "reason": "Автоматизация отчёта использует скрипт выгрузки."
+      }
+    ],
+    "modified_deadlines": [
+      {
+        "target": "milestone",
+        "target_id": "m1",
+        "from": "2026-12-20",
+        "to": "2026-10-25",
+        "reason": "При 10 ч/нед 25 часов основ занимают около 2,5 недели; 25 октября оставляет запас",
+        "autonomy": "adapt_with_summary",
+        "state": "applied"
+      },
+      {
+        "target": "milestone",
+        "target_id": "m2",
+        "from": "2027-03-15",
+        "to": "2026-12-13",
+        "reason": "Ускорение с учётом мини-проекта; около 78 часов до вехи",
+        "autonomy": "adapt_with_summary",
+        "state": "applied"
+      },
+      {
+        "target": "milestone",
+        "target_id": "m3",
+        "from": "2027-06-30",
+        "to": "2027-02-28",
+        "reason": "Ускорение всего маршрута с запасом на загруженные недели",
+        "autonomy": "adapt_with_summary",
+        "state": "applied"
+      }
+    ],
+    "new_weekly_hours_planned": 10,
+    "workload": {
+      "weekly_hours": 10,
+      "remaining_minutes_before": 6000,
+      "remaining_minutes_after": 6480,
+      "horizon": {
+        "target": "milestone",
+        "target_id": "m3",
+        "date": "2027-02-28"
+      },
+      "weeks_needed": 10.8,
+      "weeks_available": 22,
+      "fits": true
+    },
+    "preserved_progress": [
+      "n1"
+    ],
+    "facts_used": [
+      {
+        "value": "Руководитель разрешил учиться до 10 часов в неделю в рабочее время",
+        "source_type": "user_provided",
+        "source_ref": "events[0]"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Вехи сдвинуты раньше: «Основы освоены» — на 25 октября, «Читаю и пишу Excel из Python» — на 13 декабря, «Еженедельный отчёт собирается скриптом» — на 28 февраля; добавлен мини-проект на данных отдела; темп — 10 часов в неделю.",
+      "why": "Время выросло с 3 до 10 часов в неделю, и учёба теперь проходит в рабочее время; около 108 часов работы при таком темпе занимают примерно 11 недель.",
+      "impact": "Отчёт может собираться скриптом к концу февраля вместо конца июня, с запасом на загруженные недели; срок цели 30 июня остаётся запасом."
+    }
+  },
+  "contrastive": null
+}

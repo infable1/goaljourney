@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/revision_ledger.json",
+  "title": "Dataset revision ledger",
+  "description": "Every difference between a dataset version and its base version, with the reason for it. `gj revisions check` fails if any example differs from the base release without a matching entry (no silent edits). Computed fields (hashes, changed_paths, snapshots) are filled by `gj revisions sync`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ledger_version", "dataset_version", "base_version", "base_release_manifest", "author", "revisions", "metadata_changes", "examples_added", "examples_removed"],
+  "properties": {
+    "ledger_version": { "const": "1.0" },
+    "dataset_version": { "type": "string" },
+    "base_version": { "type": "string" },
+    "base_release_manifest": { "type": "string" },
+    "author": { "type": "string" },
+    "note": { "type": "string" },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "example_id", "kind", "known_issues", "policies", "defect", "correction", "rationale", "reviewer_status"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^REV-[0-9.]+-[0-9]{3}$" },
+          "example_id": { "type": "string" },
+          "kind": { "enum": ["defect_fix", "policy_alignment", "metadata"] },
+          "known_issues": { "type": "array", "items": { "type": "string", "pattern": "^KI-[0-9]{3}$" } },
+          "policies": { "type": "array", "items": { "type": "string", "pattern": "^POL-[A-F]$" } },
+          "defect": { "type": "string", "minLength": 10 },
+          "correction": { "type": "string", "minLength": 10 },
+          "rationale": { "type": "string", "minLength": 10 },
+          "reviewer_status": {
+            "description": "Human review of the corrected version. The ledger author is not a reviewer; status stays pending until a human decision is recorded in the review log.",
+            "enum": ["pending_human_review", "confirmed", "disputed"]
+          },
+          "previous_content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "changed_paths": { "type": "array", "items": { "type": "string" } },
+          "snapshots": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["previous", "current"],
+            "properties": { "previous": { "type": "string" }, "current": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "metadata_changes": {
+      "description": "Changes applied to many examples at once (e.g. schema_version, scenario_group relabelling).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "description", "examples"],
+        "properties": {
+          "field": { "type": "string" },
+          "description": { "type": "string" },
+          "examples": { "type": "integer", "minimum": 0 },
+          "mapping": { "type": "string" }
+        }
+      }
+    },
+    "examples_added": { "type": "array", "items": { "type": "string" } },
+    "examples_removed": { "type": "array", "items": { "type": "string" } }
+  }
+}

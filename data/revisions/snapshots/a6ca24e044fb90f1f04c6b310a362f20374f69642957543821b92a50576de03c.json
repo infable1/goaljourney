@@ -1,0 +1,305 @@
+{
+  "content_hash": "a6ca24e044fb90f1f04c6b310a362f20374f69642957543821b92a50576de03c",
+  "example_id": "gj-task-003",
+  "dataset_version": "0.1.0",
+  "task_type": "task_generation",
+  "input": {
+    "conversation": [
+      {
+        "content": "I only get 30-minute slots on weekday evenings, and I learn by doing, not by reading. Can you break down the SQL basics part?",
+        "role": "user"
+      }
+    ],
+    "goal": {
+      "available_time": {
+        "hours_per_week": 3,
+        "session_minutes": 30
+      },
+      "id": "g-sql",
+      "preferences": [
+        "Hands-on exercises over reading long tutorials"
+      ],
+      "resources": [
+        "A CSV export of 18 months of sales from my online shop"
+      ],
+      "title": "Learn SQL well enough to answer questions about my shop's sales data"
+    },
+    "journey": {
+      "milestones": [
+        {
+          "id": "m1",
+          "region_id": "r1",
+          "success_criteria": [
+            "5 queries on own data return correct answers"
+          ],
+          "title": "Answer 5 real business questions with SQL"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "available",
+          "title": "SQL basics",
+          "type": "task"
+        }
+      ],
+      "regions": [
+        {
+          "id": "r1",
+          "order": 1,
+          "status": "active",
+          "title": "SQL basics"
+        }
+      ]
+    },
+    "operation": "task_generation",
+    "target_node_id": "n1",
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "decision_summary": null,
+    "for_node_id": "n1",
+    "message_to_user": "Here are five 30-minute sessions, all hands-on. You'll work on your own sales CSV from the second session on, so every exercise is a question you actually care about.",
+    "response_language": "en",
+    "tasks": [
+      {
+        "dependencies": [],
+        "description": "Open a browser SQLite tool, import the sales CSV as a table and run SELECT COUNT(*) on it.",
+        "difficulty": 1,
+        "estimated_duration_minutes": 30,
+        "expected_result": "The table loaded and the row count from COUNT(*) that matches the CSV.",
+        "id": "n1-t1",
+        "title": "Load your sales CSV into a free browser-based SQL sandbox",
+        "verification_protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "acceptance_criteria": [
+                "Query runs",
+                "Count matches the CSV row count"
+              ],
+              "instructions": "Paste the query and its output; the navigator compares the count with the number of rows you report in the CSV.",
+              "method": "practical_test",
+              "role": "required"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "COUNT(*) output matches the CSV"
+          ],
+          "rationale": "A query and its output are directly checkable.",
+          "self_report_only": false,
+          "task_nature": "software"
+        },
+        "why_it_matters": "Practising on your own data from day one keeps every later exercise relevant."
+      },
+      {
+        "dependencies": [
+          "n1-t1"
+        ],
+        "description": "Answer eight small questions such as \"orders over 50\" or \"orders from March\" using SELECT, WHERE, ORDER BY and LIMIT.",
+        "difficulty": 2,
+        "estimated_duration_minutes": 30,
+        "expected_result": "8 queries with their outputs.",
+        "id": "n1-t2",
+        "title": "Solve 8 SELECT and WHERE exercises on your sales table",
+        "verification_protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "acceptance_criteria": [
+                "At least 7 of 8 queries answer the question asked"
+              ],
+              "instructions": "Paste each query with the first rows of its output.",
+              "method": "practical_test",
+              "role": "required"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "7 of 8 correct"
+          ],
+          "rationale": "Queries can be checked against the question they answer.",
+          "self_report_only": false,
+          "task_nature": "software"
+        },
+        "why_it_matters": "Filtering and sorting cover most everyday questions about sales data."
+      },
+      {
+        "dependencies": [
+          "n1-t2"
+        ],
+        "description": "Use GROUP BY with SUM, COUNT and AVG to get revenue per month, orders per product and average order value.",
+        "difficulty": 3,
+        "estimated_duration_minutes": 30,
+        "expected_result": "6 aggregate queries with outputs.",
+        "id": "n1-t3",
+        "title": "Solve 6 GROUP BY exercises (totals by month and by product)",
+        "verification_protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "acceptance_criteria": [
+                "Grouping column matches the question",
+                "At least 5 of 6 correct"
+              ],
+              "instructions": "Paste queries and outputs.",
+              "method": "practical_test",
+              "role": "required"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "5 of 6 correct"
+          ],
+          "rationale": "Directly checkable.",
+          "self_report_only": false,
+          "task_nature": "software"
+        },
+        "why_it_matters": "Aggregation turns raw orders into the numbers you make decisions with."
+      },
+      {
+        "dependencies": [
+          "n1-t3"
+        ],
+        "description": "For example, best-selling product in the last 3 months or revenue per month for one category.",
+        "difficulty": 3,
+        "estimated_duration_minutes": 30,
+        "expected_result": "3 queries with outputs.",
+        "id": "n1-t4",
+        "title": "Write 3 queries that combine a WHERE filter with GROUP BY",
+        "verification_protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "instructions": "Paste queries and outputs.",
+              "method": "practical_test",
+              "role": "required"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "3 correct queries"
+          ],
+          "rationale": "Directly checkable.",
+          "self_report_only": false,
+          "task_nature": "software"
+        },
+        "why_it_matters": "Combining filters with aggregation is what most real business questions need."
+      },
+      {
+        "dependencies": [
+          "n1-t4"
+        ],
+        "description": "Write down five questions you actually have about your shop and answer each with one query.",
+        "difficulty": 3,
+        "estimated_duration_minutes": 30,
+        "expected_result": "5 questions, 5 queries, 5 answers in one note.",
+        "id": "n1-t5",
+        "title": "Answer 5 of your own business questions with SQL",
+        "verification_protocol": {
+          "confidence_ceiling": "high",
+          "methods": [
+            {
+              "instructions": "Paste each question, query and result.",
+              "method": "practical_test",
+              "role": "required"
+            },
+            {
+              "instructions": "One question about using the result.",
+              "method": "follow_up_questions",
+              "questions": [
+                "Which answer will change something you do in the shop?"
+              ],
+              "role": "supplementary"
+            }
+          ],
+          "objective_verifiability": "high",
+          "pass_criteria": [
+            "5 queries correctly answer their questions"
+          ],
+          "rationale": "Correctness of queries is checkable; the follow-up ties the skill to the goal.",
+          "self_report_only": false,
+          "task_nature": "software"
+        },
+        "why_it_matters": "This is the milestone itself — SQL applied to your own decisions."
+      }
+    ],
+    "type": "task_generation"
+  },
+  "contrastive": [
+    {
+      "critique": "Tasks take 2 hours in one sitting although the user only has 30-minute slots, and the first task is reading a long tutorial — the opposite of the stated preference.",
+      "failure_modes": [
+        "ignored_available_time",
+        "ignored_preferences"
+      ],
+      "id": "gj-task-003-c1",
+      "output": {
+        "for_node_id": "n1",
+        "message_to_user": "Here's a thorough plan.",
+        "response_language": "en",
+        "tasks": [
+          {
+            "description": "Read the first four chapters carefully.",
+            "difficulty": 2,
+            "estimated_duration_minutes": 120,
+            "expected_result": "4 chapters read.",
+            "id": "n1-t1",
+            "title": "Read chapters 1–4 of a comprehensive SQL tutorial",
+            "verification_protocol": {
+              "confidence_ceiling": "high",
+              "methods": [
+                {
+                  "instructions": "Answer 10 quiz questions.",
+                  "method": "knowledge_test",
+                  "role": "required"
+                }
+              ],
+              "objective_verifiability": "high",
+              "pass_criteria": [
+                "8 of 10 correct"
+              ],
+              "rationale": "Quiz checks reading.",
+              "self_report_only": false,
+              "task_nature": "knowledge"
+            },
+            "why_it_matters": "Theory first."
+          },
+          {
+            "dependencies": [
+              "n1-t1"
+            ],
+            "description": "Work through all 40 exercises.",
+            "difficulty": 3,
+            "estimated_duration_minutes": 180,
+            "expected_result": "40 exercises solved.",
+            "id": "n1-t2",
+            "title": "Complete 40 practice exercises on a sample database",
+            "verification_protocol": {
+              "confidence_ceiling": "high",
+              "methods": [
+                {
+                  "instructions": "Paste your solutions.",
+                  "method": "practical_test",
+                  "role": "required"
+                }
+              ],
+              "objective_verifiability": "high",
+              "pass_criteria": [
+                "35 of 40 correct"
+              ],
+              "rationale": "Solutions are checkable.",
+              "self_report_only": false,
+              "task_nature": "software"
+            },
+            "why_it_matters": "Practice makes perfect."
+          }
+        ],
+        "type": "task_generation"
+      }
+    }
+  ]
+}

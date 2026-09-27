@@ -1,0 +1,88 @@
+{
+  "content_hash": "3289d3d7463fc2736d07b7fcdf4c6942640032384462860a5a0996f1d91f4b89",
+  "example_id": "gj-nav-001",
+  "dataset_version": "0.1.0",
+  "task_type": "navigator_response",
+  "input": {
+    "conversation": [
+      {
+        "content": "Почему я должен смотреть чужие видео? Я хочу снимать своё, а не копировать.",
+        "role": "user"
+      }
+    ],
+    "goal": {
+      "available_time": {
+        "hours_per_week": 6
+      },
+      "id": "g-yt",
+      "title": "Запустить YouTube-канал о путешествиях и набрать первую 1000 подписчиков"
+    },
+    "journey": {
+      "milestones": [
+        {
+          "id": "m1",
+          "region_id": "r1",
+          "success_criteria": [
+            "Описание канала и формат первых 5 видео"
+          ],
+          "title": "Концепция и формат выбраны"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "verified",
+          "title": "Выбрать нишу внутри темы путешествий",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n1"
+          ],
+          "estimated_duration_minutes": 120,
+          "id": "n2",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "available",
+          "title": "Проанализировать 10 видео конкурентов по чек-листу",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n2"
+          ],
+          "id": "n3",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "locked",
+          "title": "Описать формат первых 5 видео",
+          "type": "task"
+        }
+      ],
+      "regions": [
+        {
+          "id": "r1",
+          "order": 1,
+          "status": "active",
+          "title": "Концепция канала"
+        }
+      ]
+    },
+    "operation": "navigator_response",
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "decision_summary": null,
+    "in_scope": true,
+    "intent": "explain_task",
+    "message_to_user": "Копировать и не нужно — задача как раз о том, чтобы найти, чем вы будете отличаться. Разбор 10 видео в вашей нише (бюджетные путешествия с детьми) покажет:\n• какие темы и форматы там уже набирают просмотры — значит, на них есть спрос;\n• чего зрителям не хватает — это видно по комментариям;\n• какая длина и какие заставки удерживают внимание.\nЭто около двух часов вместо месяцев проб и ошибок на своих видео. Если хочется быстрее к съёмкам — можно сократить до 5 видео, но тогда выводы будут менее надёжными.",
+    "proposed_changes": [],
+    "requires_user_confirmation": false,
+    "response_language": "ru",
+    "suggested_next_action": "Начать с 3 самых популярных видео в нише и выписать, что зрители хвалят и о чём просят в комментариях.",
+    "type": "navigator_response"
+  },
+  "contrastive": null
+}

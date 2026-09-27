@@ -1,4 +1,5 @@
 from gjcore import schemas
+from gjcore.config import versions
 from gjcore.io import load_yaml
 from gjcore.paths import PROMPTS_DIR
 from generation.validators import semantic
@@ -20,11 +21,23 @@ def test_every_operation_has_an_output_schema():
 
 def test_failure_mode_catalogue_is_consistent():
     enum = set(schemas.validator("common").schema["$defs"]["failure_mode"]["enum"])
-    catalogue = load_yaml(PROMPTS_DIR / "generation" / "v0.1.0" / "failure_modes.yaml")
+    catalogue = load_yaml(PROMPTS_DIR / "generation" / f"v{versions()['generation_prompt_version']}" / "failure_modes.yaml")
     assert set(catalogue) == enum
     auto = {m for m, v in catalogue.items() if v["detection"] == "auto"}
     assert auto == semantic.ALWAYS_DETECTABLE
     assert set(semantic.FAILURE_MODE_CODES) <= enum
+
+
+def test_archived_failure_mode_catalogue_matches_archived_schema():
+    enum = set(schemas.validator("common", "0.1.0").schema["$defs"]["failure_mode"]["enum"])
+    assert set(load_yaml(PROMPTS_DIR / "generation" / "v0.1.0" / "failure_modes.yaml")) == enum
+
+
+def test_every_schema_version_loads():
+    assert schemas.available_versions()[:2] == ["0.1.0", "0.1.1"]
+    for v in schemas.available_versions():
+        for n in schemas.schema_names(v):
+            schemas.validator(n, v)
 
 
 def test_goal_requires_only_title():

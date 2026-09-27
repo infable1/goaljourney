@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/eval_leakage_metadata.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/eval_leakage_metadata.json",
   "title": "Evaluation leakage metadata",
   "description": "Evaluation-side provenance used by `gj leakage`: scenario group, behavioural template and seed origin of every case, and the reviewed overlaps between evaluation cases and training examples. Kept outside the case files so that adding it does not change released test data.",
   "type": "object",
@@ -16,7 +16,7 @@
         "additionalProperties": false,
         "required": ["scenario_group", "behavior_template", "seed_origin", "author"],
         "properties": {
-          "scenario_group": { "type": "string", "pattern": "^sg-ev-[a-z0-9-]+$" },
+          "scenario_group": { "type": "string", "pattern": "^(sg-ev|bs)-[a-z0-9-]+$" },
           "behavior_template": { "type": "string", "pattern": "^bt-[a-z0-9-]+$" },
           "seed_origin": { "type": "string" },
           "author": { "type": "string" }

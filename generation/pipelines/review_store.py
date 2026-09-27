@@ -1,4 +1,4 @@
-"""Human review store (review log v0.2): append-only events, preserved snapshots, status resolution.
+"""Human review store (review log v0.3): append-only events, preserved snapshots, status resolution.
 
 * Every decision is one line in data/reviewed/review_events.jsonl. Lines are never edited or removed:
   each event carries the hash of the previous one (`prev_event_hash`) and its own `event_hash`, so
@@ -6,15 +6,19 @@
 * A decision applies to exact content (`content_hash`). The reviewed content is written once to
   data/reviewed/snapshots/<content_hash>.json, so every historical version stays readable after
   the example is edited.
-* Status is derived, never stored on the example:
-    pending                  no decision on any version of the example
-    stale                    decided on an earlier version; the current content has not been reviewed
-    approved                 qualified human approval(s) and no open objection on the current content
-    approved_pending_expert  approved, but the expert domains the example requires are not signed off yet
-    needs_revision           a reviewer asked for a revision of the current content
-    rejected                 a reviewer rejected the current content
-  With several reviewers, the latest decision of each counts and the most conservative wins
-  (reject > revise > approve); an adjudicator's latest decision overrides everyone.
+* Status is derived, never stored on the example. There are four canonical statuses (Milestone 1.6);
+  `detail` says why a pending example is pending:
+    status          detail            meaning
+    pending         not_reviewed      no qualifying decision on the current content
+    pending         content_changed   decided on an earlier version; the current content has not been reviewed
+    pending         awaiting_expert   approved by dataset reviewers, but required expert domains are not signed off
+    approved        decided           qualified human approval(s), expert sign-off complete, no open objection
+    needs_revision  decided           a reviewer asked for a revision of the current content
+    rejected        decided           a reviewer rejected the current content
+  Only `approved` is training-eligible. With several reviewers, the latest decision of each counts and
+  the most conservative wins (reject > revise > approve); an adjudicator's latest decision overrides everyone.
+  Log v0.2 (statuses `stale`, `approved_pending_expert`) was never written to; v0.3 events record the
+  canonical status plus `new_status_detail`.
 """
 import re
 from dataclasses import dataclass
@@ -27,8 +31,9 @@ from gjcore.io import append_jsonl, canonical_json, dump_json, load_json, load_y
 from gjcore.paths import rel, repo_path
 from gjcore.records import HASHED_FIELDS, content_hash
 
-LOG_VERSION = "0.2.0"
-STATUSES = ("pending", "stale", "approved", "approved_pending_expert", "needs_revision", "rejected")
+LOG_VERSION = "0.3.0"
+STATUSES = ("pending", "approved", "needs_revision", "rejected")
+DETAILS = ("not_reviewed", "content_changed", "awaiting_expert", "decided")
 TRAINING_ELIGIBLE = {"approved"}
 ACTIONS = ("approve", "revise", "reject")
 ROLES = ("dataset_reviewer", "domain_expert", "adjudicator")
@@ -303,7 +308,8 @@ def resolve(record, events, cfg=None) -> dict:
     h = content_hash(record)
     langs = required_languages(record)
     doms = required_expert_domains(record, cfg)
-    info = {"status": "pending", "content_hash": h, "tier": "expert_review_required" if doms else "human_review_required",
+    info = {"status": "pending", "detail": "not_reviewed", "content_hash": h,
+            "tier": "expert_review_required" if doms else "human_review_required",
             "required_languages": langs, "required_expert_domains": doms, "decisions": {}, "events": 0,
             "missing_expert_domains": []}
     evs = [e for e in events if e.get("example_id") == record.get("id")]
@@ -312,7 +318,7 @@ def resolve(record, events, cfg=None) -> dict:
         return info
     cur = [e for e in evs if e.get("content_hash") == h]
     if not cur:
-        info["status"] = "stale"
+        info["detail"] = "content_changed"
         return info
     latest = {}
     for e in cur:
@@ -322,14 +328,13 @@ def resolve(record, events, cfg=None) -> dict:
     decisive = [adj[-1]] if adj else list(latest.values())
     actions = {e["action"] for e in decisive}
     if "reject" in actions:
-        info["status"] = "rejected"
+        info["status"], info["detail"] = "rejected", "decided"
     elif "revise" in actions:
-        info["status"] = "needs_revision"
+        info["status"], info["detail"] = "needs_revision", "decided"
     else:
         approvals = [e for e in decisive if e["action"] == "approve" and e["reviewer"]["human"]
                      and (not cfg["approval"]["require_language_match"] or _qualifies_language(e, langs))]
         if not approvals:
-            info["status"] = "pending"
             return info
         covered = set()
         for e in approvals:
@@ -337,7 +342,7 @@ def resolve(record, events, cfg=None) -> dict:
                 covered |= set(e["reviewer"]["expert_domains"])
         missing = sorted(set(doms) - covered) if cfg["approval"]["expert_tier_requires_expert"] else []
         info["missing_expert_domains"] = missing
-        info["status"] = "approved_pending_expert" if missing else "approved"
+        info["status"], info["detail"] = ("pending", "awaiting_expert") if missing else ("approved", "decided")
     return info
 
 
@@ -398,6 +403,7 @@ def record_decision(store, registry, rubric, record, reviewer_id, action, rating
     provisional = dict(event, reviewer_id=reviewer_id)
     after = resolve(record, events + [provisional], cfg)
     event["new_status"] = after["status"]
+    event["new_status_detail"] = after["detail"]
     return store.append(event)
 
 

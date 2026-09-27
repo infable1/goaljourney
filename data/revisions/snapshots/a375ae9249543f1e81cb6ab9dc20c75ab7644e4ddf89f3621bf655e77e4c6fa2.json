@@ -1,0 +1,87 @@
+{
+  "content_hash": "a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2",
+  "example_id": "gj-clar-007",
+  "dataset_version": "0.1.0",
+  "task_type": "goal_clarification",
+  "input": {
+    "conversation": [
+      {
+        "content": "Хочу переехать в Германию и работать там бэкенд-разработчиком.",
+        "role": "user"
+      },
+      {
+        "content": "Хорошая цель. Сколько у вас опыта в бэкенде и какой уровень английского и немецкого?",
+        "role": "assistant"
+      },
+      {
+        "content": "Пять лет на Java, английский B2, немецкий с нуля.",
+        "role": "user"
+      }
+    ],
+    "goal": {
+      "title": "Переехать в Германию и работать бэкенд-разработчиком"
+    },
+    "operation": "goal_clarification",
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "known_context_used": [
+      "Пять лет опыта на Java",
+      "Английский B2",
+      "Немецкий с нуля"
+    ],
+    "message_to_user": "Пять лет Java и английский B2 — хорошая позиция: во многих немецких IT-компаниях рабочий язык английский. Осталось два вопроса:\n1. Гражданство какой страны у вас? От этого зависит визовый путь.\n2. К какому сроку вы хотите переехать и едете ли вы один или с семьёй?\nКонкретные визовые требования и сроки я проверю по актуальным официальным источникам, когда дойдём до этого этапа маршрута.",
+    "questions": [
+      {
+        "impact": "Определяет визовый путь и нужные документы — это самый длинный по времени участок маршрута.",
+        "question": "Гражданство какой страны у вас?",
+        "targets": [
+          "location"
+        ]
+      },
+      {
+        "impact": "Срок задаёт темп поиска работы, а переезд с семьёй добавляет документы, бюджет и поиск жилья побольше.",
+        "question": "К какому сроку вы хотите переехать и едете ли один или с семьёй?",
+        "targets": [
+          "deadline",
+          "constraints"
+        ]
+      }
+    ],
+    "ready_to_plan": false,
+    "response_language": "ru",
+    "type": "goal_clarification"
+  },
+  "contrastive": [
+    {
+      "critique": "Re-asks experience and English level from the previous turn, and states a current visa rule (salary threshold) from memory as a fact.",
+      "failure_modes": [
+        "asked_known_information",
+        "unverified_current_facts"
+      ],
+      "id": "gj-clar-007-c1",
+      "output": {
+        "message_to_user": "Отлично! Для Blue Card сейчас нужна зарплата от 45 000 евро, так что всё реально. Напомните, сколько у вас опыта и какой уровень английского?",
+        "questions": [
+          {
+            "impact": "Влияет на уровень вакансий.",
+            "question": "Сколько у вас лет опыта в бэкенде?",
+            "targets": [
+              "experience"
+            ]
+          },
+          {
+            "impact": "Влияет на выбор компаний.",
+            "question": "Какой у вас уровень английского?",
+            "targets": [
+              "current_level"
+            ]
+          }
+        ],
+        "ready_to_plan": false,
+        "response_language": "ru",
+        "type": "goal_clarification"
+      }
+    }
+  ]
+}

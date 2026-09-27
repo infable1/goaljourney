@@ -3,11 +3,14 @@
 validate_example(record) runs, in order:
   1. envelope schema (schemas/example_record.json)
   2. operation output schema for expected_output
-  3. semantic lint of expected_output (must be error-free)
+  3. semantic lint of expected_output (must be error-free) and, from v0.1.1, of the input
   4. consistency checks between metadata, input and output
   5. contrastive self-test: every rejected output must be schema-valid (so preference pairs
      teach behaviour, not formatting) and the linter must catch every failure mode that is
      declared ALWAYS_DETECTABLE.
+
+Every step uses the schemas and lint rules of the record's own `schema_version`, so a released
+version validates exactly as it did when it was released.
 """
 from dataclasses import dataclass, field
 
@@ -47,8 +50,12 @@ def _user_texts(record):
 def validate_example(record: dict, strict: bool = False) -> RecordReport:
     rid = record.get("id", "<missing id>")
     rep = RecordReport(rid)
+    version = record.get("schema_version")
+    if version not in schemas.available_versions():
+        rep.errors.append(f"schema_version {version!r} is not one of {schemas.available_versions()}")
+        return rep
 
-    env_errors = schemas.validate("example_record", record)
+    env_errors = schemas.validate("example_record", record, version)
     rep.errors += [f"ENVELOPE {e}" for e in env_errors]
     op = record.get("task_type")
     out = record.get("expected_output")
@@ -62,10 +69,12 @@ def validate_example(record: dict, strict: bool = False) -> RecordReport:
 
     if ctx.get("operation") != op:
         rep.errors.append(f"input.operation {ctx.get('operation')!r} != task_type {op!r}")
-    rep.errors += [f"OUTPUT_SCHEMA {e}" for e in schemas.validate_output(op, out)]
+    rep.errors += [f"OUTPUT_SCHEMA {e}" for e in schemas.validate_output(op, out, version)]
 
-    for issue in semantic.lint_output(op, out, ctx, ann, lang, safety):
+    for issue in semantic.lint_output(op, out, ctx, ann, lang, safety, version):
         (rep.errors if issue.level == "error" or strict else rep.warnings).append(str(issue))
+    for issue in semantic.lint_input(ctx, version):
+        (rep.errors if issue.level == "error" or strict else rep.warnings).append(f"INPUT {issue}")
 
     # ---- metadata consistency
     if op in schemas.USER_FACING_OPERATIONS and out.get("response_language") != lang:
@@ -93,17 +102,23 @@ def validate_example(record: dict, strict: bool = False) -> RecordReport:
         cid = cst.get("id", f"contrastive[{i}]")
         cout = cst.get("output")
         modes = cst.get("failure_modes", [])
-        schema_errs = schemas.validate_output(op, cout) if isinstance(cout, dict) else ["not an object"]
+        schema_errs = schemas.validate_output(op, cout, version) if isinstance(cout, dict) else ["not an object"]
         if schema_errs:
             rep.errors += [f"CONTRASTIVE {cid} schema: {e}" for e in schema_errs[:5]]
         if isinstance(cout, dict) and canonical_json(cout) == expected_canon:
             rep.errors.append(f"CONTRASTIVE {cid} is identical to expected_output")
-        issues = semantic.lint_output(op, cout, ctx, ann, lang, safety) if isinstance(cout, dict) else []
+        issues = semantic.lint_output(op, cout, ctx, ann, lang, safety, version) if isinstance(cout, dict) else []
         codes = sorted({iss.code for iss in issues})
         detected_modes = [m for m in modes if semantic.FAILURE_MODE_CODES.get(m, set()) & set(codes)]
         missing = [m for m in modes if m in semantic.ALWAYS_DETECTABLE and m not in detected_modes]
         if missing:
             rep.errors.append(f"CONTRASTIVE {cid}: linter did not detect always-detectable failure mode(s) {missing} (codes seen: {codes})")
+        if schemas.version_key(version) >= schemas.version_key("0.1.1"):
+            # A rejected output should differ from the chosen one only in its tagged failure modes (KI-032).
+            tagged = set().union(*(semantic.FAILURE_MODE_CODES.get(m, set()) for m in modes)) if modes else set()
+            untagged = sorted({iss.code for iss in issues if iss.level == "error"} - tagged)
+            if untagged:
+                rep.warnings.append(f"CONTRASTIVE {cid}: error codes outside its tagged failure modes {modes}: {untagged}")
         rep.contrastive.append(ContrastiveResult(cid, modes, codes, detected_modes, missing))
     return rep
 

@@ -1,0 +1,220 @@
+{
+  "content_hash": "6ca936010d02bd18d307ee96de96fe8631791f6d2433f40182e45ed987d38f96",
+  "example_id": "gj-route-004",
+  "dataset_version": "0.1.1",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-pitch-deck",
+      "title": "Подготовить стартап к питчу перед инвесторами",
+      "deadline": "2026-11-15",
+      "available_time": {
+        "hours_per_week": 6
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Питч-дек",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Репетиции",
+          "order": 2,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Финальный дек готов",
+          "region_id": "r1",
+          "success_criteria": [
+            "Дек из 10–12 слайдов прошёл разбор"
+          ],
+          "target_date": "2026-10-25"
+        },
+        {
+          "id": "m2",
+          "title": "Питч отрепетирован",
+          "region_id": "r2",
+          "success_criteria": [
+            "3 прогона уложились в 5 минут"
+          ],
+          "target_date": "2026-11-10"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Черновик питч-дека",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "completed"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Разобрать 20 успешных питч-деков и выписать приёмы",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "estimated_duration_minutes": 600
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Финальная версия дека",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n1",
+            "n2"
+          ]
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "3 прогона перед знакомыми",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n3"
+          ]
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "new_resource",
+        "date": "2026-09-26",
+        "description": "Бывший основатель стартапа предложил 3 бесплатные менторские сессии в октябре."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Классные новости — знакомый, который сам поднимал раунд, предложил мне три сессии менторства в октябре. Как это встроить в план?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "ru",
+    "message_to_user": "Отличная новость — разбор вашего черновика с человеком, который сам поднимал раунд, даст то, чего не дадут чужие деки. Предлагаю так:\n• разбор 20 деков сократить до 5 — этого хватит, чтобы увидеть структуру, остальное даст ментор;\n• 1-я сессия — разбор вашего черновика до финальной версии;\n• 2-я — прогон питча по финальному деку до конца октября, пока действует предложение; три прогона перед знакомыми — уже с учётом замечаний;\n• 3-ю — в резерв до конца октября, например на вопросы инвесторов.\nЭкономия около 5,5 часа: разбор сокращается на 7,5 часа, а две сессии займут 2 часа. Сроки вех не меняются. Сокращаем разбор до 5 деков?",
+    "trigger": {
+      "type": "new_resource",
+      "description": "Три бесплатные менторские сессии в октябре."
+    },
+    "change_level": "moderate",
+    "requires_user_confirmation": true,
+    "removed_nodes": [],
+    "added_nodes": [
+      {
+        "id": "n5",
+        "type": "task",
+        "title": "Сессия с ментором №1: разбор черновика дека",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "available",
+        "detail_level": "outline",
+        "depends_on": [
+          "n1"
+        ],
+        "estimated_duration_minutes": 60,
+        "created_by": "ai"
+      },
+      {
+        "id": "n6",
+        "type": "task",
+        "title": "Сессия с ментором №2: прогон питча по финальному деку",
+        "region_id": "r2",
+        "milestone_id": "m2",
+        "status": "locked",
+        "detail_level": "outline",
+        "depends_on": [
+          "n3"
+        ],
+        "estimated_duration_minutes": 60,
+        "due_date": "2026-10-31",
+        "created_by": "ai"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "node_id": "n2",
+        "changes": [
+          {
+            "field": "title",
+            "from": "Разобрать 20 успешных питч-деков и выписать приёмы",
+            "to": "Разобрать 5 успешных питч-деков и выписать приёмы"
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 600,
+            "to": 150
+          }
+        ],
+        "reason": "Разбор с ментором заменяет большую часть самостоятельного анализа."
+      },
+      {
+        "node_id": "n3",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n1",
+              "n2"
+            ],
+            "to": [
+              "n1",
+              "n2",
+              "n5"
+            ]
+          }
+        ],
+        "reason": "Финальная версия учитывает замечания ментора."
+      },
+      {
+        "node_id": "n4",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n3"
+            ],
+            "to": [
+              "n6"
+            ]
+          }
+        ],
+        "reason": "Прогоны перед знакомыми идут после разбора с ментором, чтобы учесть его замечания."
+      }
+    ],
+    "modified_deadlines": [],
+    "preserved_progress": [
+      "n1"
+    ],
+    "facts_used": [
+      {
+        "value": "Три менторские сессии предложены только на октябрь",
+        "source_type": "user_provided",
+        "source_ref": "events[0]"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Предложено добавить две менторские сессии (вторую — до конца октября) и сократить разбор чужих деков с 20 до 5.",
+      "why": "Замечания опытного основателя по вашему деку полезнее самостоятельного разбора 20 чужих, а сессии доступны только в октябре.",
+      "impact": "Экономия около 5,5 часа с учётом времени на сессии; сроки вех не меняются, третья сессия в резерве."
+    }
+  },
+  "contrastive": null
+}

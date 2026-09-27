@@ -2,7 +2,8 @@
 
 sft         {"messages": [system, user, assistant], "metadata": {...}}   (train + validation)
 preference  {"prompt": [system, user], "chosen": [assistant], "rejected": [assistant], "metadata": {...}}
-eval        {"id", "messages": [system, user], "task_type", "dimensions", "checks", "language"}
+eval        {"id", "case_id", "step_id", "case_type", "messages": [system, user], "task_type", "dimensions",
+             "checks", "language"} — one row per model call (each step of a multi-step case is a row)
 
 Training formats (sft, preference) are gated:
   * --review-policy require_approved (default): only rows whose exact content is `approved` NOW
@@ -13,26 +14,35 @@ Training formats (sft, preference) are gated:
   * --review-policy allow_pending always implies a draft export.
 The eval format is not gated: it contains no training targets.
 
+The system prompt is the navigator prompt version recorded in the release manifest, so re-exporting
+an older release reproduces the prompt it was built for.
+
 The chat template of the base model is applied later by the training framework; nothing here is
 specific to one model or provider.
 """
 from gjcore.config import load_config, versions
-from gjcore.io import read_jsonl, write_jsonl
+from gjcore.io import load_json, read_jsonl, write_jsonl
 from gjcore.paths import rel, repo_path
-from gjcore.prompting import assistant_message, prompt_messages
+from gjcore.prompting import assistant_message, navigator_prompt_path, prompt_messages
 
 from .split import release_paths
 
 _RELEASE_ONLY = ("review_status", "content_hash")
 
 
-def _meta(rec, version, split, status, eligible):
-    v = versions()
+def _release_versions(paths):
+    """Versions the release was built with (manifest), falling back to the current ones."""
+    if paths["manifest"].exists():
+        return load_json(paths["manifest"]).get("versions") or versions()
+    return versions()
+
+
+def _meta(rec, version, split, status, eligible, prompt_version):
     return {"id": rec["id"], "split": split, "task_type": rec["task_type"], "behavior": rec["behavior"],
             "language": rec["language"], "domain": rec["domain"], "safety_category": rec["safety_category"],
             "review_status": status, "training_eligible": eligible, "content_hash": rec.get("content_hash"),
-            "dataset_version": version, "navigator_prompt_version": v["navigator_prompt_version"],
-            "schema_version": v["schema_version"]}
+            "dataset_version": version, "navigator_prompt_version": prompt_version,
+            "schema_version": rec.get("schema_version")}
 
 
 def export(fmt, version=None, out_dir=None, review_policy="require_approved", allow_draft=False):
@@ -44,11 +54,19 @@ def export(fmt, version=None, out_dir=None, review_policy="require_approved", al
         return 1
     base = repo_path(out_dir or load_config("export")["exports_dir"])
     written = []
+    prompt_version = _release_versions(paths)["navigator_prompt_version"]
+    prompt = navigator_prompt_path(prompt_version)
     if fmt == "eval":
+        from evaluation.metrics.scoring import expand_units
         out = base / f"v{version}"
-        rows = [{"id": c["id"], "messages": prompt_messages(c["input"]), "task_type": c["task_type"],
-                 "dimensions": c["dimensions"], "language": c["language"], "checks": c["checks"],
-                 "eval_version": c["eval_version"]} for c in read_jsonl(paths["test"])]
+        rows = []
+        for c in read_jsonl(paths["test"]):
+            for u in expand_units(c):
+                rows.append({"id": u["unit_id"], "case_id": u["case_id"], "step_id": u["step_id"],
+                             "case_type": u["case_type"], "messages": prompt_messages(u["input"], prompt),
+                             "task_type": u["task_type"], "dimensions": u["dimensions"], "language": u["language"],
+                             "checks": u["checks"], "eval_version": c["eval_version"],
+                             "schema_version": c.get("schema_version", "0.1.0"), "navigator_prompt_version": prompt_version})
         write_jsonl(rows, out / "eval.jsonl")
         print(f"Wrote {len(rows):4d} records -> {rel(out / 'eval.jsonl')}")
         return 0
@@ -83,13 +101,13 @@ def export(fmt, version=None, out_dir=None, review_policy="require_approved", al
                 continue
             kept += 1
             eligible = (not draft) and status == "approved"
-            meta = _meta({**rec, "content_hash": r.get("content_hash")}, version, split, status, eligible)
+            meta = _meta({**rec, "content_hash": r.get("content_hash")}, version, split, status, eligible, prompt_version)
             if fmt == "sft":
-                rows.append({"messages": prompt_messages(rec["input"]) + [assistant_message(rec["expected_output"])],
+                rows.append({"messages": prompt_messages(rec["input"], prompt) + [assistant_message(rec["expected_output"])],
                              "metadata": meta})
             else:
                 for c in rec.get("contrastive") or []:
-                    rows.append({"prompt": prompt_messages(rec["input"]),
+                    rows.append({"prompt": prompt_messages(rec["input"], prompt),
                                  "chosen": [assistant_message(rec["expected_output"])],
                                  "rejected": [assistant_message(c["output"])],
                                  "metadata": {**meta, "contrastive_id": c["id"], "failure_modes": c["failure_modes"]}})

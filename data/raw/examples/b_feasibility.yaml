@@ -2,7 +2,7 @@
 examples:
 
 - id: gj-feas-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: feasibility_assessment
   behavior: [feasibility, user_agency]
   language: ru
@@ -12,7 +12,8 @@ examples:
   goal_size: complex
   tags: [unrealistic_goal, has_deadline, career_switch]
   safety_category: allowed
-  scenario_group: sg-feas-senior-in-6-months
+  scenario_group: bs-feas-career-leap-too-fast
+  topic_group: sg-feas-senior-in-6-months
   input:
     operation: feasibility_assessment
     today: "2026-09-27"
@@ -88,7 +89,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-feas-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: feasibility_assessment
   behavior: [feasibility, web_research]
   language: ru
@@ -98,7 +99,8 @@ examples:
   goal_size: complex
   tags: [has_deadline, aggressive_timeline, event_specific]
   safety_category: allowed
-  scenario_group: sg-feas-marathon-january
+  scenario_group: bs-feas-endurance-event-base-unknown
+  topic_group: sg-feas-marathon-january
   input:
     operation: feasibility_assessment
     today: "2026-09-27"
@@ -174,7 +176,7 @@ examples:
   provenance: *prov
 
 - id: gj-feas-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: feasibility_assessment
   behavior: [feasibility, user_agency]
   language: en
@@ -184,7 +186,8 @@ examples:
   goal_size: medium
   tags: [numeric_reasoning, has_deadline, limited_resources]
   safety_category: allowed
-  scenario_group: sg-feas-save-10k
+  scenario_group: bs-feas-savings-gap-arithmetic
+  topic_group: sg-feas-save-10k
   input:
     operation: feasibility_assessment
     today: "2026-09-27"
@@ -254,7 +257,7 @@ examples:
   provenance: *prov
 
 - id: gj-feas-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: feasibility_assessment
   behavior: [feasibility]
   language: en
@@ -264,7 +267,8 @@ examples:
   goal_size: complex
   tags: [feasible_goal, has_deadline, creative]
   safety_category: allowed
-  scenario_group: sg-feas-ep-release
+  scenario_group: bs-feas-creative-release-feasible
+  topic_group: sg-feas-ep-release
   input:
     operation: feasibility_assessment
     today: "2026-09-27"
@@ -309,7 +313,7 @@ examples:
   provenance: *prov
 
 - id: gj-feas-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: feasibility_assessment
   behavior: [feasibility, web_research, source_awareness]
   language: ru
@@ -319,7 +323,8 @@ examples:
   goal_size: medium
   tags: [location_specific, regulations, has_deadline]
   safety_category: allowed
-  scenario_group: sg-feas-candles-marketplace
+  scenario_group: bs-feas-regulated-product-research
+  topic_group: sg-feas-candles-marketplace
   input:
     operation: feasibility_assessment
     today: "2026-09-27"
@@ -395,7 +400,7 @@ examples:
   provenance: *prov
 
 - id: gj-feas-006
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: feasibility_assessment
   behavior: [feasibility, web_research, user_agency]
   language: en
@@ -405,7 +410,8 @@ examples:
   goal_size: medium
   tags: [unrealistic_goal, has_deadline, exam]
   safety_category: allowed
-  scenario_group: sg-feas-cloud-exam-2-weeks
+  scenario_group: bs-feas-exam-too-soon
+  topic_group: sg-feas-cloud-exam-2-weeks
   input:
     operation: feasibility_assessment
     today: "2026-09-27"

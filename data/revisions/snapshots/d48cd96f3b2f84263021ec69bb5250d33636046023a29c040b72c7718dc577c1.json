@@ -1,0 +1,97 @@
+{
+  "content_hash": "d48cd96f3b2f84263021ec69bb5250d33636046023a29c040b72c7718dc577c1",
+  "example_id": "gj-nav-003",
+  "dataset_version": "0.1.1",
+  "task_type": "navigator_response",
+  "input": {
+    "operation": "navigator_response",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-pullups",
+      "title": "Подтянуться 10 раз подряд",
+      "available_time": {
+        "hours_per_week": 3
+      },
+      "current_state": {
+        "summary": "Подтягивается 2 раза."
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Сила спины и хвата",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "5 подтягиваний",
+          "region_id": "r1",
+          "success_criteria": [
+            "5 подтягиваний подряд"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Записаться в спортзал и ходить 3 раза в неделю",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Программа подтягиваний с отягощением в зале",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n1"
+          ]
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "В зал не хочу — дорого и далеко. Можно как-то по-другому?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "navigator_response",
+    "response_language": "ru",
+    "message_to_user": "Можно, для подтягиваний зал не обязателен. Предлагаю так:\n• турник — дверной или на ближайшей спортплощадке;\n• вместо тренажёров — негативные подтягивания (медленное опускание) и подтягивания с резиновой петлёй;\n• 3 тренировки в неделю по 25–30 минут.\nЕсли берёте дверной турник, проверьте, что дверной проём крепкий и перекладина держит ваш вес, — это важно для безопасности. Заменить задачи?",
+    "intent": "request_alternative",
+    "in_scope": true,
+    "proposed_changes": [
+      {
+        "action": "replace",
+        "target_id": "n1",
+        "description": "Заменить абонемент в зал на турник дома или на спортплощадке (3 тренировки в неделю по 25–30 минут)."
+      },
+      {
+        "action": "replace",
+        "target_id": "n2",
+        "description": "Заменить программу с отягощением на негативные подтягивания и подтягивания с резиновой петлёй."
+      }
+    ],
+    "requires_user_confirmation": true,
+    "risks": [
+      "Дверной турник требует крепкого проёма — проверьте перед первой тренировкой."
+    ],
+    "suggested_next_action": "Решить, где будет турник — дома или на площадке.",
+    "decision_summary": {
+      "what_changed": "Предложено заменить тренировки в зале на турник дома или на площадке.",
+      "why": "Зал дорогой и далеко, а для подтягиваний достаточно перекладины и резиновой петли.",
+      "impact": "Та же частота тренировок без затрат на абонемент и дорогу."
+    }
+  },
+  "contrastive": null
+}

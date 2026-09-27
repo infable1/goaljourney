@@ -1,0 +1,109 @@
+# Product capability registry — Policy A (docs/POLICY_DECISIONS_v0.1.1.md).
+#
+# The navigator model may only ask for, rely on or promise capabilities marked `available`.
+# `planned` capabilities are representable in the schemas but not implemented in the MVP: training
+# data must not require them (they return in a later dataset version when they ship).
+# `unsupported` capabilities will not be built; outputs must never promise them.
+# Enforced by lint (codes VP_METHOD_UNAVAILABLE, EVIDENCE_SOURCE_UNAVAILABLE, CAPABILITY_PROMISE)
+# for records with schema_version >= 0.1.1.
+version: "0.1.1"
+
+capabilities:
+  CAP-TEXT-REPORT:
+    status: available
+    description: Free-text reports and structured forms (self-report logs, result tables) typed by the user.
+  CAP-CHAT-QA:
+    status: available
+    description: The navigator puts questions, test items or problems into its reply; the user answers in the next turn.
+  CAP-FILE-TEXT:
+    status: available
+    description: Upload of documents, code, spreadsheets, CSV/JSON exports; text is extracted verbatim (file_parser).
+  CAP-IMAGE-DESCRIPTION:
+    status: available
+    description: Upload of photos/screenshots; the model receives an automatic description (vision_model) and the user's caption — never the pixels. An image alone never verifies a task.
+  CAP-AUDIO-TRANSCRIPT:
+    status: available
+    description: Upload of an audio recording; the model receives a transcript and the duration (transcription).
+  CAP-URL-FETCH:
+    status: available
+    description: The user submits a public URL; the system fetches it once (HTTP GET, no login, no forms, no scripts) and passes a text extract (system_fetch).
+  CAP-WEB-RESEARCH:
+    status: available
+    description: The navigator decides that research is needed (web_research_decision); the system runs the queries and returns results with sources in a later request (research_results).
+  CAP-VIDEO-ANALYSIS:
+    status: planned
+    description: Upload and analysis of video (frames, duration, speech). Not in the MVP.
+  CAP-TRACKER-SYNC:
+    status: planned
+    description: Live sync with fitness trackers / health apps. A manually exported file is CAP-FILE-TEXT and is available.
+  CAP-PROACTIVE-MESSAGES:
+    status: planned
+    description: Reminders, scheduled check-ins or any message the navigator sends without a user request.
+  CAP-CALENDAR:
+    status: planned
+    description: Reading or writing the user's calendar.
+  CAP-API-CALLS:
+    status: unsupported
+    description: Calling the user's own services (POST/PUT/DELETE, authenticated requests) — a security boundary.
+  CAP-ACCOUNT-ACCESS:
+    status: unsupported
+    description: Logging into user accounts or third-party platforms on the user's behalf.
+  CAP-THIRD-PARTY-CONTACT:
+    status: unsupported
+    description: Contacting people or organisations on the user's behalf.
+  CAP-LOCATION-BIOMETRICS:
+    status: unsupported
+    description: GPS tracking, biometrics, background monitoring.
+
+# Verification method -> capability it needs.
+methods:
+  structured_self_report: CAP-TEXT-REPORT
+  structured_result: CAP-TEXT-REPORT
+  third_party_confirmation: CAP-TEXT-REPORT   # the user pastes/forwards the confirmation; a public verification link is url_review
+  follow_up_questions: CAP-CHAT-QA
+  knowledge_test: CAP-CHAT-QA
+  practical_test: CAP-CHAT-QA
+  artifact_review: CAP-FILE-TEXT
+  data_export: CAP-FILE-TEXT
+  url_review: CAP-URL-FETCH
+  photo: CAP-IMAGE-DESCRIPTION
+  screenshot: CAP-IMAGE-DESCRIPTION
+  audio: CAP-AUDIO-TRANSCRIPT
+  video: CAP-VIDEO-ANALYSIS
+
+# Input evidence: how the app turned a submission into text -> capability.
+evidence_description_sources:
+  user_caption: CAP-TEXT-REPORT
+  file_parser: CAP-FILE-TEXT
+  vision_model: CAP-IMAGE-DESCRIPTION
+  transcription: CAP-AUDIO-TRANSCRIPT
+  system_fetch: CAP-URL-FETCH
+evidence_types:
+  video: CAP-VIDEO-ANALYSIS
+
+# User-facing promises that need a capability. Matched case-insensitively against the assistant's
+# text; a match of a non-available capability is an error. Patterns target requests and promises,
+# not negations ("no video needed" does not match).
+promise_patterns:
+  CAP-PROACTIVE-MESSAGES:
+    - "\\bI'?ll remind you\\b"
+    - "\\bI'?ll (send|message) you (later|tomorrow|next week|after this)"
+    - "\\bin my next message\\b"
+    - "\\bI'?ll check in (with you )?(tomorrow|later|next)"
+    - "\\bнапомню\\b"
+    - "следующим сообщением"
+    - "сразу после этого сообщения"
+    - "\\bнапишу вам (завтра|позже|через)"
+  CAP-VIDEO-ANALYSIS:
+    - "\\b(send|upload|record|submit|film)( me)?( a)?( short)? video\\b"
+    - "\\bvideo of (a|the|your)\\b"
+    - "(пришлите|загрузите|запишите|снимите)( мне)?( короткое)? видео"
+  CAP-API-CALLS:
+    - "\\bthe app (sends|calls|will call)\\b[^.]*\\b(POST|PUT|DELETE|endpoints?)\\b"
+    - "\\bcalls your [a-z ]*endpoints\\b"
+  CAP-TRACKER-SYNC:
+    - "\\b(connect|sync|link) your (fitness )?(tracker|watch|health app)\\b"
+    - "подключите (фитнес-)?(браслет|трекер|часы)"
+  CAP-CALENDAR:
+    - "\\bI'?ll (add|put) (it|this|them) (in|to|into) your calendar\\b"
+    - "добавлю в ваш календарь"

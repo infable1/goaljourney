@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-route-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: route_adaptation
   behavior: [route_adaptation, decision_summary, user_agency]
   language: en
@@ -13,7 +13,8 @@ examples:
   goal_size: complex
   tags: [hypothesis_wrong, channel_change]
   safety_category: allowed
-  scenario_group: sg-route-agency-bookkeeping
+  scenario_group: bs-route-hypothesis-invalidated
+  topic_group: sg-route-agency-bookkeeping
   input:
     operation: route_adaptation
     today: "2026-09-27"
@@ -133,7 +134,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-route-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: route_adaptation
   behavior: [route_adaptation, source_awareness, decision_summary, user_agency]
   language: ru
@@ -143,7 +144,8 @@ examples:
   goal_size: medium
   tags: [external_fact_changed, research_results, has_deadline]
   safety_category: allowed
-  scenario_group: sg-route-photo-exhibition
+  scenario_group: bs-route-external-fact-invalidates-progress
+  topic_group: sg-route-photo-exhibition
   input:
     operation: route_adaptation
     today: "2026-09-27"
@@ -189,8 +191,8 @@ examples:
     response_language: ru
     message_to_user: |-
       Неприятно, но работы уже отобраны и напечатаны — это самая долгая часть, и она никуда не денется. По новости на сайте «Точки» площадка закрыта с 1 октября до весны, так что договорённость с ними больше не работает.
-      Предлагаю сохранить ноябрь: составить список из 8 альтернативных площадок (кафе с выставочными стенами, библиотеки, коворкинги) и за две недели получить хотя бы одно согласие. Срок подтверждения площадки сдвигается с 10 на 20 октября, дата открытия остаётся.
-      Если не хочется гнаться — можно перенести выставку на весну в ту же «Точку», но это изменит ваш срок, поэтому решать вам. Какой вариант выбираете?
+      Предлагаю сохранить ноябрь: составить список из 8 альтернативных площадок (кафе с выставочными стенами, библиотеки, коворкинги) и за две недели получить хотя бы одно согласие. Срок подтверждения площадки тогда сдвигается с 10 на 20 октября, дата открытия остаётся.
+      Если не хочется гнаться — можно перенести выставку на весну в ту же «Точку», если после ремонта она подтвердит даты, но это изменит ваш срок, поэтому решать вам. Какой вариант выбираете?
     trigger:
       type: external_fact_changed
       description: Площадка закрыта на ремонт с 1 октября 2026 года до весны 2027 года.
@@ -239,10 +241,15 @@ examples:
         from: "2026-10-10"
         to: "2026-10-20"
         reason: Поиск новой площадки займёт около двух недель.
-    preserved_progress: [n1, n2, n3]
+        autonomy: adapt_with_summary
+        state: proposed
+    preserved_progress: [n1, n2]
+    invalidated_progress:
+      - node_id: n3
+        reason: Устная договорённость с «Точкой» больше не действует — площадка закрыта до весны; в истории она сохраняется.
     user_options:
       - Искать новую площадку и открыться в ноябре
-      - Перенести выставку на весну в «Точку» (изменится срок цели)
+      - Перенести выставку на весну в «Точку», если она подтвердит даты после ремонта (изменится срок цели)
     external_claims:
       - claim: Арт-пространство «Точка» закрыто на ремонт с 1 октября 2026 года до весны 2027 года.
         status: verified_with_source
@@ -252,7 +259,7 @@ examples:
           retrieved_at: "2026-09-26"
         affects: Этап «Площадка»
     decision_summary:
-      what_changed: Убрано подписание согласия с «Точкой»; добавлены поиск и подтверждение новой площадки; срок вехи «Площадка» сдвинут на 20 октября.
+      what_changed: Предложено убрать подписание согласия с «Точкой», добавить поиск и подтверждение новой площадки и сдвинуть веху «Площадка подтверждена» на 20 октября; договорённость с «Точкой» отмечена как утратившая силу.
       why: Площадка закрывается на ремонт до весны — это подтверждено новостью на её сайте.
       impact: Дата открытия в ноябре сохраняется; отобранные и напечатанные работы используются без изменений.
       alternatives_considered:
@@ -267,7 +274,7 @@ examples:
       output:
         type: route_adaptation
         response_language: ru
-        message_to_user: Не переживайте — галерея «Свет» свободна весь ноябрь, я уже всё проверил. Переносим выставку туда.
+        message_to_user: Не переживайте — галерея «Свет» свободна весь ноябрь, всё уже проверено. Переносим выставку туда.
         trigger: {type: external_fact_changed, description: Площадка закрыта на ремонт.}
         change_level: moderate
         requires_user_confirmation: false
@@ -290,7 +297,7 @@ examples:
   provenance: *prov
 
 - id: gj-route-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: route_adaptation
   behavior: [route_adaptation, decision_summary, source_awareness]
   language: en
@@ -300,7 +307,8 @@ examples:
   goal_size: complex
   tags: [resource_lost, budget_change, licensing]
   safety_category: allowed
-  scenario_group: sg-route-mobile-game-art
+  scenario_group: bs-route-resource-lost
+  topic_group: sg-route-mobile-game-art
   input:
     operation: route_adaptation
     today: "2026-09-27"
@@ -420,7 +428,7 @@ examples:
   provenance: *prov
 
 - id: gj-route-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: route_adaptation
   behavior: [route_adaptation, decision_summary]
   language: ru
@@ -430,7 +438,8 @@ examples:
   goal_size: medium
   tags: [new_resource, mentor, minor_change]
   safety_category: allowed
-  scenario_group: sg-route-pitch-mentor
+  scenario_group: bs-route-new-resource-time-window
+  topic_group: sg-route-pitch-mentor
   input:
     operation: route_adaptation
     today: "2026-09-27"
@@ -463,17 +472,17 @@ examples:
     type: route_adaptation
     response_language: ru
     message_to_user: |-
-      Отличная новость — разбор от человека, который сам поднимал раунд, ценнее любого количества чужих деков. Вот как сессии встроены в маршрут:
-      • разбор 20 деков сокращаю до 5 — хватит, чтобы увидеть структуру, остальное даст ментор (экономия около 7 часов);
+      Отличная новость — разбор вашего черновика с человеком, который сам поднимал раунд, даст то, чего не дадут чужие деки. Предлагаю так:
+      • разбор 20 деков сократить до 5 — этого хватит, чтобы увидеть структуру, остальное даст ментор;
       • 1-я сессия — разбор вашего черновика до финальной версии;
-      • 2-я — репетиция питча после ваших прогонов;
-      • 3-ю оставляю в резерве — например, на вопросы инвесторов.
-      Сроки не меняются.
+      • 2-я — прогон питча по финальному деку до конца октября, пока действует предложение; три прогона перед знакомыми — уже с учётом замечаний;
+      • 3-ю — в резерв до конца октября, например на вопросы инвесторов.
+      Экономия около 5,5 часа: разбор сокращается на 7,5 часа, а две сессии займут 2 часа. Сроки вех не меняются. Сокращаем разбор до 5 деков?
     trigger:
       type: new_resource
       description: Три бесплатные менторские сессии в октябре.
-    change_level: minor
-    requires_user_confirmation: false
+    change_level: moderate
+    requires_user_confirmation: true
     removed_nodes: []
     added_nodes:
       - id: n5
@@ -488,13 +497,14 @@ examples:
         created_by: ai
       - id: n6
         type: task
-        title: "Сессия с ментором №2: репетиция питча"
+        title: "Сессия с ментором №2: прогон питча по финальному деку"
         region_id: r2
         milestone_id: m2
         status: locked
         detail_level: outline
-        depends_on: [n4]
+        depends_on: [n3]
         estimated_duration_minutes: 60
+        due_date: "2026-10-31"
         created_by: ai
     modified_nodes:
       - node_id: n2
@@ -506,18 +516,24 @@ examples:
         changes:
           - {field: depends_on, from: [n1, n2], to: [n1, n2, n5]}
         reason: Финальная версия учитывает замечания ментора.
+      - node_id: n4
+        changes:
+          - {field: depends_on, from: [n3], to: [n6]}
+        reason: Прогоны перед знакомыми идут после разбора с ментором, чтобы учесть его замечания.
     modified_deadlines: []
     preserved_progress: [n1]
+    facts_used:
+      - {value: "Три менторские сессии предложены только на октябрь", source_type: user_provided, source_ref: "events[0]"}
     decision_summary:
-      what_changed: Добавлены две менторские сессии, разбор чужих деков сокращён с 20 до 5.
-      why: Обратная связь опытного основателя по вашему деку полезнее, чем самостоятельный разбор 20 чужих.
-      impact: Экономия около 7 часов, сроки не меняются, третья сессия в резерве.
+      what_changed: Предложено добавить две менторские сессии (вторую — до конца октября) и сократить разбор чужих деков с 20 до 5.
+      why: Замечания опытного основателя по вашему деку полезнее самостоятельного разбора 20 чужих, а сессии доступны только в октябре.
+      impact: Экономия около 5,5 часа с учётом времени на сессии; сроки вех не меняются, третья сессия в резерве.
   annotations:
-    rationale: A new resource improves the route with a minor, additive change; no confirmation needed; time saved is quantified.
+    rationale: A new resource improves the route; the second session is placed inside the October window, the saving is stated net of the added sessions, and cutting the user's planned task is proposed rather than applied.
   provenance: *prov
 
 - id: gj-route-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: route_adaptation
   behavior: [route_adaptation, decision_summary]
   language: en
@@ -527,7 +543,8 @@ examples:
   goal_size: complex
   tags: [task_failed, fixed_deadline, remediation]
   safety_category: allowed
-  scenario_group: sg-route-orgo-mock-exam
+  scenario_group: bs-route-failed-check-remediation
+  topic_group: sg-route-orgo-mock-exam
   input:
     operation: route_adaptation
     today: "2026-09-27"
@@ -564,7 +581,7 @@ examples:
     response_language: en
     message_to_user: |-
       No need to start over — the mock tells us exactly where the points went. Nomenclature (9/10) and spectroscopy (8/10) are already strong; almost all the lost points are in reaction mechanisms (2/10) and stereochemistry (3/10).
-      So I've added three targeted sessions on mechanisms and two on stereochemistry before chapters 7–10, lowered the in-depth spectroscopy review to normal priority, and added a second mock exam on 23 November to check the fix. Your exam date stays as it is, and everything you've already reviewed counts.
+      So I've added three targeted sessions on mechanisms and two on stereochemistry before chapters 7–10, lowered the in-depth spectroscopy review to normal priority, and added a second mock exam on chapters 1–6 by 14 October, right after the drills, to check the fix while it's fresh. That moves the chapter-review milestone from 1 to 10 November; your exam date stays as it is, and everything you've already reviewed counts.
     trigger:
       type: task_failed
       description: Mock exam 1 scored 48%, with most points lost in mechanisms and stereochemistry.
@@ -601,7 +618,7 @@ examples:
         detail_level: outline
         depends_on: [n7, n8]
         estimated_duration_minutes: 120
-        due_date: "2026-11-23"
+        due_date: "2026-10-14"
         created_by: ai
     modified_nodes:
       - node_id: n4
@@ -616,15 +633,19 @@ examples:
       - target: milestone
         target_id: m1
         from: "2026-11-01"
-        to: "2026-11-23"
-        reason: Five remediation sessions are added before chapters 7–10.
+        to: "2026-11-10"
+        reason: Five drill sessions and a second mock exam (about 9.5 hours) come before chapters 7–10.
+        autonomy: adapt_with_summary
+        state: applied
     preserved_progress: [n1, n2, n3]
+    facts_used:
+      - {value: "Mock exam 1: 48%, mechanisms 2/10, stereochemistry 3/10, nomenclature 9/10, spectroscopy 8/10", source_type: user_provided, source_ref: "events[0]"}
     decision_summary:
-      what_changed: Added 5 targeted sessions on mechanisms and stereochemistry and a second mock exam; lowered spectroscopy priority; moved the review milestone to 23 November.
-      why: The mock shows the gap is concentrated in two topics, not across the whole course.
-      impact: Exam date unchanged; about 7.5 hours of remediation absorbed by reducing spectroscopy time and using the buffer before the final mocks.
+      what_changed: Added 5 targeted sessions on mechanisms and stereochemistry and a second mock exam by 14 October; lowered spectroscopy priority; moved the chapter-review milestone from 1 to 10 November.
+      why: The mock shows the gap is concentrated in two topics, not across the whole course; a mock right after the drills shows whether the fix worked.
+      impact: Exam date and the 7 December exam-ready milestone are unchanged; the review milestone moves by 9 days because about 9.5 hours of new work come first.
   annotations:
-    rationale: Failure used as diagnostic data; progress preserved; fixed exam date respected (milestone moved, goal deadline not); moderate additive change needs no confirmation.
+    rationale: Failure used as diagnostic data; progress preserved; the fixed exam date is respected; the milestone move is applied with an explicit decision summary (POL-C adapt_with_summary) and sized to the added work; the check follows the drills.
   contrastive:
     - id: gj-route-005-c1
       failure_modes: [discarded_progress]
@@ -651,7 +672,7 @@ examples:
   provenance: *prov
 
 - id: gj-route-006
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: route_adaptation
   behavior: [route_adaptation, decision_summary, user_agency]
   language: ru
@@ -661,7 +682,8 @@ examples:
   goal_size: medium
   tags: [preference_changed, verification_update]
   safety_category: allowed
-  scenario_group: sg-route-italian-flashcards
+  scenario_group: bs-route-method-preference-swap
+  topic_group: sg-route-italian-flashcards
   input:
     operation: route_adaptation
     today: "2026-09-27"

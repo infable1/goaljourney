@@ -1,0 +1,303 @@
+{
+  "content_hash": "74421dc92f8396f91b7cd9b2051d647c45ddbd35f601cb4f77097113384b62c9",
+  "example_id": "gj-task-001",
+  "dataset_version": "0.1.1",
+  "task_type": "task_generation",
+  "input": {
+    "operation": "task_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-budget-app",
+      "title": "Launch the MVP of my budgeting app",
+      "available_time": {
+        "hours_per_week": 6,
+        "session_minutes": 60
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Build the MVP",
+          "order": 1,
+          "status": "completed"
+        },
+        {
+          "id": "r2",
+          "title": "Beta test",
+          "order": 2,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "MVP works end to end",
+          "region_id": "r1",
+          "success_criteria": [
+            "Core flows work on a real phone"
+          ],
+          "status": "verified"
+        },
+        {
+          "id": "m2",
+          "title": "3 beta testers using the app weekly",
+          "region_id": "r2",
+          "success_criteria": [
+            "3 testers active for 2 weeks"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Ship a TestFlight build",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Recruit 3 beta testers",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "available",
+          "depends_on": [
+            "n5"
+          ]
+        }
+      ]
+    },
+    "target_node_id": "n6",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "The TestFlight build is out. Now I need my first 3 beta testers but I have no idea where to find them. Break this down for me?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "task_generation",
+    "response_language": "en",
+    "message_to_user": "Here's \"Recruit 3 beta testers\" broken into four one-hour steps. The screener matters most: three well-matched testers who actually budget monthly will teach you more than twenty random downloads.",
+    "for_node_id": "n6",
+    "tasks": [
+      {
+        "id": "n6-t1",
+        "title": "Write a 5-sentence beta invite and a 3-question screener",
+        "description": "Draft a short invite (who it's for, what they get, time commitment of 15 minutes a week for 2 weeks) and three screening questions, e.g. how they track spending today.",
+        "why_it_matters": "The screener filters for people who actually budget, so their feedback reflects your real users.",
+        "expected_result": "One invite text and a 3-question screener form link.",
+        "estimated_duration_minutes": 45,
+        "difficulty": 2,
+        "dependencies": [],
+        "verification_protocol": {
+          "task_nature": "writing",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "artifact_review",
+              "role": "required",
+              "instructions": "Paste the invite text and the screener link.",
+              "acceptance_criteria": [
+                "Invite states the time commitment",
+                "Screener has 3 questions that separate real budgeters from curious visitors"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Invite and screener meet the criteria"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Both are texts that can be reviewed directly."
+        }
+      },
+      {
+        "id": "n6-t2",
+        "title": "Post the invite in 3 communities where people discuss budgeting",
+        "description": "Pick three communities (forums, subreddits, local groups) where budgeting is discussed, read each one's self-promotion rules, and post the invite only where it is allowed.",
+        "why_it_matters": "Going where your users already talk about the problem beats generic advertising at this stage.",
+        "expected_result": "Three live posts with links and a note of each community's rules.",
+        "estimated_duration_minutes": 60,
+        "difficulty": 2,
+        "dependencies": [
+          "n6-t1"
+        ],
+        "verification_protocol": {
+          "task_nature": "business_activity",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "url_review",
+              "role": "required",
+              "instructions": "Submit the 3 post links.",
+              "acceptance_criteria": [
+                "Posts are live",
+                "Each community's promotion rules are respected"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "3 live posts"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Public posts can be opened and checked."
+        }
+      },
+      {
+        "id": "n6-t3",
+        "title": "Run a 20-minute onboarding call with each tester who passes the screener",
+        "description": "Schedule a short call with each qualified applicant, watch them install the build and set up their first budget, and note where they hesitate.",
+        "why_it_matters": "Watching first use reveals friction that testers rarely report in writing.",
+        "expected_result": "Call notes for 3 testers with at least 3 observations each.",
+        "estimated_duration_minutes": 60,
+        "sessions": 3,
+        "difficulty": 3,
+        "dependencies": [
+          "n6-t2"
+        ],
+        "verification_protocol": {
+          "task_nature": "business_activity",
+          "objective_verifiability": "low",
+          "methods": [
+            {
+              "method": "structured_result",
+              "role": "required",
+              "instructions": "One entry per call.",
+              "fields": [
+                "Date",
+                "Tester profile (one line)",
+                "Where they hesitated",
+                "3 observations"
+              ]
+            },
+            {
+              "method": "follow_up_questions",
+              "role": "supplementary",
+              "instructions": "One question to check the notes reflect real calls.",
+              "questions": [
+                "Which observation surprised you most, and what will you change first?"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "3 calls logged with at least 3 concrete observations each"
+          ],
+          "confidence_ceiling": "limited",
+          "self_report_only": true,
+          "rationale": "The calls are not recorded, out of respect for the testers' privacy, so the notes are the user's own account and confidence stays limited however detailed they are; they are still exactly what the next step needs."
+        }
+      },
+      {
+        "id": "n6-t4",
+        "title": "Set up a feedback form and a weekly 2-question check-in message",
+        "description": "Create a short form for bugs and ideas, and a weekly message asking what they used the app for and what annoyed them.",
+        "why_it_matters": "A fixed weekly rhythm keeps testers active for the two weeks the milestone requires.",
+        "expected_result": "A form link and the check-in message text scheduled for 2 weeks.",
+        "estimated_duration_minutes": 30,
+        "difficulty": 1,
+        "dependencies": [
+          "n6-t1"
+        ],
+        "verification_protocol": {
+          "task_nature": "business_activity",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "url_review",
+              "role": "required",
+              "instructions": "Submit the form link."
+            },
+            {
+              "method": "artifact_review",
+              "role": "required",
+              "instructions": "Paste the check-in message."
+            }
+          ],
+          "pass_criteria": [
+            "Form is live",
+            "Check-in message has exactly 2 questions"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "Both artifacts are directly checkable."
+        }
+      }
+    ],
+    "decision_summary": null
+  },
+  "contrastive": [
+    {
+      "id": "gj-task-001-c1",
+      "failure_modes": [
+        "vague_tasks",
+        "generic_verification"
+      ],
+      "critique": "\"Research the market\" and \"Do marketing\" are not actions anyone can start or finish, and \"tell me what you did\" is not a verification for work that leaves checkable artifacts.",
+      "output": {
+        "type": "task_generation",
+        "response_language": "en",
+        "message_to_user": "Here are your tasks!",
+        "for_node_id": "n6",
+        "tasks": [
+          {
+            "id": "n6-t1",
+            "title": "Research the market",
+            "description": "Look into who might use your app.",
+            "why_it_matters": "You need to know your market.",
+            "expected_result": "Better understanding of the market.",
+            "estimated_duration_minutes": 60,
+            "difficulty": 2,
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "structured_self_report",
+                  "role": "required",
+                  "instructions": "Tell me what you did."
+                }
+              ],
+              "pass_criteria": [
+                "User says it's done"
+              ],
+              "confidence_ceiling": "limited",
+              "self_report_only": true,
+              "rationale": "Easy to check."
+            }
+          },
+          {
+            "id": "n6-t2",
+            "title": "Do marketing",
+            "description": "Promote the app.",
+            "why_it_matters": "People need to hear about it.",
+            "expected_result": "More awareness.",
+            "estimated_duration_minutes": 60,
+            "difficulty": 2,
+            "verification_protocol": {
+              "task_nature": "business_activity",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "structured_self_report",
+                  "role": "required",
+                  "instructions": "Tell me what you did."
+                }
+              ],
+              "pass_criteria": [
+                "User says it's done"
+              ],
+              "confidence_ceiling": "limited",
+              "self_report_only": true,
+              "rationale": "Easy to check."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/web_research_decision.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/web_research_decision.json",
   "title": "Operation output: web_research_decision (Type N)",
   "description": "Decide whether current external facts must be verified before planning. Research is required only when time-sensitive, location-specific, legal, pricing, schedule, exam or product facts materially affect the route. Unsupported claims (hearsay, model memory) are listed and never treated as facts.",
   "type": "object",

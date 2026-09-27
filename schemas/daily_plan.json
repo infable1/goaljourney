@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/daily_plan.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/daily_plan.json",
   "title": "Operation output: daily_plan (Type J)",
   "description": "The most useful next action(s) for today. Few tasks, within the time available, dependencies satisfied. The user must always know what to do next.",
   "type": "object",
@@ -44,6 +44,7 @@
         }
       }
     },
-    "next_action": { "$ref": "common.json#/$defs/short_text" }
+    "next_action": { "$ref": "common.json#/$defs/short_text" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" }
   }
 }

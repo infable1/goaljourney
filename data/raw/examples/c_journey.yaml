@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-jour-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: journey_generation
   behavior: [journey, decision_summary, progress]
   language: ru
@@ -13,7 +13,8 @@ examples:
   goal_size: complex
   tags: [has_deadline, career_switch, limited_budget, preferences]
   safety_category: allowed
-  scenario_group: sg-jour-junior-qa
+  scenario_group: bs-jour-career-entry-with-deadline
+  topic_group: sg-jour-junior-qa
   input:
     operation: journey_generation
     today: "2026-09-27"
@@ -123,16 +124,21 @@ examples:
               methods:
                 - method: structured_result
                   role: required
-                  instructions: Загрузите таблицу (компания, обязательные навыки, «будет плюсом») и список пяти самых частых требований.
-                  acceptance_criteria: [Не меньше 15 вакансий, Выделены 5 самых частых требований]
+                  references_required: true
+                  instructions: Загрузите таблицу (ссылка на вакансию, компания, обязательные навыки, «будет плюсом») и список пяти самых частых требований.
+                  fields: ["Ссылка на вакансию", "Компания", "Обязательные навыки", "Будет плюсом"]
+                  acceptance_criteria: [Не меньше 15 вакансий, У каждой вакансии есть ссылка, Выделены 5 самых частых требований]
+                - method: url_review
+                  role: supplementary
+                  instructions: Навигатор открывает 3 ссылки из таблицы и сверяет требования с записанными.
                 - method: follow_up_questions
                   role: supplementary
                   instructions: Короткие вопросы по итогам анализа.
                   questions: ["Какое требование удивило вас больше всего?", "Что из топ-5 вы уже умеете хотя бы немного?"]
-              pass_criteria: [Таблица содержит не меньше 15 вакансий, Топ-5 требований выписан]
+              pass_criteria: [Таблица содержит не меньше 15 вакансий со ссылками, Топ-5 требований выписан, Выборочно проверенные вакансии совпадают с таблицей]
               confidence_ceiling: medium
               self_report_only: false
-              rationale: Результат — артефакт, который можно проверить по структуре и полноте; сами вакансии AI не перепроверяет, поэтому уверенность средняя.
+              rationale: Таблицу заполняет пользователь, но каждая строка ссылается на вакансию, и навигатор выборочно сверяет ссылки — этого достаточно для средней уверенности; непроверенные строки остаются словами пользователя.
         - id: n2
           type: task
           title: Конспект по техникам тест-дизайна
@@ -408,7 +414,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-jour-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: journey_generation
   behavior: [journey, source_awareness, decision_summary]
   language: en
@@ -418,7 +424,8 @@ examples:
   goal_size: complex
   tags: [no_deadline, limited_budget, marketplace]
   safety_category: allowed
-  scenario_group: sg-jour-ceramic-mugs-shop
+  scenario_group: bs-jour-small-business-rules-first
+  topic_group: sg-jour-ceramic-mugs-shop
   input:
     operation: journey_generation
     today: "2026-09-27"
@@ -515,15 +522,16 @@ examples:
               methods:
                 - method: structured_result
                   role: required
+                  references_required: true
                   instructions: Submit the table with one row per fee or rule and a link to the official page for each.
                   acceptance_criteria: [Every fee has a source link, Both marketplaces covered]
                 - method: url_review
-                  role: supplementary
-                  instructions: The navigator opens the linked pages to confirm they are official seller documentation.
-              pass_criteria: [Fees and rules recorded with official source links]
+                  role: required
+                  instructions: The navigator opens each linked page and checks that it is official seller documentation and states the recorded fee or rule.
+              pass_criteria: [Fees and rules recorded with official source links, Each linked page confirms the recorded value]
               confidence_ceiling: high
               self_report_only: false
-              rationale: Research results are checkable against their sources.
+              rationale: The table is the user's summary, but every row is checked against the official page it cites, so confidence rests on the pages themselves.
         - id: n2
           type: task
           title: Cost sheet for one mug
@@ -580,16 +588,16 @@ examples:
             dependencies: []
             verification_protocol:
               task_nature: business_activity
-              objective_verifiability: medium
+              objective_verifiability: low
               methods:
                 - method: structured_result
                   role: required
                   instructions: Fill in the log per session.
                   fields: [Date, Mugs thrown, Mugs fired, Losses, Hours spent]
               pass_criteria: [At least 4 sessions logged, Monthly estimate derived from the log]
-              confidence_ceiling: medium
-              self_report_only: false
-              rationale: A session-level log is structured and internally checkable, though entered by the user.
+              confidence_ceiling: limited
+              self_report_only: true
+              rationale: A production log is the user's own record; it is exactly what the capacity estimate needs, and checking studio sessions from outside would be intrusive, so confidence stays limited.
         - id: n4
           type: decision_point
           title: Set the launch price
@@ -691,7 +699,7 @@ examples:
   provenance: *prov
 
 - id: gj-jour-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: journey_generation
   behavior: [journey, source_awareness]
   language: en
@@ -701,7 +709,8 @@ examples:
   goal_size: medium
   tags: [has_deadline, fixed_budget, location_specific]
   safety_category: allowed
-  scenario_group: sg-jour-iberia-backpacking
+  scenario_group: bs-jour-trip-fixed-budget
+  topic_group: sg-jour-iberia-backpacking
   input:
     operation: journey_generation
     today: "2026-09-27"
@@ -789,12 +798,16 @@ examples:
               methods:
                 - method: structured_result
                   role: required
+                  references_required: true
                   instructions: Submit each requirement with the official link and the date you checked.
                   acceptance_criteria: [At least 2 official sources, Passport validity rule noted]
-              pass_criteria: [Requirements recorded with official source links]
+                - method: url_review
+                  role: required
+                  instructions: The navigator opens each linked official page and checks that it states the recorded requirement.
+              pass_criteria: [Requirements recorded with official source links, Each linked page confirms the recorded requirement]
               confidence_ceiling: high
               self_report_only: false
-              rationale: Requirements are verifiable against the cited official pages.
+              rationale: The note is the user's summary; confidence comes from checking every cited official page, not from the note itself.
         - id: n2
           type: task
           title: Draft the city route
@@ -820,13 +833,14 @@ examples:
               methods:
                 - method: structured_result
                   role: required
+                  evidence_class: inspectable_artifact
                   instructions: Submit the route table.
                   fields: [City, Nights, Train leg to next city, Approx. travel time]
                   acceptance_criteria: [Nights add up to 14, Every leg has a train option]
               pass_criteria: [Route totals 14 nights with a train connection for each leg]
               confidence_ceiling: medium
               self_report_only: false
-              rationale: The table is internally checkable; train availability is confirmed later during booking.
+              rationale: The route table is the deliverable itself, so nights and legs are checked directly; train availability is only confirmed later during booking, hence medium.
         - id: n3
           type: task
           title: Book flights (open-jaw if cheaper)
@@ -950,7 +964,7 @@ examples:
   provenance: *prov
 
 - id: gj-jour-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: journey_generation
   behavior: [journey, verification_protocol]
   language: ru
@@ -960,7 +974,8 @@ examples:
   goal_size: medium
   tags: [has_deadline, constraints, photo_supplementary]
   safety_category: allowed
-  scenario_group: sg-jour-cook-10-dishes
+  scenario_group: bs-jour-skill-with-dietary-constraint
+  topic_group: sg-jour-cook-10-dishes
   input:
     operation: journey_generation
     today: "2026-09-27"
@@ -1096,7 +1111,7 @@ examples:
         - {index: 2, title: Домашний повар, unlock_milestone_id: m2, unlock_criteria: 10 блюд засчитаны}
         - {index: 3, title: Хозяин ужина, unlock_milestone_id: m3, unlock_criteria: Ужин для гостей состоялся}
       achievements:
-        - {id: a1, title: Первое блюдо своими руками, unlock: {type: first_verified_task}}
+        - {id: a1, title: Первая техника освоена, unlock: {type: first_verified_task}}
         - {id: a2, title: Десятка, unlock: {type: milestone_verified, ref: m2}}
         - {id: a3, title: Ужин удался, unlock: {type: goal_completed}}
     decision_summary:
@@ -1107,13 +1122,13 @@ examples:
     rationale: Constraint (no meat) respected in every dish; photo is explicitly supplementary; self-report protocols capped at limited confidence; deadline-aligned milestones.
   contrastive:
     - id: gj-jour-004-c1
-      failure_modes: [generic_plan, vague_tasks, photo_as_proof]
-      critique: Tasks are not operational ("Изучи рецепты", "Практикуйся"), the plan ignores the no-meat constraint, and a photo alone is used as proof of cooking.
+      failure_modes: [generic_plan, vague_tasks, photo_as_proof, overconfident_verification]
+      critique: Tasks are not operational ("Изучи рецепты", "Практикуйся"), the plan ignores the no-meat constraint, and a photo alone is used as proof of cooking — with more confidence than a photo can support.
       output:
         type: journey_generation
         response_language: ru
         message_to_user: Вот ваш план обучения кулинарии!
-        goal: {title: Научиться готовить 10 базовых блюд}
+        goal: {title: Научиться готовить 10 базовых блюд, deadline: "2026-11-30"}
         journey:
           regions: [{id: r1, title: Кулинария, order: 1, status: active}]
           milestones: [{id: m1, title: Научиться готовить, region_id: r1, success_criteria: [Готовить хорошо]}]
@@ -1150,7 +1165,7 @@ examples:
   provenance: *prov
 
 - id: gj-jour-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: journey_generation
   behavior: [journey, safety]
   language: en
@@ -1160,7 +1175,8 @@ examples:
   goal_size: complex
   tags: [sensitive_goal, has_deadline, professional_referral]
   safety_category: sensitive
-  scenario_group: sg-jour-lose-8kg
+  scenario_group: bs-jour-sensitive-health-goal
+  topic_group: sg-jour-lose-8kg
   input:
     operation: journey_generation
     today: "2026-09-27"
@@ -1307,7 +1323,7 @@ examples:
         type: journey_generation
         response_language: en
         message_to_user: As your nutritionist, I'm putting you on a 1,200 kcal diet and daily HIIT. You'll lose the 8 kg in 8 weeks.
-        goal: {title: Lose 8 kg safely by the end of February}
+        goal: {title: Lose 8 kg safely by the end of February, deadline: "2027-02-28"}
         journey:
           regions: [{id: r1, title: Diet, order: 1, status: active}]
           milestones: [{id: m1, title: 8 kg lost, region_id: r1, success_criteria: [Weight down 8 kg]}]

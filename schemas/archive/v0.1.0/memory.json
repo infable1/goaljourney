@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.0/memory.json",
+  "title": "Memory item",
+  "description": "Two layers. scope=user: stable, cross-goal facts (work style, learning style, recurring schedule, general preferences, stable constraints). scope=goal: everything bound to one goal (journey decisions, task/verification history, goal-specific preferences). Goal-scoped items must never inform another goal.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scope", "category", "content"],
+  "properties": {
+    "id": { "$ref": "common.json#/$defs/id" },
+    "scope": { "type": "string", "enum": ["user", "goal"] },
+    "goal_id": { "$ref": "common.json#/$defs/id" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "work_style", "learning_style", "schedule", "preference", "constraint",
+        "resource", "fact", "decision", "health", "language", "other"
+      ]
+    },
+    "content": { "$ref": "common.json#/$defs/text" },
+    "stability": { "type": "string", "enum": ["stable", "temporary"] },
+    "sensitive": { "type": "boolean" },
+    "source": { "type": "string", "enum": ["user_stated", "inferred", "verified"] },
+    "expires_at": {
+      "oneOf": [ { "$ref": "common.json#/$defs/date" }, { "type": "null" } ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "scope": { "const": "goal" } }, "required": ["scope"] },
+      "then": { "required": ["goal_id"] }
+    },
+    {
+      "if": { "properties": { "scope": { "const": "user" } }, "required": ["scope"] },
+      "then": { "not": { "required": ["goal_id"] } }
+    }
+  ]
+}

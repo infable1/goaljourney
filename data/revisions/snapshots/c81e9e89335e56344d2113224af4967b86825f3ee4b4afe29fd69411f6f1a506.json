@@ -1,0 +1,71 @@
+{
+  "content_hash": "c81e9e89335e56344d2113224af4967b86825f3ee4b4afe29fd69411f6f1a506",
+  "example_id": "gj-vprot-003",
+  "dataset_version": "0.1.0",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "goal": {
+      "id": "g-backend",
+      "title": "Become job-ready as a junior backend developer"
+    },
+    "operation": "verification_protocol_design",
+    "task": {
+      "description": "Build a small to-do API with POST /todos, GET /todos and DELETE /todos/{id}, write at least 3 tests, and deploy it to any free hosting.",
+      "difficulty": 3,
+      "estimated_duration_minutes": 360,
+      "expected_result": "A public URL where the 3 endpoints work, and a repository with tests and a README.",
+      "id": "t-api",
+      "sessions": 4,
+      "title": "Deploy a to-do REST API with create, list and delete endpoints",
+      "why_it_matters": "A deployed, tested API is the minimum portfolio piece for junior backend roles."
+    },
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "message_to_user": "I'll verify this the way a reviewer would: the app calls your three endpoints on the live URL, and I read the repository — tests and README included. Then one question about a design choice.",
+    "protocol": {
+      "confidence_ceiling": "high",
+      "methods": [
+        {
+          "acceptance_criteria": [
+            "POST creates an item and returns it",
+            "GET lists it",
+            "DELETE removes it and a second GET no longer shows it"
+          ],
+          "instructions": "Submit the base URL. The app sends POST /todos, GET /todos and DELETE /todos/{id} and attaches the responses for review.",
+          "method": "url_review",
+          "role": "required"
+        },
+        {
+          "acceptance_criteria": [
+            "At least 3 automated tests",
+            "README explains how to run locally and lists the endpoints"
+          ],
+          "instructions": "Submit the repository link.",
+          "method": "artifact_review",
+          "role": "required"
+        },
+        {
+          "instructions": "One design question.",
+          "method": "follow_up_questions",
+          "questions": [
+            "What status code does DELETE return for an id that doesn't exist, and why did you choose it?"
+          ],
+          "role": "supplementary"
+        }
+      ],
+      "objective_verifiability": "high",
+      "pass_criteria": [
+        "All 3 endpoints behave as specified on the live URL",
+        "Repository has tests and a README"
+      ],
+      "rationale": "Software is verified by running it and reading the code, not by screenshots or descriptions.",
+      "self_report_only": false,
+      "task_nature": "software"
+    },
+    "response_language": "en",
+    "task_id": "t-api",
+    "type": "verification_protocol_design"
+  },
+  "contrastive": null
+}

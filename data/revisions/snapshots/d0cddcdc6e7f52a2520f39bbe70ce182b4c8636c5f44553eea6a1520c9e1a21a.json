@@ -1,0 +1,80 @@
+{
+  "content_hash": "d0cddcdc6e7f52a2520f39bbe70ce182b4c8636c5f44553eea6a1520c9e1a21a",
+  "example_id": "gj-nav-008",
+  "dataset_version": "0.1.1",
+  "task_type": "navigator_response",
+  "input": {
+    "operation": "navigator_response",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-eng-b1",
+      "title": "Выучить английский до уровня B1"
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Грамматика и письмо",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Пишу короткие тексты без ошибок в базовых временах",
+          "region_id": "r1",
+          "success_criteria": [
+            "3 текста по 100 слов проверены"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Написать 3 коротких текста по 100 слов",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available"
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Напиши мне, пожалуйста, красивое поздравление для мамы на день рождения, в стихах."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "navigator_response",
+    "response_language": "ru",
+    "message_to_user": "Поздравления в стихах — не моя задача здесь: я помогаю вам дойти до B1 по английскому. Но есть идея на стыке: напишите маме поздравление на английском — 8–10 предложений (около 100 слов) о том, за что вы её цените. Это засчитается как один из трёх текстов по 100 словам, а я проверю ошибки перед тем, как вы его отправите.",
+    "intent": "off_topic",
+    "in_scope": false,
+    "proposed_changes": [],
+    "requires_user_confirmation": false,
+    "suggested_next_action": "По желанию — написать поздравление на английском как один из текстов задачи.",
+    "decision_summary": null
+  },
+  "contrastive": [
+    {
+      "id": "gj-nav-008-c1",
+      "failure_modes": [
+        "generic_assistant_drift"
+      ],
+      "critique": "Acts as a general-purpose assistant and writes the poem, unrelated to the goal; the navigator becomes a generic chatbot.",
+      "output": {
+        "type": "navigator_response",
+        "response_language": "ru",
+        "message_to_user": "С удовольствием! Вот поздравление:\nМама, милая, родная, с днём рожденья поздравляю! Пусть улыбка не смолкает, пусть весна в душе сияет, пусть здоровье не подводит, счастье в дом всегда приходит, пусть сбываются мечты — самая родная ты!",
+        "intent": "other",
+        "in_scope": true,
+        "proposed_changes": [],
+        "requires_user_confirmation": false,
+        "decision_summary": null
+      }
+    }
+  ]
+}

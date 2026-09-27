@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-nav-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator]
   language: ru
@@ -13,7 +13,8 @@ examples:
   goal_size: complex
   tags: [explain_task]
   safety_category: allowed
-  scenario_group: sg-nav-travel-youtube
+  scenario_group: bs-nav-explain-task-with-context
+  topic_group: sg-nav-travel-youtube
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -22,6 +23,8 @@ examples:
       title: Запустить YouTube-канал о путешествиях и набрать первую 1000 подписчиков
       available_time:
         hours_per_week: 6
+    goal_memory:
+      - {id: gm1, scope: goal, goal_id: g-yt, category: decision, content: "Ниша канала — бюджетные путешествия с детьми (выбрана в задаче n1).", stability: stable, source: user_stated}
     journey:
       regions:
         - {id: r1, title: Концепция канала, order: 1, status: active}
@@ -42,12 +45,14 @@ examples:
       • какие темы и форматы там уже набирают просмотры — значит, на них есть спрос;
       • чего зрителям не хватает — это видно по комментариям;
       • какая длина и какие заставки удерживают внимание.
-      Это около двух часов вместо месяцев проб и ошибок на своих видео. Если хочется быстрее к съёмкам — можно сократить до 5 видео, но тогда выводы будут менее надёжными.
+      Это около двух часов. Если хочется быстрее к съёмкам — можно сократить до 5 видео, но тогда выводы будут менее надёжными.
     intent: explain_task
     in_scope: true
     proposed_changes: []
     requires_user_confirmation: false
     suggested_next_action: Начать с 3 самых популярных видео в нише и выписать, что зрители хвалят и о чём просят в комментариях.
+    facts_used:
+      - {value: "Ниша канала — бюджетные путешествия с детьми", source_type: user_provided, source_ref: "goal_memory:gm1"}
     decision_summary: null
   annotations:
     rationale: Explains the task in terms of the user's own goal and concern (originality); offers a lighter option without imposing it.
@@ -59,7 +64,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-nav-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, user_agency, decision_summary]
   language: en
@@ -69,7 +74,8 @@ examples:
   goal_size: medium
   tags: [decline_task, alternative]
   safety_category: allowed
-  scenario_group: sg-nav-expense-tracking
+  scenario_group: bs-nav-declined-task-alternative
+  topic_group: sg-nav-expense-tracking
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -128,7 +134,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, user_agency, decision_summary]
   language: ru
@@ -138,7 +144,8 @@ examples:
   goal_size: medium
   tags: [request_alternative, home_training]
   safety_category: allowed
-  scenario_group: sg-nav-pullups-no-gym
+  scenario_group: bs-nav-constraint-alternative-method
+  topic_group: sg-nav-pullups-no-gym
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -167,7 +174,7 @@ examples:
       Можно, для подтягиваний зал не обязателен. Предлагаю так:
       • турник — дверной или на ближайшей спортплощадке;
       • вместо тренажёров — негативные подтягивания (медленное опускание) и подтягивания с резиновой петлёй;
-      • 3 тренировки в неделю по 25–30 минут, как и было.
+      • 3 тренировки в неделю по 25–30 минут.
       Если берёте дверной турник, проверьте, что дверной проём крепкий и перекладина держит ваш вес, — это важно для безопасности. Заменить задачи?
     intent: request_alternative
     in_scope: true
@@ -191,7 +198,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, user_agency]
   language: en
@@ -201,7 +208,8 @@ examples:
   goal_size: complex
   tags: [explain_route_change, decision_log]
   safety_category: allowed
-  scenario_group: sg-nav-ux-research-certificate
+  scenario_group: bs-nav-explain-past-decision
+  topic_group: sg-nav-ux-research-certificate
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -240,7 +248,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, decision_summary]
   language: en
@@ -250,7 +258,8 @@ examples:
   goal_size: medium
   tags: [limited_time, split_task]
   safety_category: allowed
-  scenario_group: sg-nav-portfolio-site-15min
+  scenario_group: bs-nav-limited-time-split
+  topic_group: sg-nav-portfolio-site-15min
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -315,7 +324,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-006
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, user_agency, decision_summary]
   language: ru
@@ -325,7 +334,8 @@ examples:
   goal_size: medium
   tags: [reschedule, milestone_impact]
   safety_category: allowed
-  scenario_group: sg-nav-calls-reschedule
+  scenario_group: bs-nav-reschedule-knock-on-milestone
+  topic_group: sg-nav-calls-reschedule
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -349,25 +359,36 @@ examples:
     type: navigator_response
     response_language: ru
     message_to_user: |-
-      Перенести можно. Предлагаю звонки на 5 октября, но важно одно: родители откликнулись сейчас, и через неделю часть из них может найти другого репетитора. Поэтому компромисс: сегодня-завтра отправить всем троим короткое сообщение — «спасибо за отклик, позвоню в воскресенье 5-го, удобно?» — это 5 минут.
-      Пробные уроки тогда сдвинутся с 10 на 14 октября. Переносим?
+      Перенести можно. Предлагаю звонки на понедельник, 5 октября, но важно одно: родители откликнулись сейчас, и через неделю часть из них может найти другого репетитора. Поэтому компромисс: сегодня-завтра отправить всем троим короткое сообщение — «спасибо за отклик, позвоню в понедельник, 5 октября, удобно?» — это 5 минут.
+      Пробные уроки и веха «3 пробных урока проведены» тогда сдвинутся с 10 на 14 октября. Переносим?
     intent: reschedule
     in_scope: true
     proposed_changes:
       - action: reschedule
         target_id: n5
+        target_type: node
+        new_date: "2026-10-05"
         description: Перенести звонки родителям с 30 сентября на 5 октября; до этого отправить трём родителям короткое сообщение с предложением времени звонка.
       - action: reschedule
         target_id: n6
+        target_type: node
+        new_date: "2026-10-14"
         description: Сдвинуть пробные уроки с 10 на 14 октября.
+      - action: reschedule
+        target_id: m1
+        target_type: milestone
+        new_date: "2026-10-14"
+        description: Сдвинуть веху «3 пробных урока проведены» с 10 на 14 октября вслед за пробными уроками.
     requires_user_confirmation: true
     risks:
       - Родители, откликнувшиеся сейчас, могут выбрать другого репетитора, если ждать неделю без ответа.
     suggested_next_action: Отправить трём родителям сообщение с предложением звонка 5 октября.
+    facts_used:
+      - {value: На этой неделе завал на работе, source_type: user_provided, source_ref: "conversation[0]"}
     decision_summary:
-      what_changed: Звонки перенесены на 5 октября, пробные уроки — на 14 октября, добавлено короткое сообщение родителям.
+      what_changed: Предлагается перенести звонки на 5 октября, пробные уроки и веху «3 пробных урока проведены» — на 14 октября, а до звонков отправить родителям короткое сообщение.
       why: На этой неделе у вас нет времени на звонки.
-      impact: Веха «3 пробных урока» сдвигается на 4 дня; риск потерять откликнувшихся снижается сообщением.
+      impact: Веха «3 пробных урока проведены» сдвигается на 4 дня, срок цели 1 декабря не меняется; риск потерять откликнувшихся снижается сообщением.
   annotations:
     rationale: Accepts the reschedule, shows the knock-on effect on the milestone and a cheap mitigation for the real risk.
   contrastive:
@@ -381,7 +402,9 @@ examples:
         intent: reschedule
         in_scope: true
         proposed_changes:
-          - {action: reschedule, target_id: n5, description: Move the calls to October 5.}
+          - {action: reschedule, target_id: n5, target_type: node, new_date: "2026-10-05", description: Move the calls to October 5.}
+          - {action: reschedule, target_id: n6, target_type: node, new_date: "2026-10-14", description: Move the trial lessons to October 14.}
+          - {action: reschedule, target_id: m1, target_type: milestone, new_date: "2026-10-14", description: Move the trial-lesson milestone to October 14.}
         requires_user_confirmation: true
         decision_summary:
           what_changed: Calls moved to October 5.
@@ -390,7 +413,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-007
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, user_agency, decision_summary]
   language: en
@@ -400,7 +423,8 @@ examples:
   goal_size: complex
   tags: [remove_milestone, partial_agreement]
   safety_category: allowed
-  scenario_group: sg-nav-translator-website
+  scenario_group: bs-nav-remove-milestone-partial
+  topic_group: sg-nav-translator-website
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -468,7 +492,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-008
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, scope]
   language: ru
@@ -478,7 +502,8 @@ examples:
   goal_size: complex
   tags: [off_topic, redirect]
   safety_category: allowed
-  scenario_group: sg-nav-birthday-greeting
+  scenario_group: bs-nav-off-topic-redirect
+  topic_group: sg-nav-birthday-greeting
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -499,7 +524,7 @@ examples:
     type: navigator_response
     response_language: ru
     message_to_user: |-
-      Поздравления в стихах — не моя задача здесь: я помогаю вам дойти до B1 по английскому. Но есть идея на стыке: напишите маме короткое поздравление на английском — 5–6 предложений о том, за что вы её цените. Это засчитается как один из трёх текстов по 100 словам, а я проверю ошибки перед тем, как вы его отправите.
+      Поздравления в стихах — не моя задача здесь: я помогаю вам дойти до B1 по английскому. Но есть идея на стыке: напишите маме поздравление на английском — 8–10 предложений (около 100 слов) о том, за что вы её цените. Это засчитается как один из трёх текстов по 100 словам, а я проверю ошибки перед тем, как вы его отправите.
     intent: off_topic
     in_scope: false
     proposed_changes: []
@@ -526,7 +551,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-009
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, scope, safety, decision_summary]
   language: en
@@ -536,7 +561,8 @@ examples:
   goal_size: complex
   tags: [emotional_support_boundary, not_a_therapist]
   safety_category: sensitive
-  scenario_group: sg-nav-lonely-learner
+  scenario_group: bs-nav-emotional-support-boundary
+  topic_group: sg-nav-lonely-learner
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -588,7 +614,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-010
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, user_agency, decision_summary]
   language: en
@@ -598,7 +624,8 @@ examples:
   goal_size: medium
   tags: [create_task, user_created]
   safety_category: allowed
-  scenario_group: sg-nav-speaking-club
+  scenario_group: bs-nav-user-created-task
+  topic_group: sg-nav-speaking-club
   input:
     operation: navigator_response
     today: "2026-09-27"
@@ -638,7 +665,7 @@ examples:
   provenance: *prov
 
 - id: gj-nav-011
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: navigator_response
   behavior: [navigator, scope]
   language: en
@@ -648,7 +675,8 @@ examples:
   goal_size: complex
   tags: [off_topic, redirect]
   safety_category: allowed
-  scenario_group: sg-nav-news-request
+  scenario_group: bs-nav-off-topic-redirect
+  topic_group: sg-nav-news-request
   input:
     operation: navigator_response
     today: "2026-09-27"

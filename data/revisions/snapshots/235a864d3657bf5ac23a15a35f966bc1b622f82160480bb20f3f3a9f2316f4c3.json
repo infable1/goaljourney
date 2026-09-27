@@ -1,0 +1,393 @@
+{
+  "content_hash": "235a864d3657bf5ac23a15a35f966bc1b622f82160480bb20f3f3a9f2316f4c3",
+  "example_id": "gj-task-005",
+  "dataset_version": "0.1.1",
+  "task_type": "task_generation",
+  "input": {
+    "operation": "task_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-bird",
+      "title": "Build a birdhouse with my kids",
+      "available_time": {
+        "hours_per_week": 4
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Build it",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Birdhouse mounted in the garden",
+          "region_id": "r1",
+          "success_criteria": [
+            "Birdhouse assembled and mounted"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Build and mount the birdhouse",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available"
+        }
+      ]
+    },
+    "target_node_id": "n1",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I want to build a birdhouse with my two kids (7 and 10) this month. I have basic tools — saw, drill, hammer. What are the steps?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "task_generation",
+    "response_language": "en",
+    "message_to_user": "Four steps, each a good-sized weekend activity with kids. The sawing and drilling are adult jobs; the kids can measure, sand, assemble with glue and nails, and pick the spot.",
+    "for_node_id": "n1",
+    "tasks": [
+      {
+        "id": "n1-t1",
+        "title": "Pick a simple small-bird plan and write a cut list with materials",
+        "description": "Choose a beginner plan for small garden birds and list every board with its dimensions, plus screws or nails, wood glue and sandpaper.",
+        "why_it_matters": "A cut list prevents a second trip to the store and mid-project guesswork with kids waiting.",
+        "expected_result": "A cut list with dimensions for each piece and a materials list.",
+        "estimated_duration_minutes": 30,
+        "difficulty": 1,
+        "dependencies": [],
+        "verification_protocol": {
+          "task_nature": "creative_work",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "artifact_review",
+              "role": "required",
+              "instructions": "Paste or upload the cut list and materials list.",
+              "acceptance_criteria": [
+                "Every piece has dimensions",
+                "Entrance hole size is specified",
+                "Untreated wood is chosen"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Complete cut and materials list"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "A list is directly reviewable."
+        }
+      },
+      {
+        "id": "n1-t2",
+        "title": "Cut all pieces and drill the entrance and drainage holes",
+        "description": "Adults saw and drill; kids measure, mark and sand the edges.",
+        "why_it_matters": "Accurate pieces make assembly quick and safe for the kids.",
+        "expected_result": "All pieces cut to size and sanded, entrance and drainage holes drilled.",
+        "estimated_duration_minutes": 90,
+        "difficulty": 3,
+        "dependencies": [
+          "n1-t1"
+        ],
+        "verification_protocol": {
+          "task_nature": "creative_work",
+          "objective_verifiability": "medium",
+          "methods": [
+            {
+              "method": "photo",
+              "role": "required",
+              "instructions": "A photo of all pieces laid out."
+            },
+            {
+              "method": "follow_up_questions",
+              "role": "required",
+              "instructions": "Two short questions about the build.",
+              "questions": [
+                "How many drainage holes did you drill and where?",
+                "Which piece needed recutting, if any?"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "All pieces visible and matching the cut list",
+            "Answers are consistent with the plan"
+          ],
+          "confidence_ceiling": "medium",
+          "self_report_only": false,
+          "rationale": "For a physical object a photo is useful, but only combined with answers about how it was made."
+        }
+      },
+      {
+        "id": "n1-t3",
+        "title": "Assemble the birdhouse with a removable or hinged roof",
+        "description": "Glue and nail the walls and floor, then attach the roof so it can be opened for cleaning.",
+        "why_it_matters": "Birdhouses need cleaning between seasons; a fixed roof makes that hard.",
+        "expected_result": "One assembled birdhouse with a roof that opens for cleaning.",
+        "estimated_duration_minutes": 60,
+        "difficulty": 2,
+        "dependencies": [
+          "n1-t2"
+        ],
+        "verification_protocol": {
+          "task_nature": "creative_work",
+          "objective_verifiability": "medium",
+          "methods": [
+            {
+              "method": "photo",
+              "role": "required",
+              "instructions": "A photo with the roof open."
+            },
+            {
+              "method": "follow_up_questions",
+              "role": "required",
+              "instructions": "One question about assembly.",
+              "questions": [
+                "How did you make the roof removable?"
+              ]
+            }
+          ],
+          "pass_criteria": [
+            "Assembled with an opening roof"
+          ],
+          "confidence_ceiling": "medium",
+          "self_report_only": false,
+          "rationale": "Photo plus explanation is a reasonable combination for a physical build."
+        }
+      },
+      {
+        "id": "n1-t4",
+        "title": "Mount the birdhouse at about head height, away from direct afternoon sun",
+        "description": "Choose a spot sheltered from strong sun and wind and out of easy reach of cats, and mount it securely.",
+        "why_it_matters": "Placement decides whether birds actually use it.",
+        "expected_result": "Birdhouse mounted with the chosen height and direction noted.",
+        "estimated_duration_minutes": 30,
+        "difficulty": 1,
+        "dependencies": [
+          "n1-t3"
+        ],
+        "verification_protocol": {
+          "task_nature": "other",
+          "objective_verifiability": "medium",
+          "methods": [
+            {
+              "method": "structured_result",
+              "role": "required",
+              "instructions": "Note height, direction the entrance faces and why you chose the spot.",
+              "fields": [
+                "Height",
+                "Entrance faces",
+                "Why this spot"
+              ]
+            },
+            {
+              "method": "photo",
+              "role": "required",
+              "instructions": "A photo of the mounted birdhouse where the entrance is visible."
+            }
+          ],
+          "pass_criteria": [
+            "Placement details recorded",
+            "Photo shows the birdhouse mounted"
+          ],
+          "confidence_ceiling": "medium",
+          "self_report_only": false,
+          "rationale": "A physical result — the photo shows it is mounted and the notes explain the placement; neither alone would be enough, together they justify medium."
+        }
+      }
+    ],
+    "decision_summary": null
+  },
+  "contrastive": [
+    {
+      "id": "gj-task-005-c1",
+      "failure_modes": [
+        "overplanning"
+      ],
+      "critique": "Turns a one-weekend family project into six formal steps including research and documentation that add nothing for a simple birdhouse.",
+      "output": {
+        "type": "task_generation",
+        "response_language": "en",
+        "message_to_user": "Here's a comprehensive project plan for your birdhouse.",
+        "for_node_id": "n1",
+        "tasks": [
+          {
+            "id": "n1-t1",
+            "title": "Research 15 bird species native to your region",
+            "description": "Compile a report on local species and their nesting preferences.",
+            "why_it_matters": "Thorough research leads to better outcomes.",
+            "expected_result": "A 15-species research document.",
+            "estimated_duration_minutes": 180,
+            "difficulty": 3,
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the report."
+                }
+              ],
+              "pass_criteria": [
+                "Report complete"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Reviewable."
+            }
+          },
+          {
+            "id": "n1-t2",
+            "title": "Compare 10 birdhouse plans in a scored decision matrix",
+            "description": "Score each plan on 8 criteria.",
+            "why_it_matters": "Structured decisions are better.",
+            "expected_result": "A decision matrix of 10 plans.",
+            "estimated_duration_minutes": 120,
+            "difficulty": 2,
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the matrix."
+                }
+              ],
+              "pass_criteria": [
+                "Matrix complete"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Reviewable."
+            }
+          },
+          {
+            "id": "n1-t3",
+            "title": "Draw a technical drawing with 3 projections",
+            "description": "Produce front, side and top views to scale.",
+            "why_it_matters": "Precision.",
+            "expected_result": "A 3-view technical drawing.",
+            "estimated_duration_minutes": 120,
+            "difficulty": 3,
+            "verification_protocol": {
+              "task_nature": "creative_work",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the drawing."
+                }
+              ],
+              "pass_criteria": [
+                "Drawing complete"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Reviewable."
+            }
+          },
+          {
+            "id": "n1-t4",
+            "title": "Write a safety risk assessment for 5 tools",
+            "description": "Document hazards and mitigations.",
+            "why_it_matters": "Safety first.",
+            "expected_result": "A 5-tool risk assessment document.",
+            "estimated_duration_minutes": 90,
+            "difficulty": 2,
+            "verification_protocol": {
+              "task_nature": "writing",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the document."
+                }
+              ],
+              "pass_criteria": [
+                "Document complete"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Reviewable."
+            }
+          },
+          {
+            "id": "n1-t5",
+            "title": "Build the birdhouse following the drawing",
+            "description": "Cut, assemble and finish.",
+            "why_it_matters": "This is the goal.",
+            "expected_result": "One finished birdhouse.",
+            "estimated_duration_minutes": 180,
+            "difficulty": 3,
+            "verification_protocol": {
+              "task_nature": "creative_work",
+              "objective_verifiability": "medium",
+              "methods": [
+                {
+                  "method": "photo",
+                  "role": "required",
+                  "instructions": "Photo of the birdhouse."
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "required",
+                  "instructions": "Questions.",
+                  "questions": [
+                    "How did you assemble it?",
+                    "Which step was hardest?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Birdhouse built"
+              ],
+              "confidence_ceiling": "medium",
+              "self_report_only": false,
+              "rationale": "Photo plus questions."
+            }
+          },
+          {
+            "id": "n1-t6",
+            "title": "Write a project retrospective of 500 words",
+            "description": "Reflect on lessons learned.",
+            "why_it_matters": "Continuous improvement.",
+            "expected_result": "A 500-word retrospective document.",
+            "estimated_duration_minutes": 60,
+            "difficulty": 1,
+            "verification_protocol": {
+              "task_nature": "writing",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the text."
+                }
+              ],
+              "pass_criteria": [
+                "Text complete"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Reviewable."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

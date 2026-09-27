@@ -1,0 +1,63 @@
+# Evidence confidence semantics — Policy B (docs/POLICY_DECISIONS_v0.1.1.md).
+#
+# Confidence scale used by protocols (confidence_ceiling) and verification results (confidence):
+#   limited  -> the user's word (self-report or user-entered data) or media descriptions alone
+#   medium   -> corroborated: the user's word plus something that constrains it
+#   high     -> the result itself was inspected, or an independent source confirms it
+#   low      -> verification_result only: the evidence received is insufficient (needs_more_evidence)
+# Enforced by lint (VP_CEILING_ABOVE_EVIDENCE, VR_CONFIDENCE_ABOVE_EVIDENCE, VP_SELF_REPORT_CEILING)
+# for records with schema_version >= 0.1.1.
+version: "0.1.1"
+
+order: [limited, medium, high]
+
+classes:
+  self_report:
+    ceiling: limited
+    description: The user's own account of what they did — free text, logs, answers about their own activity.
+  user_entered_data:
+    ceiling: limited
+    description: Structured data typed by the user (tables, interview cards, measurements). Confidently worded or detailed data is still the user's word.
+    medium_if: every row carries a checkable reference (references_required) AND the protocol spot-checks references (url_review or a fetched third-party confirmation)
+  image_description:
+    ceiling: limited
+    description: A machine description of a photo/screenshot. Never verifies a task alone.
+    medium_if: combined with at least one other required, non-image method (a physical result shown + explained)
+  inspectable_artifact:
+    ceiling: high
+    description: The result itself — text, code, document, file, recording transcript, answers to a test the navigator issued.
+  externally_verifiable:
+    ceiling: high
+    description: An independent source the system fetched itself (public page, platform verification link).
+
+# Default class of each protocol method (a method may override with evidence_class when the default
+# is wrong for the task, e.g. a structured_result that IS the deliverable -> inspectable_artifact).
+method_class:
+  structured_self_report: self_report
+  follow_up_questions: self_report
+  structured_result: user_entered_data
+  third_party_confirmation: user_entered_data
+  photo: image_description
+  screenshot: image_description
+  artifact_review: inspectable_artifact
+  data_export: inspectable_artifact
+  knowledge_test: inspectable_artifact
+  practical_test: inspectable_artifact
+  audio: inspectable_artifact
+  video: inspectable_artifact
+  url_review: externally_verifiable
+
+# Default class of submitted evidence items (input side of verification_result).
+evidence_class:
+  text_report: self_report
+  structured_self_report: self_report
+  answers: self_report              # answers to a knowledge/practical test the protocol requires -> inspectable_artifact
+  structured_result: user_entered_data
+  third_party_confirmation: user_entered_data
+  photo: image_description
+  screenshot: image_description
+  file: inspectable_artifact
+  data_export: inspectable_artifact
+  audio: inspectable_artifact
+  video: inspectable_artifact
+  url: externally_verifiable        # only when description_source is system_fetch; otherwise user_entered_data

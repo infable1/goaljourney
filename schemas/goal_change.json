@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/goal_change.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/goal_change.json",
   "title": "Operation output: goal_change (Type L)",
   "description": "Classifies a change of intention (minor adjustment / major adjustment / new goal) and preserves useful progress instead of discarding history.",
   "type": "object",
@@ -46,6 +46,7 @@
     },
     "requires_user_confirmation": { "type": "boolean" },
     "needs_web_research": { "type": "boolean" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" },
     "decision_summary": { "$ref": "decision_summary.json" }
   }
 }

@@ -4,7 +4,7 @@
 examples:
 
 - id: gj-vres-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision]
   language: en
@@ -14,7 +14,8 @@ examples:
   goal_size: n/a
   tags: [verified, artifact_review]
   safety_category: allowed
-  scenario_group: sg-vres-product-brief
+  scenario_group: bs-vres-artifact-meets-criteria
+  topic_group: sg-vres-product-brief
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -95,7 +96,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-vres-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision]
   language: ru
@@ -105,7 +106,8 @@ examples:
   goal_size: n/a
   tags: [needs_more_evidence, photo_only]
   safety_category: allowed
-  scenario_group: sg-vres-probability-problems
+  scenario_group: bs-vres-partial-photo
+  topic_group: sg-vres-probability-problems
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -147,10 +149,14 @@ examples:
     type: verification_result
     response_language: ru
     message_to_user: |-
-      Отличное начало — на фото аккуратные решения задач 3.1–3.4. Но пока я вижу только одну страницу, а для зачёта нужны все 20 задач и 3 короткие контрольные задачи.
+      Отличное начало — на фото аккуратные решения задач 3.1–3.4. Но на фото только одна страница, а для зачёта нужны все 20 задач и 3 короткие контрольные задачи.
       Пришлите, пожалуйста:
       1) фото или скан остальных страниц (задачи 3.5–3.20);
-      2) решения трёх контрольных задач — я пришлю их сразу после этого сообщения.
+      2) решения трёх контрольных задач с ходом решения — вот они:
+         а) В урне 4 белых и 6 чёрных шаров, два шара вынимают без возвращения. Какова вероятность, что второй шар белый, если первый — чёрный?
+         б) Монету подбрасывают три раза. Какова вероятность ровно двух орлов, если первым выпал орёл?
+         в) Тест даёт положительный результат у 95% больных и у 2% здоровых, болеет 1% людей. Какова вероятность, что человек болен, если тест положительный?
+      Решения можно прислать вместе с остальными страницами.
     task_id: t-problems
     attempt: 1
     status: needs_more_evidence
@@ -204,7 +210,7 @@ examples:
   provenance: *prov
 
 - id: gj-vres-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision, user_agency]
   language: en
@@ -214,7 +220,8 @@ examples:
   goal_size: n/a
   tags: [rejected, audio]
   safety_category: allowed
-  scenario_group: sg-vres-pitch-recording
+  scenario_group: bs-vres-audio-shows-failure
+  topic_group: sg-vres-pitch-recording
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -310,7 +317,7 @@ examples:
   provenance: *prov
 
 - id: gj-vres-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision]
   language: ru
@@ -320,7 +327,8 @@ examples:
   goal_size: n/a
   tags: [self_report, verified_limited]
   safety_category: allowed
-  scenario_group: sg-vres-stretching
+  scenario_group: bs-vres-self-report-accepted
+  topic_group: sg-vres-stretching
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -396,8 +404,8 @@ examples:
     rationale: Reasonable self-report under a self-report protocol is accepted and labelled limited, without demanding impossible proof.
   contrastive:
     - id: gj-vres-004-c1
-      failure_modes: [rejected_reasonable_self_report]
-      critique: Demands video proof for a home stretching routine whose protocol accepts self-report; objective proof is unreasonable here and punishes honest users.
+      failure_modes: [rejected_reasonable_self_report, unavailable_capability]
+      critique: Demands video proof for a home stretching routine whose protocol accepts self-report; objective proof is unreasonable here, punishes honest users, and video is not something the app can receive.
       output:
         type: verification_result
         response_language: ru
@@ -439,7 +447,7 @@ examples:
   provenance: *prov
 
 - id: gj-vres-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision]
   language: en
@@ -449,7 +457,8 @@ examples:
   goal_size: n/a
   tags: [verified, url_review]
   safety_category: allowed
-  scenario_group: sg-vres-case-study-url
+  scenario_group: bs-vres-url-verified
+  topic_group: sg-vres-case-study-url
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -519,7 +528,7 @@ examples:
   provenance: *prov
 
 - id: gj-vres-006
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision]
   language: en
@@ -529,7 +538,8 @@ examples:
   goal_size: n/a
   tags: [photo_plus_explanation, mixed_evidence]
   safety_category: allowed
-  scenario_group: sg-vres-paint-wall
+  scenario_group: bs-vres-photo-plus-report
+  topic_group: sg-vres-paint-wall
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -608,8 +618,8 @@ examples:
     rationale: Photo used correctly as one part of a combination; confidence reflects the self-reported component.
   contrastive:
     - id: gj-vres-006-c1
-      failure_modes: [rejected_reasonable_self_report]
-      critique: Refuses the self-reported part of a mixed protocol (number of coats) and demands a video of the painting process, although the protocol accepts a report plus a photo and a question.
+      failure_modes: [rejected_reasonable_self_report, unavailable_capability]
+      critique: Refuses the self-reported part of a mixed protocol (number of coats) and demands a video of the painting process, although the protocol accepts a report plus a photo and a question — and the app cannot receive video at all.
       output:
         type: verification_result
         response_language: en
@@ -633,7 +643,7 @@ examples:
   provenance: *prov
 
 - id: gj-vres-007
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: verification_result
   behavior: [verification_decision]
   language: ru
@@ -643,7 +653,8 @@ examples:
   goal_size: n/a
   tags: [needs_more_evidence, incomplete_submission]
   safety_category: allowed
-  scenario_group: sg-vres-book-ideas
+  scenario_group: bs-vres-missing-required-artifact
+  topic_group: sg-vres-book-ideas
   input:
     operation: verification_result
     today: "2026-09-27"
@@ -665,6 +676,7 @@ examples:
         methods:
           - method: structured_result
             role: required
+            evidence_class: inspectable_artifact
             instructions: Заполните список идей.
             fields: ["Идея своими словами", "Глава", "Как применю в команде"]
           - method: follow_up_questions
@@ -674,7 +686,7 @@ examples:
         pass_criteria: ["5 идей с главой и способом применения"]
         confidence_ceiling: medium
         self_report_only: false
-        rationale: Идеи своими словами с привязкой к команде показывают понимание прочитанного.
+        rationale: Список идей своими словами с привязкой к команде — это и есть результат задачи; по нему видно понимание прочитанного.
     evidence:
       - id: e1
         type: text_report

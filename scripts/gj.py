@@ -7,6 +7,7 @@
     python scripts/gj.py generate ...        # synthetic candidates via a teacher LLM (needs credentials)
     python scripts/gj.py review sample|list|show|template|approve|revise|reject|apply|history|stats|export|verify-log
     python scripts/gj.py audit               # heuristic audits (Problems 1-9) + known issues register
+    python scripts/gj.py revisions check|sync|diff   # revision ledger vs. the base release (no silent edits)
     python scripts/gj.py leakage             # layered train/eval/seed leakage report
     python scripts/gj.py split               # immutable train/validation/test release + manifest
     python scripts/gj.py gates               # is the release training_ready? (configs/release_gates.yaml)
@@ -117,6 +118,11 @@ def cmd_audit(args):
     return audit.run(write=args.write, as_json=args.json, record=args.record)
 
 
+def cmd_revisions(args):
+    from generation.pipelines import revisions
+    return revisions.run(args.rev_cmd, version=args.version, example=getattr(args, "example", None))
+
+
 def cmd_leakage(args):
     from generation.pipelines import leakage
     return leakage.run(as_json=args.json, distribution=args.distribution, out=args.out)
@@ -189,7 +195,7 @@ def main(argv=None):
     rsa.add_argument("--check", action="store_true", help="verify the committed manifest equals a fresh regeneration")
     rsa.add_argument("--json", action="store_true")
     rl = rs.add_parser("list", help="examples with tier, required qualifications and status")
-    rl.add_argument("--status", choices=["pending", "stale", "approved", "approved_pending_expert", "needs_revision", "rejected"])
+    rl.add_argument("--status", choices=["pending", "approved", "needs_revision", "rejected"])
     rl.add_argument("--tier", choices=["human_review_required", "expert_review_required"])
     rl.add_argument("--task-type")
     rl.add_argument("--language", choices=["ru", "en"])
@@ -228,7 +234,7 @@ def main(argv=None):
     rex = rs.add_parser("export", help="md reading packet | sheet (batch YAML) | json (statuses + events)")
     rex.add_argument("--format", required=True, choices=["md", "sheet", "json"])
     rex.add_argument("--out", required=True)
-    rex.add_argument("--status", choices=["pending", "stale", "approved", "approved_pending_expert", "needs_revision", "rejected"])
+    rex.add_argument("--status", choices=["pending", "approved", "needs_revision", "rejected"])
     rex.add_argument("--id", action="append")
     rex.add_argument("--manifest", action="store_true", help="only the review sample, in manifest order")
     rex.add_argument("--with-automated", action="store_true", help="md only: include audit findings (breaks independence)")
@@ -240,6 +246,15 @@ def main(argv=None):
     au.add_argument("--json", action="store_true")
     au.add_argument("--record", help="only findings for this example/case id (prefix match)")
     au.set_defaults(func=cmd_audit)
+
+    rv = sub.add_parser("revisions", help="revision ledger of a dataset version (data/revisions/v<ver>.yaml)")
+    rvs = rv.add_subparsers(dest="rev_cmd", required=True)
+    rvs.add_parser("check", help="every difference from the base release is recorded (exit 1 if not)")
+    rvs.add_parser("sync", help="fill computed fields (hashes, changed paths) and write snapshots")
+    rvd = rvs.add_parser("diff", help="show the ledger entry and field-level diff for one example")
+    rvd.add_argument("example")
+    rv.add_argument("--version")
+    rv.set_defaults(func=cmd_revisions)
 
     lk = sub.add_parser("leakage", help="layered leakage report (exits 1 on hard findings)")
     lk.add_argument("--json", action="store_true")
@@ -293,6 +308,7 @@ def main(argv=None):
     from gjcore.records import RecordFileError
     from generation.generators.providers import ProviderError
     from generation.pipelines.review_store import ReviewError
+    from generation.pipelines.revisions import RevisionError
     try:
         return args.func(args)
     except BrokenPipeError:
@@ -300,7 +316,7 @@ def main(argv=None):
         import os
         os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
         return 0
-    except (RecordFileError, MissingCredentialsError, ProviderError, ReviewError) as e:
+    except (RecordFileError, MissingCredentialsError, ProviderError, ReviewError, RevisionError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2
 

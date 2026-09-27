@@ -9,11 +9,26 @@ Every rule has a stable code. Codes are referenced by:
   * FAILURE_MODE_CODES — which failure modes a rule detects (contrastive self-test),
   * evaluation checks (`lint_absent`).
 Add new rules at the end of the relevant section and document them in DATASET_SPEC.md.
+
+Rules are versioned with the output contract: a record is linted with the rules of its own
+`schema_version`, so a released dataset is never re-judged by later policy. Rules added in
+v0.1.1 (docs/POLICY_DECISIONS_v0.1.1.md) run only when `version >= 0.1.1`; `version=None` means the
+current schema version. `lint_input` checks the request side (evidence the product could not have
+received, protocols in the input, memory wording, assistant turns) and is reported separately so a
+model is never scored on its input.
 """
 from dataclasses import dataclass
 from datetime import date, timedelta
 
+from gjcore.schemas import current_version, version_key
+
+from . import calendar as CAL
+from . import policy as POL
+from . import provenance as PROV
+from . import quantities as Q
+from . import russian as RU
 from . import text as T
+from . import workload as W
 
 
 @dataclass(frozen=True)
@@ -29,8 +44,14 @@ class Issue:
 
 
 class _Collector:
-    def __init__(self):
+    def __init__(self, version=None):
         self.issues = []
+        self.version = str(version or current_version())
+        self._vkey = version_key(self.version)
+
+    def since(self, version):
+        """True if the record's contract is at least `version` (rules introduced then apply)."""
+        return self._vkey >= version_key(version)
 
     def error(self, code, message, path=""):
         self.issues.append(Issue("error", code, message, path))
@@ -45,16 +66,23 @@ FAILURE_MODE_CODES = {
     "asked_known_information": {"Q_ASKS_KNOWN"},
     "missed_critical_question": {"Q_MISSED_CRITICAL"},
     "photo_as_proof": {"VP_PHOTO_ONLY", "VR_PHOTO_ONLY_VERIFIED"},
-    "accepted_unsupported_proof": {"VR_VERIFIED_UNMET", "VR_PHOTO_ONLY_VERIFIED", "VR_BASIS_MISMATCH", "VR_OVER_CONFIDENT", "VR_IGNORED_OPEN_REQUEST"},
+    "accepted_unsupported_proof": {"VR_VERIFIED_UNMET", "VR_PHOTO_ONLY_VERIFIED", "VR_BASIS_MISMATCH", "VR_OVER_CONFIDENT",
+                                   "VR_IGNORED_OPEN_REQUEST", "VR_CONFIDENCE_ABOVE_EVIDENCE", "VR_CONTRADICTION_VERIFIED"},
     "rejected_reasonable_self_report": {"VR_SELF_REPORT_DISMISSED", "VR_DEMANDS_OBJECTIVE_FOR_SELF_REPORT", "VR_REJECT_WITHOUT_FAILURE"},
     "premature_rejection": {"VR_REJECT_WITHOUT_FAILURE"},
     "generic_verification": {"VP_NATURE_MISMATCH", "VP_WEAK_FOR_VERIFIABLE", "VP_GENERIC"},
     "vague_tasks": {"T_VAGUE_TITLE", "T_UNMEASURABLE"},
-    "ignored_available_time": {"DP_OVER_TIME", "DP_TOO_MANY", "J_OVER_TIME", "T_EXCEEDS_SESSION", "RA_OVER_TIME", "RA_TIME_CHANGE_IGNORED"},
-    "ignored_deadline": {"J_DEADLINE", "DP_IGNORED_DUE", "RA_DEADLINE_BEYOND_GOAL", "RA_GOAL_DEADLINE_NO_CONFIRM"},
-    "silent_route_change": {"RA_MAJOR_NO_CONFIRM", "RA_BIG_CHANGE_NO_CONFIRM", "RA_GOAL_DEADLINE_NO_CONFIRM", "NAV_SILENT_CHANGE", "NAV_NO_CONFIRM", "GC_NO_CONFIRM"},
+    "ignored_available_time": {"DP_OVER_TIME", "DP_TOO_MANY", "J_OVER_TIME", "T_EXCEEDS_SESSION", "RA_OVER_TIME", "RA_TIME_CHANGE_IGNORED",
+                               "T_OVER_CAPACITY", "RA_UNFIT_NO_DECISION", "ARITH_PACE"},
+    "ignored_deadline": {"J_DEADLINE", "DP_IGNORED_DUE", "RA_DEADLINE_BEYOND_GOAL", "RA_GOAL_DEADLINE_NO_CONFIRM",
+                         "MILESTONE_DATE_INFEASIBLE", "J_MILESTONE_OVERBOOKED"},
+    "silent_route_change": {"RA_MAJOR_NO_CONFIRM", "RA_BIG_CHANGE_NO_CONFIRM", "RA_GOAL_DEADLINE_NO_CONFIRM", "NAV_SILENT_CHANGE", "NAV_NO_CONFIRM", "GC_NO_CONFIRM",
+                            "RA_DEADLINE_STATE_INCONSISTENT", "RA_DEADLINE_AUTONOMY_WRONG", "RA_MILESTONE_NO_SUMMARY",
+                            "RA_UNDECLARED_DEADLINE_CHANGE", "NAV_GOAL_DEADLINE_NO_CONFIRM", "NAV_RESCHEDULE_UNDECLARED",
+                            "GC_DEADLINE_NO_CONFIRM", "J_GOAL_DEADLINE_CHANGED"},
     "discarded_progress": {"RA_REMOVED_COMPLETED", "RA_PROGRESS_NOT_PRESERVED", "GC_DISCARDED_ALL", "GC_PROGRESS_UNACCOUNTED"},
-    "unverified_current_facts": {"CLAIM_SOURCE_NOT_IN_CONTEXT", "WR_UNSUPPORTED_IGNORED"},
+    "unverified_current_facts": {"CLAIM_SOURCE_NOT_IN_CONTEXT", "WR_UNSUPPORTED_IGNORED", "FACT_VERIFIED_WITHOUT_SOURCE"},
+    "assumed_user_info": {"FACT_NOT_GROUNDED", "FACT_PROVENANCE_UPGRADED", "FACT_BAD_REF", "MEM_SOURCE_NOT_GROUNDED"},
     "memory_leak": {"MEMORY_LEAK", "MEM_WRONG_GOAL", "MEM_SENSITIVE_USER_SCOPE", "MEM_THIRD_PARTY_STORED"},
     "wrong_language": {"LANG_MISMATCH", "LANG_SCRIPT"},
     "activity_based_progress": {"PU_ACTIVITY_BASED", "PU_LEVEL_UNSUPPORTED", "PU_UNVERIFIED_EVIDENCE", "PU_PROGRESS_WITHOUT_VERIFICATION"},
@@ -66,6 +94,16 @@ FAILURE_MODE_CODES = {
     "goal_change_misclassified": {"GC_NEW_GOAL_IN_PLACE"},
     "overrode_user_decision": {"NAV_DECLINE_NO_OPTIONS"},
     "generic_assistant_drift": {"NAV_OFF_TOPIC_FULFILLED"},
+    # v0.1.1
+    "calendar_error": {"DATE_WEEKDAY_MISMATCH"},
+    "arithmetic_error": {"ARITH_REMAINING_BEFORE", "ARITH_REMAINING_AFTER", "ARITH_UNESTIMATED", "ARITH_WEEKS_NEEDED",
+                         "ARITH_WEEKS_AVAILABLE", "ARITH_FITS", "ARITH_HORIZON_DATE", "ARITH_PACE", "ARITH_TEXT_UNDERIVABLE",
+                         "RA_WORKLOAD_MISSING", "DP_TOTAL_MISMATCH", "MILESTONE_DATE_INFEASIBLE", "J_MILESTONE_OVERBOOKED",
+                         "T_OVER_CAPACITY"},
+    "unavailable_capability": {"VP_METHOD_UNAVAILABLE", "CAPABILITY_PROMISE"},
+    "overconfident_verification": {"VP_CEILING_ABOVE_EVIDENCE", "VR_CONFIDENCE_ABOVE_EVIDENCE", "VP_SELF_REPORT_CEILING", "VR_OVER_CONFIDENT"},
+    "ignored_contradiction": {"VR_CONTRADICTION_VERIFIED", "VR_CONTRADICTION_BAD_REF"},
+    "gendered_language": {"RU_GENDERED_SELF_REFERENCE", "RU_GENDERED_USER_ADDRESS", "RU_GENDERED_MEMORY"},
 }
 
 # Failure modes whose every instance must be caught by the linter. For the others the lint
@@ -75,6 +113,7 @@ ALWAYS_DETECTABLE = {
     "accepted_unsupported_proof", "rejected_reasonable_self_report", "ignored_available_time",
     "silent_route_change", "discarded_progress", "memory_leak", "wrong_language",
     "activity_based_progress", "exposed_reasoning", "vague_tasks", "unnecessary_questions",
+    "overconfident_verification",
 }
 
 DONE_STATUSES = {"completed", "verified"}
@@ -135,6 +174,81 @@ def _lint_common(c, operation, output, context, annotations, language):
         if T.contains_term(output, term):
             c.error("MEMORY_LEAK", f"output mentions {term!r}, which belongs to an unrelated goal/memory")
     _lint_claims(c, output.get("external_claims"), context)
+    if c.since("0.1.1"):
+        _lint_calendar(c, output, context)
+        _lint_capability_promises(c, output)
+        if resp_lang == "ru" or (operation == "memory_extraction" and language == "ru"):
+            _lint_ru_voice(c, output)
+        for code, i, message in PROV.check_facts(output.get("facts_used"), context):
+            c.error(code, message, f"facts_used/{i}")
+
+
+# --------------------------------------------------------------------------- v0.1.1 common rules
+
+# Keys whose strings are written in the assistant's voice. Level and achievement titles are badge
+# names (POL-D rule 3) and are not linted; ids, urls and research queries are not prose.
+_VOICE_SKIP_KEYS = {"id", "url", "query", "queries", "task_id", "node_id", "target_id", "for_node_id", "type",
+                    "response_language", "status", "value", "source_ref", "facts_to_verify", "research_topics"}
+_BADGE_PATHS = ("journey/levels", "journey/achievements", "level/current_title", "achievements_unlocked")
+
+
+def _iter_text(obj, path=""):
+    """Yield (path, key, string) for string leaves; list items inherit their parent's key."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            p = f"{path}/{k}" if path else k
+            if isinstance(v, str):
+                yield p, k, v
+            else:
+                for item in _iter_text(v, p):
+                    yield item
+    elif isinstance(obj, list):
+        key = path.rsplit("/", 1)[-1]
+        for i, v in enumerate(obj):
+            p = f"{path}/{i}"
+            if isinstance(v, str):
+                yield p, key, v
+            else:
+                yield from _iter_text(v, p)
+
+
+def _voice_strings(output):
+    for p, k, s in _iter_text(output):
+        if k in _VOICE_SKIP_KEYS or any(p.startswith(b) for b in _BADGE_PATHS) or p.startswith("facts_used"):
+            continue
+        yield p, s
+
+
+def _lint_calendar(c, output, context):
+    today = _d((context or {}).get("today"))
+    if not today:
+        return
+    for p, _, s in _iter_text(output):
+        for mm in CAL.weekday_mismatches(s, today):
+            c.error("DATE_WEEKDAY_MISMATCH", mm.message(), p)
+
+
+def _lint_capability_promises(c, output):
+    for p, s in _voice_strings(output):
+        for cap, status, m in POL.capability_promises(s):
+            c.error("CAPABILITY_PROMISE", f"«{m.group(0)}» needs {cap}, which is {status} (POL-A)", p)
+
+
+def _lint_ru_voice(c, output):
+    for p, s in _voice_strings(output):
+        if T.cyrillic_ratio(s) < 0.5:
+            continue
+        if output.get("type") == "memory_extraction" and p.startswith(("items/", "updates/")):
+            m = RU.memory_gendered(s)
+            if m:
+                c.error("RU_GENDERED_MEMORY", f"stored memory describes the user with a gendered form «{m.group(0)}» (POL-D)", p)
+            continue
+        hit = next(RU.self_reference(s), None)
+        if hit:
+            c.error("RU_GENDERED_SELF_REFERENCE", f"the assistant refers to itself with a gendered form «{hit}» (POL-D)", p)
+        for m in RU.user_address(s):
+            c.error("RU_GENDERED_USER_ADDRESS", f"the user is addressed with a gendered form «{m.group(0)}» (POL-D)", p)
+            break
 
 
 def _lint_claims(c, claims, context):
@@ -240,13 +354,26 @@ def lint_protocol(c, p, path="protocol"):
         c.error("VP_PHOTO_ONLY", "a photo/screenshot alone cannot establish completion; combine it with explanation, questions or an artifact", path)
     if req == {"video"}:
         c.warn("VP_MEDIA_ONLY", "video is the only required evidence; consider follow-up questions", path)
-    self_report_class = req <= _SELF_REPORT_METHODS
+    # v0.1.1 (POL-B): user-entered data without checkable references is the user's word too.
+    self_report_class = POL.protocol_is_users_word(p) if c.since("0.1.1") else req <= _SELF_REPORT_METHODS
     if self_report_class and (p.get("confidence_ceiling") != "limited" or not p.get("self_report_only")):
-        c.error("VP_SELF_REPORT_CEILING", "self-report-only protocols must set self_report_only=true and confidence_ceiling=limited", path)
+        c.error("VP_SELF_REPORT_CEILING", "protocols that rely only on the user's word (self-report or unreferenced user-entered "
+                                          "data) must set self_report_only=true and confidence_ceiling=limited", path)
     if p.get("self_report_only") and not self_report_class:
         c.error("VP_INCONSISTENT", "self_report_only=true but objective methods are required", path)
     if p.get("objective_verifiability") in {"high", "medium"} and self_report_class:
-        c.error("VP_WEAK_FOR_VERIFIABLE", "the result can be checked objectively but only self-report is required", path)
+        c.error("VP_WEAK_FOR_VERIFIABLE", "the result can be checked objectively but only the user's word is required", path)
+    if c.since("0.1.1"):
+        for i, m in enumerate(methods):
+            un = POL.unavailable_method(m.get("method"))
+            if un:
+                c.error("VP_METHOD_UNAVAILABLE", f"method {m.get('method')!r} needs {un[0]}, which is {un[1]} in the product (POL-A)",
+                        f"{path}/methods/{i}")
+        support, classes = POL.protocol_support(p)
+        ceiling = p.get("confidence_ceiling")
+        if ceiling in POL.RANK and POL.RANK[ceiling] > POL.RANK[support]:
+            c.error("VP_CEILING_ABOVE_EVIDENCE", f"confidence_ceiling={ceiling} but the required evidence "
+                                                 f"({', '.join(classes)}) supports at most {support} (POL-B)", path)
     if p.get("objective_verifiability") == "none" and p.get("confidence_ceiling") == "high":
         c.error("VP_CEILING_TOO_HIGH", "objective_verifiability=none cannot justify high confidence", path)
     nature = p.get("task_nature")
@@ -377,9 +504,12 @@ def lint_journey_generation(c, output, context, annotations):
     goal = output.get("goal") or {}
     ctx_goal = (context or {}).get("goal") or {}
     if ctx_goal.get("deadline") and goal.get("deadline") != ctx_goal.get("deadline"):
-        c.warn("J_GOAL_DEADLINE_CHANGED", "journey silently changes the user's deadline; propose it instead")
+        (c.error if c.since("0.1.1") else c.warn)(
+            "J_GOAL_DEADLINE_CHANGED", "journey silently changes the user's deadline; propose it instead")
     merged_goal = {**ctx_goal, **goal}
     lint_journey(c, output.get("journey") or {}, merged_goal, context)
+    if c.since("0.1.1"):
+        _lint_journey_capacity(c, output.get("journey") or {}, merged_goal, context)
 
 
 def lint_task_generation(c, output, context, annotations):
@@ -396,6 +526,8 @@ def lint_task_generation(c, output, context, annotations):
         c.error("T_UNKNOWN_NODE", f"for_node_id {target!r} not in the journey")
     for i, t in enumerate(tasks):
         lint_task(c, t, context, known - {t.get("id")}, f"tasks/{i}")
+    if c.since("0.1.1"):
+        _lint_task_capacity(c, output, context)
 
 
 def lint_verification_protocol_design(c, output, context, annotations):
@@ -464,6 +596,24 @@ def lint_verification_result(c, output, context, annotations):
             c.error("VR_IGNORED_OPEN_REQUEST", "verified without the evidence requested in the previous attempt")
     if status == "verified" and conf == "low":
         c.warn("VR_LOW_CONFIDENCE_VERIFIED", "verified with low confidence")
+    if c.since("0.1.1"):
+        items = list(evidence) + [e for h in history for e in (h.get("evidence") or [])]
+        if items:
+            support, classes = POL.evidence_support(items)
+            if conf in POL.RANK and POL.RANK[conf] > POL.RANK[support]:
+                c.error("VR_CONFIDENCE_ABOVE_EVIDENCE", f"confidence={conf} but the evidence received ({', '.join(sorted(set(classes)))}) "
+                                                        f"supports at most {support} (POL-B)")
+            if set(classes) <= POL.LOW_CLASSES and basis not in (None, "self_report"):
+                c.error("VR_BASIS_MISMATCH", "only the user's word (self-report or user-entered data) was submitted but "
+                                             "evidence_basis is not self_report (POL-B)")
+        ids = {e.get("id") for e in items}
+        contradictions = output.get("contradictions") or []
+        if contradictions and status == "verified":
+            c.error("VR_CONTRADICTION_VERIFIED", "the evidence contradicts the user's claim, so the task cannot be verified (POL-B)")
+        for i, k in enumerate(contradictions):
+            bad = [e for e in k.get("evidence_ids", []) if e not in ids]
+            if bad:
+                c.error("VR_CONTRADICTION_BAD_REF", f"contradiction cites unknown evidence {bad}", f"contradictions/{i}")
 
 
 # --------------------------------------------------------------------------- H/K: route adaptation
@@ -482,9 +632,14 @@ def lint_route_adaptation(c, output, context, annotations):
             c.error("RA_UNKNOWN_NODE", f"modified node {m.get('node_id')!r} is not in the journey")
     preserved = set(output.get("preserved_progress", []))
     modified = {m.get("node_id") for m in output.get("modified_nodes", [])}
-    missing = done - preserved - removed - modified
+    invalidated = {i.get("node_id") for i in output.get("invalidated_progress") or []}
+    missing = done - preserved - removed - modified - invalidated
     if missing:
         c.error("RA_PROGRESS_NOT_PRESERVED", f"completed nodes {sorted(missing)} not listed in preserved_progress")
+    for nid in sorted(invalidated - done):
+        c.error("RA_BAD_INVALIDATION", f"{nid!r} is not completed/verified progress, so it cannot be invalidated")
+    for nid in sorted(invalidated & preserved):
+        c.error("RA_BAD_INVALIDATION", f"{nid!r} is listed as both preserved and invalidated")
     added_ids = [n.get("id") for n in output.get("added_nodes", [])]
     for nid in added_ids:
         if nid in nodes:
@@ -529,6 +684,9 @@ def lint_route_adaptation(c, output, context, annotations):
             c.error("RA_TIME_CHANGE_IGNORED", "time budget changed but new_weekly_hours_planned is not set")
         elif new_hours > budget["hours_per_week"] * 1.1:
             c.error("RA_OVER_TIME", f"plan needs {new_hours} h/week but the user now has {budget['hours_per_week']}")
+    if c.since("0.1.1"):
+        _lint_route_deadlines(c, output, context)
+        _lint_route_workload(c, output, context)
 
 
 # --------------------------------------------------------------------------- J: daily plan
@@ -589,10 +747,13 @@ def lint_navigator_response(c, output, context, annotations):
         c.error("NAV_SCOPE_MISMATCH", "intent=off_topic <=> in_scope=false")
     nodes = _journey_nodes(context)
     milestones = {m["id"] for m in ((context or {}).get("journey") or {}).get("milestones", [])}
+    goal_id = ((context or {}).get("goal") or {}).get("id")
     for i, ch in enumerate(changes):
         tid = ch.get("target_id")
-        if tid and nodes and ch.get("action") != "add" and tid not in nodes and tid not in milestones:
+        if tid and nodes and ch.get("action") != "add" and tid not in nodes and tid not in milestones and tid != goal_id:
             c.error("NAV_UNKNOWN_TARGET", f"target {tid!r} not in the journey", f"proposed_changes/{i}")
+    if c.since("0.1.1"):
+        _lint_navigator_deadlines(c, output, context)
     if output.get("intent") in {"decline_task", "request_alternative"} and not changes and not output.get("suggested_next_action"):
         c.error("NAV_DECLINE_NO_OPTIONS", "user declined a task but got neither an alternative nor a next action")
     if output.get("intent") == "off_topic" and len(output.get("message_to_user", "")) > 900:
@@ -621,6 +782,12 @@ def lint_goal_change(c, output, context, annotations):
         c.error("GC_NEW_GOAL_IN_PLACE", "a new goal should become a separate goal; keep the original's history")
     if cls == "minor_adjustment" and discarded & done:
         c.warn("GC_MINOR_DISCARDS", "minor adjustment discards completed progress")
+    if c.since("0.1.1"):
+        old_dl = ((context or {}).get("goal") or {}).get("deadline")
+        new_dl = (output.get("updated_goal") or {}).get("deadline")
+        if old_dl and new_dl != old_dl and not output.get("requires_user_confirmation"):
+            c.error("GC_DEADLINE_NO_CONFIRM", f"goal deadline {old_dl} -> {new_dl}: the user's deadline changes only after "
+                                              "confirmation (POL-C)")
 
 
 # --------------------------------------------------------------------------- N: web research
@@ -686,6 +853,9 @@ def lint_memory_extraction(c, output, context, annotations):
     for i, u in enumerate(output.get("updates", [])):
         if u.get("memory_id") not in existing:
             c.error("MEM_UNKNOWN_ID", f"update references unknown memory {u.get('memory_id')!r}", f"updates/{i}")
+    if c.since("0.1.1"):
+        for code, i, message in PROV.memory_source_issues(output.get("items"), context):
+            c.error(code, message, f"items/{i}")
 
 
 # --------------------------------------------------------------------------- progress
@@ -724,6 +894,253 @@ def lint_progress_update(c, output, context, annotations):
             c.error("PU_UNVERIFIED_EVIDENCE", f"milestone {m} reported as verified but it is not")
 
 
+# --------------------------------------------------------------------------- v0.1.1: deadlines & workload (POL-C)
+
+_AUTONOMY = {"node": "auto", "milestone": "adapt_with_summary", "goal": "confirm_required"}
+_OVERBOOK_TOLERANCE = 1.1   # plans may use up to 110 % of the nominal capacity before they count as infeasible
+
+
+def _weekly_pace(context, output=None):
+    """The pace a plan runs at: explicit workload > new steady pace > current budget > goal > journey pacing."""
+    output = output or {}
+    ctx = context or {}
+    for v in ((output.get("workload") or {}).get("weekly_hours"), output.get("new_weekly_hours_planned"),
+              (ctx.get("time_budget") or {}).get("hours_per_week"),
+              ((ctx.get("goal") or {}).get("available_time") or {}).get("hours_per_week"),
+              ((ctx.get("journey") or {}).get("pacing") or {}).get("weekly_hours_planned")):
+        if isinstance(v, (int, float)) and v > 0:
+            return float(v)
+    return None
+
+
+def _need_vs_capacity(nodes, mdates, target, target_id, until, today, weekly, phases=None):
+    """(hours needed, hours available) for the work due by a target, or None if too few estimates."""
+    scope = W.in_horizon(nodes, mdates, target, target_id)
+    total, missing = W.total_minutes(scope)
+    if not scope or len(missing) > 0.2 * len(scope) or not (today and until and weekly):
+        return None
+    return total / 60, W.capacity_hours(today, until, weekly, phases)
+
+
+def _summary_text(output):
+    ds = output.get("decision_summary") or {}
+    return " ".join(str(ds.get(k, "")) for k in ("what_changed", "why", "impact"))
+
+
+def _lint_route_deadlines(c, output, context):
+    confirm = output.get("requires_user_confirmation")
+    today = _d((context or {}).get("today"))
+    journey = (context or {}).get("journey") or {}
+    ms_titles = {m["id"]: m.get("title", "") for m in journey.get("milestones", [])}
+    declared = set()
+    for i, d in enumerate(output.get("modified_deadlines", [])):
+        path = f"modified_deadlines/{i}"
+        target, autonomy, state = d.get("target"), d.get("autonomy"), d.get("state")
+        declared.add((target, d.get("target_id")))
+        if not autonomy or not state:
+            c.error("RA_DEADLINE_AUTONOMY_MISSING", "every deadline change declares autonomy and state (POL-C)", path)
+            continue
+        if _AUTONOMY.get(target) != autonomy:
+            c.error("RA_DEADLINE_AUTONOMY_WRONG", f"a {target} deadline has autonomy {_AUTONOMY.get(target)!r}, not {autonomy!r} (POL-C)", path)
+        if confirm and state != "proposed":
+            c.error("RA_DEADLINE_STATE_INCONSISTENT", "the change waits for the user's confirmation, so nothing is applied yet: state must be 'proposed'", path)
+        if not confirm and state != "applied":
+            c.error("RA_DEADLINE_STATE_INCONSISTENT", "state 'proposed' needs requires_user_confirmation=true", path)
+        if target == "milestone" and state == "applied":
+            text = _summary_text(output)
+            title = ms_titles.get(d.get("target_id"), "")
+            named = d.get("target_id") in text or (title and title.lower() in text.lower()) or \
+                CAL.mentions_date(text, _d(d.get("to")), today)
+            if not named:
+                c.error("RA_MILESTONE_NO_SUMMARY", f"milestone {d.get('target_id')} moves to {d.get('to')} but decision_summary "
+                                                   "names neither the milestone nor the new date (POL-C)", path)
+    for m in output.get("modified_nodes", []):
+        for ch in m.get("changes", []):
+            if ch.get("field") == "due_date" and ("node", m.get("node_id")) not in declared:
+                c.error("RA_UNDECLARED_DEADLINE_CHANGE", f"due_date of {m.get('node_id')} changes in modified_nodes but is not declared "
+                                                         "in modified_deadlines (POL-C)", f"modified_nodes/{m.get('node_id')}")
+    for m in output.get("modified_milestones", []) or []:
+        if m.get("change") == "moved" and ("milestone", m.get("milestone_id")) not in declared:
+            c.error("RA_UNDECLARED_DEADLINE_CHANGE", f"milestone {m.get('milestone_id')} is moved but its date change is not in "
+                                                     "modified_deadlines (POL-C)", "modified_milestones")
+    # Every new milestone/goal date must leave room for the work due by it.
+    if not today:
+        return
+    nodes, mdates, _ = W.apply_route_changes(context, output)
+    weekly = _weekly_pace(context, output)
+    phases = (output.get("workload") or {}).get("pace_phases")
+    for i, d in enumerate(output.get("modified_deadlines", [])):
+        to = _d(d.get("to"))
+        if d.get("target") not in ("milestone", "goal") or not to:
+            continue
+        nc = _need_vs_capacity(nodes, mdates, d.get("target"), d.get("target_id"), to, today, weekly, phases)
+        if nc and nc[0] > nc[1] * _OVERBOOK_TOLERANCE + 0.5:
+            c.error("MILESTONE_DATE_INFEASIBLE", f"{d.get('target')} {d.get('target_id')} moved to {to}: {nc[0]:.1f} h of unfinished "
+                                                 f"work due by then, {nc[1]:.1f} h available at {weekly:g} h/week", f"modified_deadlines/{i}")
+
+
+def _lint_route_workload(c, output, context):
+    today = _d((context or {}).get("today"))
+    trig = (output.get("trigger") or {}).get("type")
+    wl = output.get("workload")
+    if trig in {"less_time", "more_time"} and not wl:
+        c.error("RA_WORKLOAD_MISSING", "a time change needs the workload arithmetic (remaining work, pace, horizon) (POL-C)")
+    if wl and today:
+        _check_workload(c, wl, output, context, today)
+    if today:
+        vals = Q.derivable(context, output)
+        texts = [("message_to_user", output.get("message_to_user", "")),
+                 ("decision_summary", _summary_text(output))]
+        ds = output.get("decision_summary") or {}
+        texts += [(f"decision_summary/alternatives_considered/{i}", f"{a.get('option', '')}. {a.get('why_not', '')}")
+                  for i, a in enumerate(ds.get("alternatives_considered") or [])]
+        for path, text in texts:
+            for value, unit, snippet in Q.underivable(text, vals):
+                c.error("ARITH_TEXT_UNDERIVABLE", f"«{snippet}»: {value:g} {unit} does not follow from the plan "
+                                                  "(remaining work, pace, dates) (POL-C)", path)
+
+
+def _check_workload(c, wl, output, context, today):
+    horizon = wl.get("horizon") or {}
+    ht, hid, hdate = horizon.get("target"), horizon.get("target_id"), _d(horizon.get("date"))
+    before_nodes = W.unfinished_nodes(context)
+    before_dates = W.milestone_dates(context)
+    after_nodes, after_dates, goal_after = W.apply_route_changes(context, output)
+    goal_before = _d(((context or {}).get("goal") or {}).get("deadline"))
+    valid = {goal_before, goal_after} if ht == "goal" else {before_dates.get(hid), after_dates.get(hid)}
+    if hdate not in valid - {None}:
+        c.error("ARITH_HORIZON_DATE", f"workload horizon {ht} {hid} dated {hdate}, but that target is due "
+                                      f"{', '.join(sorted(str(v) for v in valid if v)) or 'on no known date'}", "workload/horizon")
+    before, miss_b = W.total_minutes(W.in_horizon(before_nodes, before_dates, ht, hid))
+    after, miss_a = W.total_minutes(W.in_horizon(after_nodes, after_dates, ht, hid))
+    if wl.get("remaining_minutes_before") != before:
+        c.error("ARITH_REMAINING_BEFORE", f"remaining_minutes_before={wl.get('remaining_minutes_before')} but the unfinished work "
+                                          f"due by the horizon adds up to {before} min", "workload")
+    if wl.get("remaining_minutes_after") != after:
+        c.error("ARITH_REMAINING_AFTER", f"remaining_minutes_after={wl.get('remaining_minutes_after')} but after this change the "
+                                         f"unfinished work due by the horizon adds up to {after} min", "workload")
+    missing, listed = set(miss_b) | set(miss_a), set(wl.get("unestimated_node_ids") or [])
+    if missing != listed:
+        c.error("ARITH_UNESTIMATED", f"unestimated nodes {sorted(missing)} but unestimated_node_ids lists {sorted(listed)}", "workload")
+    weekly = wl.get("weekly_hours")
+    new_hours = output.get("new_weekly_hours_planned")
+    if new_hours is not None and weekly != new_hours:
+        c.error("ARITH_PACE", f"workload.weekly_hours={weekly} but new_weekly_hours_planned={new_hours}", "workload")
+    budget = ((context or {}).get("time_budget") or {}).get("hours_per_week")
+    if budget is not None and weekly and weekly > budget * 1.1:
+        c.error("ARITH_PACE", f"workload runs at {weekly} h/week but the user has {budget} h/week", "workload")
+    if not weekly or not hdate:
+        return
+    needed = W.weeks_needed(today, after / 60, weekly, wl.get("pace_phases"))
+    available = (hdate - today).days / 7
+    if needed is None:
+        return
+    if not W.close(wl.get("weeks_needed"), needed):
+        c.error("ARITH_WEEKS_NEEDED", f"weeks_needed={wl.get('weeks_needed')} but {after} min at this pace takes {needed:.1f} weeks", "workload")
+    if not W.close(wl.get("weeks_available"), available, rel=0.03, abs_=0.3):
+        c.error("ARITH_WEEKS_AVAILABLE", f"weeks_available={wl.get('weeks_available')} but {today} -> {hdate} is {available:.1f} weeks", "workload")
+    fits = needed <= available
+    if wl.get("fits") != fits and abs(needed - available) > 0.5:
+        c.error("ARITH_FITS", f"fits={wl.get('fits')} but {needed:.1f} weeks are needed and {available:.1f} are available", "workload")
+    if not fits and abs(needed - available) > 0.5 and not output.get("requires_user_confirmation"):
+        c.error("RA_UNFIT_NO_DECISION", f"the remaining work needs {needed:.1f} weeks but only {available:.1f} remain until {hdate}: "
+                                        "the user has to choose (move the date, cut scope or add time) (POL-C)")
+
+
+def _lint_navigator_deadlines(c, output, context):
+    today = _d((context or {}).get("today"))
+    confirm = output.get("requires_user_confirmation")
+    nodes, mdates = W.unfinished_nodes(context), W.milestone_dates(context)
+    weekly = _weekly_pace(context)
+    for i, ch in enumerate(output.get("proposed_changes", [])):
+        path = f"proposed_changes/{i}"
+        if ch.get("action") == "reschedule" and not (ch.get("target_type") and ch.get("new_date")):
+            c.error("NAV_RESCHEDULE_UNDECLARED", "a reschedule declares target_type and new_date (POL-C)", path)
+        if ch.get("target_type") == "goal" and not confirm:
+            c.error("NAV_GOAL_DEADLINE_NO_CONFIRM", "the goal deadline changes only after the user confirms (POL-C)", path)
+        new = _d(ch.get("new_date"))
+        if ch.get("target_type") in ("milestone", "goal") and new and today:
+            dates = dict(mdates)
+            if ch["target_type"] == "milestone":
+                dates[ch.get("target_id")] = new
+            nc = _need_vs_capacity(nodes, dates, ch["target_type"], ch.get("target_id"), new, today, weekly)
+            if nc and nc[0] > nc[1] * _OVERBOOK_TOLERANCE + 0.5:
+                c.error("MILESTONE_DATE_INFEASIBLE", f"{ch['target_type']} {ch.get('target_id')} moved to {new}: {nc[0]:.1f} h of "
+                                                     f"unfinished work due by then, {nc[1]:.1f} h available at {weekly:g} h/week", path)
+
+
+def _lint_journey_capacity(c, journey, goal, context):
+    today = _d((context or {}).get("today"))
+    weekly = ((journey.get("pacing") or {}).get("weekly_hours_planned")
+              or ((goal or {}).get("available_time") or {}).get("hours_per_week"))
+    if not (today and weekly):
+        return
+    nodes = {n["id"]: n for n in journey.get("nodes", []) if n.get("status") not in W.INACTIVE_STATUSES}
+    mdates = {m["id"]: _d(m.get("target_date")) for m in journey.get("milestones", [])}
+    for mid, md in sorted(mdates.items(), key=lambda kv: (kv[1] or date.max, kv[0])):
+        if not md:
+            continue
+        nc = _need_vs_capacity(nodes, mdates, "milestone", mid, md, today, weekly)
+        if nc and nc[0] > nc[1] * _OVERBOOK_TOLERANCE + 0.5:
+            c.error("J_MILESTONE_OVERBOOKED", f"milestone {mid} ({md}): {nc[0]:.1f} h of work due by then, {nc[1]:.1f} h available "
+                                              f"at {weekly:g} h/week (POL-C)", "journey/milestones")
+
+
+def _lint_task_capacity(c, output, context):
+    today = _d((context or {}).get("today"))
+    weekly = _weekly_pace(context)
+    journey = (context or {}).get("journey") or {}
+    target = output.get("for_node_id") or (context or {}).get("target_node_id")
+    node = next((n for n in journey.get("nodes", []) if n.get("id") == target), {})
+    mdates = W.milestone_dates(context)
+    until = mdates.get(node.get("milestone_id")) or mdates.get(target) or _d(((context or {}).get("goal") or {}).get("deadline"))
+    if not (today and weekly and until):
+        return
+    total_h = sum(t.get("estimated_duration_minutes") or 0 for t in output.get("tasks", [])) / 60
+    cap = W.capacity_hours(today, until, weekly)
+    if total_h > cap * _OVERBOOK_TOLERANCE + 0.5:
+        c.error("T_OVER_CAPACITY", f"the tasks need {total_h:.1f} h but {weekly:g} h/week until {until} gives {cap:.1f} h (POL-C)", "tasks")
+
+
+def lint_input(context, version=None):
+    """Request-side checks (v0.1.1+): what the product could not have sent, and wording the model
+    would learn from. Reported separately from output lint; a model is never scored on its input."""
+    c = _Collector(version)
+    if not c.since("0.1.1") or not isinstance(context, dict):
+        return c.issues
+    items = [(f"input/evidence/{i}", e) for i, e in enumerate(context.get("evidence") or [])]
+    for h, att in enumerate(context.get("verification_history") or []):
+        items += [(f"input/verification_history/{h}/evidence/{i}", e) for i, e in enumerate(att.get("evidence") or [])]
+    for path, e in items:
+        un = POL.unavailable_evidence(e)
+        if un:
+            c.error("EVIDENCE_SOURCE_UNAVAILABLE", f"evidence {e.get('id')!r} ({e.get('type')}) needs {un[0]}, which is {un[1]} (POL-A)", path)
+    vp = (context.get("task") or {}).get("verification_protocol")
+    if vp:
+        lint_protocol(c, vp, "input/task/verification_protocol")
+    for n in (context.get("journey") or {}).get("nodes") or []:
+        vp = (n.get("task") or {}).get("verification_protocol")
+        if vp and n.get("status") not in DONE_STATUSES:
+            lint_protocol(c, vp, f"input/journey/nodes/{n.get('id')}/task/verification_protocol")
+    for key in ("user_memory", "goal_memory", "retrieved_memory"):
+        for i, m in enumerate(context.get(key) or []):
+            text = m.get("content") or ""
+            if T.cyrillic_ratio(text) >= 0.5:
+                hit = RU.memory_gendered(text)
+                if hit:
+                    c.error("RU_GENDERED_MEMORY", f"stored memory describes the user with a gendered form «{hit.group(0)}» (POL-D)",
+                            f"input/{key}/{i}")
+    today = _d(context.get("today"))
+    if today:
+        texts = [(f"input/conversation/{i}", m.get("content", "")) for i, m in enumerate(context.get("conversation") or [])
+                 if m.get("role") == "assistant"]
+        texts += [(f"input/decision_log/{i}", d.get("summary", "")) for i, d in enumerate(context.get("decision_log") or [])]
+        for path, text in texts:
+            for mm in CAL.weekday_mismatches(text, today):
+                c.error("DATE_WEEKDAY_MISMATCH", mm.message(), path)
+    return c.issues
+
+
 # --------------------------------------------------------------------------- dispatch
 
 _RULES = {
@@ -744,9 +1161,10 @@ _RULES = {
 }
 
 
-def lint_output(operation, output, context=None, annotations=None, language=None, safety_category=None):
-    """Lint one output. `language` is the user's language; `safety_category` the expected category."""
-    c = _Collector()
+def lint_output(operation, output, context=None, annotations=None, language=None, safety_category=None, version=None):
+    """Lint one output. `language` is the user's language; `safety_category` the expected category;
+    `version` the output contract (schema_version) whose rules apply (default: current)."""
+    c = _Collector(version)
     if not isinstance(output, dict):
         c.error("NOT_AN_OBJECT", "output is not a JSON object")
         return c.issues

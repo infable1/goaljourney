@@ -1,0 +1,310 @@
+{
+  "content_hash": "4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207",
+  "example_id": "gj-time-001",
+  "dataset_version": "0.1.1",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-dataviz",
+      "title": "Build a portfolio of 3 data visualisation projects by March 1",
+      "deadline": "2027-03-01",
+      "deadline_flexibility": "flexible",
+      "available_time": {
+        "hours_per_week": 10
+      }
+    },
+    "time_budget": {
+      "hours_per_week": 3,
+      "previous_hours_per_week": 10
+    },
+    "journey": {
+      "pacing": {
+        "weekly_hours_planned": 10,
+        "horizon_weeks": 22
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Projects",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Presentation",
+          "order": 2,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "3 projects finished",
+          "region_id": "r1",
+          "success_criteria": [
+            "3 projects published"
+          ],
+          "target_date": "2027-02-01"
+        },
+        {
+          "id": "m2",
+          "title": "Portfolio site live",
+          "region_id": "r2",
+          "success_criteria": [
+            "Site with 3 case pages"
+          ],
+          "target_date": "2027-03-01"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Project 1: city bike usage dashboard",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified",
+          "estimated_duration_minutes": 1500
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Project 2: housing prices story",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "in_progress",
+          "estimated_duration_minutes": 1500
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Learn D3.js from scratch",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "estimated_duration_minutes": 1800,
+          "priority": "optional"
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Project 3: interactive D3 climate visualisation",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n3"
+          ],
+          "estimated_duration_minutes": 1800
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Write a blog post about each project",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n4"
+          ],
+          "estimated_duration_minutes": 900,
+          "priority": "optional"
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Build the portfolio site",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n4"
+          ],
+          "estimated_duration_minutes": 900
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "less_time",
+        "date": "2026-09-26",
+        "description": "New job starts next week; available time drops from 10 to 3 hours per week."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I got the job! But it means I'll only have about 3 hours a week for the portfolio from now on."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "en",
+    "message_to_user": "Congratulations on the job! At 3 hours a week the unfinished part of the plan (about 115 hours) would take around 38 weeks — roughly 9 months, well past March 1 — so something has to give. My proposal:\n• drop \"Learn D3 from scratch\" and the blog posts — they're nice-to-haves;\n• make project 3 a smaller one in the tools you already use (about 15 hours instead of 30);\n• keep March 1 for projects 2 and 3 plus a simple one-page portfolio site (about 8 hours instead of 15).\nThat leaves about 48 hours of work: about 16 weeks at 3 h/week, so roughly 6 weeks of buffer before March 1. If you'd rather keep the D3 project, the alternative is moving the deadline to early May. Which do you prefer?",
+    "trigger": {
+      "type": "less_time",
+      "description": "Available time drops from 10 to 3 hours per week because of a new job."
+    },
+    "change_level": "major",
+    "requires_user_confirmation": true,
+    "removed_nodes": [
+      {
+        "node_id": "n3",
+        "reason": "Learning D3 from scratch (about 30 h) doesn't fit 3 h/week before March."
+      },
+      {
+        "node_id": "n5",
+        "reason": "Blog posts are optional; the case pages on the site cover the same story."
+      }
+    ],
+    "added_nodes": [],
+    "modified_nodes": [
+      {
+        "node_id": "n4",
+        "changes": [
+          {
+            "field": "title",
+            "from": "Project 3: interactive D3 climate visualisation",
+            "to": "Project 3: climate visualisation in your current tools"
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 1800,
+            "to": 900
+          },
+          {
+            "field": "depends_on",
+            "from": [
+              "n3"
+            ],
+            "to": [
+              "n2"
+            ]
+          }
+        ],
+        "reason": "Keeps a third project within the new time budget."
+      },
+      {
+        "node_id": "n6",
+        "changes": [
+          {
+            "field": "title",
+            "from": "Build the portfolio site",
+            "to": "Build a simple one-page portfolio site"
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 900,
+            "to": 480
+          }
+        ],
+        "reason": "A single page with three project cards is enough for applications."
+      }
+    ],
+    "modified_deadlines": [],
+    "new_weekly_hours_planned": 3,
+    "workload": {
+      "weekly_hours": 3,
+      "remaining_minutes_before": 6900,
+      "remaining_minutes_after": 2880,
+      "horizon": {
+        "target": "goal",
+        "target_id": "g-dataviz",
+        "date": "2027-03-01"
+      },
+      "weeks_needed": 16,
+      "weeks_available": 22.1,
+      "fits": true
+    },
+    "preserved_progress": [
+      "n1"
+    ],
+    "user_options": [
+      "Keep March 1 with a smaller third project (recommended)",
+      "Keep the D3 project and move the deadline to early May"
+    ],
+    "facts_used": [
+      {
+        "value": "About 3 hours a week for the portfolio from now on",
+        "source_type": "user_provided",
+        "source_ref": "conversation[0]"
+      },
+      {
+        "value": "Unfinished tasks add up to 6,900 minutes (about 115 hours)",
+        "source_type": "model_inferred"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Proposed to drop D3 learning and the blog posts, shrink project 3 and the site, and plan 3 hours per week.",
+      "why": "The unfinished tasks add up to about 115 hours; at 3 h/week that is about 38 weeks, far past March 1.",
+      "impact": "About 48 hours remain — about 16 weeks at 3 h/week — which fits before March 1 with roughly 6 weeks to spare; project 1 stays verified, project 2 continues as is and the milestone dates do not change.",
+      "alternatives_considered": [
+        {
+          "option": "Keep everything and move the deadline to late June",
+          "why_not": "It would push your March 1 date back by almost four months, mostly for optional items (the D3 course and blog posts)."
+        }
+      ]
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-time-001-c1",
+      "failure_modes": [
+        "ignored_available_time"
+      ],
+      "critique": "Acknowledges the new job but keeps planning 10 hours a week, so the user falls behind from week one.",
+      "output": {
+        "type": "route_adaptation",
+        "response_language": "en",
+        "message_to_user": "Congrats! Let's keep the plan as it is — just try to squeeze in the hours on weekends.",
+        "trigger": {
+          "type": "less_time",
+          "description": "New job."
+        },
+        "change_level": "minor",
+        "requires_user_confirmation": false,
+        "removed_nodes": [],
+        "added_nodes": [],
+        "modified_nodes": [
+          {
+            "node_id": "n5",
+            "changes": [
+              {
+                "field": "priority",
+                "from": "optional",
+                "to": "normal"
+              }
+            ],
+            "reason": "Keep everything."
+          }
+        ],
+        "modified_deadlines": [],
+        "new_weekly_hours_planned": 10,
+        "workload": {
+          "weekly_hours": 10,
+          "remaining_minutes_before": 6900,
+          "remaining_minutes_after": 6900,
+          "horizon": {
+            "target": "goal",
+            "target_id": "g-dataviz",
+            "date": "2027-03-01"
+          },
+          "weeks_needed": 11.5,
+          "weeks_available": 22.1,
+          "fits": true
+        },
+        "preserved_progress": [
+          "n1"
+        ],
+        "decision_summary": {
+          "what_changed": "Nothing important.",
+          "why": "The plan is good.",
+          "impact": "Work on weekends."
+        }
+      }
+    }
+  ]
+}

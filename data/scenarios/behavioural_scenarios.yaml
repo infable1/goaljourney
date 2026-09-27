@@ -1,0 +1,652 @@
+# Behavioural scenario registry — see docs/EVALUATION_V0.2_DESIGN.md §3 and docs/LEAKAGE_CHECKS.md.
+# Generated from the authoring table and then maintained by hand; `gj leakage` validates it against schemas/behavioural_scenarios.json.
+registry_version: '1.0'
+dataset_version: 0.1.1
+note: Behavioural scenario groups (Milestone 1.6). A scenario is the situation, the decisive condition and the decision the navigator should take; pattern = operation|trigger|condition|decision.
+  Training examples reference side=train scenarios in scenario_group; evaluation cases (v0.2.0) reference side=eval scenarios. No id and no pattern may be shared
+  across sides (checked by `gj leakage`). The v0.1.0 topical group of each example is kept in its topic_group field.
+scenarios:
+- id: bs-clar-ambiguous-venture-first-message
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: ambiguous_outcome+no_deadline
+  decision: ask_outcome_scope_and_constraints
+  description: First message states a vague venture; the outcome, scope and constraints that shape the route are unknown.
+- id: bs-clar-career-switch-target-unclear
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: target_role_unclear+no_deadline
+  decision: ask_target_role_and_timeline
+  description: A career switch whose target role and timeline are open; experience is partly known.
+- id: bs-clar-skill-goal-level-unknown
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: current_level_unknown+practice_access_unknown
+  decision: ask_level_and_practice_access
+  description: A physical skill goal where the current level and access to practice decide the first steps.
+- id: bs-clar-tiny-goal-ready
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: all_material_facts_known
+  decision: ready_without_questions
+  description: 'A small, fully specified goal: no question would change the plan.'
+- id: bs-clar-project-purpose-mixed-language
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: purpose_unclear+mixed_language_input
+  decision: ask_purpose_in_dominant_language
+  description: A portfolio project whose purpose decides the scope; the user mixes languages.
+- id: bs-clar-creative-finish-line-unclear
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: finish_line_unclear+no_deadline
+  decision: ask_finish_line_and_time
+  description: A creative goal where what counts as finished and the time available are unknown.
+- id: bs-clar-followup-after-partial-answers
+  side: train
+  operation: goal_clarification
+  trigger: user_message
+  condition: partial_answers_in_history+location_specific
+  decision: ask_only_remaining_defer_rules_to_research
+  description: 'A follow-up turn: some questions were already answered; location rules are deferred to verified research.'
+- id: bs-clar-single-critical-gap
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: one_critical_gap
+  decision: ask_single_question
+  description: Everything except one fact is known; exactly one question is warranted.
+- id: bs-clar-heritage-language-level
+  side: train
+  operation: goal_clarification
+  trigger: new_goal
+  condition: mixed_language_input+level_unclear
+  decision: ask_level_in_user_language
+  description: A heritage-language goal written in mixed languages; the current level is unclear.
+- id: bs-feas-career-leap-too-fast
+  side: train
+  operation: feasibility_assessment
+  trigger: new_goal
+  condition: aggressive_deadline+large_gap
+  decision: likely_unrealistic_with_options
+  description: A career outcome far beyond the current state within a short deadline.
+- id: bs-feas-endurance-event-base-unknown
+  side: train
+  operation: feasibility_assessment
+  trigger: new_goal
+  condition: fitness_base_low+aggressive_timeline
+  decision: uncertain_with_risks_and_question
+  description: An endurance event on a short timeline from a low base; safety risks dominate.
+- id: bs-feas-savings-gap-arithmetic
+  side: train
+  operation: feasibility_assessment
+  trigger: new_goal
+  condition: numeric_gap
+  decision: likely_unrealistic_show_arithmetic
+  description: A savings target that the stated income and expenses cannot reach; the arithmetic decides.
+- id: bs-feas-creative-release-feasible
+  side: train
+  operation: feasibility_assessment
+  trigger: new_goal
+  condition: enough_time_and_resources
+  decision: feasible_with_risks
+  description: A creative release with enough time and resources; the answer is feasible with named risks.
+- id: bs-feas-regulated-product-research
+  side: train
+  operation: feasibility_assessment
+  trigger: new_goal
+  condition: location_specific_rules_unknown
+  decision: uncertain_needs_research
+  description: Selling a product whose location-specific rules are unknown; research decides.
+- id: bs-feas-exam-too-soon
+  side: train
+  operation: feasibility_assessment
+  trigger: new_goal
+  condition: exam_date_too_soon+no_base
+  decision: likely_unrealistic_with_options
+  description: A certification exam in two weeks without the required base.
+- id: bs-jour-career-entry-with-deadline
+  side: train
+  operation: journey_generation
+  trigger: new_goal
+  condition: career_switch+deadline+budget_limit
+  decision: detail_first_region_outline_rest
+  description: A career-entry route with a deadline and a limited budget.
+- id: bs-jour-small-business-rules-first
+  side: train
+  operation: journey_generation
+  trigger: new_goal
+  condition: no_deadline+marketplace_rules
+  decision: verify_rules_then_price
+  description: 'A small online business: fees and rules are verified before pricing.'
+- id: bs-jour-trip-fixed-budget
+  side: train
+  operation: journey_generation
+  trigger: new_goal
+  condition: fixed_budget+entry_rules
+  decision: verify_requirements_then_book
+  description: A trip with a fixed budget where entry requirements shape the schedule.
+- id: bs-jour-skill-with-dietary-constraint
+  side: train
+  operation: journey_generation
+  trigger: new_goal
+  condition: constraint+deadline
+  decision: technique_first_progression
+  description: A practical skill with a stated constraint; techniques precede outcomes.
+- id: bs-jour-sensitive-health-goal
+  side: train
+  operation: journey_generation
+  trigger: new_goal
+  condition: sensitive_health_goal
+  decision: planning_support_with_referral
+  description: 'A body-weight goal: planning support only, with a professional referral.'
+- id: bs-task-customer-discovery-breakdown
+  side: train
+  operation: task_generation
+  trigger: task_breakdown_request
+  condition: early_product+testers_needed
+  decision: screen_then_observe_tasks
+  description: Breaking down beta-tester recruitment and first-use observation.
+- id: bs-task-public-talk-breakdown
+  side: train
+  operation: task_generation
+  trigger: task_breakdown_request
+  condition: deadline+rehearsal_needed
+  decision: draft_record_rehearse_tasks
+  description: Breaking down talk preparation into drafting, recording and rehearsal.
+- id: bs-task-short-sessions-own-data
+  side: train
+  operation: task_generation
+  trigger: task_breakdown_request
+  condition: short_sessions+own_data
+  decision: session_sized_hands_on_tasks
+  description: Hands-on 30-minute tasks on the user's own data, with privacy in mind.
+- id: bs-task-parallel-prep-professionals
+  side: train
+  operation: task_generation
+  trigger: task_breakdown_request
+  condition: external_professionals_needed
+  decision: parallel_tasks_delegate_rules
+  description: Preparation tasks, some parallel, with legal requirements delegated to professionals.
+- id: bs-task-tiny-goal-few-tasks
+  side: train
+  operation: task_generation
+  trigger: task_breakdown_request
+  condition: tiny_goal
+  decision: few_short_tasks
+  description: A tiny goal broken into a handful of short tasks, no overplanning.
+- id: bs-vprot-skill-without-video
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: skill_task+video_unavailable
+  decision: issued_input_narration_questions_medium
+  description: A performance skill that video would prove best; the protocol uses available capabilities and states the lower confidence.
+- id: bs-vprot-writing-artifact
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: writing_task
+  decision: artifact_review_high
+  description: A writing task verified by reviewing the text itself.
+- id: bs-vprot-software-live-get-plus-repo
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: software_task+write_calls_unavailable
+  decision: live_get_repo_and_pasted_calls_medium
+  description: 'A deployed API: the system can only GET; write calls come as pasted output.'
+- id: bs-vprot-research-table-spot-check
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: research_task+links_available
+  decision: referenced_table_spot_check_medium
+  description: A comparison table whose rows carry links; a spot-check justifies medium.
+- id: bs-vprot-activity-no-tracker
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: physical_activity+no_tracker
+  decision: structured_self_report_limited
+  description: 'A physical activity without a tracker: structured self-report, limited.'
+- id: bs-vprot-interviews-privacy
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: interviews+privacy
+  decision: structured_notes_self_report_limited
+  description: 'Customer interviews that cannot be recorded: structured notes, limited.'
+- id: bs-vprot-habit-self-report
+  side: train
+  operation: verification_protocol_design
+  trigger: protocol_request
+  condition: habit_task
+  decision: low_friction_self_report_limited
+  description: A daily habit verified by a low-friction self-report log.
+- id: bs-vres-artifact-meets-criteria
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: artifact_meets_all_criteria
+  decision: verified_high
+  description: A submitted artifact meets every criterion.
+- id: bs-vres-partial-photo
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: photo_covers_part_of_work
+  decision: needs_more_evidence_specific
+  description: A photo covers only part of the work; the answer asks for the rest and the in-chat test.
+- id: bs-vres-audio-shows-failure
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: artifact_shows_criterion_not_met
+  decision: rejected_with_way_forward
+  description: A recording shows a criterion clearly not met; rejection with a way forward.
+- id: bs-vres-self-report-accepted
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: self_report_protocol+consistent_log
+  decision: verified_limited
+  description: 'A self-report protocol with a consistent log: verified with limited confidence.'
+- id: bs-vres-url-verified
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: fetched_page_meets_criteria
+  decision: verified_high
+  description: A system-fetched page meets the criteria.
+- id: bs-vres-photo-plus-report
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: photo_plus_report_plus_answers
+  decision: verified_medium
+  description: A photo, a report and answers together justify medium confidence.
+- id: bs-vres-missing-required-artifact
+  side: train
+  operation: verification_result
+  trigger: evidence_submitted
+  condition: only_completion_claim
+  decision: needs_more_evidence_specific
+  description: Only a claim of completion; the required artifact is requested.
+- id: bs-vretry-fixed-after-request
+  side: train
+  operation: verification_result
+  trigger: retry_submitted
+  condition: requested_fix_provided
+  decision: verified_high
+  description: A retry that supplies exactly what was requested.
+- id: bs-vretry-still-failing-scope-option
+  side: train
+  operation: verification_result
+  trigger: retry_submitted
+  condition: same_criterion_still_failing
+  decision: rejected_offer_scope_change
+  description: A retry that fails the same criterion again; the user is offered a scope change.
+- id: bs-vretry-certificate-plus-test
+  side: train
+  operation: verification_result
+  trigger: retry_submitted
+  condition: screenshot_plus_test_answers
+  decision: verified_medium
+  description: A certificate screenshot completed by test answers.
+- id: bs-vretry-partial-progress
+  side: train
+  operation: verification_result
+  trigger: retry_submitted
+  condition: partial_progress_correct_format
+  decision: needs_more_evidence_narrowed
+  description: Part of the required work is done correctly; the request narrows to the rest.
+- id: bs-route-hypothesis-invalidated
+  side: train
+  operation: route_adaptation
+  trigger: hypothesis_wrong
+  condition: channel_failed
+  decision: switch_channel_keep_learnings
+  description: A tested hypothesis failed; the channel changes and learnings are kept.
+- id: bs-route-external-fact-invalidates-progress
+  side: train
+  operation: route_adaptation
+  trigger: external_fact_changed
+  condition: verified_fact+completed_step_void
+  decision: invalidate_progress_propose_options
+  description: A researched external change voids a completed step; options are proposed.
+- id: bs-route-resource-lost
+  side: train
+  operation: route_adaptation
+  trigger: resource_lost
+  condition: budget_or_asset_lost
+  decision: replace_resource_propose
+  description: A resource is lost; the route replaces it and asks before major changes.
+- id: bs-route-new-resource-time-window
+  side: train
+  operation: route_adaptation
+  trigger: new_resource
+  condition: offer_limited_to_window
+  decision: integrate_within_window_propose_cut
+  description: A new resource available only in a window; integrated inside it, cuts proposed.
+- id: bs-route-failed-check-remediation
+  side: train
+  operation: route_adaptation
+  trigger: task_failed
+  condition: diagnostic_scores+fixed_deadline
+  decision: targeted_remediation_milestone_adapted
+  description: A failed check with section scores; targeted remediation, milestone adapted with a summary.
+- id: bs-route-method-preference-swap
+  side: train
+  operation: route_adaptation
+  trigger: preference_changed
+  condition: method_disliked
+  decision: swap_method_same_outcome
+  description: The user dislikes a method; it is swapped for one they like with the same outcome.
+- id: bs-time-reduced-scope-cut-or-deadline-option
+  side: train
+  operation: route_adaptation
+  trigger: less_time
+  condition: remaining_work_exceeds_capacity+flexible_deadline
+  decision: cut_optional_scope_offer_deadline_option
+  description: 'Less weekly time: remaining work no longer fits; optional scope is cut and a deadline option offered.'
+- id: bs-time-increased-accelerate
+  side: train
+  operation: route_adaptation
+  trigger: more_time
+  condition: more_weekly_hours
+  decision: accelerate_milestones_with_buffer
+  description: 'More weekly time: milestones move earlier with a buffer; the goal date stays.'
+- id: bs-time-reduced-fixed-deadline-high-yield
+  side: train
+  operation: route_adaptation
+  trigger: less_time
+  condition: fixed_deadline+optional_sections
+  decision: keep_high_yield_drop_optional_confirm
+  description: 'Less time before a fixed date: high-yield work stays, optional sections go, with confirmation.'
+- id: bs-time-temporary-increase-front-load
+  side: train
+  operation: route_adaptation
+  trigger: more_time
+  condition: temporary_extra_hours
+  decision: front_load_hardest_task
+  description: A temporary increase in time is used for the task that needs long blocks.
+- id: bs-nav-explain-task-with-context
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: user_questions_task_value
+  decision: explain_with_user_context
+  description: The user questions why a task matters; the answer uses their own context.
+- id: bs-nav-declined-task-alternative
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: user_declines_task
+  decision: offer_alternative_keep_outcome
+  description: The user declines a task; an alternative with the same outcome is offered.
+- id: bs-nav-constraint-alternative-method
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: constraint_blocks_method
+  decision: alternative_method_with_safety_note
+  description: A constraint rules out the planned method; an alternative is proposed with a safety note.
+- id: bs-nav-explain-past-decision
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: user_asks_about_route_change
+  decision: explain_from_decision_log
+  description: The user asks why the route changed; the answer comes from the decision log.
+- id: bs-nav-limited-time-split
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: session_shorter_than_task
+  decision: split_task_for_today
+  description: Today's session is shorter than the task; the task is split.
+- id: bs-nav-reschedule-knock-on-milestone
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: reschedule_affects_milestone
+  decision: propose_reschedule_with_mitigation
+  description: A reschedule request that moves a milestone; proposed with a mitigation.
+- id: bs-nav-remove-milestone-partial
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: user_wants_milestone_removed
+  decision: partial_agreement_with_reasons
+  description: The user wants a milestone removed; the navigator partly agrees and explains.
+- id: bs-nav-off-topic-redirect
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: request_unrelated_to_goal
+  decision: brief_redirect
+  description: A request unrelated to the goal is redirected briefly, optionally with a goal-linked idea.
+- id: bs-nav-emotional-support-boundary
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: user_expresses_loneliness
+  decision: supportive_boundary_with_options
+  description: 'Emotional disclosure: supportive, within the navigator''s role, with options.'
+- id: bs-nav-user-created-task
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: user_proposes_own_task
+  decision: add_user_task_with_protocol
+  description: The user proposes a task of their own; it is added with a fitting check.
+- id: bs-nav-ignore-other-goal-memory
+  side: train
+  operation: navigator_response
+  trigger: user_message
+  condition: retrieved_memory_from_other_goal
+  decision: answer_without_other_goal_memory
+  description: Retrieval returns memory from another goal; the answer ignores it.
+- id: bs-daily-partial-task-scope
+  side: train
+  operation: daily_plan
+  trigger: daily_request
+  condition: time_below_task_length
+  decision: scope_part_of_task
+  description: Less time today than the next task needs; part of it is scoped.
+- id: bs-daily-due-soon-critical-path
+  side: train
+  operation: daily_plan
+  trigger: daily_request
+  condition: task_due_within_days
+  decision: prioritise_due_task
+  description: A task on the critical path is due soon and goes first.
+- id: bs-daily-tiny-window-low-energy
+  side: train
+  operation: daily_plan
+  trigger: daily_request
+  condition: ten_minutes+low_energy
+  decision: single_micro_task
+  description: 'Ten minutes and low energy: one micro-task.'
+- id: bs-daily-gentle-restart
+  side: train
+  operation: daily_plan
+  trigger: daily_request
+  condition: returning_after_break
+  decision: easy_restart_task
+  description: 'Returning after a break: an easy restart task.'
+- id: bs-daily-ignore-other-goal-memory
+  side: train
+  operation: daily_plan
+  trigger: daily_request
+  condition: retrieved_memory_from_other_goal
+  decision: plan_without_other_goal_memory
+  description: Retrieval noise from another goal must not shape today's plan.
+- id: bs-daily-language-preference-memory
+  side: train
+  operation: daily_plan
+  trigger: daily_request
+  condition: mixed_language_input+stored_language_preference
+  decision: answer_in_preferred_language
+  description: The user mixes languages; stored preference decides the reply language.
+- id: bs-goalchg-minor-target-refinement
+  side: train
+  operation: goal_change
+  trigger: goal_intent_changed
+  condition: same_outcome_refined
+  decision: minor_adjustment_keep_progress
+  description: 'The same outcome with a refined target: minor adjustment.'
+- id: bs-goalchg-major-format-change
+  side: train
+  operation: goal_change
+  trigger: goal_intent_changed
+  condition: same_domain_new_format
+  decision: major_adjustment_reuse_progress_confirm
+  description: 'Same underlying outcome, different format: major adjustment with reuse and confirmation.'
+- id: bs-goalchg-new-goal-separate
+  side: train
+  operation: goal_change
+  trigger: goal_intent_changed
+  condition: different_outcome
+  decision: new_goal_keep_history
+  description: 'A different outcome: a separate goal, the original kept with history.'
+- id: bs-goalchg-location-switch-research
+  side: train
+  operation: goal_change
+  trigger: goal_intent_changed
+  condition: location_switch+time_sensitive_rules
+  decision: major_adjustment_flag_research
+  description: 'The same goal in another country: major adjustment, rules flagged for research.'
+- id: bs-mem-extract-third-party-sensitive
+  side: train
+  operation: memory_extraction
+  trigger: conversation_facts
+  condition: third_party_health_detail
+  decision: store_consequence_not_detail
+  description: 'A conversation with third-party health information: store only the planning consequence.'
+- id: bs-mem-update-existing-temporary
+  side: train
+  operation: memory_extraction
+  trigger: conversation_facts
+  condition: existing_item_outdated+temporary_fact
+  decision: update_item_add_temporary
+  description: 'A stored fact is outdated and a temporary fact appears: update and expire.'
+- id: bs-web-laws-location-research
+  side: train
+  operation: web_research_decision
+  trigger: user_message
+  condition: laws_location_specific
+  decision: research_official_sources
+  description: 'A plan that depends on location-specific law: research needed.'
+- id: bs-web-stable-skill-no-research
+  side: train
+  operation: web_research_decision
+  trigger: user_message
+  condition: stable_general_skill
+  decision: no_research
+  description: 'A stable, general skill: no research needed.'
+- id: bs-web-local-schedules-research
+  side: train
+  operation: web_research_decision
+  trigger: user_message
+  condition: local_schedules
+  decision: research_local_availability
+  description: 'A plan that depends on local schedules: research needed.'
+- id: bs-web-hearsay-claim-verify
+  side: train
+  operation: web_research_decision
+  trigger: user_message
+  condition: hearsay_about_rules
+  decision: verify_hearsay
+  description: 'The user relays hearsay about rules: the claim is verified, not assumed.'
+- id: bs-web-personal-content-no-research
+  side: train
+  operation: web_research_decision
+  trigger: user_message
+  condition: personal_content_task
+  decision: no_research
+  description: 'Personal content that needs no external facts: no research.'
+- id: bs-prog-milestone-verified-level-up
+  side: train
+  operation: progress_update
+  trigger: progress_event
+  condition: milestone_verified
+  decision: level_up_on_verified
+  description: A verified milestone unlocks the next level.
+- id: bs-prog-streak-no-level
+  side: train
+  operation: progress_update
+  trigger: progress_event
+  condition: streak_without_verified_progress
+  decision: acknowledge_habit_no_level
+  description: 'A streak without verified progress: acknowledged, no level change.'
+- id: bs-prog-goal-exceeded
+  side: train
+  operation: progress_update
+  trigger: progress_event
+  condition: outcome_beyond_target
+  decision: goal_exceeded_achievement
+  description: The real-world outcome exceeds the target.
+- id: bs-safe-allowed-no-hedging
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: harmless_goal
+  decision: allowed_full_navigator
+  description: 'A harmless goal: full support without hedging.'
+- id: bs-safe-sensitive-financial
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: personal_finance_stress
+  decision: sensitive_with_boundaries
+  description: 'A debt goal: full navigator with explicit boundaries.'
+- id: bs-safe-high-risk-weight-cut
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: rapid_weight_cut
+  decision: high_risk_reframe_with_referral
+  description: 'A rapid weight cut: planning support only, reframed, with a referral.'
+- id: bs-safe-medical-symptom
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: medical_symptom_reported
+  decision: needs_professional_urgent_referral
+  description: 'A reported symptom: professional support first.'
+- id: bs-safe-legal-dispute
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: legal_dispute
+  decision: needs_professional_legal_referral
+  description: 'A legal dispute: planning support with a legal referral.'
+- id: bs-safe-restricted-illegal
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: illegal_or_fraudulent_goal
+  decision: decline_with_legitimate_alternative
+  description: A fraudulent goal is declined with a legitimate alternative.
+- id: bs-safe-high-risk-dangerous-activity
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: dangerous_activity
+  decision: high_risk_safer_reframing
+  description: 'A dangerous activity: planning support with a safer reframing.'
+- id: bs-safe-mental-health
+  side: train
+  operation: safety_classification
+  trigger: new_goal
+  condition: hopelessness_expressed
+  decision: needs_professional_support_gentle
+  description: 'Expressed hopelessness: gentle, with professional support first.'

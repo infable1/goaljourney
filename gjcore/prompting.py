@@ -7,6 +7,13 @@ from .config import load_config
 from .paths import repo_path
 
 
+def navigator_prompt_path(version=None) -> str:
+    """prompts/navigator/v<version>/system.md; without a version, the prompt configured for export."""
+    if version is None:
+        return load_config("export")["navigator_prompt"]
+    return f"prompts/navigator/v{version}/system.md"
+
+
 @lru_cache(maxsize=None)
 def navigator_system_prompt(path=None) -> str:
     path = path or load_config("export")["navigator_prompt"]
@@ -19,9 +26,9 @@ def _dumps(obj) -> str:
                       separators=None if cfg.get("json_indent") else (",", ":"))
 
 
-def prompt_messages(input_ctx: dict) -> list:
+def prompt_messages(input_ctx: dict, prompt_path=None) -> list:
     """[system, user] messages for one request. The user turn is the request object as JSON."""
-    return [{"role": "system", "content": navigator_system_prompt()},
+    return [{"role": "system", "content": navigator_system_prompt(prompt_path)},
             {"role": "user", "content": _dumps(input_ctx)}]
 
 

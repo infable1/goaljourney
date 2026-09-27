@@ -1,0 +1,498 @@
+{
+  "content_hash": "ea4354db36efc7ef9163988205916e0bad314494cd9accdf6545e46ad18e016c",
+  "example_id": "gj-jour-002",
+  "dataset_version": "0.1.1",
+  "task_type": "journey_generation",
+  "input": {
+    "operation": "journey_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-mugs",
+      "title": "Open an online shop selling my ceramic mugs",
+      "domain": "business",
+      "available_time": {
+        "hours_per_week": 8
+      },
+      "resources": [
+        "Community studio membership with kiln access twice a week",
+        "Budget of about $500"
+      ],
+      "current_state": {
+        "summary": "Has made about 40 mugs in the last year, gifted most of them; never sold anything."
+      }
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I want to start selling my handmade mugs on one of the big handmade marketplaces. No hard deadline, but I'd love a first sale within three months. I have ~8 hours a week and about $500 to start. Kiln access twice a week at my community studio."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "journey_generation",
+    "response_language": "en",
+    "message_to_user": "Here's your route to a first sale in about three months. It starts with the unglamorous part that decides whether the shop can work at all: what one mug really costs you, and how many you can make per month with two kiln slots a week.\nMarketplace fees and seller rules change, so the first region includes checking them on the marketplace's official pages before you set prices — I haven't assumed any numbers.\nLater regions (listing photos, launch, first sales) are outlines for now and will get detailed once we know your costs and capacity.",
+    "goal": {
+      "id": "g-mugs",
+      "title": "Open an online shop selling my ceramic mugs",
+      "domain": "business",
+      "desired_outcome": "A live marketplace shop with at least 10 listed mugs and a first sale.",
+      "success_criteria": [
+        "Shop live with at least 10 listings",
+        "First sale to a stranger"
+      ],
+      "deadline": null,
+      "available_time": {
+        "hours_per_week": 8
+      },
+      "resources": [
+        "Community studio membership with kiln access twice a week",
+        "Budget of about $500"
+      ],
+      "assumptions": [
+        {
+          "statement": "A first sale within about 3 months is the target, not a hard deadline.",
+          "basis": "user_stated",
+          "confirmed": true
+        }
+      ]
+    },
+    "journey": {
+      "id": "j-mugs",
+      "goal_id": "g-mugs",
+      "version": 1,
+      "strategy_summary": "Validate unit economics and capacity first, then build a small, well-photographed first collection, launch, and learn from the first 30 days of traffic.",
+      "pacing": {
+        "weekly_hours_planned": 8,
+        "horizon_weeks": 13
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Costs and capacity",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "First collection and shop setup",
+          "order": 2,
+          "status": "locked"
+        },
+        {
+          "id": "r3",
+          "title": "Launch and first sales",
+          "order": 3,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Price per mug decided from real costs",
+          "region_id": "r1",
+          "success_criteria": [
+            "Cost sheet with materials, firing, packaging and marketplace fees",
+            "Price chosen with a margin"
+          ],
+          "target_date": "2026-10-25"
+        },
+        {
+          "id": "m2",
+          "title": "Shop ready to publish",
+          "region_id": "r2",
+          "success_criteria": [
+            "10 mugs photographed and described",
+            "Shop profile and policies filled in"
+          ],
+          "target_date": "2026-11-29"
+        },
+        {
+          "id": "m3",
+          "title": "First sale",
+          "region_id": "r3",
+          "success_criteria": [
+            "First order from a stranger shipped"
+          ],
+          "target_date": "2026-12-27"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Check current marketplace fees and seller rules",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 60,
+          "priority": "critical",
+          "task": {
+            "id": "n1",
+            "title": "Write down the current fees and seller rules of 2 candidate marketplaces",
+            "description": "On each marketplace's official seller pages, find listing fees, transaction and payment-processing fees, and any rules for handmade items and food-contact ceramics. Record each with the page link and today's date.",
+            "why_it_matters": "Fees go straight into your price, and food-contact rules may affect what you can list. These change over time, so they must come from the official source.",
+            "expected_result": "A short table per marketplace with fees, relevant rules and source links.",
+            "estimated_duration_minutes": 60,
+            "difficulty": 1,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "structured_result",
+                  "role": "required",
+                  "references_required": true,
+                  "instructions": "Submit the table with one row per fee or rule and a link to the official page for each.",
+                  "acceptance_criteria": [
+                    "Every fee has a source link",
+                    "Both marketplaces covered"
+                  ]
+                },
+                {
+                  "method": "url_review",
+                  "role": "required",
+                  "instructions": "The navigator opens each linked page and checks that it is official seller documentation and states the recorded fee or rule."
+                }
+              ],
+              "pass_criteria": [
+                "Fees and rules recorded with official source links",
+                "Each linked page confirms the recorded value"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "The table is the user's summary, but every row is checked against the official page it cites, so confidence rests on the pages themselves."
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Cost sheet for one mug",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 90,
+          "priority": "critical",
+          "task": {
+            "id": "n2",
+            "title": "Build a cost sheet for one mug from your last 10 pieces",
+            "description": "Using receipts and studio fees, calculate clay, glaze, firing share, packaging and shipping materials per mug. Add a row for your time at an hourly rate you choose.",
+            "why_it_matters": "Without real costs you can't set a price that pays for materials, fees and some of your time.",
+            "expected_result": "A spreadsheet with cost per mug broken down into at least 5 lines.",
+            "estimated_duration_minutes": 90,
+            "difficulty": 2,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "business_activity",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Upload the spreadsheet.",
+                  "acceptance_criteria": [
+                    "At least 5 cost lines",
+                    "Studio and firing costs included",
+                    "Time costed explicitly"
+                  ]
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "supplementary",
+                  "instructions": "A question on the biggest cost driver.",
+                  "questions": [
+                    "Which cost line surprised you most?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Complete cost sheet with a per-mug total"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "A spreadsheet is directly reviewable."
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Measure monthly capacity with two kiln slots",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 30,
+          "priority": "high",
+          "task": {
+            "id": "n3",
+            "title": "Log 2 weeks of production and estimate mugs per month",
+            "description": "For the next two weeks, log each studio session — mugs thrown, trimmed, glazed, fired, and losses.",
+            "why_it_matters": "Capacity decides how big the first collection can be and whether restocking is realistic.",
+            "expected_result": "A 2-week production log and an estimate of finished mugs per month.",
+            "estimated_duration_minutes": 30,
+            "difficulty": 1,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "business_activity",
+              "objective_verifiability": "low",
+              "methods": [
+                {
+                  "method": "structured_result",
+                  "role": "required",
+                  "instructions": "Fill in the log per session.",
+                  "fields": [
+                    "Date",
+                    "Mugs thrown",
+                    "Mugs fired",
+                    "Losses",
+                    "Hours spent"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "At least 4 sessions logged",
+                "Monthly estimate derived from the log"
+              ],
+              "confidence_ceiling": "limited",
+              "self_report_only": true,
+              "rationale": "A production log is the user's own record; it is exactly what the capacity estimate needs, and checking studio sessions from outside would be intrusive, so confidence stays limited."
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "type": "decision_point",
+          "title": "Set the launch price",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "decision": {
+            "question": "Which pricing approach for launch?",
+            "options": [
+              "Cost plus margin",
+              "Match similar handmade mugs",
+              "Launch discount for the first 5 buyers"
+            ]
+          }
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Make and select a first collection of 10 mugs",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n4"
+          ]
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Photograph the collection in natural light (3 photos per mug)",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n5"
+          ]
+        },
+        {
+          "id": "n7",
+          "type": "task",
+          "title": "Write listings and shop policies",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6",
+            "n1"
+          ]
+        },
+        {
+          "id": "n8",
+          "type": "task",
+          "title": "Publish the shop and share it with 30 people you know",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n7"
+          ]
+        },
+        {
+          "id": "n9",
+          "type": "ai_checkpoint",
+          "title": "30-day review of views, favourites and sales",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n8"
+          ]
+        }
+      ],
+      "levels": [
+        {
+          "index": 0,
+          "title": "Maker",
+          "unlock_criteria": "Start of the journey"
+        },
+        {
+          "index": 1,
+          "title": "Maker who knows the numbers",
+          "unlock_milestone_id": "m1",
+          "unlock_criteria": "Pricing milestone verified"
+        },
+        {
+          "index": 2,
+          "title": "Shop owner",
+          "unlock_milestone_id": "m2",
+          "unlock_criteria": "Shop ready to publish"
+        },
+        {
+          "index": 3,
+          "title": "Selling ceramicist",
+          "unlock_milestone_id": "m3",
+          "unlock_criteria": "First sale verified"
+        }
+      ],
+      "achievements": [
+        {
+          "id": "a1",
+          "title": "Numbers don't lie",
+          "unlock": {
+            "type": "milestone_verified",
+            "ref": "m1"
+          }
+        },
+        {
+          "id": "a2",
+          "title": "First sale",
+          "unlock": {
+            "type": "first_real_world_result",
+            "ref": "m3"
+          }
+        }
+      ]
+    },
+    "external_claims": [
+      {
+        "claim": "Handmade marketplaces charge listing and transaction fees.",
+        "status": "general_knowledge",
+        "affects": "Pricing"
+      },
+      {
+        "claim": "Exact current fee levels and rules for food-contact ceramics on the chosen marketplace.",
+        "status": "needs_verification",
+        "affects": "Price per mug and what can be listed (task n1)"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Created a 3-region route aimed at a first sale in about 13 weeks.",
+      "why": "Costs and capacity come first because they decide the price and the size of the first collection.",
+      "impact": "About 8 hours a week; the $500 budget goes to materials, packaging and possible listing fees.",
+      "alternatives_considered": [
+        {
+          "option": "Launch immediately with the mugs you already have",
+          "why_not": "Without costs and fees you risk pricing below cost."
+        }
+      ]
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-jour-002-c1",
+      "failure_modes": [
+        "unverified_current_facts",
+        "generic_plan"
+      ],
+      "critique": "Presents specific fee numbers as verified with a source that was never researched, and the route is generic (research, market, sell) without costs or capacity.",
+      "output": {
+        "type": "journey_generation",
+        "response_language": "en",
+        "message_to_user": "Great! The marketplace charges a $0.20 listing fee and 6.5% per sale, so price your mugs at $25 and start selling.",
+        "goal": {
+          "title": "Open an online shop selling my ceramic mugs"
+        },
+        "journey": {
+          "regions": [
+            {
+              "id": "r1",
+              "title": "Sell",
+              "order": 1,
+              "status": "active"
+            }
+          ],
+          "milestones": [
+            {
+              "id": "m1",
+              "title": "Sell mugs",
+              "region_id": "r1",
+              "success_criteria": [
+                "Sales made"
+              ]
+            }
+          ],
+          "nodes": [
+            {
+              "id": "n1",
+              "type": "task",
+              "title": "Do marketing",
+              "region_id": "r1",
+              "milestone_id": "m1",
+              "status": "available",
+              "detail_level": "outline"
+            },
+            {
+              "id": "n2",
+              "type": "task",
+              "title": "Sell mugs online",
+              "region_id": "r1",
+              "milestone_id": "m1",
+              "status": "locked",
+              "detail_level": "outline",
+              "depends_on": [
+                "n1"
+              ]
+            }
+          ]
+        },
+        "external_claims": [
+          {
+            "claim": "Listing fee is $0.20 and the transaction fee is 6.5%.",
+            "status": "verified_with_source",
+            "source": {
+              "title": "Seller fees",
+              "url": "https://handmade-market.example.com/fees"
+            }
+          }
+        ],
+        "decision_summary": {
+          "what_changed": "Created a plan.",
+          "why": "To sell mugs.",
+          "impact": "You will sell mugs."
+        }
+      }
+    }
+  ]
+}

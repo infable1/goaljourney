@@ -4,7 +4,7 @@
 examples:
 
 - id: gj-web-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: web_research_decision
   behavior: [web_research, source_awareness]
   language: ru
@@ -14,7 +14,8 @@ examples:
   goal_size: complex
   tags: [needs_research, laws_regulations, location_specific]
   safety_category: allowed
-  scenario_group: sg-web-portugal-nomad-visa
+  scenario_group: bs-web-laws-location-research
+  topic_group: sg-web-portugal-nomad-visa
   input:
     operation: web_research_decision
     today: "2026-09-27"
@@ -72,7 +73,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-web-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: web_research_decision
   behavior: [web_research]
   language: en
@@ -82,7 +83,8 @@ examples:
   goal_size: medium
   tags: [no_research]
   safety_category: allowed
-  scenario_group: sg-web-touch-typing
+  scenario_group: bs-web-stable-skill-no-research
+  topic_group: sg-web-touch-typing
   input:
     operation: web_research_decision
     today: "2026-09-27"
@@ -121,7 +123,7 @@ examples:
   provenance: *prov
 
 - id: gj-web-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: web_research_decision
   behavior: [web_research]
   language: en
@@ -131,7 +133,8 @@ examples:
   goal_size: tiny
   tags: [needs_research, schedules, location_specific]
   safety_category: allowed
-  scenario_group: sg-web-cpr-course
+  scenario_group: bs-web-local-schedules-research
+  topic_group: sg-web-cpr-course
   input:
     operation: web_research_decision
     today: "2026-09-27"
@@ -167,7 +170,7 @@ examples:
   provenance: *prov
 
 - id: gj-web-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: web_research_decision
   behavior: [web_research, source_awareness]
   language: ru
@@ -177,7 +180,8 @@ examples:
   goal_size: medium
   tags: [hearsay, laws_regulations]
   safety_category: allowed
-  scenario_group: sg-web-short-term-rental-hearsay
+  scenario_group: bs-web-hearsay-claim-verify
+  topic_group: sg-web-short-term-rental-hearsay
   input:
     operation: web_research_decision
     today: "2026-09-27"
@@ -230,7 +234,7 @@ examples:
   provenance: *prov
 
 - id: gj-web-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: web_research_decision
   behavior: [web_research]
   language: en
@@ -240,7 +244,8 @@ examples:
   goal_size: tiny
   tags: [no_research, has_deadline]
   safety_category: allowed
-  scenario_group: sg-web-best-man-speech
+  scenario_group: bs-web-personal-content-no-research
+  topic_group: sg-web-best-man-speech
   input:
     operation: web_research_decision
     today: "2026-09-27"

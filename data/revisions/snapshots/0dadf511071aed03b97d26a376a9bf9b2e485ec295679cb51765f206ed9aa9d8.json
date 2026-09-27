@@ -1,0 +1,129 @@
+{
+  "content_hash": "0dadf511071aed03b97d26a376a9bf9b2e485ec295679cb51765f206ed9aa9d8",
+  "example_id": "gj-vres-007",
+  "dataset_version": "0.1.0",
+  "task_type": "verification_result",
+  "input": {
+    "evidence": [
+      {
+        "content": "Прочитал, всё сделал, очень полезная книга!",
+        "id": "e1",
+        "type": "text_report"
+      }
+    ],
+    "goal": {
+      "id": "g-mgmt",
+      "title": "Подготовиться к роли тимлида"
+    },
+    "operation": "verification_result",
+    "task": {
+      "description": "Прочитайте первые три главы выбранной книги и выпишите 5 идей своими словами — каждую с указанием главы и того, как применить её в вашей команде.",
+      "difficulty": 2,
+      "estimated_duration_minutes": 180,
+      "expected_result": "Список из 5 идей с номером главы и способом применения.",
+      "id": "t-book",
+      "sessions": 3,
+      "title": "Прочитать главы 1–3 книги о менеджменте и выписать 5 идей для своей команды",
+      "verification_protocol": {
+        "confidence_ceiling": "medium",
+        "methods": [
+          {
+            "fields": [
+              "Идея своими словами",
+              "Глава",
+              "Как применю в команде"
+            ],
+            "instructions": "Заполните список идей.",
+            "method": "structured_result",
+            "role": "required"
+          },
+          {
+            "instructions": "Вопрос по одной из идей.",
+            "method": "follow_up_questions",
+            "questions": [
+              "Какую идею вы попробуете первой и что может помешать?"
+            ],
+            "role": "supplementary"
+          }
+        ],
+        "objective_verifiability": "medium",
+        "pass_criteria": [
+          "5 идей с главой и способом применения"
+        ],
+        "rationale": "Идеи своими словами с привязкой к команде показывают понимание прочитанного.",
+        "self_report_only": false,
+        "task_nature": "knowledge"
+      },
+      "why_it_matters": "Идеи, привязанные к вашей команде, станут основой первых решений в новой роли."
+    },
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "additional_evidence": [
+      {
+        "request": "Список из 5 идей с номером главы и способом применения",
+        "why": "Это обязательный результат задачи по протоколу"
+      }
+    ],
+    "attempt": 1,
+    "confidence": "limited",
+    "criteria_results": [
+      {
+        "criterion": "5 идей с главой и способом применения",
+        "note": "Список идей не приложен",
+        "result": "unclear"
+      }
+    ],
+    "decision_summary": {
+      "impact": "Задача засчитается сразу после отправки списка.",
+      "what_changed": "Задача пока не засчитана, запрошен список идей.",
+      "why": "Прислано только сообщение о выполнении без обязательного результата."
+    },
+    "evidence_assessment": [
+      {
+        "evidence_id": "e1",
+        "limitations": "Нет обязательного структурированного результата",
+        "supports": "Пользователь сообщает о выполнении"
+      }
+    ],
+    "evidence_basis": "self_report",
+    "message_to_user": "Здорово, что книга оказалась полезной! Чтобы засчитать задачу, не хватает самого результата — списка из пяти идей. Добавьте, пожалуйста, для каждой идеи: суть своими словами, номер главы и как вы примените её в своей команде. Это займёт минут десять, и эти идеи потом пригодятся в плане первых недель тимлидом.",
+    "reason": "Протокол требует список идей; пока есть только сообщение о выполнении.",
+    "response_language": "ru",
+    "status": "needs_more_evidence",
+    "task_id": "t-book",
+    "type": "verification_result"
+  },
+  "contrastive": [
+    {
+      "critique": "Rejects the task outright although nothing shows it wasn't done — the evidence is simply incomplete, so the right answer is a specific request.",
+      "failure_modes": [
+        "premature_rejection"
+      ],
+      "id": "gj-vres-007-c1",
+      "output": {
+        "additional_evidence": [],
+        "attempt": 1,
+        "confidence": "limited",
+        "criteria_results": [
+          {
+            "criterion": "5 идей с главой и способом применения",
+            "result": "unclear"
+          }
+        ],
+        "decision_summary": {
+          "impact": "Задачу нужно выполнить заново.",
+          "what_changed": "Задача отклонена.",
+          "why": "Нет результата."
+        },
+        "evidence_basis": "self_report",
+        "message_to_user": "Задача отклонена — вы не выполнили её.",
+        "reason": "Нет списка.",
+        "response_language": "ru",
+        "status": "rejected",
+        "task_id": "t-book",
+        "type": "verification_result"
+      }
+    }
+  ]
+}

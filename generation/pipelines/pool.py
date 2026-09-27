@@ -23,7 +23,7 @@ def load_review_events():
 
 
 def review_status(record, events=None) -> str:
-    """pending | stale | approved | approved_pending_expert | needs_revision | rejected
-    (see generation/pipelines/review_store.py). Only `approved` is eligible for training."""
+    """pending | approved | needs_revision | rejected (see generation/pipelines/review_store.py for the
+    `detail` of pending). Only `approved` is eligible for training."""
     from .review_store import resolve
     return resolve(record, load_review_events() if events is None else events)["status"]

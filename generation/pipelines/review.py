@@ -267,8 +267,8 @@ def decide(action, example_id, reviewer, decision_file=None, rates=(), overall=N
                             open_findings=blocking)
     print(f"Recorded {ev['event_id']}: {example_id} {ev['old_status']} -> {ev['new_status']} "
           f"({action} by {reviewer}, overall {ev['overall']})")
-    if ev["new_status"] == "approved_pending_expert":
-        print(f"  expert sign-off still needed for: {RS.resolve(rec, store.events())['missing_expert_domains']}")
+    if ev.get("new_status_detail") == "awaiting_expert":
+        print(f"  still pending — expert sign-off needed for: {RS.resolve(rec, store.events())['missing_expert_domains']}")
     return ev
 
 

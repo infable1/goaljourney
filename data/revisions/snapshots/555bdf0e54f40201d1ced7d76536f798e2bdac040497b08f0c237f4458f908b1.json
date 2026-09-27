@@ -1,0 +1,75 @@
+{
+  "content_hash": "555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1",
+  "example_id": "gj-vprot-004",
+  "dataset_version": "0.1.1",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "operation": "verification_protocol_design",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-eng",
+      "title": "Выйти на уровень B1 по английскому к лету"
+    },
+    "task": {
+      "id": "t-compare",
+      "title": "Сравнить 5 курсов английского для взрослых и выбрать один",
+      "description": "Найдите 5 курсов уровня A2–B1 для взрослых, сравните их по формату, цене, длительности и наличию разговорной практики.",
+      "why_it_matters": "Правильный курс задаёт темп всего маршрута до B1.",
+      "expected_result": "Таблица сравнения 5 курсов и выбранный курс с обоснованием.",
+      "estimated_duration_minutes": 90,
+      "difficulty": 2
+    }
+  },
+  "expected_output": {
+    "type": "verification_protocol_design",
+    "response_language": "ru",
+    "message_to_user": "Проверка будет по самой таблице: 5 курсов, одинаковые критерии и ссылка на страницу каждого курса — 1–2 ссылки навигатор откроет и сверит цену и формат. И один вопрос о вашем выборе.",
+    "task_id": "t-compare",
+    "protocol": {
+      "task_nature": "research",
+      "objective_verifiability": "high",
+      "methods": [
+        {
+          "method": "structured_result",
+          "role": "required",
+          "references_required": true,
+          "instructions": "Заполните таблицу сравнения.",
+          "fields": [
+            "Курс",
+            "Формат",
+            "Цена",
+            "Длительность",
+            "Разговорная практика",
+            "Ссылка"
+          ],
+          "acceptance_criteria": [
+            "5 курсов",
+            "У каждого есть ссылка на официальную страницу",
+            "Все столбцы заполнены"
+          ]
+        },
+        {
+          "method": "url_review",
+          "role": "supplementary",
+          "instructions": "Навигатор открывает 1–2 ссылки из таблицы и сверяет цену и формат."
+        },
+        {
+          "method": "follow_up_questions",
+          "role": "required",
+          "instructions": "Один вопрос о выборе.",
+          "questions": [
+            "Какой критерий оказался решающим при выборе и почему?"
+          ]
+        }
+      ],
+      "pass_criteria": [
+        "Таблица полная и со ссылками",
+        "Выбор обоснован"
+      ],
+      "confidence_ceiling": "medium",
+      "self_report_only": false,
+      "rationale": "Каждая строка ссылается на страницу курса, и навигатор выборочно сверяет 1–2 ссылки — выборочная проверка обосновывает среднюю уверенность, а не высокую, потому что остальные строки остаются данными пользователя."
+    }
+  },
+  "contrastive": null
+}

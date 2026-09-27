@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-goalchg-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_change
   behavior: [goal_change, decision_summary]
   language: en
@@ -13,7 +13,8 @@ examples:
   goal_size: medium
   tags: [minor_adjustment]
   safety_category: allowed
-  scenario_group: sg-goalchg-10k-time
+  scenario_group: bs-goalchg-minor-target-refinement
+  topic_group: sg-goalchg-10k-time
   input:
     operation: goal_change
     today: "2026-09-27"
@@ -88,7 +89,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-goalchg-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_change
   behavior: [goal_change, decision_summary, web_research]
   language: ru
@@ -98,7 +99,8 @@ examples:
   goal_size: complex
   tags: [major_adjustment, preserve_progress]
   safety_category: allowed
-  scenario_group: sg-goalchg-bakery-to-home-cakes
+  scenario_group: bs-goalchg-major-format-change
+  topic_group: sg-goalchg-bakery-to-home-cakes
   input:
     operation: goal_change
     today: "2026-09-27"
@@ -180,7 +182,7 @@ examples:
   provenance: *prov
 
 - id: gj-goalchg-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_change
   behavior: [goal_change, decision_summary, web_research]
   language: en
@@ -190,7 +192,8 @@ examples:
   goal_size: complex
   tags: [new_goal, keep_history]
   safety_category: allowed
-  scenario_group: sg-goalchg-webdev-to-teacher
+  scenario_group: bs-goalchg-new-goal-separate
+  topic_group: sg-goalchg-webdev-to-teacher
   input:
     operation: goal_change
     today: "2026-09-27"
@@ -264,7 +267,7 @@ examples:
   provenance: *prov
 
 - id: gj-goalchg-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_change
   behavior: [goal_change, decision_summary, web_research, source_awareness]
   language: ru
@@ -274,7 +277,8 @@ examples:
   goal_size: complex
   tags: [major_adjustment, location_specific, time_sensitive]
   safety_category: allowed
-  scenario_group: sg-goalchg-masters-de-to-nl
+  scenario_group: bs-goalchg-location-switch-research
+  topic_group: sg-goalchg-masters-de-to-nl
   input:
     operation: goal_change
     today: "2026-09-27"

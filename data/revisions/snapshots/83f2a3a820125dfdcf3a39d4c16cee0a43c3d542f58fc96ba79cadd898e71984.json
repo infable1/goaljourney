@@ -1,0 +1,217 @@
+{
+  "content_hash": "83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984",
+  "example_id": "gj-time-004",
+  "dataset_version": "0.1.0",
+  "task_type": "route_adaptation",
+  "input": {
+    "conversation": [
+      {
+        "content": "I have two weeks off in October and could do maybe 15 hours a week on the thesis during that time. After that it's back to normal.",
+        "role": "user"
+      }
+    ],
+    "events": [
+      {
+        "date": "2026-09-26",
+        "description": "Two weeks of vacation from October 5 to October 18; about 15 hours a week during that time, then back to 4.",
+        "type": "more_time"
+      }
+    ],
+    "goal": {
+      "available_time": {
+        "hours_per_week": 4
+      },
+      "deadline": "2027-01-15",
+      "id": "g-thesis",
+      "title": "Finish the first full draft of my master's thesis"
+    },
+    "journey": {
+      "milestones": [
+        {
+          "id": "m1",
+          "region_id": "r1",
+          "success_criteria": [
+            "Chapters 2, 3 and 4 drafted"
+          ],
+          "target_date": "2026-12-10",
+          "title": "Chapters 2–4 drafted"
+        },
+        {
+          "id": "m2",
+          "region_id": "r2",
+          "success_criteria": [
+            "Complete draft emailed"
+          ],
+          "target_date": "2027-01-15",
+          "title": "Full draft sent to supervisor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "verified",
+          "title": "Draft chapter 1 (introduction)",
+          "type": "task"
+        },
+        {
+          "estimated_duration_minutes": 1200,
+          "id": "n2",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "available",
+          "title": "Draft chapter 2 (literature review)",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 900,
+          "id": "n3",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "locked",
+          "title": "Draft chapter 3 (method)",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n3"
+          ],
+          "estimated_duration_minutes": 1200,
+          "id": "n4",
+          "milestone_id": "m1",
+          "region_id": "r1",
+          "status": "locked",
+          "title": "Draft chapter 4 (results)",
+          "type": "task"
+        },
+        {
+          "depends_on": [
+            "n4"
+          ],
+          "estimated_duration_minutes": 900,
+          "id": "n5",
+          "milestone_id": "m2",
+          "region_id": "r2",
+          "status": "locked",
+          "title": "Revise and assemble the full draft",
+          "type": "task"
+        }
+      ],
+      "pacing": {
+        "horizon_weeks": 16,
+        "weekly_hours_planned": 4
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "order": 1,
+          "status": "active",
+          "title": "Chapters"
+        },
+        {
+          "id": "r2",
+          "order": 2,
+          "status": "locked",
+          "title": "Full draft"
+        }
+      ]
+    },
+    "operation": "route_adaptation",
+    "time_budget": {
+      "hours_per_week": 15,
+      "previous_hours_per_week": 4
+    },
+    "today": "2026-09-27"
+  },
+  "expected_output": {
+    "added_nodes": [
+      {
+        "created_by": "ai",
+        "depends_on": [
+          "n2"
+        ],
+        "detail_level": "outline",
+        "due_date": "2026-10-18",
+        "estimated_duration_minutes": 300,
+        "id": "n6",
+        "milestone_id": "m1",
+        "region_id": "r1",
+        "status": "locked",
+        "title": "Outline chapter 3 section by section during the vacation",
+        "type": "task"
+      }
+    ],
+    "change_level": "moderate",
+    "decision_summary": {
+      "impact": "Planning returns to 4 hours a week after October 18, with about three extra weeks of buffer before the January deadline.",
+      "what_changed": "Chapter 2 and the chapter 3 outline are scheduled for the two vacation weeks; the chapters milestone moves to November 22.",
+      "why": "Two weeks at about 15 hours a week are best used for the chapter that needs long focus blocks."
+    },
+    "message_to_user": "Two focused weeks are perfect for the literature review — it's the chapter that benefits most from long uninterrupted blocks. Plan: finish chapter 2 during the vacation (about 20 hours) and use the rest to outline chapter 3. After October 18 you're back to 4 hours a week, and the chapters milestone moves up to November 22, leaving more buffer before the January deadline.",
+    "modified_deadlines": [
+      {
+        "from": "2026-12-10",
+        "reason": "Chapter 2 finished during the vacation",
+        "target": "milestone",
+        "target_id": "m1",
+        "to": "2026-11-22"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "changes": [
+          {
+            "field": "due_date",
+            "from": null,
+            "to": "2026-10-18"
+          },
+          {
+            "field": "priority",
+            "from": "normal",
+            "to": "critical"
+          }
+        ],
+        "node_id": "n2",
+        "reason": "The literature review needs long blocks, which the vacation provides."
+      },
+      {
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n2"
+            ],
+            "to": [
+              "n2",
+              "n6"
+            ]
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 900,
+            "to": 720
+          }
+        ],
+        "node_id": "n3",
+        "reason": "Writing from a detailed outline is faster."
+      }
+    ],
+    "new_weekly_hours_planned": 15,
+    "preserved_progress": [
+      "n1"
+    ],
+    "removed_nodes": [],
+    "requires_user_confirmation": false,
+    "response_language": "en",
+    "trigger": {
+      "description": "About 15 hours per week from October 5 to 18, then back to 4.",
+      "type": "more_time"
+    },
+    "type": "route_adaptation"
+  },
+  "contrastive": null
+}

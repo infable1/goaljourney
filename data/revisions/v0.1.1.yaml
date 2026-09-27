@@ -1,0 +1,992 @@
+# Revision ledger — dataset v0.1.1 (base: v0.1.0).
+#
+# Every example whose trainable content (task_type, input, expected_output, contrastive) differs from
+# the base release has one entry here; metadata changes are counted below. Authored fields: id,
+# example_id, kind, known_issues, policies, defect, correction, rationale, reviewer_status.
+# Computed fields (previous_content_hash, content_hash, changed_paths, snapshots) are written by
+# `gj revisions sync`; `gj revisions check` fails on any unrecorded or stale change.
+# reviewer_status is a human decision: it stays pending_human_review until a reviewer records one.
+ledger_version: '1.0'
+dataset_version: 0.1.1
+base_version: 0.1.0
+base_release_manifest: data/manifests/goaljourney-v0.1.0.json
+author: dataset engineering, Milestone 1.6 (AI agent; not a reviewer)
+note: REV-0.1.1-001..006 are the six defects named in the Milestone 1.6 brief. Every entry awaits human review; automated validation passing is
+  not a review.
+revisions:
+- id: REV-0.1.1-001
+  example_id: gj-nav-006
+  kind: defect_fix
+  known_issues:
+  - KI-001
+  policies:
+  - POL-C
+  - POL-E
+  defect: The message names «воскресенье 5-го», but 5 October 2026 is a Monday (today is Sunday 27 September). The move of milestone m1 to 14
+    October appears only in decision_summary.impact, and the two reschedules do not say which level of deadline moves or to which date.
+  correction: Weekday corrected to «понедельник, 5 октября» in both places; every reschedule declares target_type and new_date; the milestone
+    move (m1 → 2026-10-14) is added as its own proposed change; the decision summary is phrased as a proposal and names the unchanged goal date;
+    the user's constraint is listed in facts_used. The English rejected output gets the same declared targets so it differs only in its tagged
+    failure (wrong_language).
+  rationale: Weekday labels must be computed from the calendar (DATE_WEEKDAY_MISMATCH); a milestone change the user is asked to confirm has to
+    be part of the proposed changes, not only of the explanation (POL-C, NAV_RESCHEDULE_UNDECLARED).
+  reviewer_status: pending_human_review
+  previous_content_hash: 5c93d67245033ae10a2ebbb7a618afc6c108cbf8490bf241074d65ac381bff2b
+  content_hash: 626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac
+  changed_paths:
+  - contrastive/0/output/proposed_changes/0/new_date
+  - contrastive/0/output/proposed_changes/0/target_type
+  - contrastive/0/output/proposed_changes/1
+  - contrastive/0/output/proposed_changes/2
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/proposed_changes/0/new_date
+  - expected_output/proposed_changes/0/target_type
+  - expected_output/proposed_changes/1/new_date
+  - expected_output/proposed_changes/1/target_type
+  - expected_output/proposed_changes/2
+  snapshots:
+    previous: data/revisions/snapshots/5c93d67245033ae10a2ebbb7a618afc6c108cbf8490bf241074d65ac381bff2b.json
+    current: data/revisions/snapshots/626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac.json
+- id: REV-0.1.1-002
+  example_id: gj-time-001
+  kind: defect_fix
+  known_issues:
+  - KI-002
+  policies:
+  - POL-C
+  - POL-E
+  defect: «About 140 hours of remaining work … around 11 months» counts the already verified project 1; the unfinished tasks add up to 6,900 min
+    (115 h), about 38 weeks at 3 h/week. The milestone move m1 2027-02-01 → 2027-02-10 is not needed (40 h due by m1 fit by late December). The
+    alternative's why_not assumes a job search although the user has just accepted a job.
+  correction: 'Numbers recomputed from the node estimates: 115 h / about 38 weeks (≈9 months) before, 48 h / 16 weeks after, about 6 weeks of
+    buffer before March 1; workload block added; the unnecessary milestone move removed; the alternative now argues from the user''s own March
+    1 date; the D3 option moves the deadline to early May (93 h at 3 h/week). The rejected output gets a consistent workload block so it differs
+    only in ignoring the time budget.'
+  rationale: Arithmetic in the message must follow from the plan (ARITH_TEXT_UNDERIVABLE, ARITH_*); an unjustified date change and an invented
+    user purpose teach the wrong behaviour.
+  reviewer_status: pending_human_review
+  previous_content_hash: f82c0fc070edc834ae47b1de4fa3de2bf098ffd3050098ecf4e848386246aded
+  content_hash: 4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207
+  changed_paths:
+  - contrastive/0/output/workload
+  - expected_output/decision_summary/alternatives_considered/0/option
+  - expected_output/decision_summary/alternatives_considered/0/why_not
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/decision_summary/why
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/modified_deadlines/0
+  - expected_output/user_options/1
+  - expected_output/workload
+  snapshots:
+    previous: data/revisions/snapshots/f82c0fc070edc834ae47b1de4fa3de2bf098ffd3050098ecf4e848386246aded.json
+    current: data/revisions/snapshots/4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207.json
+- id: REV-0.1.1-003
+  example_id: gj-time-004
+  kind: defect_fix
+  known_issues:
+  - KI-003
+  policies:
+  - POL-C
+  - POL-E
+  defect: The chapters milestone moved to 22 November, and the text promised «about three extra weeks of buffer», but after 18 October chapters
+    3–4 still need 32 h at 4 h/week; the original 10 December date was itself infeasible at 4 h/week. new_weekly_hours_planned was 15 although
+    the pace returns to 4 h/week, and the due date of n2 changed only inside modified_nodes.
+  correction: The temporary pace is represented as workload.pace_phases (15 h/week 5–18 October, 4 h/week otherwise); the milestone stays on 10
+    December, which the vacation makes reachable (about 12 days to spare); the full draft lands in late December, about 3 weeks before 15 January;
+    the n2 due date is declared in modified_deadlines (autonomy auto, applied); new_weekly_hours_planned is the steady 4.
+  rationale: The vacation closes a gap rather than creating spare time; saying otherwise teaches false buffers. POL-C requires deadline changes
+    to be declared and new dates to fit the remaining work.
+  reviewer_status: pending_human_review
+  previous_content_hash: 83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984
+  content_hash: d8536ef0c23618a7edbc8f7326a531f93d12d1f90dc0befc63d3a2e964946110
+  changed_paths:
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/decision_summary/why
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/modified_deadlines/0/autonomy
+  - expected_output/modified_deadlines/0/from
+  - expected_output/modified_deadlines/0/reason
+  - expected_output/modified_deadlines/0/state
+  - expected_output/modified_deadlines/0/target
+  - expected_output/modified_deadlines/0/target_id
+  - expected_output/modified_deadlines/0/to
+  - expected_output/new_weekly_hours_planned
+  - expected_output/workload
+  snapshots:
+    previous: data/revisions/snapshots/83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984.json
+    current: data/revisions/snapshots/d8536ef0c23618a7edbc8f7326a531f93d12d1f90dc0befc63d3a2e964946110.json
+- id: REV-0.1.1-004
+  example_id: gj-nav-001
+  kind: defect_fix
+  known_issues:
+  - KI-006
+  policies:
+  - POL-E
+  defect: The answer states the user's niche («бюджетные путешествия с детьми»), which appears nowhere in the input, and overclaims «около двух
+    часов вместо месяцев проб и ошибок».
+  correction: The niche is added to the input as goal memory gm1 (the recorded result of the verified node n1) and cited in facts_used as user_provided
+    with source_ref goal_memory:gm1; the unsupported time-saving claim is removed.
+  rationale: A navigator must never present an invented detail as the user's fact (POL-E, FACT_NOT_GROUNDED); grounding the fact in the input
+    keeps the example's useful behaviour.
+  reviewer_status: pending_human_review
+  previous_content_hash: 3289d3d7463fc2736d07b7fcdf4c6942640032384462860a5a0996f1d91f4b89
+  content_hash: 90acb23582a8ee40e773912861195fbcff62219a78456dbddb17c3cab5d3c85a
+  changed_paths:
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - input/goal_memory
+  snapshots:
+    previous: data/revisions/snapshots/3289d3d7463fc2736d07b7fcdf4c6942640032384462860a5a0996f1d91f4b89.json
+    current: data/revisions/snapshots/90acb23582a8ee40e773912861195fbcff62219a78456dbddb17c3cab5d3c85a.json
+- id: REV-0.1.1-005
+  example_id: gj-task-004
+  kind: defect_fix
+  known_issues:
+  - KI-004
+  - KI-015
+  policies:
+  - POL-D
+  - POL-B
+  defect: The assistant refers to itself in the masculine («Подготовку разбил на 4 задачи»). Three protocols rated user-entered tables medium
+    or high, and the documents task claimed medium from a list the user types.
+  correction: '«Подготовка разбита на 4 задачи, каждая — …». Defect list: the list is the deliverable (evidence_class inspectable_artifact), ceiling
+    medium. Valuations: the agencies'' written valuations are required (artifact_review), the table is supplementary, ceiling medium. Repairs:
+    an «after» photo is required together with the description (image + non-image → medium). Documents: self_report_only, limited, objective_verifiability
+    low (documents stay private).'
+  rationale: The assistant has no grammatical gender (POL-D); confidence follows the class of evidence, and user-entered data is the user's word
+    (POL-B).
+  reviewer_status: pending_human_review
+  previous_content_hash: 36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e
+  content_hash: 7254399c3565ace09660c9a31ab3f8a4120bad1653eee1b3312dc5af7f8c7fc7
+  changed_paths:
+  - expected_output/message_to_user
+  - expected_output/tasks/0/verification_protocol/methods/0/evidence_class
+  - expected_output/tasks/0/verification_protocol/rationale
+  - expected_output/tasks/1/verification_protocol/confidence_ceiling
+  - expected_output/tasks/1/verification_protocol/methods/0/acceptance_criteria
+  - expected_output/tasks/1/verification_protocol/methods/0/fields
+  - expected_output/tasks/1/verification_protocol/methods/0/instructions
+  - expected_output/tasks/1/verification_protocol/methods/0/method
+  - expected_output/tasks/1/verification_protocol/methods/1/fields
+  - expected_output/tasks/1/verification_protocol/methods/1/instructions
+  - expected_output/tasks/1/verification_protocol/methods/1/method
+  - expected_output/tasks/1/verification_protocol/pass_criteria/0
+  - expected_output/tasks/1/verification_protocol/rationale
+  - expected_output/tasks/2/verification_protocol/methods/1/instructions
+  - expected_output/tasks/2/verification_protocol/methods/1/role
+  - expected_output/tasks/2/verification_protocol/pass_criteria/1
+  - expected_output/tasks/2/verification_protocol/rationale
+  - expected_output/tasks/3/verification_protocol/confidence_ceiling
+  - expected_output/tasks/3/verification_protocol/objective_verifiability
+  - expected_output/tasks/3/verification_protocol/rationale
+  - expected_output/tasks/3/verification_protocol/self_report_only
+  snapshots:
+    previous: data/revisions/snapshots/36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e.json
+    current: data/revisions/snapshots/7254399c3565ace09660c9a31ab3f8a4120bad1653eee1b3312dc5af7f8c7fc7.json
+- id: REV-0.1.1-006
+  example_id: gj-clar-007
+  kind: defect_fix
+  known_issues:
+  - KI-005
+  policies:
+  - POL-D
+  - POL-E
+  defect: The user is addressed in the masculine («едете ли вы один или с семьёй?») although their gender is unknown, and the answer asserts a
+    market generalisation («во многих немецких IT-компаниях рабочий язык английский»). The rejected output also misses the critical questions
+    without that failure being tagged.
+  correction: «…и планируете переезд в одиночку или с семьёй?» in the message and in the question; the market claim is hedged to «есть IT-компании,
+    где рабочий язык английский … станет видно на этапе поиска»; facts_used lists the known facts and the unknown ones; the rejected output is
+    tagged missed_critical_question as well.
+  rationale: Never infer the user's gender (POL-D, RU_GENDERED_USER_ADDRESS); general claims about markets are not stated as facts.
+  reviewer_status: pending_human_review
+  previous_content_hash: a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2
+  content_hash: 949f477f31fd2566fb2276325a0518cbd8b999dd10be942569a5f1c571c754ae
+  changed_paths:
+  - contrastive/0/critique
+  - contrastive/0/failure_modes/2
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/questions/1/question
+  snapshots:
+    previous: data/revisions/snapshots/a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2.json
+    current: data/revisions/snapshots/949f477f31fd2566fb2276325a0518cbd8b999dd10be942569a5f1c571c754ae.json
+- id: REV-0.1.1-007
+  example_id: gj-time-003
+  kind: defect_fix
+  known_issues:
+  - KI-007
+  - KI-032
+  policies:
+  - POL-C
+  - POL-D
+  - POL-E
+  defect: '«В плане — примерно 60 [часов]» was not derivable: no node had a duration. The milestone move had no autonomy/state. The rejected output
+    contains an untagged gendered self-reference («Перенёс ваш экзамен»).'
+  correction: Input nodes get estimates totalling 3,600 min (60 h); after the cuts 1,800 min (30 h) remain against about 32 h available until
+    12 December; workload block added; the milestone move is sized to the work (8 → 15 November, adapt_with_summary, proposed) and named in the
+    summary; the rejected output says «Экзамен перенесён на весну» and declares its silent goal-deadline change.
+  rationale: Numbers in explanations must be grounded in the plan; the rejected output must differ only in its tagged failure modes.
+  reviewer_status: pending_human_review
+  previous_content_hash: b5cc77aecc850b92ee447709898db0d9d7f2760666600a9799d6a008a64b46ef
+  content_hash: e5e92c524fc51d84272b2c81963af89cc9ef1e794f2f2cfba2325521ceba0960
+  changed_paths:
+  - contrastive/0/output/message_to_user
+  - contrastive/0/output/modified_deadlines/0/autonomy
+  - contrastive/0/output/modified_deadlines/0/state
+  - contrastive/0/output/workload
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/decision_summary/why
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/modified_deadlines/0/autonomy
+  - expected_output/modified_deadlines/0/reason
+  - expected_output/modified_deadlines/0/state
+  - expected_output/modified_deadlines/0/to
+  - expected_output/modified_nodes/0/changes/1
+  - expected_output/modified_nodes/1/changes/1
+  - expected_output/workload
+  - input/journey/nodes/1/estimated_duration_minutes
+  - input/journey/nodes/2/estimated_duration_minutes
+  - input/journey/nodes/3/estimated_duration_minutes
+  - input/journey/nodes/4/estimated_duration_minutes
+  - input/journey/nodes/5/estimated_duration_minutes
+  - input/journey/nodes/6/estimated_duration_minutes
+  - input/journey/nodes/7/estimated_duration_minutes
+  snapshots:
+    previous: data/revisions/snapshots/b5cc77aecc850b92ee447709898db0d9d7f2760666600a9799d6a008a64b46ef.json
+    current: data/revisions/snapshots/e5e92c524fc51d84272b2c81963af89cc9ef1e794f2f2cfba2325521ceba0960.json
+- id: REV-0.1.1-008
+  example_id: gj-route-004
+  kind: defect_fix
+  known_issues:
+  - KI-009
+  policies:
+  - POL-C
+  - POL-E
+  defect: «Экономия около 7 часов» counts only the 450-minute cut and ignores the 2 added mentor hours (net 5.5 h). The second mentor session
+    depended on the run-throughs, which fall after October, although the sessions are only offered in October. The cut of the user's planned task
+    was applied as a minor change without asking.
+  correction: 'Saving stated net («около 5,5 часа: разбор сокращается на 7,5 часа, а две сессии займут 2 часа»); session 2 is a run-through on
+    the final deck before 31 October and the three run-throughs follow it; the change is moderate and proposed with a question; the October window
+    is cited in facts_used; an overclaim («ценнее любого количества чужих деков») is softened.'
+  rationale: A saving is the net change in remaining work (ARITH_TEXT_UNDERIVABLE); resources with a time window must be scheduled inside it;
+    reducing the user's own task is proposed, not imposed.
+  reviewer_status: pending_human_review
+  previous_content_hash: ffdf68a9d80c9d338848b7e7d17abaf5808ec8b486557b91bde5729af16cf4a6
+  content_hash: 6ca936010d02bd18d307ee96de96fe8631791f6d2433f40182e45ed987d38f96
+  changed_paths:
+  - expected_output/added_nodes/1/depends_on/0
+  - expected_output/added_nodes/1/due_date
+  - expected_output/added_nodes/1/title
+  - expected_output/change_level
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/decision_summary/why
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/modified_nodes/2
+  - expected_output/requires_user_confirmation
+  snapshots:
+    previous: data/revisions/snapshots/ffdf68a9d80c9d338848b7e7d17abaf5808ec8b486557b91bde5729af16cf4a6.json
+    current: data/revisions/snapshots/6ca936010d02bd18d307ee96de96fe8631791f6d2433f40182e45ed987d38f96.json
+- id: REV-0.1.1-009
+  example_id: gj-route-005
+  kind: policy_alignment
+  known_issues:
+  - KI-010
+  policies:
+  - POL-C
+  - POL-E
+  defect: Milestone m1 moved three weeks (1 → 23 November) without confirmation while the summary claimed the remediation was absorbed by buffer;
+    the second mock exam on 23 November checked a fix made about 8 weeks earlier.
+  correction: 'Under POL-C a milestone may be adapted with an explicit summary: the move is sized to the added work (about 9.5 h → 1 → 10 November,
+    adapt_with_summary, applied) and named in decision_summary; mock exam 2 is due 14 October, right after the drills; the section scores are
+    cited in facts_used.'
+  rationale: Milestone autonomy is now defined (adapt_with_summary); the date and the explanation must agree.
+  reviewer_status: pending_human_review
+  previous_content_hash: 006fed774c8e7e8eb8de4da7801abf0f3fec561a7585a9515899a07ea5388d86
+  content_hash: 66c0fbeea7ff86e414a501affcfd01d161645526d638db17faf2c3ddbb96ce13
+  changed_paths:
+  - expected_output/added_nodes/2/due_date
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/decision_summary/why
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/modified_deadlines/0/autonomy
+  - expected_output/modified_deadlines/0/reason
+  - expected_output/modified_deadlines/0/state
+  - expected_output/modified_deadlines/0/to
+  snapshots:
+    previous: data/revisions/snapshots/006fed774c8e7e8eb8de4da7801abf0f3fec561a7585a9515899a07ea5388d86.json
+    current: data/revisions/snapshots/66c0fbeea7ff86e414a501affcfd01d161645526d638db17faf2c3ddbb96ce13.json
+- id: REV-0.1.1-010
+  example_id: gj-route-002
+  kind: policy_alignment
+  known_issues:
+  - KI-030
+  - KI-032
+  policies:
+  - POL-C
+  - POL-D
+  defect: The completed verbal agreement with «Точка» stayed in preserved_progress although it is void (the schema could not express invalidated
+    progress); the milestone move lacked autonomy/state; the spring option assumed «Точка» would host after reopening; the rejected output contained
+    «я уже всё проверил».
+  correction: n3 moves to the new invalidated_progress list (kept in history, no longer counted as preserved); the milestone move is adapt_with_summary
+    / proposed and the summary is phrased as a proposal; the spring option is hedged («если после ремонта она подтвердит даты»); the rejected
+    output says «всё уже проверено».
+  rationale: Schema v0.1.1 can represent invalidated progress; the rejected output must differ only in its tagged failure.
+  reviewer_status: pending_human_review
+  previous_content_hash: ad82ad29353ed674be7804884af5d83979d5f378d574bcffd8d9d12bf6426cdf
+  content_hash: c9812c892ab2a24d20f427420569d783f2a446c4878c280eafc28c55e1005fde
+  changed_paths:
+  - contrastive/0/output/message_to_user
+  - expected_output/decision_summary/what_changed
+  - expected_output/invalidated_progress
+  - expected_output/message_to_user
+  - expected_output/modified_deadlines/0/autonomy
+  - expected_output/modified_deadlines/0/state
+  - expected_output/preserved_progress/2
+  - expected_output/user_options/1
+  snapshots:
+    previous: data/revisions/snapshots/ad82ad29353ed674be7804884af5d83979d5f378d574bcffd8d9d12bf6426cdf.json
+    current: data/revisions/snapshots/c9812c892ab2a24d20f427420569d783f2a446c4878c280eafc28c55e1005fde.json
+- id: REV-0.1.1-011
+  example_id: gj-time-002
+  kind: policy_alignment
+  known_issues:
+  - KI-029
+  policies:
+  - POL-C
+  - POL-E
+  defect: «Примерно втрое быстрее» did not match the new dates (30 June → 28 February); nodes had no estimates, so the acceleration could not
+    be checked; three milestone changes had no autonomy/state and were not named in the summary.
+  correction: Input nodes get estimates (6,000 min); with the mini-project 6,480 min (108 h) remain, about 11 weeks at 10 h/week; the text states
+    the pace («втрое с лишним») and the work instead of a speed-up factor; each milestone change is adapt_with_summary / applied and named with
+    its new date; workload block added; the source of the extra time is cited in facts_used.
+  rationale: Milestone moves may be applied automatically only with an explicit summary (POL-C); numbers must follow from the plan.
+  reviewer_status: pending_human_review
+  previous_content_hash: 43d22dfb1e541a2c9276c67ed1af29dc9f5bbf09f5088a4dd1d1d72c63419bd7
+  content_hash: 19ca0dd658adf0fd4d1215e4baa0c16812c0e1816176ac8ae3ee53c97a232f08
+  changed_paths:
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/decision_summary/why
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  - expected_output/modified_deadlines/0/autonomy
+  - expected_output/modified_deadlines/0/reason
+  - expected_output/modified_deadlines/0/state
+  - expected_output/modified_deadlines/1/autonomy
+  - expected_output/modified_deadlines/1/reason
+  - expected_output/modified_deadlines/1/state
+  - expected_output/modified_deadlines/2/autonomy
+  - expected_output/modified_deadlines/2/reason
+  - expected_output/modified_deadlines/2/state
+  - expected_output/workload
+  - input/journey/nodes/1/estimated_duration_minutes
+  - input/journey/nodes/2/estimated_duration_minutes
+  - input/journey/nodes/3/estimated_duration_minutes
+  - input/journey/nodes/4/estimated_duration_minutes
+  snapshots:
+    previous: data/revisions/snapshots/43d22dfb1e541a2c9276c67ed1af29dc9f5bbf09f5088a4dd1d1d72c63419bd7.json
+    current: data/revisions/snapshots/19ca0dd658adf0fd4d1215e4baa0c16812c0e1816176ac8ae3ee53c97a232f08.json
+- id: REV-0.1.1-012
+  example_id: gj-task-003
+  kind: defect_fix
+  known_issues:
+  - KI-011
+  policies:
+  - POL-B
+  defect: The first task imported 18 months of shop sales data (often with customer names and addresses) into an unspecified online sandbox, and
+    the COUNT(*) check compared two numbers both reported by the user at a high ceiling.
+  correction: The task uses a local SQLite tool (or deleting personal columns before any online tool); the check asks for the query, its output
+    and the spreadsheet's row count; the query is checked directly and the counts are pasted, so the ceiling is medium.
+  rationale: Customer data should not leave the user's computer without need; confidence follows what is actually inspected (POL-B).
+  reviewer_status: pending_human_review
+  previous_content_hash: a6ca24e044fb90f1f04c6b310a362f20374f69642957543821b92a50576de03c
+  content_hash: a01895fc8f1be54acb86c985c877dcb9afd8c5a4e63e3151df8722cf2451e0a4
+  changed_paths:
+  - expected_output/tasks/0/description
+  - expected_output/tasks/0/title
+  - expected_output/tasks/0/verification_protocol/confidence_ceiling
+  - expected_output/tasks/0/verification_protocol/methods/0/acceptance_criteria/0
+  - expected_output/tasks/0/verification_protocol/methods/0/instructions
+  - expected_output/tasks/0/verification_protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/a6ca24e044fb90f1f04c6b310a362f20374f69642957543821b92a50576de03c.json
+    current: data/revisions/snapshots/a01895fc8f1be54acb86c985c877dcb9afd8c5a4e63e3151df8722cf2451e0a4.json
+- id: REV-0.1.1-013
+  example_id: gj-vprot-001
+  kind: policy_alignment
+  known_issues:
+  - KI-014
+  policies:
+  - POL-A
+  - POL-B
+  defect: The protocol required a video of the solve and a scramble «given by the app»; video analysis is a planned, not available, capability.
+  correction: The navigator puts a random scramble into its own message; the attempt is narrated in an audio recording (transcript shows the stage
+    order, duration shows the time) and two method questions are answered in chat; practical test and narration are the user's account (evidence_class
+    self_report), the questions are an in-chat test; ceiling medium, and the message states the limit. The rejected photo-only protocol is also
+    tagged overconfident_verification.
+  rationale: The example shows the best verification with available capabilities and states the resulting limit instead of teaching the model
+    to ask for video (POL-A, POL-F).
+  reviewer_status: pending_human_review
+  previous_content_hash: 1698ce56fc4deffb478e2febf4251eca74e03160d411be25e238ad25a5ead59f
+  content_hash: 01f2af999d6934aa1d1d787083d3e8e4fb972209233697f7541b3b99fba8c1b4
+  changed_paths:
+  - contrastive/0/failure_modes/1
+  - expected_output/message_to_user
+  - expected_output/protocol/confidence_ceiling
+  - expected_output/protocol/methods/0/acceptance_criteria/0
+  - expected_output/protocol/methods/0/acceptance_criteria/1
+  - expected_output/protocol/methods/0/acceptance_criteria/2
+  - expected_output/protocol/methods/0/acceptance_criteria/3
+  - expected_output/protocol/methods/0/evidence_class
+  - expected_output/protocol/methods/0/instructions
+  - expected_output/protocol/methods/1/acceptance_criteria
+  - expected_output/protocol/methods/1/evidence_class
+  - expected_output/protocol/methods/1/instructions
+  - expected_output/protocol/methods/1/method
+  - expected_output/protocol/methods/2/instructions
+  - expected_output/protocol/methods/2/method
+  - expected_output/protocol/objective_verifiability
+  - expected_output/protocol/pass_criteria/0
+  - expected_output/protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/1698ce56fc4deffb478e2febf4251eca74e03160d411be25e238ad25a5ead59f.json
+    current: data/revisions/snapshots/01f2af999d6934aa1d1d787083d3e8e4fb972209233697f7541b3b99fba8c1b4.json
+- id: REV-0.1.1-014
+  example_id: gj-vprot-003
+  kind: policy_alignment
+  known_issues:
+  - KI-014
+  policies:
+  - POL-A
+  - POL-B
+  defect: The protocol said the app sends POST, GET and DELETE requests to the user's API; calling the user's services is unsupported.
+  correction: The app fetches GET /todos once; the repository is uploaded and reviewed (tests and README); create/delete are shown by a pasted
+    curl session; ceiling medium because the write calls are the user's paste; the message says what the app cannot do.
+  rationale: Unsupported capabilities must never be promised (CAPABILITY_PROMISE); the limit is stated honestly.
+  reviewer_status: pending_human_review
+  previous_content_hash: c81e9e89335e56344d2113224af4967b86825f3ee4b4afe29fd69411f6f1a506
+  content_hash: 50802264ef9811af237e5ac3d32000b6abfcbe379c8239cf4fe3f927d34b1826
+  changed_paths:
+  - expected_output/message_to_user
+  - expected_output/protocol/confidence_ceiling
+  - expected_output/protocol/methods/0/acceptance_criteria/0
+  - expected_output/protocol/methods/0/acceptance_criteria/1
+  - expected_output/protocol/methods/0/acceptance_criteria/2
+  - expected_output/protocol/methods/0/instructions
+  - expected_output/protocol/methods/1/acceptance_criteria/0
+  - expected_output/protocol/methods/1/instructions
+  - expected_output/protocol/methods/2/acceptance_criteria
+  - expected_output/protocol/methods/2/instructions
+  - expected_output/protocol/methods/2/method
+  - expected_output/protocol/methods/2/questions
+  - expected_output/protocol/methods/2/role
+  - expected_output/protocol/methods/3
+  - expected_output/protocol/pass_criteria/0
+  - expected_output/protocol/pass_criteria/1
+  - expected_output/protocol/pass_criteria/2
+  - expected_output/protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/c81e9e89335e56344d2113224af4967b86825f3ee4b4afe29fd69411f6f1a506.json
+    current: data/revisions/snapshots/50802264ef9811af237e5ac3d32000b6abfcbe379c8239cf4fe3f927d34b1826.json
+- id: REV-0.1.1-015
+  example_id: gj-vres-002
+  kind: policy_alignment
+  known_issues:
+  - KI-014
+  policies:
+  - POL-A
+  defect: The answer promised to send the three control problems «сразу после этого сообщения»; the navigator cannot send a message on its own.
+  correction: The three control problems are written into the current reply; «пока я вижу только одну страницу» becomes «на фото только одна страница»
+    (the model receives a description, not the image).
+  rationale: Whatever the user needs now goes into the current reply (POL-A, CAP-PROACTIVE-MESSAGES is planned).
+  reviewer_status: pending_human_review
+  previous_content_hash: a95a311b190953f74f4344df0757addbf8843720438abd06cd7da91af7531659
+  content_hash: ea333ce51a91634250d9bc24ec54edb9dcf523742d70a4b584e469637d067e2a
+  changed_paths:
+  - expected_output/message_to_user
+  snapshots:
+    previous: data/revisions/snapshots/a95a311b190953f74f4344df0757addbf8843720438abd06cd7da91af7531659.json
+    current: data/revisions/snapshots/ea333ce51a91634250d9bc24ec54edb9dcf523742d70a4b584e469637d067e2a.json
+- id: REV-0.1.1-016
+  example_id: gj-vprot-004
+  kind: policy_alignment
+  known_issues:
+  - KI-014
+  - KI-015
+  policies:
+  - POL-B
+  defect: A comparison table typed by the user with a 1–2 link spot-check was rated high.
+  correction: references_required on the table, the spot-check by the navigator is stated in the message, ceiling medium; «AI открывает» becomes
+    «Навигатор открывает».
+  rationale: A spot-check of referenced user data justifies medium, not high (POL-B). Fetching a submitted public URL is an available capability,
+    so the method itself stays.
+  reviewer_status: pending_human_review
+  previous_content_hash: b812376629ecf9629af8cb9969d560d6834ccdd0058ef10f8c8496cc2d164be7
+  content_hash: 555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1
+  changed_paths:
+  - expected_output/message_to_user
+  - expected_output/protocol/confidence_ceiling
+  - expected_output/protocol/methods/0/references_required
+  - expected_output/protocol/methods/1/instructions
+  - expected_output/protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/b812376629ecf9629af8cb9969d560d6834ccdd0058ef10f8c8496cc2d164be7.json
+    current: data/revisions/snapshots/555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1.json
+- id: REV-0.1.1-017
+  example_id: gj-jour-001
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  policies:
+  - POL-B
+  defect: Node n1's protocol rated a table of 15 job postings typed by the user medium without any reference to check.
+  correction: Each row carries the posting link (references_required), the navigator spot-checks 3 links (url_review), ceiling medium; the rationale
+    explains why unchecked rows remain the user's word.
+  rationale: User-entered data reaches medium only with checkable references and a spot-check (POL-B).
+  reviewer_status: pending_human_review
+  previous_content_hash: 77906c26aadd8e8ccdf42ac6b24e7869d505894c1738fcac39e999798066d56e
+  content_hash: b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1
+  changed_paths:
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/acceptance_criteria/1
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/acceptance_criteria/2
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/fields
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/instructions
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/references_required
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/1/instructions
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/1/method
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/1/questions
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/2
+  - expected_output/journey/nodes/0/task/verification_protocol/pass_criteria/0
+  - expected_output/journey/nodes/0/task/verification_protocol/pass_criteria/2
+  - expected_output/journey/nodes/0/task/verification_protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/77906c26aadd8e8ccdf42ac6b24e7869d505894c1738fcac39e999798066d56e.json
+    current: data/revisions/snapshots/b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1.json
+- id: REV-0.1.1-018
+  example_id: gj-jour-002
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  policies:
+  - POL-B
+  defect: Node n1 rated a user-typed fee table high with an optional link check; node n3 rated a two-week production log (the user's own record)
+    medium.
+  correction: 'n1: references_required and a required check of every linked official page, ceiling high (confidence rests on the pages); n3: self_report_only,
+    limited, objective_verifiability low.'
+  rationale: Confidence follows the evidence class (POL-B).
+  reviewer_status: pending_human_review
+  previous_content_hash: 1f3f2bfb751fd1abb85bb9dfd51115acf8a35ebf4e465a0441fb4e66a2536b51
+  content_hash: ea4354db36efc7ef9163988205916e0bad314494cd9accdf6545e46ad18e016c
+  changed_paths:
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/references_required
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/1/instructions
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/1/role
+  - expected_output/journey/nodes/0/task/verification_protocol/pass_criteria/1
+  - expected_output/journey/nodes/0/task/verification_protocol/rationale
+  - expected_output/journey/nodes/2/task/verification_protocol/confidence_ceiling
+  - expected_output/journey/nodes/2/task/verification_protocol/objective_verifiability
+  - expected_output/journey/nodes/2/task/verification_protocol/rationale
+  - expected_output/journey/nodes/2/task/verification_protocol/self_report_only
+  snapshots:
+    previous: data/revisions/snapshots/1f3f2bfb751fd1abb85bb9dfd51115acf8a35ebf4e465a0441fb4e66a2536b51.json
+    current: data/revisions/snapshots/ea4354db36efc7ef9163988205916e0bad314494cd9accdf6545e46ad18e016c.json
+- id: REV-0.1.1-019
+  example_id: gj-jour-003
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  policies:
+  - POL-B
+  defect: Node n1 rated a user-typed note of entry requirements high without any check of the cited pages; node n2 rated a route table medium
+    as user-entered data.
+  correction: 'n1: references_required plus a required check of each cited official page (ceiling high); n2: the route table is the deliverable
+    itself (evidence_class inspectable_artifact), ceiling medium because train availability is confirmed later.'
+  rationale: 'POL-B: a structured result that is the deliverable is an inspectable artifact; otherwise user-entered data needs checkable references.'
+  reviewer_status: pending_human_review
+  previous_content_hash: 360c792cb6a4e278b238241f749acd13c5b851d970f7faa8afdd299fc96dbb13
+  content_hash: 541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4
+  changed_paths:
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/0/references_required
+  - expected_output/journey/nodes/0/task/verification_protocol/methods/1
+  - expected_output/journey/nodes/0/task/verification_protocol/pass_criteria/1
+  - expected_output/journey/nodes/0/task/verification_protocol/rationale
+  - expected_output/journey/nodes/1/task/verification_protocol/methods/0/evidence_class
+  - expected_output/journey/nodes/1/task/verification_protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/360c792cb6a4e278b238241f749acd13c5b851d970f7faa8afdd299fc96dbb13.json
+    current: data/revisions/snapshots/541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4.json
+- id: REV-0.1.1-020
+  example_id: gj-task-001
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  - KI-028
+  policies:
+  - POL-B
+  defect: The onboarding-call notes were rated medium because «specific notes are hard to fabricate» — confidence from detail; three separate
+    calls were modelled as one session.
+  correction: 'Self-report only, limited, objective_verifiability low (calls are not recorded out of respect for the testers'' privacy); sessions:
+    3.'
+  rationale: Detailed wording is not evidence (POL-B).
+  reviewer_status: pending_human_review
+  previous_content_hash: 21220c58f980737f3a01521e10f47b4793fd862d7f4b4397fa0c5f1782c339fd
+  content_hash: 74421dc92f8396f91b7cd9b2051d647c45ddbd35f601cb4f77097113384b62c9
+  changed_paths:
+  - expected_output/tasks/2/sessions
+  - expected_output/tasks/2/verification_protocol/confidence_ceiling
+  - expected_output/tasks/2/verification_protocol/objective_verifiability
+  - expected_output/tasks/2/verification_protocol/rationale
+  - expected_output/tasks/2/verification_protocol/self_report_only
+  snapshots:
+    previous: data/revisions/snapshots/21220c58f980737f3a01521e10f47b4793fd862d7f4b4397fa0c5f1782c339fd.json
+    current: data/revisions/snapshots/74421dc92f8396f91b7cd9b2051d647c45ddbd35f601cb4f77097113384b62c9.json
+- id: REV-0.1.1-021
+  example_id: gj-task-002
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  policies:
+  - POL-B
+  defect: Listener feedback typed by the user was rated medium because its structure «shows the run-through happened».
+  correction: self_report_only, limited, objective_verifiability low; the rationale says the feedback is the user's word and is sufficient for
+    the next step.
+  rationale: 'POL-B: user-entered data is limited without checkable references.'
+  reviewer_status: pending_human_review
+  previous_content_hash: 96f0bfce3713ad203a46cce8ea6aeffca329c91c46d64187df27176d6c314bac
+  content_hash: 23c95b159faf992faa0189a15bba36f3785052f14598034fc8bbedee19bc1583
+  changed_paths:
+  - expected_output/tasks/3/verification_protocol/confidence_ceiling
+  - expected_output/tasks/3/verification_protocol/objective_verifiability
+  - expected_output/tasks/3/verification_protocol/rationale
+  - expected_output/tasks/3/verification_protocol/self_report_only
+  snapshots:
+    previous: data/revisions/snapshots/96f0bfce3713ad203a46cce8ea6aeffca329c91c46d64187df27176d6c314bac.json
+    current: data/revisions/snapshots/23c95b159faf992faa0189a15bba36f3785052f14598034fc8bbedee19bc1583.json
+- id: REV-0.1.1-022
+  example_id: gj-task-005
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  policies:
+  - POL-B
+  defect: The mounting task was rated medium on the user's notes with an optional photo.
+  correction: The photo of the mounted birdhouse is required together with the placement notes (image + non-image required → medium).
+  rationale: 'POL-B: an image description reaches medium only together with another required non-image method.'
+  reviewer_status: pending_human_review
+  previous_content_hash: 24c943915ff9f8a71c7adfcaabe13eb8934e7438519f2027806079fa2f271318
+  content_hash: 235a864d3657bf5ac23a15a35f966bc1b622f82160480bb20f3f3a9f2316f4c3
+  changed_paths:
+  - expected_output/tasks/3/verification_protocol/methods/1/instructions
+  - expected_output/tasks/3/verification_protocol/methods/1/role
+  - expected_output/tasks/3/verification_protocol/pass_criteria/1
+  - expected_output/tasks/3/verification_protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/24c943915ff9f8a71c7adfcaabe13eb8934e7438519f2027806079fa2f271318.json
+    current: data/revisions/snapshots/235a864d3657bf5ac23a15a35f966bc1b622f82160480bb20f3f3a9f2316f4c3.json
+- id: REV-0.1.1-023
+  example_id: gj-vprot-006
+  kind: policy_alignment
+  known_issues:
+  - KI-015
+  policies:
+  - POL-B
+  defect: Interview notes typed by the user were rated medium and the message justified it with «такие детали трудно придумать».
+  correction: self_report_only, limited, objective_verifiability low; the message says the check rests on the user's word and the notes are what
+    the next step needs.
+  rationale: Confidently worded or detailed user data is still the user's word (POL-B).
+  reviewer_status: pending_human_review
+  previous_content_hash: 091e01eb58f9a4adf2156858b924b1f6d49fbd9de3cabf730092b5d808671cc9
+  content_hash: 62d84d101e8d95b8acdb3e55014c1c4c18a0b94a2ca4ab177a563d4d6fd36779
+  changed_paths:
+  - expected_output/message_to_user
+  - expected_output/protocol/confidence_ceiling
+  - expected_output/protocol/objective_verifiability
+  - expected_output/protocol/rationale
+  - expected_output/protocol/self_report_only
+  snapshots:
+    previous: data/revisions/snapshots/091e01eb58f9a4adf2156858b924b1f6d49fbd9de3cabf730092b5d808671cc9.json
+    current: data/revisions/snapshots/62d84d101e8d95b8acdb3e55014c1c4c18a0b94a2ca4ab177a563d4d6fd36779.json
+- id: REV-0.1.1-024
+  example_id: gj-vres-007
+  kind: policy_alignment
+  known_issues: []
+  policies:
+  - POL-B
+  defect: The input protocol rated a user-written list of ideas medium as user-entered data.
+  correction: The list of ideas is the deliverable of the task, so the input protocol declares it an inspectable artifact; the expected output
+    (needs_more_evidence, limited) is unchanged.
+  rationale: Input protocols are linted from v0.1.1; this one is consistent with POL-B once the deliverable is named.
+  reviewer_status: pending_human_review
+  previous_content_hash: 0dadf511071aed03b97d26a376a9bf9b2e485ec295679cb51765f206ed9aa9d8
+  content_hash: f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1
+  changed_paths:
+  - input/task/verification_protocol/methods/0/evidence_class
+  - input/task/verification_protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/0dadf511071aed03b97d26a376a9bf9b2e485ec295679cb51765f206ed9aa9d8.json
+    current: data/revisions/snapshots/f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1.json
+- id: REV-0.1.1-025
+  example_id: gj-vretry-004
+  kind: policy_alignment
+  known_issues: []
+  policies:
+  - POL-B
+  defect: Interview cards typed by the user were accepted at confidence medium with evidence_basis mixed; the input protocol rated them medium.
+  correction: 'Input protocol: self_report_only, limited, objective_verifiability low; output: confidence limited, evidence_basis self_report;
+    the rejected output uses the same confidence so it differs only in premature rejection.'
+  rationale: User-entered data is the user's word (POL-B, VR_CONFIDENCE_ABOVE_EVIDENCE).
+  reviewer_status: pending_human_review
+  previous_content_hash: 69516730fe6afddd07a1718c3454a407b3dae7325c32771b17e3dca7734bb69f
+  content_hash: 14bf6ca2fac993d73b369bf829ce4186ab39845d6389e4dd5eb5fd60b151a6a9
+  changed_paths:
+  - contrastive/0/output/confidence
+  - contrastive/0/output/evidence_basis
+  - expected_output/confidence
+  - expected_output/evidence_basis
+  - input/task/verification_protocol/confidence_ceiling
+  - input/task/verification_protocol/objective_verifiability
+  - input/task/verification_protocol/rationale
+  - input/task/verification_protocol/self_report_only
+  snapshots:
+    previous: data/revisions/snapshots/69516730fe6afddd07a1718c3454a407b3dae7325c32771b17e3dca7734bb69f.json
+    current: data/revisions/snapshots/14bf6ca2fac993d73b369bf829ce4186ab39845d6389e4dd5eb5fd60b151a6a9.json
+- id: REV-0.1.1-026
+  example_id: gj-mem-002
+  kind: defect_fix
+  known_issues:
+  - KI-024
+  - KI-031
+  policies:
+  - POL-D
+  - POL-E
+  defect: «400 тысяч» was stored as «400 000 рублей» (currency inferred and stored as user_stated); the input memory described the user in the
+    masculine («свободен по выходным»).
+  correction: Stored as «400 тысяч (валюта не указана)»; input memory «выходные свободны».
+  rationale: Inferences must not be upgraded into user facts (POL-E, MEM_SOURCE_NOT_GROUNDED); stored memory is gender-neutral (POL-D).
+  reviewer_status: pending_human_review
+  previous_content_hash: e97a1d33e6f40a40c22e2324364acdd46229612626e476438838ec94a4441e79
+  content_hash: 38fbc83124116bc3ebf33720c4f835a300949fd0a3638133d1d5f6c793a7d2b3
+  changed_paths:
+  - expected_output/items/0/content
+  - input/user_memory/0/content
+  snapshots:
+    previous: data/revisions/snapshots/e97a1d33e6f40a40c22e2324364acdd46229612626e476438838ec94a4441e79.json
+    current: data/revisions/snapshots/38fbc83124116bc3ebf33720c4f835a300949fd0a3638133d1d5f6c793a7d2b3.json
+- id: REV-0.1.1-027
+  example_id: gj-lang-001
+  kind: policy_alignment
+  known_issues:
+  - KI-031
+  policies:
+  - POL-D
+  defect: Input memory described the user in the masculine («даже если сам пишет вперемешку»).
+  correction: «даже если пишет вперемешку».
+  rationale: Memory the model learns from is gender-neutral (POL-D, RU_GENDERED_MEMORY).
+  reviewer_status: pending_human_review
+  previous_content_hash: 6111e852d488c53c4808104725d2a1888e20ed4d76751546cd76dfe857e4fe58
+  content_hash: 86a13ed2ff0f951dd2a4f32c635e05591c487060d965146f2db113f11cfe6faa
+  changed_paths:
+  - input/user_memory/0/content
+  snapshots:
+    previous: data/revisions/snapshots/6111e852d488c53c4808104725d2a1888e20ed4d76751546cd76dfe857e4fe58.json
+    current: data/revisions/snapshots/86a13ed2ff0f951dd2a4f32c635e05591c487060d965146f2db113f11cfe6faa.json
+- id: REV-0.1.1-028
+  example_id: gj-jour-004
+  kind: policy_alignment
+  known_issues:
+  - KI-013
+  policies:
+  - POL-D
+  - POL-B
+  defect: Achievement a1 «Первое блюдо своими руками» unlocked on the first verified task, which is knife practice, not a dish. The rejected output
+    silently dropped the goal deadline (an untagged defect) and its photo-only protocol was also over-confident.
+  correction: a1 renamed «Первая техника освоена»; the level titles stay (POL-D rule 3 accepts natural role nouns as badge names); the rejected
+    output keeps the goal deadline and is also tagged overconfident_verification.
+  rationale: Titles must describe what unlocks them; rejected outputs differ only in their tagged failures.
+  reviewer_status: pending_human_review
+  previous_content_hash: 875498360a039cba9c3b29cc3c837d8f051b1f9739d5cddc40f835122aa68468
+  content_hash: dd7a3b8ff8a00a46a5ee0c6ddb0b78ec0b18c68edf3b1bd3ea2ab9afb5ca0e9b
+  changed_paths:
+  - contrastive/0/critique
+  - contrastive/0/failure_modes/3
+  - contrastive/0/output/goal/deadline
+  - expected_output/journey/achievements/0/title
+  snapshots:
+    previous: data/revisions/snapshots/875498360a039cba9c3b29cc3c837d8f051b1f9739d5cddc40f835122aa68468.json
+    current: data/revisions/snapshots/dd7a3b8ff8a00a46a5ee0c6ddb0b78ec0b18c68edf3b1bd3ea2ab9afb5ca0e9b.json
+- id: REV-0.1.1-029
+  example_id: gj-jour-005
+  kind: policy_alignment
+  known_issues: []
+  policies:
+  - POL-C
+  defect: The rejected output's goal omitted the user's deadline, which v0.1.1 treats as a silent deadline change (J_GOAL_DEADLINE_CHANGED is
+    an error) — an untagged defect.
+  correction: The rejected output's goal carries the deadline, so it fails only on its tagged modes (pretended professional, unsafe compliance).
+  rationale: Contrastive quality (KI-032 principle).
+  reviewer_status: pending_human_review
+  previous_content_hash: 6476a8b8b626a4627c8e5d52938095da84a3062fdae2f96131cd3b01a1424fb6
+  content_hash: 0b450cde1a381a65ec5ee43d55b6a2a6f114db0034aef7833218cf26e01aef6b
+  changed_paths:
+  - contrastive/0/output/goal/deadline
+  snapshots:
+    previous: data/revisions/snapshots/6476a8b8b626a4627c8e5d52938095da84a3062fdae2f96131cd3b01a1424fb6.json
+    current: data/revisions/snapshots/0b450cde1a381a65ec5ee43d55b6a2a6f114db0034aef7833218cf26e01aef6b.json
+- id: REV-0.1.1-030
+  example_id: gj-vprot-007
+  kind: policy_alignment
+  known_issues: []
+  policies:
+  - POL-B
+  defect: The rejected photo-only protocol also claims more confidence than a photo supports; this was not tagged.
+  correction: Tagged overconfident_verification in addition to photo_as_proof; the critique says so.
+  rationale: Tags must describe every defect of a rejected output.
+  reviewer_status: pending_human_review
+  previous_content_hash: dde477bddf3f786b00f51b8bd7a2b34035370af74dbf2bf818a2c1e3f4560f6c
+  content_hash: 4f863a0005e32e88ff2d96be1110b5ab449c756b7b227186be576e81f08096e0
+  changed_paths:
+  - contrastive/0/critique
+  - contrastive/0/failure_modes/1
+  snapshots:
+    previous: data/revisions/snapshots/dde477bddf3f786b00f51b8bd7a2b34035370af74dbf2bf818a2c1e3f4560f6c.json
+    current: data/revisions/snapshots/4f863a0005e32e88ff2d96be1110b5ab449c756b7b227186be576e81f08096e0.json
+- id: REV-0.1.1-031
+  example_id: gj-vres-004
+  kind: policy_alignment
+  known_issues: []
+  policies:
+  - POL-A
+  defect: The rejected output demands a video of every workout; beyond rejecting a reasonable self-report, video is a capability the app does
+    not have — untagged.
+  correction: Tagged unavailable_capability as well; the critique names it.
+  rationale: Tags must describe every defect of a rejected output (POL-A).
+  reviewer_status: pending_human_review
+  previous_content_hash: 2cbbbe61bbc211ae95da412c38f59ddf6493639d1a4651bcd9a7d166645b35db
+  content_hash: 356dc499cec8916231bd00023782601cc41f5bf6cf52161d64fb5143c114171f
+  changed_paths:
+  - contrastive/0/critique
+  - contrastive/0/failure_modes/1
+  snapshots:
+    previous: data/revisions/snapshots/2cbbbe61bbc211ae95da412c38f59ddf6493639d1a4651bcd9a7d166645b35db.json
+    current: data/revisions/snapshots/356dc499cec8916231bd00023782601cc41f5bf6cf52161d64fb5143c114171f.json
+- id: REV-0.1.1-032
+  example_id: gj-vres-006
+  kind: policy_alignment
+  known_issues: []
+  policies:
+  - POL-A
+  defect: The rejected output demands a video of the painting process — an unavailable capability, untagged.
+  correction: Tagged unavailable_capability as well; the critique names it.
+  rationale: Tags must describe every defect of a rejected output (POL-A).
+  reviewer_status: pending_human_review
+  previous_content_hash: a7dee044cde2fe51260f2cbddf04612cdea4b78a58ee36b06d3176db48f3c2a1
+  content_hash: ce610c175812f53e77c78e3616abe3708b20f4a514ef98428532e3b736768091
+  changed_paths:
+  - contrastive/0/critique
+  - contrastive/0/failure_modes/1
+  snapshots:
+    previous: data/revisions/snapshots/a7dee044cde2fe51260f2cbddf04612cdea4b78a58ee36b06d3176db48f3c2a1.json
+    current: data/revisions/snapshots/ce610c175812f53e77c78e3616abe3708b20f4a514ef98428532e3b736768091.json
+- id: REV-0.1.1-033
+  example_id: gj-clar-001
+  kind: policy_alignment
+  known_issues: []
+  policies: []
+  defect: The rejected output asks five questions but none about the critical unknowns — the missed critical question was not tagged.
+  correction: Tagged missed_critical_question in addition to unnecessary_questions and asked_known_information; the critique says so.
+  rationale: Tags must describe every defect of a rejected output.
+  reviewer_status: pending_human_review
+  previous_content_hash: f3b3509748637a3b8ece45444b4e7ae9797c19e8782c10d84397ef28b6a03d03
+  content_hash: 2ac9da78a4f935d02dda27fa6106ad278f6ef0bce68a206386ca601910052124
+  changed_paths:
+  - contrastive/0/critique
+  - contrastive/0/failure_modes/2
+  snapshots:
+    previous: data/revisions/snapshots/f3b3509748637a3b8ece45444b4e7ae9797c19e8782c10d84397ef28b6a03d03.json
+    current: data/revisions/snapshots/2ac9da78a4f935d02dda27fa6106ad278f6ef0bce68a206386ca601910052124.json
+- id: REV-0.1.1-034
+  example_id: gj-nav-003
+  kind: defect_fix
+  known_issues:
+  - KI-020
+  policies:
+  - POL-E
+  defect: «3 тренировки в неделю по 25–30 минут, как и было» — the earlier session length is not in the input.
+  correction: «как и было» removed.
+  rationale: No invented details about the user's past plan (POL-E).
+  reviewer_status: pending_human_review
+  previous_content_hash: 17cce1257cb6a793a25f2dbd03370b7a9d183455f484a15f99c215a9b241479b
+  content_hash: d48cd96f3b2f84263021ec69bb5250d33636046023a29c040b72c7718dc577c1
+  changed_paths:
+  - expected_output/message_to_user
+  snapshots:
+    previous: data/revisions/snapshots/17cce1257cb6a793a25f2dbd03370b7a9d183455f484a15f99c215a9b241479b.json
+    current: data/revisions/snapshots/d48cd96f3b2f84263021ec69bb5250d33636046023a29c040b72c7718dc577c1.json
+- id: REV-0.1.1-035
+  example_id: gj-nav-008
+  kind: defect_fix
+  known_issues:
+  - KI-021
+  policies: []
+  defect: A greeting of 5–6 sentences (about 60–90 words) was said to count as one of the three 100-word texts.
+  correction: «8–10 предложений (около 100 слов)».
+  rationale: Quantities in advice must be consistent.
+  reviewer_status: pending_human_review
+  previous_content_hash: bbdb93870ad21d84263280a41bd0ebc5d83f05cd36d641143a2ad7aab43de535
+  content_hash: d0cddcdc6e7f52a2520f39bbe70ce182b4c8636c5f44553eea6a1520c9e1a21a
+  changed_paths:
+  - expected_output/message_to_user
+  snapshots:
+    previous: data/revisions/snapshots/bbdb93870ad21d84263280a41bd0ebc5d83f05cd36d641143a2ad7aab43de535.json
+    current: data/revisions/snapshots/d0cddcdc6e7f52a2520f39bbe70ce182b4c8636c5f44553eea6a1520c9e1a21a.json
+- id: REV-0.1.1-036
+  example_id: gj-mem-003
+  kind: defect_fix
+  known_issues:
+  - KI-025
+  policies: []
+  defect: total_minutes was 30 while the message planned 40 minutes (a 10-minute comparison outside any task).
+  correction: 'The comparison is part of the recommended task: estimated 40 minutes with a scope_note, total_minutes 40 (within the 40 available).'
+  rationale: Daily-plan arithmetic must match the message (DP_TOTAL_MISMATCH principle).
+  reviewer_status: pending_human_review
+  previous_content_hash: 2b047e804cef43a702c88fb89bcb85fc070f14f931926c269697e048bb7e3c07
+  content_hash: 8d3c88f3972fb969f6f1a12e3b758a702ad786cae2ee6fb3fe5b09e73ddcaec5
+  changed_paths:
+  - expected_output/recommended_tasks/0/estimated_duration_minutes
+  - expected_output/recommended_tasks/0/scope_note
+  - expected_output/total_minutes
+  snapshots:
+    previous: data/revisions/snapshots/2b047e804cef43a702c88fb89bcb85fc070f14f931926c269697e048bb7e3c07.json
+    current: data/revisions/snapshots/8d3c88f3972fb969f6f1a12e3b758a702ad786cae2ee6fb3fe5b09e73ddcaec5.json
+metadata_changes:
+- field: schema_version
+  description: Every example moves to the v0.1.1 output contract (validated with v0.1.1 schemas and lint rules).
+  examples: 93
+  mapping: 0.1.0 -> 0.1.1
+- field: scenario_group
+  description: Topical groups replaced by behavioural scenario groups (data/scenarios/behavioural_scenarios.yaml).
+  examples: 93
+  mapping: sg-<topic> -> bs-<behaviour>; one scenario per example except bs-nav-off-topic-redirect (gj-nav-008, gj-nav-011)
+- field: topic_group
+  description: The v0.1.0 topical group, kept for traceability.
+  examples: 93
+  mapping: topic_group = v0.1.0 scenario_group
+- field: annotations
+  description: annotations.rationale updated to describe the revised behaviour.
+  examples: 2
+  mapping: gj-route-004, gj-route-005
+examples_added: []
+examples_removed: []

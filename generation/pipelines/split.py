@@ -4,8 +4,9 @@ Steps (the build aborts on any failure — nothing is written half-way):
   1. every example in the pool validates (schema + semantic + contrastive self-test), ids unique;
   2. evaluation cases validate (their reference outputs pass their own checks);
   3. selection by review policy: `approved` examples always; `pending` *authored* examples only under
-     `allow_pending` (release marked draft_unreviewed); everything else (stale, needs_revision,
-     rejected, approved_pending_expert) and unapproved generated candidates are excluded;
+     `allow_pending` (release marked draft_unreviewed); everything else (needs_revision, rejected) and
+     unapproved generated candidates are excluded. Under allow_pending, `pending` includes content changed
+     since a decision and approvals still awaiting an expert — they are released only as draft rows;
   4. leakage guard: any hard finding of the layered checks (exact, near-duplicate, lexical paraphrase,
      scenario group, seed id — see docs/LEAKAGE_CHECKS.md) aborts the build;
   5. deterministic group split: whole scenario groups go to train or validation, stratified by task type;

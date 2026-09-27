@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.0/navigator_response.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/navigator_response.json",
   "title": "Operation output: navigator_response (Type I)",
   "description": "Contextual reply to a user request about the goal/journey. The navigator advises, may push back with reasons, and proposes changes the user confirms. Requests unrelated to the goal are politely redirected (in_scope=false), not fulfilled.",
   "type": "object",
@@ -30,7 +30,12 @@
         "properties": {
           "action": { "type": "string", "enum": ["add", "remove", "modify", "reschedule", "replace", "skip", "split"] },
           "target_id": { "$ref": "common.json#/$defs/id" },
-          "description": { "$ref": "common.json#/$defs/text" }
+          "description": { "$ref": "common.json#/$defs/text" },
+          "target_type": {
+            "description": "Required for reschedule (POL-C): which level of deadline moves.",
+            "type": "string", "enum": ["node", "milestone", "goal"]
+          },
+          "new_date": { "$ref": "common.json#/$defs/date" }
         }
       }
     },
@@ -42,6 +47,7 @@
     },
     "suggested_next_action": { "$ref": "common.json#/$defs/short_text" },
     "external_claims": { "$ref": "common.json#/$defs/external_claims" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" },
     "decision_summary": {
       "oneOf": [ { "$ref": "decision_summary.json" }, { "type": "null" } ]
     }

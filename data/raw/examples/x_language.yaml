@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-lang-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: daily_plan
   behavior: [language, daily_prioritization, memory]
   language: ru
@@ -13,7 +13,8 @@ examples:
   goal_size: medium
   tags: [mixed_language, language_preference_memory]
   safety_category: allowed
-  scenario_group: sg-lang-mixed-daily-go
+  scenario_group: bs-daily-language-preference-memory
+  topic_group: sg-lang-mixed-daily-go
   input:
     operation: daily_plan
     today: "2026-09-27"
@@ -24,7 +25,7 @@ examples:
     user_memory:
       - scope: user
         category: language
-        content: Предпочитает, чтобы ответы были на русском, даже если сам пишет вперемешку.
+        content: Предпочитает, чтобы ответы были на русском, даже если пишет вперемешку.
         stability: stable
     retrieved_memory:
       - scope: goal
@@ -81,7 +82,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-lang-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: goal_clarification
   behavior: [language, clarification]
   language: en
@@ -91,7 +92,8 @@ examples:
   goal_size: complex
   tags: [mixed_language, heritage_speaker]
   safety_category: allowed
-  scenario_group: sg-lang-heritage-russian
+  scenario_group: bs-clar-heritage-language-level
+  topic_group: sg-lang-heritage-russian
   input:
     operation: goal_clarification
     today: "2026-09-27"

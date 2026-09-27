@@ -3,7 +3,7 @@
 examples:
 
 - id: gj-task-001
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: task_generation
   behavior: [task, verification_protocol]
   language: en
@@ -13,7 +13,8 @@ examples:
   goal_size: medium
   tags: [saas, customer_discovery]
   safety_category: allowed
-  scenario_group: sg-task-budget-app-beta
+  scenario_group: bs-task-customer-discovery-breakdown
+  topic_group: sg-task-budget-app-beta
   input:
     operation: task_generation
     today: "2026-09-27"
@@ -90,12 +91,12 @@ examples:
         why_it_matters: Watching first use reveals friction that testers rarely report in writing.
         expected_result: Call notes for 3 testers with at least 3 observations each.
         estimated_duration_minutes: 60
-        sessions: 1
+        sessions: 3
         difficulty: 3
         dependencies: [n6-t2]
         verification_protocol:
           task_nature: business_activity
-          objective_verifiability: medium
+          objective_verifiability: low
           methods:
             - method: structured_result
               role: required
@@ -106,9 +107,9 @@ examples:
               instructions: One question to check the notes reflect real calls.
               questions: ["Which observation surprised you most, and what will you change first?"]
           pass_criteria: ["3 calls logged with at least 3 concrete observations each"]
-          confidence_ceiling: medium
-          self_report_only: false
-          rationale: Structured, specific notes are hard to fabricate convincingly and are what the next step needs; calls themselves are not recorded, so confidence is medium.
+          confidence_ceiling: limited
+          self_report_only: true
+          rationale: The calls are not recorded, out of respect for the testers' privacy, so the notes are the user's own account and confidence stays limited however detailed they are; they are still exactly what the next step needs.
       - id: n6-t4
         title: Set up a feedback form and a weekly 2-question check-in message
         description: Create a short form for bugs and ideas, and a weekly message asking what they used the app for and what annoyed them.
@@ -184,7 +185,7 @@ examples:
     license: proprietary-internal
 
 - id: gj-task-002
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: task_generation
   behavior: [task, verification_protocol]
   language: ru
@@ -194,7 +195,8 @@ examples:
   goal_size: medium
   tags: [public_speaking, has_deadline]
   safety_category: allowed
-  scenario_group: sg-task-conference-talk
+  scenario_group: bs-task-public-talk-breakdown
+  topic_group: sg-task-conference-talk
   input:
     operation: task_generation
     today: "2026-09-27"
@@ -298,23 +300,23 @@ examples:
         dependencies: [n2-t3]
         verification_protocol:
           task_nature: social_interaction
-          objective_verifiability: medium
+          objective_verifiability: low
           methods:
             - method: structured_result
               role: required
               instructions: Внесите ответы каждого слушателя и итоговый список правок.
               fields: ["Слушатель (имя не обязательно)", "Что запомнилось", "Где было непонятно", "Что лишнее", "Правки"]
           pass_criteria: ["Ответы двух слушателей внесены", "Есть список правок"]
-          confidence_ceiling: medium
-          self_report_only: false
-          rationale: Отзывы вносит сам пользователь, но их структура и правки показывают, что прогон состоялся.
+          confidence_ceiling: limited
+          self_report_only: true
+          rationale: Отзывы слушателей вносит сам пользователь — это его слова, поэтому уверенность ограниченная, как бы подробно они ни были записаны; для следующего шага — правок — этого достаточно.
     decision_summary: null
   annotations:
     rationale: Ordered, dependency-correct steps with measurable results; the audio run-through is objective evidence for a skill task; all tasks fit 90-minute sessions and end before the milestone date.
   provenance: *prov
 
 - id: gj-task-003
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: task_generation
   behavior: [task]
   language: en
@@ -324,7 +326,8 @@ examples:
   goal_size: medium
   tags: [short_sessions, preferences, skill_goal]
   safety_category: allowed
-  scenario_group: sg-task-sql-basics
+  scenario_group: bs-task-short-sessions-own-data
+  topic_group: sg-task-sql-basics
   input:
     operation: task_generation
     today: "2026-09-27"
@@ -357,8 +360,8 @@ examples:
     for_node_id: n1
     tasks:
       - id: n1-t1
-        title: Load your sales CSV into a free browser-based SQL sandbox
-        description: Open a browser SQLite tool, import the sales CSV as a table and run SELECT COUNT(*) on it.
+        title: Load your sales CSV into a local SQLite tool on your computer
+        description: Install a free desktop SQLite tool, import the sales CSV as a table and run SELECT COUNT(*) on it. Keeping the file on your computer matters because sales exports often include customer names and addresses; if you would rather use an online tool, delete those columns first.
         why_it_matters: Practising on your own data from day one keeps every later exercise relevant.
         expected_result: The table loaded and the row count from COUNT(*) that matches the CSV.
         estimated_duration_minutes: 30
@@ -370,12 +373,12 @@ examples:
           methods:
             - method: practical_test
               role: required
-              instructions: Paste the query and its output; the navigator compares the count with the number of rows you report in the CSV.
-              acceptance_criteria: ["Query runs", "Count matches the CSV row count"]
+              instructions: Paste the query and its output, and the number of data rows your spreadsheet program shows for the CSV.
+              acceptance_criteria: ["The query is a valid COUNT(*) on the imported table", "Count matches the CSV row count"]
           pass_criteria: ["COUNT(*) output matches the CSV"]
-          confidence_ceiling: high
+          confidence_ceiling: medium
           self_report_only: false
-          rationale: A query and its output are directly checkable.
+          rationale: The query itself is checked directly, but both row counts are pasted by the user, so confidence is medium rather than high; no customer data leaves the computer.
       - id: n1-t2
         title: Solve 8 SELECT and WHERE exercises on your sales table
         description: Answer eight small questions such as "orders over 50" or "orders from March" using SELECT, WHERE, ORDER BY and LIMIT.
@@ -511,7 +514,7 @@ examples:
   provenance: *prov
 
 - id: gj-task-004
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: task_generation
   behavior: [task, source_awareness]
   language: ru
@@ -521,7 +524,8 @@ examples:
   goal_size: medium
   tags: [real_estate, external_professionals]
   safety_category: allowed
-  scenario_group: sg-task-flat-sale-prep
+  scenario_group: bs-task-parallel-prep-professionals
+  topic_group: sg-task-flat-sale-prep
   input:
     operation: task_generation
     today: "2026-09-27"
@@ -550,7 +554,7 @@ examples:
     type: task_generation
     response_language: ru
     message_to_user: |-
-      Подготовку разбил на 4 задачи, каждую — блоками до двух часов. Первые две можно делать параллельно: список дефектов и оценка стоимости от трёх агентств. Список документов для сделки зависит от вашей ситуации, поэтому его стоит получить у риелтора или нотариуса, а не из общих советов.
+      Подготовка разбита на 4 задачи, каждая — блоками до двух часов. Первые две можно делать параллельно: список дефектов и оценка стоимости от трёх агентств. Список документов для сделки зависит от вашей ситуации, поэтому его стоит получить у риелтора или нотариуса, а не из общих советов.
     for_node_id: n1
     tasks:
       - id: n1-t1
@@ -567,6 +571,7 @@ examples:
           methods:
             - method: structured_result
               role: required
+              evidence_class: inspectable_artifact
               instructions: Внесите список в форму.
               fields: ["Комната", "Дефект", "Приоритет"]
             - method: photo
@@ -575,7 +580,7 @@ examples:
           pass_criteria: ["Список охватывает все комнаты", "У каждого пункта есть приоритет"]
           confidence_ceiling: medium
           self_report_only: false
-          rationale: Список проверяется по полноте и структуре; фото — только дополнение.
+          rationale: Список и есть результат задачи — его структуру и приоритеты видно напрямую; то, что охвачены все комнаты, известно только со слов пользователя, поэтому потолок medium. Фото — только дополнение.
       - id: n1-t2
         title: Получить оценку стоимости от 3 агентств недвижимости
         description: Запросите у трёх агентств или частных риелторов оценку стоимости квартиры и сравните диапазоны и аргументы.
@@ -589,17 +594,18 @@ examples:
           task_nature: administrative
           objective_verifiability: high
           methods:
-            - method: structured_result
+            - method: artifact_review
               role: required
-              instructions: Внесите три оценки.
-              fields: ["Агентство", "Дата", "Диапазон цены", "Главный аргумент"]
-            - method: third_party_confirmation
+              instructions: Загрузите письменные оценки трёх агентств — письма, сообщения или PDF (подойдёт экспорт переписки в файл).
+              acceptance_criteria: ["В каждой оценке видны агентство, дата и диапазон цены"]
+            - method: structured_result
               role: supplementary
-              instructions: Письмо или сообщение агентства с оценкой, если оно есть.
-          pass_criteria: ["Три оценки от разных агентств внесены"]
-          confidence_ceiling: high
+              instructions: Сводная таблица трёх оценок для сравнения.
+              fields: ["Агентство", "Дата", "Диапазон цены", "Главный аргумент"]
+          pass_criteria: ["Три письменные оценки от разных агентств"]
+          confidence_ceiling: medium
           self_report_only: false
-          rationale: Оценки — конкретные данные от третьих лиц, их можно подтвердить перепиской.
+          rationale: Письменные оценки агентств проверяются напрямую; таблица, заполненная пользователем, — только его слова, поэтому опорой служат сами письма. Потолок medium, потому что экспорт переписки можно отредактировать.
       - id: n1-t3
         title: Устранить все дефекты с приоритетом «до показов»
         description: По списку из первой задачи устраните дефекты с высоким приоритетом сами или с помощью мастера.
@@ -617,12 +623,12 @@ examples:
               role: required
               instructions: Отметьте каждый пункт списка как устранённый и коротко опишите, как.
             - method: photo
-              role: supplementary
-              instructions: Фото «после» для пунктов, у которых есть фото «до».
-          pass_criteria: ["Все пункты «до показов» отмечены с описанием"]
+              role: required
+              instructions: Фото «после» для каждого пункта с приоритетом «до показов» (и фото «до», если оно есть).
+          pass_criteria: ["Все пункты «до показов» отмечены с описанием", "Для каждого пункта есть фото «после»"]
           confidence_ceiling: medium
           self_report_only: false
-          rationale: Описание каждого пункта плюс фото «до / после» — разумная комбинация; одно фото ничего не доказывает.
+          rationale: Описание каждого пункта плюс фото «после» — разумная комбинация для физического результата; одно фото или одно описание ничего не доказывают.
       - id: n1-t4
         title: Получить у риелтора или нотариуса список документов для сделки и отметить недостающие
         description: Запросите список документов, нужных именно в вашей ситуации (собственники, основание владения), и отметьте, что уже есть на руках.
@@ -633,23 +639,23 @@ examples:
         dependencies: []
         verification_protocol:
           task_nature: administrative
-          objective_verifiability: medium
+          objective_verifiability: low
           methods:
             - method: structured_result
               role: required
               instructions: Внесите список документов со статусами.
               fields: ["Документ", "Есть / нужно получить", "Кто выдаёт", "Срок"]
           pass_criteria: ["Список получен от специалиста", "У каждого документа есть статус"]
-          confidence_ceiling: medium
-          self_report_only: false
-          rationale: Сами документы не загружаются из соображений приватности; достаточно структурированного списка.
+          confidence_ceiling: limited
+          self_report_only: true
+          rationale: Сами документы не загружаются из соображений приватности, поэтому проверка опирается на слова пользователя; для планирования сделки этого достаточно.
     decision_summary: null
   annotations:
     rationale: Operational tasks with priorities, parallelisable first steps, long work split into 2-hour sessions, legal document requirements delegated to professionals instead of asserted.
   provenance: *prov
 
 - id: gj-task-005
-  schema_version: "0.1.0"
+  schema_version: "0.1.1"
   task_type: task_generation
   behavior: [task, verification_protocol]
   language: en
@@ -659,7 +665,8 @@ examples:
   goal_size: tiny
   tags: [tiny_goal, physical_artifact, photo_supplementary]
   safety_category: allowed
-  scenario_group: sg-task-birdhouse
+  scenario_group: bs-task-tiny-goal-few-tasks
+  topic_group: sg-task-birdhouse
   input:
     operation: task_generation
     today: "2026-09-27"
@@ -769,12 +776,12 @@ examples:
               instructions: Note height, direction the entrance faces and why you chose the spot.
               fields: ["Height", "Entrance faces", "Why this spot"]
             - method: photo
-              role: supplementary
-              instructions: Optional photo of the mounted birdhouse.
-          pass_criteria: ["Placement details recorded"]
+              role: required
+              instructions: A photo of the mounted birdhouse where the entrance is visible.
+          pass_criteria: ["Placement details recorded", "Photo shows the birdhouse mounted"]
           confidence_ceiling: medium
           self_report_only: false
-          rationale: The placement reasoning matters more than a picture.
+          rationale: A physical result — the photo shows it is mounted and the notes explain the placement; neither alone would be enough, together they justify medium.
     decision_summary: null
   annotations:
     rationale: A tiny goal kept tiny (4 tasks); safety-aware role split for children; photos only in combination with questions or structured details.
