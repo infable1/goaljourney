@@ -338,6 +338,9 @@ _EXPECTED_METHODS = {
     "administrative": {"artifact_review", "screenshot", "structured_result", "third_party_confirmation"},
     "social_interaction": {"structured_result", "structured_self_report", "follow_up_questions"},
 }
+# v0.1.1: a performance export (e.g. a typing-test history) shows a skill directly, and a public page or
+# verification link is the natural proof of an administrative step (POL-B classes both as high-support evidence).
+_EXPECTED_METHODS_V011 = {"skill_acquisition": {"data_export"}, "administrative": {"url_review"}}
 _STRICT_NATURES = {"software", "writing"}
 _MEDIA_ONLY = {"photo", "screenshot"}
 _SELF_REPORT_METHODS = {"structured_self_report", "follow_up_questions"}
@@ -378,6 +381,8 @@ def lint_protocol(c, p, path="protocol"):
         c.error("VP_CEILING_TOO_HIGH", "objective_verifiability=none cannot justify high confidence", path)
     nature = p.get("task_nature")
     expected = _EXPECTED_METHODS.get(nature)
+    if expected and c.since("0.1.1"):
+        expected = expected | _EXPECTED_METHODS_V011.get(nature, set())
     if expected and not (req & expected) and p.get("objective_verifiability") in {"high", "medium"}:
         (c.error if nature in _STRICT_NATURES else c.warn)(
             "VP_NATURE_MISMATCH", f"{nature} task but none of the required methods fits it (expected one of {sorted(expected)})", path)
