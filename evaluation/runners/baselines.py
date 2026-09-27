@@ -64,7 +64,9 @@ def naive_output(case: dict) -> dict:
                 "modified_nodes": [], "modified_deadlines": [], "preserved_progress": [], "decision_summary": _DS}
     if op == "daily_plan":
         todo = [n for n in _nodes(ctx) if n.get("status") in ("available", "in_progress", "locked")][:5] or [{"id": "n1"}]
-        recs = [{"task_id": n["id"], "reason": "Good to do.", "estimated_duration_minutes": n.get("estimated_duration_minutes", 60)} for n in todo]
+        # capped per task so five tasks stay inside the schema's one-day maximum (1440 min)
+        recs = [{"task_id": n["id"], "reason": "Good to do.",
+                 "estimated_duration_minutes": min(n.get("estimated_duration_minutes", 60), 240)} for n in todo]
         return {**base, "available_minutes": max(1, (ctx.get("time_budget") or {}).get("available_minutes_today") or 60),
                 "recommended_tasks": recs, "total_minutes": sum(r["estimated_duration_minutes"] for r in recs),
                 "next_action": "Start with the first task."}

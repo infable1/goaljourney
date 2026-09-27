@@ -5,8 +5,8 @@ dataset_version: "0.1.1"        # data/{train,validation,test}/goaljourney-v<dat
 schema_version: "0.1.1"         # schemas/*.json ($id contains v0.1.1); older versions frozen in schemas/archive/
 navigator_prompt_version: "0.1.1"   # prompts/navigator/v<ver>/system.md (runtime model prompt; 0.1.1 adds POL-A..E)
 generation_prompt_version: "0.1.1"  # prompts/generation/v<ver>/ (teacher prompts; 0.1.1 adds the v0.1.1 policies and failure modes)
-pipeline_version: "0.2.0"       # generation/ + gjcore/ code (0.2.0: review log v0.2, audit, leakage layers, release gates)
-evaluation_version: "0.1.0"     # evaluation/cases/v<ver>/ + check semantics
+pipeline_version: "0.3.0"       # generation/ + gjcore/ code (0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders; 0.2.0: review log v0.2, audit, leakage layers, release gates)
+evaluation_version: "0.2.0"     # evaluation/cases/v<ver>/ + check semantics (0.2.0: independent seeds, atomic/composite/longitudinal units; v0.1.0 kept frozen)
 base_model:
   # Deliberately unset: the base model is chosen later and recorded here, not hard-coded.
   # Candidates: small/medium open-weight multilingual (~4B) models with a licence permitting commercial fine-tuning.

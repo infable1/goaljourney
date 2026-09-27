@@ -5,13 +5,14 @@
     python scripts/gj.py stats               # dataset distribution
     python scripts/gj.py coverage            # current pool vs. scale-up targets
     python scripts/gj.py generate ...        # synthetic candidates via a teacher LLM (needs credentials)
-    python scripts/gj.py review sample|list|show|template|approve|revise|reject|apply|history|stats|export|verify-log
+    python scripts/gj.py review sample|sample-status|list|show|template|approve|revise|reject|apply|history|stats|export|verify-log
     python scripts/gj.py audit               # heuristic audits (Problems 1-9) + known issues register
     python scripts/gj.py revisions check|sync|diff   # revision ledger vs. the base release (no silent edits)
     python scripts/gj.py leakage             # layered train/eval/seed leakage report
     python scripts/gj.py split               # immutable train/validation/test release + manifest
     python scripts/gj.py gates               # is the release training_ready? (configs/release_gates.yaml)
     python scripts/gj.py export --format sft|preference|eval
+    python scripts/gj.py eval build-cases [--check]   # render evaluation/cases/v0.2.0 from evaluation/builders/
     python scripts/gj.py eval run --predictor reference|naive|model
     python scripts/gj.py eval score --predictions file.jsonl
     python scripts/gj.py eval review-sheet --predictions file.jsonl
@@ -44,9 +45,15 @@ def cmd_validate(args):
     ok &= not sc["errors"]
 
     print("\n== Evaluation cases ==")
-    ec = validate_cases()
-    print_case_summary(ec)
-    ok &= not ec["invalid"]
+    from gjcore.paths import REPO_ROOT
+    from gjcore.schemas import version_key
+    ec = {}
+    # every case set is validated: the current one and the frozen earlier versions
+    for d in sorted((REPO_ROOT / "evaluation" / "cases").glob("v*"), key=lambda p: version_key(p.name[1:])):
+        res = validate_cases(str(d))
+        print_case_summary(res)
+        ok &= not res["invalid"]
+        ec[d.name] = res
 
     if args.report:
         Path(args.report).parent.mkdir(parents=True, exist_ok=True)
@@ -88,6 +95,9 @@ def cmd_review(args):
     c = args.review_cmd
     if c == "sample":
         return sampling.run(write=args.write, check=args.check, as_json=args.json)
+    if c == "sample-status":
+        from generation.pipelines import sample_status
+        return sample_status.run(write=args.write, check=args.check, as_json=args.json)
     if c == "list":
         return review.cmd_list(status=args.status, tier=args.tier, task_type=args.task_type, language=args.language,
                                manifest_only=args.manifest, as_json=args.json)
@@ -146,6 +156,9 @@ def cmd_export(args):
 
 def cmd_eval(args):
     from evaluation.runners import runner
+    if args.eval_cmd == "build-cases":
+        from evaluation.builders import build
+        return build.run(check=args.check)
     if args.eval_cmd == "run":
         return runner.run(predictor=args.predictor, provider=args.provider, model=args.model,
                           cases_dir=args.cases, out_dir=args.out, limit=args.limit)
@@ -194,6 +207,11 @@ def main(argv=None):
     rsa.add_argument("--write", action="store_true", help="write the manifest (refuses to change an existing one)")
     rsa.add_argument("--check", action="store_true", help="verify the committed manifest equals a fresh regeneration")
     rsa.add_argument("--json", action="store_true")
+    rss = rs.add_parser("sample-status", help="the review sample in force at this version: per-item change, known "
+                                              "issues and human status -> review/review_sample_status_v<ver>.json")
+    rss.add_argument("--write", action="store_true")
+    rss.add_argument("--check", action="store_true", help="verify the committed status file is current")
+    rss.add_argument("--json", action="store_true")
     rl = rs.add_parser("list", help="examples with tier, required qualifications and status")
     rl.add_argument("--status", choices=["pending", "approved", "needs_revision", "rejected"])
     rl.add_argument("--tier", choices=["human_review_required", "expert_review_required"])
@@ -286,6 +304,8 @@ def main(argv=None):
 
     e = sub.add_parser("eval", help="evaluation suite")
     es = e.add_subparsers(dest="eval_cmd", required=True)
+    eb = es.add_parser("build-cases", help="render evaluation cases from evaluation/builders/ (v0.2.0)")
+    eb.add_argument("--check", action="store_true", help="only report files that differ from the builder output")
     er = es.add_parser("run", help="produce predictions with a predictor and score them")
     er.add_argument("--predictor", required=True, choices=["reference", "naive", "model"])
     er.add_argument("--provider")

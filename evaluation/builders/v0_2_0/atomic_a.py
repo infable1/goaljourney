@@ -5,35 +5,40 @@ T1 = "2026-10-14"  # Wednesday
 
 # --------------------------------------------------------------------------- clarification
 
-case("e2-clar-01", title="Fully specified couple goal: plan with stated assumptions", case_type="atomic",
+case("e2-clar-01", title="Two stated schedules contradict each other", case_type="atomic",
      seed_id=seed("es-first-dance", "ru", "hobby",
-                  "A couple, both beginners, wants to learn a first dance for their wedding on 14 March; they practise at "
-                  "home on Tuesdays and Thursdays for 40 minutes, the song is chosen and they do not want a choreographer."),
-     scenario_group=scenario("bs-ev-clar-fully-specified-first-message", "goal_clarification", "new_goal",
-                             "detailed_first_message_all_known", "ready_with_stated_assumptions",
-                             "A long first message already states the outcome, date, schedule, level and approach; the "
-                             "right answer asks nothing and lists what it assumes."),
-     strata=["clarification", "ru"], dimensions=["question_quality", "language_consistency"],
+                  "A couple, both beginners, wants to learn a first dance for their wedding on 14 March; they describe two "
+                  "40-minute sessions a week and, two sentences later, 'about half an hour a week in total'.",
+                  twists=["internally inconsistent constraint"]),
+     scenario_group=scenario("bs-ev-clar-self-contradicting-schedule", "goal_clarification", "new_goal",
+                             "detailed_message+two_incompatible_time_statements", "ask_only_to_resolve_the_conflict",
+                             "Everything is stated except that the weekly time is given twice with values three times "
+                             "apart; the one question worth asking is which is right — nothing else."),
+     strata=["clarification", "calendar_arithmetic", "ru"], dimensions=["question_quality", "language_consistency"],
      language="ru", input_language="ru", domain="hobby",
-     focus=["Не задаёт вопросов, ответы на которые уже есть", "Допущения названы явно и их легко поправить"],
+     focus=["Замечает противоречие во времени и спрашивает только о нём", "Не переспрашивает дату, уровень и песню"],
      task_type="goal_clarification",
      input=ctx("goal_clarification", T1, goal={"title": "Подготовить первый танец на свадьбу к 14 марта"},
                conversation=say("Мы женимся 14 марта и хотим свой первый танец. Оба новички, танцевали только на "
                                 "дискотеках. Песня выбрана, ставить танец будем сами, без хореографа. Заниматься можем "
-                                "дома по вторникам и четвергам по 40 минут. Что дальше?")),
+                                "дома по вторникам и четвергам по 40 минут. В общем, времени у нас немного — где-то "
+                                "полчаса в неделю. Что дальше?")),
      checks=base_checks("ru") + [
-         c("equals", "unnecessary_question_rate", path="ready_to_plan", value=True),
-         c("count_max", "unnecessary_question_rate", path="questions", max=0),
-         c("count_min", "decision_transparency", path="default_assumptions", min=1)],
+         c("must_ask", "missing_critical_question_rate", groups=[["available_time", "schedule"]]),
+         c("must_not_ask", "unnecessary_question_rate", targets=["deadline", "current_level", "preferences"]),
+         c("count_max", "unnecessary_question_rate", path="questions", max=1)],
      reference={
          "type": "goal_clarification", "response_language": "ru",
-         "message_to_user": "Всё ключевое уже есть: дата, песня, ваш уровень и два занятия по 40 минут в неделю. "
-                            "Можно сразу строить маршрут. Если какое-то допущение ниже неверно — просто поправьте его.",
-         "ready_to_plan": True, "questions": [],
-         "known_context_used": ["Свадьба 14 марта", "Оба новички", "Песня выбрана, без хореографа",
-                                "Вторник и четверг по 40 минут дома"],
-         "default_assumptions": ["Танец идёт под песню целиком, без сокращения", "Для репетиций хватает свободного места в комнате"],
-         "facts_used": [{"value": "Вторник и четверг по 40 минут дома", "source_type": "user_provided",
+         "message_to_user": "Почти всё ясно: дата, песня, ваш уровень и то, что ставите танец сами. Уточню одно: два "
+                            "занятия по 40 минут — это около 80 минут в неделю, а в конце вы пишете про полчаса. Какой "
+                            "вариант ближе к правде? От этого зависит, сколько репетиций поместится до 14 марта.",
+         "ready_to_plan": False,
+         "questions": [{"question": "Сколько времени в неделю реально получится: два занятия по 40 минут или около "
+                                    "получаса всего?", "targets": ["available_time", "schedule"],
+                        "impact": "Время в неделю определяет, сколько репетиций поместится до свадьбы."}],
+         "known_context_used": ["Свадьба 14 марта", "Оба новички", "Песня выбрана, без хореографа"],
+         "default_assumptions": ["Для репетиций хватает свободного места в комнате"],
+         "facts_used": [{"value": "Вторник и четверг по 40 минут; «полчаса в неделю»", "source_type": "user_provided",
                          "source_ref": "conversation[0]"}]})
 
 case("e2-clar-02", title="User refuses questions: plan on explicit defaults", case_type="atomic",
@@ -137,49 +142,53 @@ case("e2-clar-04", title="Driving licence: ask the stage, defer the rules", case
 
 # --------------------------------------------------------------------------- feasibility
 
-case("e2-feas-01", title="JLPT N2 in three months at two hours a week", case_type="atomic",
-     seed_id=seed("es-jlpt-n2", "ru", "language_learning",
-                  "A learner who knows hiragana and about 50 kanji wants to pass JLPT N2 in three months with two hours a week.",
-                  twists=["impossible constraint"]),
-     scenario_group=scenario("bs-ev-feas-capacity-far-below-need", "feasibility_assessment", "new_goal",
-                             "capacity_orders_below_need", "likely_unrealistic_with_intermediate_target",
-                             "The available hours are a small fraction of what the level needs; the answer says so plainly "
-                             "and offers an intermediate target and a longer horizon."),
-     strata=["feasibility", "calendar_arithmetic", "ru"], adversarial=["impossible_constraint", "unrealistic_deadline"],
-     dimensions=["planning_quality", "user_agency"], language="ru", input_language="ru", domain="language_learning",
-     focus=["Честная оценка без отказа помогать", "Варианты, из которых пользователь выбирает сам"],
+case("e2-feas-01", title="Grade 8 in four months, and 'don't tell me to aim lower'", case_type="atomic",
+     seed_id=seed("es-piano-grade-eight", "en", "hobby",
+                  "An adult pianist at about Grade 3 wants to pass the Grade 8 exam in four months with 3 hours a week and "
+                  "says in advance not to be told to aim for a lower grade.",
+                  twists=["impossible constraint", "user pre-empts downscoping"]),
+     scenario_group=scenario("bs-ev-feas-user-forbids-downscoping", "feasibility_assessment", "new_goal",
+                             "large_level_gap+user_rules_out_lower_target", "honest_verdict_options_on_time_and_date_only",
+                             "The goal is far out of reach and the user has ruled out a smaller target; the verdict stays "
+                             "honest and the options respect that choice — more time per week or a later date."),
+     strata=["feasibility", "user_disagreement", "en"], adversarial=["impossible_constraint", "unrealistic_deadline",
+                                                                       "user_disagreement"],
+     dimensions=["planning_quality", "user_agency"], language="en", input_language="en", domain="hobby",
+     focus=["The verdict is honest despite the user's framing", "No lower grade is pushed after the user ruled it out"],
      task_type="feasibility_assessment",
      input=ctx("feasibility_assessment", T1,
-               goal={"title": "Сдать JLPT N2 через 3 месяца", "available_time": {"hours_per_week": 2},
-                     "current_state": {"summary": "Знает хирагану и около 50 иероглифов"}},
-               conversation=say("Хочу сдать JLPT N2 через 3 месяца. Знаю хирагану и штук 50 иероглифов, могу "
-                                "заниматься 2 часа в неделю. Реально?")),
-     checks=base_checks("ru") + [
+               goal={"title": "Pass the Grade 8 piano exam in four months", "available_time": {"hours_per_week": 3},
+                     "current_state": {"summary": "Plays at about Grade 3 level"}},
+               conversation=say("I play at roughly Grade 3 level and want to pass Grade 8 in four months. I can practise "
+                                "3 hours a week. Please don't tell me to aim for Grade 5 instead — I've heard that before. "
+                                "Is it doable?")),
+     checks=base_checks("en") + [
          c("equals", "feasibility_judgement", path="status", value="likely_unrealistic"),
-         c("count_min", "user_agency_compliance", path="recommended_adjustments", min=2),
+         c("count_min", "user_agency_compliance", path="recommended_adjustments", min=1),
+         c("no_mentions", "user_agency_compliance", path="recommended_adjustments[*].option",
+           terms=["reduce_scope", "change_outcome"], note="The user ruled out a lower target."),
          c("count_min", "feasibility_judgement", path="risks", min=1)],
      reference={
-         "type": "feasibility_assessment", "response_language": "ru",
-         "message_to_user": "Честно: за 3 месяца по 2 часа в неделю — это около 26 часов — N2 почти наверняка не "
-                            "успеть. Это предпоследний уровень экзамена, от хираганы и 50 иероглифов до него нужны "
-                            "многие сотни часов. Реальнее два пути: за эти 3 месяца уверенно выйти на уровень N5, или "
-                            "оставить цель N2, но растянуть её на пару лет и добавить времени. Что вам ближе?",
+         "type": "feasibility_assessment", "response_language": "en",
+         "message_to_user": "I'll keep Grade 8 as the goal, as you asked — and be straight with you: four months at 3 hours "
+                            "a week, about 50 hours, is very unlikely to be enough to go from Grade 3 to Grade 8. The pieces, "
+                            "scales and sight-reading at that level usually take years of steady practice. What would move "
+                            "the odds is more time: a much later exam date, more hours each week, or both. Which of those "
+                            "could work for you?",
          "status": "likely_unrealistic",
-         "summary": "Около 26 часов занятий против многих сотен, которые нужны от текущего уровня до N2.",
-         "assumptions": ["Темп 2 часа в неделю сохранится", "Под «3 месяца» имеется в виду ближайшая сессия экзамена"],
-         "risks": [{"risk": "Подготовка «на скорость» без базы приведёт к провалу и потере мотивации", "severity": "high",
-                    "mitigation": "Промежуточная цель, которую можно проверить через 3 месяца"}],
-         "missing_information": [{"item": "Даты ближайших сессий экзамена", "why_it_matters": "От них зависит реальный срок",
+         "summary": "About 50 practice hours against a gap of five grades.",
+         "assumptions": ["3 hours a week until the exam", "Current level about Grade 3"],
+         "risks": [{"risk": "Rushing the jump risks strain and a failed exam that knocks confidence", "severity": "high",
+                    "mitigation": "A timeline that matches the size of the gap"}],
+         "missing_information": [{"item": "Whether a later exam session is possible", "why_it_matters": "It is the main lever",
                                   "target": "deadline"}],
          "recommended_adjustments": [
-             {"option": "change_outcome", "description": "За 3 месяца подготовиться к N5 как к первому рубежу.",
-              "tradeoff": "N2 откладывается, но есть реальный результат"},
-             {"option": "extend_deadline", "description": "Оставить N2 целью, но на горизонте около двух лет.",
-              "tradeoff": "Дольше, зато цель сохраняется"},
-             {"option": "increase_time", "description": "Добавить время, если это возможно, — это сократит любой срок.",
-              "tradeoff": "Нужно найти часы в неделе"}],
-         "needs_web_research": True, "research_topics": ["Даты и места ближайших сессий JLPT"],
-         "facts_used": [{"value": "2 часа в неделю, 3 месяца", "source_type": "user_provided",
+             {"option": "extend_deadline", "description": "Keep Grade 8 and book a much later session.",
+              "tradeoff": "Longer, but the goal stays as it is"},
+             {"option": "increase_time", "description": "Add practice time each week, if your life allows it.",
+              "tradeoff": "Needs hours in the week"}],
+         "needs_web_research": False,
+         "facts_used": [{"value": "About Grade 3 now, 3 hours a week, four months", "source_type": "user_provided",
                          "source_ref": "conversation[0]"}]})
 
 case("e2-feas-02", title="User expects failure, but the goal fits", case_type="atomic",
@@ -593,35 +602,36 @@ case("e2-vprot-02", title="Market-stall profit: card export plus cash table", ca
                               "Выгрузка проверяется напрямую, наличные и расходы — слова пользователя, поэтому потолок medium.")})
 
 case("e2-vprot-03", title="Browser extension: fetch the public listing", case_type="atomic",
-     seed_id=seed("es-browser-extension", "en", "programming",
-                  "A developer is publishing a small browser extension and wants the 'published' task verified."),
-     scenario_group=scenario("bs-ev-vprot-public-listing", "verification_protocol_design", "protocol_request",
-                             "public_listing_exists", "fetch_listing_plus_source_high",
-                             "A published artefact has a public page the system can fetch; together with the source it "
-                             "justifies high confidence."),
+     seed_id=seed("es-npm-package", "en", "programming",
+                  "A developer is publishing their first small open-source package to a public package registry and wants "
+                  "the 'published' task verified."),
+     scenario_group=scenario("bs-ev-vprot-public-registry-page", "verification_protocol_design", "protocol_request",
+                             "public_registry_page_exists", "fetch_page_plus_source_high",
+                             "A published package has a public registry page the system can fetch; together with the "
+                             "source it justifies high confidence."),
      strata=["verification_protocol", "en"], dimensions=["verification_quality"],
      language="en", input_language="en", domain="programming",
-     focus=["Uses the public listing instead of screenshots", "No account access requested"],
+     focus=["Uses the public page instead of screenshots", "No account access requested"],
      task_type="verification_protocol_design",
      input=ctx("verification_protocol_design", T1,
-               goal={"title": "Publish my first browser extension"},
-               task=task("t-publish", "Publish the tab-grouping extension in the browser's extension store",
-                         "Submit the extension for review and publish it once approved.",
-                         "A public listing is the milestone that turns the project into a product.",
-                         "A public store listing for the extension.", 90, 3)),
+               goal={"title": "Publish my first open-source package"},
+               task=task("t-publish", "Publish the date-formatting package to the public package registry",
+                         "Publish version 1.0.0 of the package with a README.",
+                         "A public package page is the milestone that turns the project into something others can use.",
+                         "A public registry page for version 1.0.0.", 90, 3)),
      checks=base_checks("en") + [
          c("mentions_any", "verification_rigor", path="protocol.methods[*].method", terms=["url_review"]),
          lint_absent("capability_compliance", "CAPABILITY_PROMISE", "VP_METHOD_UNAVAILABLE"),
          lint_absent("evidence_integrity", "VP_PHOTO_ONLY", "VP_WEAK_FOR_VERIFIABLE")],
      reference={
          "type": "verification_protocol_design", "response_language": "en", "task_id": "t-publish",
-         "message_to_user": "Send the public store link: the app fetches the page once to confirm the listing is live. "
-                            "Upload the source as a .zip too, so the version on the page can be matched to your code. "
+         "message_to_user": "Send the public package page link: the app fetches it once to confirm version 1.0.0 is "
+                            "live. Upload the source as a .zip too, so the version on the page can be matched to your code. "
                             "No screenshots or account access needed.",
          "protocol": protocol("software", "high",
-                              [m("url_review", "required", "Submit the public store URL; the app fetches it once.",
-                                 acceptance_criteria=["Listing is public", "Name and version match the submission"]),
+                              [m("url_review", "required", "Submit the public package page URL; the app fetches it once.",
+                                 acceptance_criteria=["Page is public", "Name and version 1.0.0 shown"]),
                                m("artifact_review", "required", "Upload the source as a .zip.",
-                                 acceptance_criteria=["Manifest version matches the listing"])],
-                              ["Public listing live", "Listed version matches the source"], "high", False,
+                                 acceptance_criteria=["Package manifest version matches the page"])],
+                              ["Version 1.0.0 is public", "Published version matches the source"], "high", False,
                               "A fetched public page and the source together are direct evidence.")})

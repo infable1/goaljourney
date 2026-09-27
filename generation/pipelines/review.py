@@ -39,8 +39,17 @@ def _path(key, version=None):
     return repo_path(RS.review_config()["paths"][key].format(version=_version(version)))
 
 
+def sample_version(version=None):
+    """The review sample in force for a dataset version: its own manifest if one was drawn, otherwise the
+    frozen sample carried forward (configs/review.yaml sampling.sample_version)."""
+    version = _version(version)
+    if _path("manifest", version).exists():
+        return version
+    return RS.review_config()["sampling"].get("sample_version") or version
+
+
 def load_manifest(version=None):
-    p = _path("manifest", version)
+    p = _path("manifest", sample_version(version))
     return load_json(p) if p.exists() else None
 
 

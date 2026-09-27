@@ -175,11 +175,14 @@ def evaluate(version=None, rows=None, purpose="sft", events=None, manifest=None)
     # eval_readiness
     g = cfg["eval_readiness"]
     cases = [c for c, _ in load_eval_cases(repo_path(load_config("evaluation")["cases_dir"]))]
-    per_op = Counter(c["task_type"] for c in cases)
+    from .leakage import _units
+    units = _units(cases)
+    # min_cases counts cases (steps of one case are correlated); the per-operation floor counts model calls
+    per_op = Counter(u["task_type"] for u in units)
     thin_ops = sum(1 for op in OPERATION_SCHEMAS if per_op.get(op, 0) < g["min_cases_per_task_type"])
     ok = len(cases) >= g["min_cases"] and not thin_ops and not summary["eval_cases_without_metadata"]
-    add("eval_readiness", ok, f"{len(cases)}/{g['min_cases']} cases; {thin_ops} operation(s) below "
-        f"{g['min_cases_per_task_type']} cases; {len(summary['eval_cases_without_metadata'])} without leakage metadata")
+    add("eval_readiness", ok, f"{len(cases)}/{g['min_cases']} cases ({len(units)} model calls); {thin_ops} operation(s) "
+        f"below {g['min_cases_per_task_type']} model calls; {len(summary['eval_cases_without_metadata'])} without leakage metadata")
 
     # licensing_resolved
     lic = load_yaml(repo_path(cfg["licensing_resolved"]["file"])) or {}

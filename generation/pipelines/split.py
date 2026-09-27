@@ -8,7 +8,11 @@ Steps (the build aborts on any failure — nothing is written half-way):
      unapproved generated candidates are excluded. Under allow_pending, `pending` includes content changed
      since a decision and approvals still awaiting an expert — they are released only as draft rows;
   4. leakage guard: any hard finding of the layered checks (exact, near-duplicate, lexical paraphrase,
-     scenario group, seed id — see docs/LEAKAGE_CHECKS.md) aborts the build;
+     scenario group, seed id, decision pattern — see docs/LEAKAGE_CHECKS.md) aborts the build; multi-step
+     evaluation cases are checked per step;
+  4b. revision ledger: a version derived from an earlier release (data/revisions/v<version>.yaml) is built only
+     if the ledger accounts for every change (`gj revisions check`); each revised row's manifest entry names
+     its revision ids;
   5. deterministic group split: whole scenario groups go to train or validation, stratified by task type;
   6. files written to data/{train,validation,test}/goaljourney-v<version>.jsonl plus a manifest.
      release_status: draft_unreviewed (pending rows) | reviewed_not_training_ready (gates fail) |
@@ -114,14 +118,24 @@ def build_release(version=None, review_policy=None, dry_run=False):
         else:
             excluded[f"{origin}/{st}"] += 1
 
-    from .leakage import load_eval_metadata, load_seeds
+    from .leakage import _units, load_eval_metadata, load_registry, load_seeds
     meta, meta_problems = load_eval_metadata()
-    rep = L.run_checks(selected, cases, leak_cfg, eval_meta=meta.get("cases") or {}, seeds=load_seeds())
+    units = _units(cases)
+    rep = L.run_checks(selected, units, leak_cfg, eval_meta=meta.get("cases") or {}, seeds=load_seeds(),
+                       registry=load_registry())
     if rep.hard or meta_problems:
         print(f"✗ leakage: {len(rep.hard)} hard finding(s){'; metadata problems ' + str(meta_problems) if meta_problems else ''}:")
         for f in rep.hard:
             print(f"    [{f.layer}] {f.a} ~ {f.b} ({f.score}): {f.detail}")
         return 1
+
+    from .revisions import check as revisions_check, ledger_path, load_ledger, revision_info
+    ledger = load_ledger(version)
+    rev_errors = revisions_check(version)[0] if ledger else []
+    if rev_errors:
+        print(f"✗ revision ledger: {len(rev_errors)} problem(s); run `gj revisions check`. First: {rev_errors[0]}")
+        return 1
+    rinfo = revision_info(version)
 
     assignment = assign_splits(selected, split_cfg["seed"], split_cfg["validation_fraction"],
                                split_cfg["min_stratum_size_for_validation"])
@@ -158,21 +172,27 @@ def build_release(version=None, review_policy=None, dry_run=False):
                           "thresholds": rep.thresholds, "hard_findings": 0, "warnings": len(rep.warnings),
                           "max_scores": rep.max_scores},
         "failing_gates": failing,
+        "revisions": ({"ledger": rel(ledger_path(version)), "base_version": ledger.get("base_version"),
+                       "revised_examples": sum(1 for r in selected if r["id"] in rinfo),
+                       "revision_entries": sum(len(i["revision_ids"]) for i in rinfo.values())} if ledger else None),
         "counts": {
-            "train": len(train), "validation": len(val), "test_eval_cases": len(test),
+            "train": len(train), "validation": len(val), "test_eval_cases": len(test), "test_eval_units": len(units),
             "train_contrastive_outputs": sum(len(r.get("contrastive") or []) for r in train),
             "pending_review": pending, "excluded": dict(excluded),
         },
         "distribution": {
             "train": {"task_type": dist(train, "task_type"), "language": dist(train, "language")},
             "validation": {"task_type": dist(val, "task_type"), "language": dist(val, "language")},
-            "test": {"task_type": dist(test, "task_type"), "language": dist(test, "language")},
+            "test": {"task_type": dist(units, "task_type"), "language": dist(test, "language"),
+                     "case_type": dict(sorted(Counter(c.get("case_type", "atomic") for c in test).items()))},
         },
         "files": {split: {"path": rel(paths[split]), "sha256": sha256_text(texts[split]),
                           "records": {"train": len(train), "validation": len(val), "test": len(test)}[split]}
                   for split in ("train", "validation", "test")},
         "examples": [{"id": r["id"], "split": assignment[r["scenario_group"]], "scenario_group": r["scenario_group"],
-                      "content_hash": r["content_hash"], "review_status": r["review_status"]}
+                      "content_hash": r["content_hash"], "review_status": r["review_status"],
+                      **({"revision_ids": rinfo[r["id"]]["revision_ids"],
+                          "previous_content_hash": rinfo[r["id"]]["previous_content_hash"]} if r["id"] in rinfo else {})}
                      for r in sorted(selected, key=lambda r: r["id"])],
     }
 

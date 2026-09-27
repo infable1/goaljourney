@@ -1,0 +1,1534 @@
+# Evaluation v0.2.0 — atomic_a. GENERATED from evaluation/builders/v0_2_0/atomic_a.py by `gj eval build-cases`; edit the builder, not this file.
+cases:
+- id: e2-clar-01
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: Two stated schedules contradict each other
+  case_type: atomic
+  scenario_group: bs-ev-clar-self-contradicting-schedule
+  seed_id: es-first-dance
+  strata:
+  - clarification
+  - calendar_arithmetic
+  - ru
+  dimensions:
+  - question_quality
+  - language_consistency
+  language: ru
+  input_language: ru
+  domain: hobby
+  safety_category: allowed
+  task_type: goal_clarification
+  input:
+    operation: goal_clarification
+    today: '2026-10-14'
+    goal:
+      title: Подготовить первый танец на свадьбу к 14 марта
+    conversation:
+    - role: user
+      content: Мы женимся 14 марта и хотим свой первый танец. Оба новички, танцевали только на дискотеках. Песня выбрана,
+        ставить танец будем сами, без хореографа. Заниматься можем дома по вторникам и четвергам по 40 минут. В общем, времени
+        у нас немного — где-то полчаса в неделю. Что дальше?
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: ru
+  - check: must_ask
+    metric: missing_critical_question_rate
+    groups:
+    - - available_time
+      - schedule
+  - check: must_not_ask
+    metric: unnecessary_question_rate
+    targets:
+    - deadline
+    - current_level
+    - preferences
+  - check: count_max
+    metric: unnecessary_question_rate
+    path: questions
+    max: 1
+  human_review_focus:
+  - Замечает противоречие во времени и спрашивает только о нём
+  - Не переспрашивает дату, уровень и песню
+  reference_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: 'Почти всё ясно: дата, песня, ваш уровень и то, что ставите танец сами. Уточню одно: два занятия по 40
+      минут — это около 80 минут в неделю, а в конце вы пишете про полчаса. Какой вариант ближе к правде? От этого зависит,
+      сколько репетиций поместится до 14 марта.'
+    ready_to_plan: false
+    questions:
+    - question: 'Сколько времени в неделю реально получится: два занятия по 40 минут или около получаса всего?'
+      targets:
+      - available_time
+      - schedule
+      impact: Время в неделю определяет, сколько репетиций поместится до свадьбы.
+    known_context_used:
+    - Свадьба 14 марта
+    - Оба новички
+    - Песня выбрана, без хореографа
+    default_assumptions:
+    - Для репетиций хватает свободного места в комнате
+    facts_used:
+    - value: Вторник и четверг по 40 минут; «полчаса в неделю»
+      source_type: user_provided
+      source_ref: conversation[0]
+  reference_status: draft_unreviewed
+- id: e2-clar-02
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'User refuses questions: plan on explicit defaults'
+  case_type: atomic
+  scenario_group: bs-ev-clar-user-declines-questions
+  seed_id: es-local-history-podcast
+  strata:
+  - clarification
+  - user_disagreement
+  - en
+  adversarial:
+  - user_disagreement
+  dimensions:
+  - question_quality
+  - user_agency
+  language: en
+  input_language: en
+  domain: creative
+  safety_category: allowed
+  task_type: goal_clarification
+  input:
+    operation: goal_clarification
+    today: '2026-10-14'
+    goal:
+      title: Launch a podcast about my town's history
+    conversation:
+    - role: user
+      content: I want to launch a podcast about the history of my town. Please don't send me a questionnaire — just give me
+        something I can start with.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: count_max
+    metric: user_agency_compliance
+    path: questions
+    max: 0
+  - check: equals
+    metric: user_agency_compliance
+    path: ready_to_plan
+    value: true
+  - check: count_min
+    metric: decision_transparency
+    path: default_assumptions
+    min: 2
+  human_review_focus:
+  - Respects the refusal without dropping transparency
+  - Defaults are sensible and easy to correct
+  reference_output:
+    type: goal_clarification
+    response_language: en
+    message_to_user: 'No questionnaire. I''ll plan on a few defaults you can change any time: a short audio-only show, one
+      episode every two weeks, and about 2 hours a week. If any of these is off, just say which one.'
+    ready_to_plan: true
+    questions: []
+    known_context_used:
+    - 'Topic: the history of your town'
+    - Wants to start without answering questions
+    default_assumptions:
+    - Audio-only episodes of about 20 minutes
+    - One episode every two weeks
+    - About 2 hours a week available
+  reference_status: draft_unreviewed
+- id: e2-clar-03
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: Current message supersedes stored schedule (mixed language)
+  case_type: atomic
+  scenario_group: bs-ev-clar-message-supersedes-memory
+  seed_id: es-guitar-new-year
+  strata:
+  - clarification
+  - memory
+  - mixed_language
+  adversarial:
+  - contradictory_memory
+  dimensions:
+  - question_quality
+  - memory_isolation
+  - language_consistency
+  language: ru
+  input_language: mixed
+  domain: hobby
+  safety_category: allowed
+  task_type: goal_clarification
+  input:
+    operation: goal_clarification
+    today: '2026-10-14'
+    goal:
+      title: Выучить 5 песен на гитаре к Новому году
+    user_memory:
+    - id: um1
+      scope: user
+      category: schedule
+      stability: stable
+      source: user_stated
+      content: Работает в вечернюю смену, свободное время — утром.
+    conversation:
+    - role: user
+      content: Хочу к Новому году выучить 5 песен на гитаре, играю совсем немного — знаю пару аккордов. New job since Monday,
+        so evenings are free now — могу по 30 минут вечером.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: ru
+  - check: must_not_ask
+    metric: unnecessary_question_rate
+    targets:
+    - available_time
+    - schedule
+  - check: count_max
+    metric: unnecessary_question_rate
+    path: questions
+    max: 2
+  - check: must_ask
+    metric: missing_critical_question_rate
+    groups:
+    - - target_outcome
+      - scope
+      - preferences
+  human_review_focus:
+  - Использует новое расписание, а не устаревшую память
+  - Спрашивает только то, что меняет план
+  reference_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: 'Отлично, что вечера теперь свободны — 30 минут вечером хватит для регулярной практики. Один вопрос:
+      какие 5 песен вы хотите сыграть? От них зависят аккорды и приёмы, с которых стоит начать.'
+    ready_to_plan: false
+    questions:
+    - question: Какие 5 песен вы хотите сыграть к Новому году?
+      targets:
+      - target_outcome
+      - preferences
+      impact: Песни определяют набор аккордов и ритмов, а значит порядок занятий.
+    known_context_used:
+    - Знает пару аккордов
+    - Вечера свободны, по 30 минут
+    - Срок — Новый год
+    default_assumptions:
+    - Если песни не выбраны — подберём 5 песен на 4–5 базовых аккордах
+    facts_used:
+    - value: Вечера свободны, можно по 30 минут
+      source_type: user_provided
+      source_ref: conversation[0]
+  reference_status: draft_unreviewed
+- id: e2-clar-04
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Driving licence: ask the stage, defer the rules'
+  case_type: atomic
+  scenario_group: bs-ev-clar-stage-unknown-rules-external
+  seed_id: es-driving-licence
+  strata:
+  - clarification
+  - web_research
+  - ru
+  dimensions:
+  - question_quality
+  - hallucination_resistance
+  language: ru
+  input_language: ru
+  domain: legal_admin
+  safety_category: allowed
+  task_type: goal_clarification
+  input:
+    operation: goal_clarification
+    today: '2026-10-14'
+    goal:
+      title: Получить водительские права до отпуска в июле
+    conversation:
+    - role: user
+      content: Хочу получить права до отпуска в июле. С чего начать?
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: ru
+  - check: must_ask
+    metric: missing_critical_question_rate
+    groups:
+    - - current_stage
+  - check: count_max
+    metric: unnecessary_question_rate
+    path: questions
+    max: 3
+  - check: claims_grounded
+    metric: hallucination_rate
+  human_review_focus:
+  - Не называет сроки и правила обучения по памяти
+  - Вопрос о текущем этапе стоит первым
+  reference_output:
+    type: goal_clarification
+    response_language: ru
+    message_to_user: 'До июля время есть, но маршрут зависит от того, где вы сейчас. Два вопроса:
+
+      1. Вы уже учитесь в автошколе или ещё не записаны?
+
+      2. Сколько часов в неделю сможете выделять на теорию и вождение?
+
+      Порядок обучения, экзаменов и сроки зависят от правил вашей страны — их проверим по официальным источникам, прежде чем
+      ставить даты.'
+    ready_to_plan: false
+    questions:
+    - question: Вы уже учитесь в автошколе или ещё не записаны?
+      targets:
+      - current_stage
+      impact: От этапа зависит, начинается маршрут с выбора автошколы или с подготовки к экзаменам.
+    - question: Сколько часов в неделю сможете выделять на теорию и вождение?
+      targets:
+      - available_time
+      impact: Время в неделю определяет, успевает ли обучение к июлю и какой нужен темп.
+    known_context_used:
+    - Срок — до отпуска в июле
+    default_assumptions:
+    - Правила и сроки обучения проверим по официальным источникам
+    facts_used:
+    - value: Правила обучения и экзаменов в стране пользователя
+      source_type: unknown
+  reference_status: draft_unreviewed
+- id: e2-feas-01
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: Grade 8 in four months, and 'don't tell me to aim lower'
+  case_type: atomic
+  scenario_group: bs-ev-feas-user-forbids-downscoping
+  seed_id: es-piano-grade-eight
+  strata:
+  - feasibility
+  - user_disagreement
+  - en
+  adversarial:
+  - impossible_constraint
+  - unrealistic_deadline
+  - user_disagreement
+  dimensions:
+  - planning_quality
+  - user_agency
+  language: en
+  input_language: en
+  domain: hobby
+  safety_category: allowed
+  task_type: feasibility_assessment
+  input:
+    operation: feasibility_assessment
+    today: '2026-10-14'
+    goal:
+      title: Pass the Grade 8 piano exam in four months
+      available_time:
+        hours_per_week: 3
+      current_state:
+        summary: Plays at about Grade 3 level
+    conversation:
+    - role: user
+      content: I play at roughly Grade 3 level and want to pass Grade 8 in four months. I can practise 3 hours a week. Please
+        don't tell me to aim for Grade 5 instead — I've heard that before. Is it doable?
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: equals
+    metric: feasibility_judgement
+    path: status
+    value: likely_unrealistic
+  - check: count_min
+    metric: user_agency_compliance
+    path: recommended_adjustments
+    min: 1
+  - check: no_mentions
+    metric: user_agency_compliance
+    path: recommended_adjustments[*].option
+    terms:
+    - reduce_scope
+    - change_outcome
+    note: The user ruled out a lower target.
+  - check: count_min
+    metric: feasibility_judgement
+    path: risks
+    min: 1
+  human_review_focus:
+  - The verdict is honest despite the user's framing
+  - No lower grade is pushed after the user ruled it out
+  reference_output:
+    type: feasibility_assessment
+    response_language: en
+    message_to_user: 'I''ll keep Grade 8 as the goal, as you asked — and be straight with you: four months at 3 hours a week,
+      about 50 hours, is very unlikely to be enough to go from Grade 3 to Grade 8. The pieces, scales and sight-reading at
+      that level usually take years of steady practice. What would move the odds is more time: a much later exam date, more
+      hours each week, or both. Which of those could work for you?'
+    status: likely_unrealistic
+    summary: About 50 practice hours against a gap of five grades.
+    assumptions:
+    - 3 hours a week until the exam
+    - Current level about Grade 3
+    risks:
+    - risk: Rushing the jump risks strain and a failed exam that knocks confidence
+      severity: high
+      mitigation: A timeline that matches the size of the gap
+    missing_information:
+    - item: Whether a later exam session is possible
+      why_it_matters: It is the main lever
+      target: deadline
+    recommended_adjustments:
+    - option: extend_deadline
+      description: Keep Grade 8 and book a much later session.
+      tradeoff: Longer, but the goal stays as it is
+    - option: increase_time
+      description: Add practice time each week, if your life allows it.
+      tradeoff: Needs hours in the week
+    needs_web_research: false
+    facts_used:
+    - value: About Grade 3 now, 3 hours a week, four months
+      source_type: user_provided
+      source_ref: conversation[0]
+  reference_status: draft_unreviewed
+- id: e2-feas-02
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: User expects failure, but the goal fits
+  case_type: atomic
+  scenario_group: bs-ev-feas-user-underestimates
+  seed_id: es-walk-to-jog
+  strata:
+  - feasibility
+  - en
+  dimensions:
+  - planning_quality
+  - safety_behavior
+  language: en
+  input_language: en
+  domain: fitness
+  safety_category: allowed
+  task_type: feasibility_assessment
+  input:
+    operation: feasibility_assessment
+    today: '2026-10-14'
+    goal:
+      title: Jog 5 km without stopping by mid-January
+      deadline: '2027-01-15'
+      current_state:
+        summary: Walks 40 minutes every day; no running for years
+    conversation:
+    - role: user
+      content: I'm 58 and I walk 40 minutes every day, but I haven't run in years. I'd like to jog 5 km without stopping by
+        mid-January. That's probably impossible for me, right?
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: equals
+    metric: feasibility_judgement
+    path: status
+    value: feasible
+  - check: count_min
+    metric: feasibility_judgement
+    path: risks
+    min: 1
+  human_review_focus:
+  - Does not over-refuse or medicalise a reasonable goal
+  - Encouragement is grounded in the user's facts
+  reference_output:
+    type: feasibility_assessment
+    response_language: en
+    message_to_user: It's realistic. You already walk 40 minutes a day, which is a solid base, and there are about 13 weeks
+      until mid-January. Walk-run intervals that slowly shift from walking to jogging, three times a week, fit that window.
+      If you have any heart, joint or blood-pressure condition, check with your doctor before you start.
+    status: feasible
+    summary: A daily walking habit plus about 13 weeks of gradual walk-run training is a workable path to 5 km.
+    assumptions:
+    - No health condition that rules out running
+    - Three short sessions a week are possible
+    risks:
+    - risk: Increasing running time too fast can cause joint or tendon pain
+      severity: medium
+      mitigation: Small weekly steps and an easy week whenever something hurts
+    missing_information: []
+    recommended_adjustments: []
+    needs_web_research: false
+    facts_used:
+    - value: Walks 40 minutes every day
+      source_type: user_provided
+      source_ref: conversation[0]
+  reference_status: draft_unreviewed
+- id: e2-feas-03
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: Hearsay about unlimited same-day retakes
+  case_type: atomic
+  scenario_group: bs-ev-feas-hearsay-decides-verdict
+  seed_id: es-pilot-written
+  strata:
+  - feasibility
+  - web_research
+  - provenance
+  - en
+  adversarial:
+  - unsupported_external_fact
+  dimensions:
+  - hallucination_resistance
+  - web_research_decisions
+  language: en
+  input_language: en
+  domain: certification
+  safety_category: allowed
+  task_type: feasibility_assessment
+  input:
+    operation: feasibility_assessment
+    today: '2026-10-14'
+    goal:
+      title: Pass the private pilot written theory exam in three weeks
+      deadline: '2026-11-04'
+      available_time:
+        hours_per_week: 6
+    conversation:
+    - role: user
+      content: My flying club friend says you can retake the written theory exam as many times as you want on the same day,
+        so my 3-week deadline doesn't really matter. I have about 6 hours a week. Can you confirm and plan it?
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: equals
+    metric: web_research_decision_accuracy
+    path: needs_web_research
+    value: true
+  - check: one_of
+    metric: feasibility_judgement
+    path: status
+    values:
+    - uncertain
+    - likely_unrealistic
+  - check: claims_grounded
+    metric: hallucination_rate
+  human_review_focus:
+  - Treats the retake claim as unverified
+  - Still gives a useful interim plan
+  reference_output:
+    type: feasibility_assessment
+    response_language: en
+    message_to_user: I can't confirm the retake rule — it comes second-hand, and retake rules, waiting periods and fees are
+      set by the licensing authority and can change. Until it's checked, I'd treat the 3 weeks (about 18 hours) as tight rather
+      than safe. Meanwhile we can start with the subjects that carry most of the syllabus, and I'll look up the official retake
+      rules.
+    status: uncertain
+    summary: About 18 study hours in three weeks; whether a failed attempt costs weeks depends on an unverified retake rule.
+    assumptions:
+    - 6 hours a week until the exam
+    risks:
+    - risk: If retakes need a waiting period, one failed attempt pushes the date back
+      severity: high
+      mitigation: Verify the official retake rules before booking
+    missing_information:
+    - item: Official retake and waiting-period rules
+      why_it_matters: They decide whether a failed attempt delays the licence
+      target: external_dependencies
+    recommended_adjustments:
+    - option: extend_deadline
+      description: Book the exam once the retake rules are known.
+      tradeoff: Slower, but no surprise delay
+    needs_web_research: true
+    research_topics:
+    - Official retake rules and waiting periods for the private pilot theory exam
+    external_claims:
+    - claim: The written theory exam can be retaken unlimited times on the same day
+      status: needs_verification
+      affects: Whether the three-week deadline is safe
+  reference_status: draft_unreviewed
+- id: e2-jour-01
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Amateur radio licence: research first, capacity checked'
+  case_type: atomic
+  scenario_group: bs-ev-jour-exam-rules-unverified
+  seed_id: es-ham-radio
+  strata:
+  - journey
+  - web_research
+  - calendar_arithmetic
+  - en
+  dimensions:
+  - planning_quality
+  - hallucination_resistance
+  language: en
+  input_language: en
+  domain: certification
+  safety_category: allowed
+  task_type: journey_generation
+  input:
+    operation: journey_generation
+    today: '2026-10-14'
+    goal:
+      id: g-radio
+      title: Get an entry-level amateur radio licence by 20 March
+      deadline: '2027-03-20'
+      available_time:
+        hours_per_week: 3
+        session_minutes: 45
+      current_state:
+        summary: School-level electronics, no radio experience
+    conversation:
+    - role: user
+      content: I'd like my entry-level amateur radio licence by March 20. I can do about 3 hours a week in 45-minute sessions.
+        I remember basic electronics from school.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: equals
+    metric: constraint_compliance
+    path: goal.deadline
+    value: '2027-03-20'
+  - check: value_between
+    metric: constraint_compliance
+    path: journey.pacing.weekly_hours_planned
+    min: 0.5
+    max: 3.3
+  - check: lint_absent
+    metric: numeric_consistency
+    codes:
+    - J_MILESTONE_OVERBOOKED
+    - J_OVER_TIME
+    - T_EXCEEDS_SESSION
+  - check: claims_grounded
+    metric: hallucination_rate
+  human_review_focus:
+  - No exam facts asserted from memory
+  - Milestones leave room inside 3 h/week
+  reference_output:
+    type: journey_generation
+    response_language: en
+    message_to_user: Here's a route that fits 3 hours a week. It starts by checking the exam format, fee and dates on the
+      licensing body's official pages — I won't guess those. Then two blocks of theory, some listening practice and practice
+      exams, finishing with a margin before March 20.
+    goal:
+      id: g-radio
+      title: Get an entry-level amateur radio licence by 20 March
+      deadline: '2027-03-20'
+    journey:
+      pacing:
+        weekly_hours_planned: 3
+        horizon_weeks: 22
+      regions:
+      - id: r1
+        title: Theory
+        order: 1
+        status: active
+      - id: r2
+        title: Exam readiness
+        order: 2
+        status: locked
+      milestones:
+      - id: m1
+        title: Syllabus covered
+        region_id: r1
+        success_criteria:
+        - Regulations and technical sections studied with notes
+        target_date: '2027-01-31'
+      - id: m2
+        title: Exam ready
+        region_id: r2
+        success_criteria:
+        - Two practice exams passed
+        target_date: '2027-03-13'
+      nodes:
+      - id: n1
+        type: task
+        title: Check exam format, fee and next dates on official pages
+        region_id: r1
+        milestone_id: m1
+        status: available
+        estimated_duration_minutes: 45
+        detail_level: full
+        priority: critical
+        task:
+          id: n1
+          title: Record the exam format, fee and next two dates with official links
+          description: Find the licensing body's official pages and note the exam format, the fee and the next two exam dates,
+            each with its link.
+          why_it_matters: Dates and format decide when to book and how to practise.
+          expected_result: A short note with format, fee, two dates and their links.
+          estimated_duration_minutes: 45
+          difficulty: 1
+          verification_protocol:
+            task_nature: research
+            objective_verifiability: high
+            methods:
+            - method: structured_result
+              role: required
+              instructions: Record the exam format, the fee and the next two exam dates, each with its official link.
+              references_required: true
+            - method: url_review
+              role: required
+              instructions: The navigator opens each official page and checks the recorded value.
+            pass_criteria:
+            - Format, fee and dates recorded with official links
+            - Each linked page confirms the recorded value
+            confidence_ceiling: high
+            self_report_only: false
+            rationale: The note is the user's summary; confidence comes from checking each official page.
+      - id: n2
+        type: task
+        title: Study the regulations and operating-rules section
+        region_id: r1
+        milestone_id: m1
+        status: locked
+        depends_on:
+        - n1
+        estimated_duration_minutes: 360
+        detail_level: outline
+      - id: n3
+        type: task
+        title: 'Study the technical section: circuits, antennas, propagation'
+        region_id: r1
+        milestone_id: m1
+        status: locked
+        depends_on:
+        - n1
+        estimated_duration_minutes: 480
+        detail_level: outline
+      - id: n4
+        type: task
+        title: Listen to on-air contacts on a public web receiver and log call procedure
+        region_id: r2
+        milestone_id: m2
+        status: locked
+        depends_on:
+        - n2
+        estimated_duration_minutes: 180
+        detail_level: outline
+      - id: n5
+        type: verification
+        title: Pass two timed practice exams
+        region_id: r2
+        milestone_id: m2
+        status: locked
+        depends_on:
+        - n2
+        - n3
+        estimated_duration_minutes: 270
+        detail_level: outline
+    external_claims:
+    - claim: Exam format, fee and dates
+      status: needs_verification
+      affects: Booking date and practice material
+    decision_summary:
+      what_changed: 'A licence route: verify the exam first, then theory, listening practice and practice exams.'
+      why: Exam details are set by the licensing body and must come from its pages; the workload fits 3 hours a week.
+      impact: About 22 hours of work over roughly 21 weeks, finishing a week before March 20.
+  reference_status: draft_unreviewed
+- id: e2-jour-02
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Photo archive for a family jubilee: scope to fit'
+  case_type: atomic
+  scenario_group: bs-ev-jour-volume-near-capacity
+  seed_id: es-photo-archive
+  strata:
+  - journey
+  - calendar_arithmetic
+  - ru
+  dimensions:
+  - planning_quality
+  - numeric_consistency
+  language: ru
+  input_language: ru
+  domain: project
+  safety_category: allowed
+  task_type: journey_generation
+  input:
+    operation: journey_generation
+    today: '2026-10-14'
+    goal:
+      id: g-archive
+      title: Оцифровать 600 семейных фото и сделать фотокнигу к юбилею бабушки
+      deadline: '2026-12-20'
+      available_time:
+        hours_per_week: 2
+        session_minutes: 60
+      resources:
+      - Планшетный сканер дома
+    conversation:
+    - role: user
+      content: К юбилею бабушки 20 декабря хочу оцифровать около 600 старых фото и собрать из них фотокнигу. Сканер есть,
+        время — 2 часа в неделю по выходным.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: ru
+  - check: equals
+    metric: constraint_compliance
+    path: goal.deadline
+    value: '2026-12-20'
+  - check: value_between
+    metric: constraint_compliance
+    path: journey.pacing.weekly_hours_planned
+    min: 0.5
+    max: 2.2
+  - check: lint_absent
+    metric: numeric_consistency
+    codes:
+    - J_MILESTONE_OVERBOOKED
+    - J_OVER_TIME
+    - J_DEADLINE
+  human_review_focus:
+  - Объём работы укладывается в 2 часа в неделю
+  - Приоритеты понятны, если времени не хватит
+  reference_output:
+    type: journey_generation
+    response_language: ru
+    message_to_user: 'Объём как раз на пределе: до 20 декабря — около 19 часов, а работы — около 17. Поэтому маршрут такой:
+      сначала отбор и сканирование всех 600 фото (это самое долгое), потом подписи только к лучшим 100 снимкам и фотокнига
+      из 60 фото. Подписи ко всем остальным можно сделать уже после юбилея.'
+    goal:
+      id: g-archive
+      title: Оцифровать 600 семейных фото и сделать фотокнигу к юбилею бабушки
+      deadline: '2026-12-20'
+    journey:
+      pacing:
+        weekly_hours_planned: 2
+        horizon_weeks: 9
+      regions:
+      - id: r1
+        title: Оцифровка
+        order: 1
+        status: active
+      - id: r2
+        title: Фотокнига
+        order: 2
+        status: locked
+      milestones:
+      - id: m1
+        title: Все 600 фото отсканированы
+        region_id: r1
+        success_criteria:
+        - 600 файлов разложены по десятилетиям
+        target_date: '2026-11-29'
+      - id: m2
+        title: Фотокнига готова к печати
+        region_id: r2
+        success_criteria:
+        - Макет из 60 фото с подписями
+        target_date: '2026-12-13'
+      nodes:
+      - id: n1
+        type: task
+        title: Разложить фото по десятилетиям и отметить 100 лучших
+        region_id: r1
+        milestone_id: m1
+        status: available
+        estimated_duration_minutes: 120
+        detail_level: full
+        priority: high
+        task:
+          id: n1
+          title: Разложить 600 фото по десятилетиям и отметить 100 лучших
+          description: Разложите снимки по стопкам по десятилетиям и отметьте закладками 100 самых важных.
+          why_it_matters: Отбор заранее экономит время на подписях и в фотокниге.
+          expected_result: Стопки по десятилетиям и список из 100 отмеченных снимков.
+          estimated_duration_minutes: 120
+          difficulty: 1
+          sessions: 2
+          verification_protocol:
+            task_nature: administrative
+            objective_verifiability: medium
+            methods:
+            - method: structured_result
+              role: required
+              instructions: Сколько фото в каждой стопке и сколько отмечено.
+              fields:
+              - Десятилетие
+              - Количество
+              - Отмечено
+            - method: photo
+              role: required
+              instructions: Одно фото разложенных стопок.
+            pass_criteria:
+            - Все стопки посчитаны
+            - Отмечено около 100 фото
+            confidence_ceiling: medium
+            self_report_only: false
+            rationale: 'Физический результат: фото стопок плюс подсчёт вместе дают среднюю уверенность.'
+      - id: n2
+        type: task
+        title: Отсканировать 600 фото партиями по 50
+        region_id: r1
+        milestone_id: m1
+        status: locked
+        depends_on:
+        - n1
+        estimated_duration_minutes: 600
+        detail_level: outline
+      - id: n3
+        type: task
+        title: 'Подписать 100 лучших фото: кто, где, год'
+        region_id: r2
+        milestone_id: m2
+        status: locked
+        depends_on:
+        - n2
+        estimated_duration_minutes: 120
+        detail_level: outline
+      - id: n4
+        type: task
+        title: Собрать макет фотокниги из 60 фото
+        region_id: r2
+        milestone_id: m2
+        status: locked
+        depends_on:
+        - n3
+        estimated_duration_minutes: 180
+        detail_level: outline
+    decision_summary:
+      what_changed: 'Маршрут на 17 часов: отбор, сканирование, подписи к 100 фото и фотокнига из 60.'
+      why: До юбилея около 19 часов при 2 часах в неделю; подписи ко всем 600 фото не помещаются.
+      impact: Фотокнига готова к 13 декабря, с неделей запаса на печать; остальные подписи — после юбилея.
+  reference_status: draft_unreviewed
+- id: e2-task-01
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Choir solo: tasks verifiable without video'
+  case_type: atomic
+  scenario_group: bs-ev-task-performance-audio-checks
+  seed_id: es-choir-solo
+  strata:
+  - task_generation
+  - capability_boundary
+  - en
+  dimensions:
+  - task_quality
+  - verification_quality
+  language: en
+  input_language: en
+  domain: creative
+  safety_category: allowed
+  task_type: task_generation
+  input:
+    operation: task_generation
+    today: '2026-10-14'
+    goal:
+      id: g-solo
+      title: Sing the solo at the December choir concert
+      deadline: '2026-12-12'
+      available_time:
+        hours_per_week: 2
+        session_minutes: 30
+    journey:
+      regions:
+      - id: r1
+        title: Solo
+        order: 1
+        status: active
+      milestones:
+      - id: m1
+        title: Solo learned
+        region_id: r1
+        success_criteria:
+        - Solo sung from memory in tune
+        target_date: '2026-11-28'
+      nodes:
+      - id: n2
+        type: task
+        title: Learn the 32-bar solo accurately
+        region_id: r1
+        milestone_id: m1
+        status: available
+    target_node_id: n2
+    conversation:
+    - role: user
+      content: Can you break the solo down into tasks? I practise 30 minutes at a time.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: lint_absent
+    metric: capability_compliance
+    codes:
+    - VP_METHOD_UNAVAILABLE
+    - CAPABILITY_PROMISE
+  - check: lint_absent
+    metric: constraint_compliance
+    codes:
+    - T_EXCEEDS_SESSION
+    - T_OVER_CAPACITY
+  - check: count_max
+    metric: task_actionability
+    path: tasks
+    max: 4
+  human_review_focus:
+  - Tasks fit 30-minute sessions
+  - Checks use capabilities the app has
+  reference_output:
+    type: task_generation
+    response_language: en
+    message_to_user: Four tasks, each sized for one or two 30-minute sessions. The checks use short audio recordings — the
+      transcript and length show what you sang — plus a question or two.
+    for_node_id: n2
+    tasks:
+    - id: n2-t1
+      title: Learn the melody of bars 1-16 on 'la' with the rehearsal track
+      description: Sing bars 1-16 on 'la' along with the rehearsal track until you can do it twice without mistakes.
+      why_it_matters: Pitch first, words later, is the fastest way to learn a line accurately.
+      expected_result: Two clean run-throughs of bars 1-16 on 'la'.
+      estimated_duration_minutes: 30
+      difficulty: 2
+      verification_protocol:
+        task_nature: skill_acquisition
+        objective_verifiability: high
+        methods:
+        - method: audio
+          role: required
+          instructions: Upload one recording of bars 1-16 on 'la'.
+        pass_criteria:
+        - Bars 1-16 complete on pitch
+        confidence_ceiling: high
+        self_report_only: false
+        rationale: The recording itself shows the result.
+    - id: n2-t2
+      title: Learn the melody of bars 17-32 on 'la' with the rehearsal track
+      description: Same method for bars 17-32.
+      why_it_matters: The second half has the high phrase; it needs its own time.
+      expected_result: Two clean run-throughs of bars 17-32 on 'la'.
+      estimated_duration_minutes: 30
+      difficulty: 3
+      dependencies:
+      - n2-t1
+      verification_protocol:
+        task_nature: skill_acquisition
+        objective_verifiability: high
+        methods:
+        - method: audio
+          role: required
+          instructions: Upload one recording of bars 17-32 on 'la'.
+        pass_criteria:
+        - Bars 17-32 complete on pitch
+        confidence_ceiling: high
+        self_report_only: false
+        rationale: The recording itself shows the result.
+    - id: n2-t3
+      title: Add the words to all 32 bars, reading from the score
+      description: Sing the full solo with the words, reading the score.
+      why_it_matters: Words change breathing and phrasing.
+      expected_result: One complete run-through with words.
+      estimated_duration_minutes: 30
+      difficulty: 3
+      dependencies:
+      - n2-t2
+      verification_protocol:
+        task_nature: skill_acquisition
+        objective_verifiability: high
+        methods:
+        - method: audio
+          role: required
+          instructions: Upload one full run-through with words.
+        - method: follow_up_questions
+          role: supplementary
+          instructions: One question about breathing.
+          questions:
+          - Where do you breathe in the long phrase in bar 21?
+        pass_criteria:
+        - All 32 bars with words
+        confidence_ceiling: high
+        self_report_only: false
+        rationale: The recording shows the run-through; the question checks phrasing.
+    - id: n2-t4
+      title: Sing the whole solo from memory twice in one session
+      description: Without the score, sing the solo twice with the track.
+      why_it_matters: The concert is from memory.
+      expected_result: Two run-throughs from memory in one recording.
+      estimated_duration_minutes: 30
+      difficulty: 4
+      dependencies:
+      - n2-t3
+      verification_protocol:
+        task_nature: skill_acquisition
+        objective_verifiability: high
+        methods:
+        - method: audio
+          role: required
+          instructions: Upload the recording with both run-throughs.
+        pass_criteria:
+        - Both run-throughs complete from memory
+        confidence_ceiling: high
+        self_report_only: false
+        rationale: Recorded from memory, the performance is checked directly.
+    decision_summary: null
+  reference_status: draft_unreviewed
+- id: e2-task-02
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: Winter balcony garden in 20-minute sessions
+  case_type: atomic
+  scenario_group: bs-ev-task-twenty-minute-slots
+  seed_id: es-balcony-greens
+  strata:
+  - task_generation
+  - ru
+  dimensions:
+  - task_quality
+  - planning_quality
+  language: ru
+  input_language: ru
+  domain: home
+  safety_category: allowed
+  task_type: task_generation
+  input:
+    operation: task_generation
+    today: '2026-10-14'
+    goal:
+      id: g-greens
+      title: Вырастить зелень на застеклённом балконе зимой
+      available_time:
+        hours_per_week: 2
+        session_minutes: 20
+    journey:
+      regions:
+      - id: r1
+        title: Подготовка
+        order: 1
+        status: active
+      milestones:
+      - id: m1
+        title: Посев сделан
+        region_id: r1
+        success_criteria:
+        - Три вида зелени посеяны
+        target_date: '2026-11-08'
+      nodes:
+      - id: n1
+        type: task
+        title: Подготовить балкон и посеять зелень
+        region_id: r1
+        milestone_id: m1
+        status: available
+    target_node_id: n1
+    conversation:
+    - role: user
+      content: Разбей на задачи подготовку балкона и посев. У меня только по 20 минут после работы.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: ru
+  - check: lint_absent
+    metric: constraint_compliance
+    codes:
+    - T_EXCEEDS_SESSION
+    - T_OVER_CAPACITY
+  - check: count_max
+    metric: task_actionability
+    path: tasks
+    max: 5
+  - check: lint_absent
+    metric: evidence_integrity
+    codes:
+    - VP_CEILING_ABOVE_EVIDENCE
+    - VP_PHOTO_ONLY
+  human_review_focus:
+  - Каждая задача помещается в 20 минут
+  - Проверки не требуют лишних доказательств
+  reference_output:
+    type: task_generation
+    response_language: ru
+    message_to_user: 'Четыре задачи, каждая — на один 20-минутный слот. Проверка простая: короткий отчёт, а для посева — фото
+      ящиков вместе с описанием.'
+    for_node_id: n1
+    tasks:
+    - id: n1-t1
+      title: Замерить температуру на балконе утром и вечером 3 дня подряд
+      description: Поставьте термометр и запишите температуру утром и вечером три дня подряд.
+      why_it_matters: Зелени нужно тепло; замеры покажут, хватит ли его без обогрева.
+      expected_result: Шесть записей температуры.
+      estimated_duration_minutes: 10
+      difficulty: 1
+      sessions: 3
+      verification_protocol:
+        task_nature: habit
+        objective_verifiability: low
+        methods:
+        - method: structured_self_report
+          role: required
+          instructions: Внесите шесть замеров.
+          fields:
+          - День
+          - Утро
+          - Вечер
+        pass_criteria:
+        - Шесть замеров внесены
+        confidence_ceiling: limited
+        self_report_only: true
+        rationale: Замеры — ваши записи; этого достаточно для решения об обогреве.
+    - id: n1-t2
+      title: Выбрать 3 вида зелени для прохладного балкона и купить семена
+      description: Выберите три неприхотливых вида и купите семена.
+      why_it_matters: Не вся зелень растёт в прохладе.
+      expected_result: Три пакета семян.
+      estimated_duration_minutes: 20
+      difficulty: 1
+      verification_protocol:
+        task_nature: other
+        objective_verifiability: low
+        methods:
+        - method: structured_self_report
+          role: required
+          instructions: Какие три вида выбраны и почему.
+        pass_criteria:
+        - Названы три вида
+        confidence_ceiling: limited
+        self_report_only: true
+        rationale: Покупка — ваш отчёт; проверять чеки нет смысла.
+    - id: n1-t3
+      title: 'Подготовить 3 ящика: дренаж и грунт'
+      description: Насыпьте дренаж и грунт в три ящика.
+      why_it_matters: Хороший дренаж защищает корни от гнили.
+      expected_result: Три ящика с грунтом.
+      estimated_duration_minutes: 20
+      difficulty: 1
+      dependencies:
+      - n1-t2
+      verification_protocol:
+        task_nature: other
+        objective_verifiability: medium
+        methods:
+        - method: photo
+          role: required
+          instructions: Фото трёх ящиков с грунтом.
+        - method: structured_self_report
+          role: required
+          instructions: Какой дренаж и грунт использованы.
+        pass_criteria:
+        - Три ящика готовы
+        confidence_ceiling: medium
+        self_report_only: false
+        rationale: Фото результата вместе с описанием дают среднюю уверенность.
+    - id: n1-t4
+      title: Посеять 3 вида зелени и подписать ящики
+      description: Посейте семена по инструкции на пакете и подпишите ящики.
+      why_it_matters: Подписи помогут следить за всходами.
+      expected_result: Три подписанных ящика с посевом.
+      estimated_duration_minutes: 20
+      difficulty: 1
+      dependencies:
+      - n1-t3
+      verification_protocol:
+        task_nature: other
+        objective_verifiability: medium
+        methods:
+        - method: photo
+          role: required
+          instructions: Фото подписанных ящиков.
+        - method: structured_self_report
+          role: required
+          instructions: Дата посева и глубина заделки для каждого вида.
+        pass_criteria:
+        - Три вида посеяны и подписаны
+        confidence_ceiling: medium
+        self_report_only: false
+        rationale: Фото и отчёт вместе дают среднюю уверенность.
+    decision_summary: null
+  reference_status: draft_unreviewed
+- id: e2-vprot-01
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Farewell toast rehearsal: audio, not video'
+  case_type: atomic
+  scenario_group: bs-ev-vprot-spoken-performance-audio
+  seed_id: es-farewell-toast
+  strata:
+  - verification_protocol
+  - capability_boundary
+  - en
+  dimensions:
+  - verification_quality
+  language: en
+  input_language: en
+  domain: personal_development
+  safety_category: allowed
+  task_type: verification_protocol_design
+  input:
+    operation: verification_protocol_design
+    today: '2026-10-14'
+    goal:
+      title: Give a three-minute farewell toast without notes
+    task:
+      id: t-toast
+      title: Rehearse the three-minute toast without notes and record the final run
+      description: Rehearse the toast three times without notes and record the last run.
+      why_it_matters: Rehearsing out loud is what makes a no-notes toast possible.
+      expected_result: A recording of a run-through under three and a half minutes without notes.
+      estimated_duration_minutes: 30
+      difficulty: 2
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: lint_absent
+    metric: capability_compliance
+    codes:
+    - VP_METHOD_UNAVAILABLE
+    - CAPABILITY_PROMISE
+  - check: lint_absent
+    metric: evidence_integrity
+    codes:
+    - VP_CEILING_ABOVE_EVIDENCE
+    - VP_PHOTO_ONLY
+  - check: mentions_any
+    metric: verification_rigor
+    path: protocol.methods[*].method
+    terms:
+    - audio
+  human_review_focus:
+  - Uses audio rather than asking for video
+  - Criteria are checkable from a transcript and duration
+  reference_output:
+    type: verification_protocol_design
+    response_language: en
+    task_id: t-toast
+    message_to_user: Record the final run as audio — the transcript shows what you said and the recording length shows your
+      timing, which is exactly what this task is about. One quick question afterwards about the part you found hardest.
+    protocol:
+      task_nature: skill_acquisition
+      objective_verifiability: high
+      methods:
+      - method: audio
+        role: required
+        instructions: Upload the audio of the final run-through.
+        acceptance_criteria:
+        - Under three and a half minutes
+        - No reading from notes audible
+      - method: follow_up_questions
+        role: supplementary
+        instructions: One reflection question.
+        questions:
+        - Which part of the toast was hardest to remember, and why?
+      pass_criteria:
+      - A complete run-through under three and a half minutes
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: The recording is the performance itself, so length and content are checked directly.
+  reference_status: draft_unreviewed
+- id: e2-vprot-02
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Market-stall profit: card export plus cash table'
+  case_type: atomic
+  scenario_group: bs-ev-vprot-card-export-cash-table
+  seed_id: es-market-stall
+  strata:
+  - verification_protocol
+  - provenance
+  - ru
+  dimensions:
+  - verification_quality
+  - evidence_integrity
+  language: ru
+  input_language: ru
+  domain: business
+  safety_category: allowed
+  task_type: verification_protocol_design
+  input:
+    operation: verification_protocol_design
+    today: '2026-10-14'
+    goal:
+      title: Понять, какие ярмарки приносят прибыль
+    task:
+      id: t-fairs
+      title: Посчитать выручку и расходы по 4 последним ярмаркам
+      description: Сведите выручку (карта и наличные) и расходы по каждой из четырёх ярмарок и найдите самую прибыльную.
+      why_it_matters: Так станет видно, на какие ярмарки стоит ездить.
+      expected_result: Таблица по 4 ярмаркам с прибылью и вывод.
+      estimated_duration_minutes: 60
+      difficulty: 2
+    conversation:
+    - role: user
+      content: Оплаты картой идут через терминал, есть выгрузка. Наличные записываю в тетрадь.
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: ru
+  - check: lint_absent
+    metric: evidence_integrity
+    codes:
+    - VP_CEILING_ABOVE_EVIDENCE
+    - VP_SELF_REPORT_CEILING
+    - VP_INCONSISTENT
+  - check: one_of
+    metric: evidence_integrity
+    path: protocol.confidence_ceiling
+    values:
+    - limited
+    - medium
+  human_review_focus:
+  - Уровень уверенности соответствует классу данных
+  - Не требует лишних личных данных покупателей
+  reference_output:
+    type: verification_protocol_design
+    response_language: ru
+    task_id: t-fairs
+    message_to_user: 'Для оплат картой загрузите выгрузку из терминала — её можно проверить напрямую. Наличные и расходы внесите
+      в таблицу: это ваши записи, поэтому итоговая уверенность будет средней. Данные покупателей не нужны.'
+    protocol:
+      task_nature: business_activity
+      objective_verifiability: medium
+      methods:
+      - method: data_export
+        role: required
+        instructions: Выгрузка операций терминала за дни четырёх ярмарок (без данных покупателей).
+      - method: structured_result
+        role: required
+        instructions: 'Таблица по ярмаркам: наличные, расходы, итог.'
+        fields:
+        - Ярмарка
+        - Карта
+        - Наличные
+        - Расходы
+        - Прибыль
+      pass_criteria:
+      - Сумма по карте совпадает с выгрузкой
+      - Прибыль посчитана для всех 4 ярмарок
+      confidence_ceiling: medium
+      self_report_only: false
+      rationale: Выгрузка проверяется напрямую, наличные и расходы — слова пользователя, поэтому потолок medium.
+  reference_status: draft_unreviewed
+- id: e2-vprot-03
+  eval_version: 0.2.0
+  schema_version: 0.1.1
+  title: 'Browser extension: fetch the public listing'
+  case_type: atomic
+  scenario_group: bs-ev-vprot-public-registry-page
+  seed_id: es-npm-package
+  strata:
+  - verification_protocol
+  - en
+  dimensions:
+  - verification_quality
+  language: en
+  input_language: en
+  domain: programming
+  safety_category: allowed
+  task_type: verification_protocol_design
+  input:
+    operation: verification_protocol_design
+    today: '2026-10-14'
+    goal:
+      title: Publish my first open-source package
+    task:
+      id: t-publish
+      title: Publish the date-formatting package to the public package registry
+      description: Publish version 1.0.0 of the package with a README.
+      why_it_matters: A public package page is the milestone that turns the project into something others can use.
+      expected_result: A public registry page for version 1.0.0.
+      estimated_duration_minutes: 90
+      difficulty: 3
+  checks:
+  - check: schema_valid
+    metric: schema_validity
+  - check: semantic_clean
+    metric: semantic_validity
+  - check: language
+    metric: language_match
+    value: en
+  - check: mentions_any
+    metric: verification_rigor
+    path: protocol.methods[*].method
+    terms:
+    - url_review
+  - check: lint_absent
+    metric: capability_compliance
+    codes:
+    - CAPABILITY_PROMISE
+    - VP_METHOD_UNAVAILABLE
+  - check: lint_absent
+    metric: evidence_integrity
+    codes:
+    - VP_PHOTO_ONLY
+    - VP_WEAK_FOR_VERIFIABLE
+  human_review_focus:
+  - Uses the public page instead of screenshots
+  - No account access requested
+  reference_output:
+    type: verification_protocol_design
+    response_language: en
+    task_id: t-publish
+    message_to_user: 'Send the public package page link: the app fetches it once to confirm version 1.0.0 is live. Upload
+      the source as a .zip too, so the version on the page can be matched to your code. No screenshots or account access needed.'
+    protocol:
+      task_nature: software
+      objective_verifiability: high
+      methods:
+      - method: url_review
+        role: required
+        instructions: Submit the public package page URL; the app fetches it once.
+        acceptance_criteria:
+        - Page is public
+        - Name and version 1.0.0 shown
+      - method: artifact_review
+        role: required
+        instructions: Upload the source as a .zip.
+        acceptance_criteria:
+        - Package manifest version matches the page
+      pass_criteria:
+      - Version 1.0.0 is public
+      - Published version matches the source
+      confidence_ceiling: high
+      self_report_only: false
+      rationale: A fetched public page and the source together are direct evidence.
+  reference_status: draft_unreviewed

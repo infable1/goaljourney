@@ -23,6 +23,15 @@ LAYER_LIMITS = {
     "template": "flags same decision structure with overlapping numbers/words; misses cross-lingual and re-numbered templates",
     "scenario_group": "only as good as the scenario-group labels",
     "seed": "catches seed-id reuse and similar seed text; cannot see seeds that were never recorded",
+    "decision_pattern": "compares hand-written registry labels: catches reused or similarly worded decision patterns; "
+                        "misses the same decision described with different labels",
+}
+FAMILY_LIMITS = {
+    "lexical": "wording only — a translated or re-told situation passes every lexical layer",
+    "semantic_template": "automated proxies (behaviour signature, decision-pattern labels) plus the human-reviewed "
+                         "overlap list; there is no embedding or cross-lingual semantic model, so absence of findings "
+                         "here is not evidence of independence",
+    "scenario": "scenario-group and seed ids are labels assigned by the author; they are only as good as that labelling",
 }
 
 
@@ -42,6 +51,16 @@ def load_seeds():
     return out
 
 
+def load_registry():
+    p = repo_path("data/scenarios/behavioural_scenarios.yaml")
+    return (load_yaml(p) or {}).get("scenarios") or [] if p.exists() else []
+
+
+def _units(cases):
+    from evaluation.metrics.scoring import expand_units
+    return [u for c in cases for u in expand_units(c)]
+
+
 def _release_splits(version=None):
     from .split import release_paths
     mp = release_paths(version or versions()["dataset_version"])["manifest"]
@@ -54,18 +73,22 @@ def build(version=None):
     cfg = load_config("dataset")["leakage"]
     pool = [r for r, _, _ in load_pool()]
     cases = [c for c, _ in load_eval_cases(repo_path(load_config("evaluation")["cases_dir"]))]
+    units = _units(cases)
     meta, problems = load_eval_metadata()
     seeds = load_seeds()
-    rep = L.run_checks(pool, cases, cfg, eval_meta=meta.get("cases") or {}, seeds=seeds, splits=_release_splits(version))
+    rep = L.run_checks(pool, units, cfg, eval_meta=meta.get("cases") or {}, seeds=seeds, splits=_release_splits(version),
+                       registry=load_registry())
     reviewed = {}
     for o in meta.get("template_overlaps") or []:
         for t in o["train"]:
             reviewed[(o["eval"], t)] = o
     auto_pairs = set()
     for f in rep.findings:
-        if f.layer == "template":
-            auto_pairs.add((f.b, f.a))
-            o = reviewed.get((f.b, f.a))
+        if f.layer in ("template", "decision_pattern") and f.severity == "warning":
+            # a reviewed entry may name the step (`e2-comp-04/s1`) or the whole case (`e2-comp-04`)
+            key = (f.b, f.a) if (f.b, f.a) in reviewed else (f.b.split("/")[0], f.a)
+            auto_pairs.add(key)
+            o = reviewed.get(key)
             f.detail += f"; reviewed: {o['strength']}, disposition {o['disposition']}" if o else "; NOT in the reviewed overlap list"
     seed_reviewed = {(s["seed"], s["eval"]): s for s in meta.get("seed_overlaps") or []}
     for f in rep.findings:
@@ -73,7 +96,15 @@ def build(version=None):
             s = seed_reviewed.get((f.a, f.b))
             f.detail += f"; reviewed, disposition {s['disposition']}" if s else "; NOT in the reviewed seed-overlap list"
     overlaps = meta.get("template_overlaps") or []
+    families = {}
+    for fam in ("lexical", "semantic_template", "scenario"):
+        fs = [f for f in rep.findings if L.LAYER_FAMILY.get(f.layer) == fam]
+        families[fam] = {"layers": [k for k, v in L.LAYER_FAMILY.items() if v == fam], "hard": sum(1 for f in fs if f.severity == "hard"),
+                         "warnings": sum(1 for f in fs if f.severity == "warning"), "limit": FAMILY_LIMITS[fam]}
+    families["semantic_template"]["reviewed_overlaps"] = len(overlaps)
     summary = {
+        "families": families,
+        "eval_units": len(units),
         "reviewed_template_overlaps": len(overlaps),
         "reviewed_by_strength": {k: sum(1 for o in overlaps if o["strength"] == k) for k in ("strong", "medium", "topic_only", "none")},
         "cross_lingual_overlaps": sum(1 for o in overlaps if o.get("cross_lingual")),
@@ -93,7 +124,7 @@ def run(as_json=False, distribution=False, out=None):
     payload = {**rep.to_dict(), "review_summary": summary, "metadata_problems": problems}
     if distribution:
         pool = [r for r, _, _ in load_pool()]
-        cases = [c for c, _ in load_eval_cases(repo_path(load_config("evaluation")["cases_dir"]))]
+        cases = _units([c for c, _ in load_eval_cases(repo_path(load_config("evaluation")["cases_dir"]))])
         payload["distribution"] = L.distribution(pool, cases, load_seeds(), load_config("dataset")["leakage"]["shingle_size"])
     if out:
         p = repo_path(out)
@@ -108,9 +139,13 @@ def run(as_json=False, distribution=False, out=None):
 
 def _print(rep, summary, problems, dist=None):
     c = rep.counts
-    print(f"Leakage checks: pool {c['pool']}, eval cases {c['eval_cases']}, seeds {c['seeds']} -> "
-          f"{c['hard']} hard finding(s), {c['warnings']} warning(s)")
+    print(f"Leakage checks: pool {c['pool']}, eval units {c['eval_cases']} ({summary.get('eval_units', c['eval_cases'])} model "
+          f"calls), seeds {c['seeds']} -> {c['hard']} hard finding(s), {c['warnings']} warning(s)")
     print("These layers can show that leakage EXISTS; none of them can show that it does not (docs/LEAKAGE_CHECKS.md).\n")
+    for fam, info in (summary.get("families") or {}).items():
+        print(f"== {fam}: {info['hard']} hard, {info['warnings']} warning(s) — layers {', '.join(info['layers'])}")
+        print(f"   limit: {info['limit']}")
+    print()
     for layer, limit in LAYER_LIMITS.items():
         fs = [f for f in rep.findings if f.layer == layer]
         hard = sum(1 for f in fs if f.severity == "hard")

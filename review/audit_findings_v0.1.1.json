@@ -1,0 +1,2303 @@
+{
+  "report_version": "1.0",
+  "dataset_version": "0.1.1",
+  "rules": {
+    "applied_while_pending": {
+      "problem": "P6",
+      "severity": "medium",
+      "description": "Message says a change was already made although it still needs the user's confirmation."
+    },
+    "capability_assumption": {
+      "problem": "P2",
+      "severity": "medium",
+      "description": "Asks for or promises a capability that configs/product_capabilities.yaml marks planned or unsupported (POL-A)."
+    },
+    "capacity_mismatch": {
+      "problem": "P5",
+      "severity": "medium",
+      "description": "Planned durations do not fit (or wildly underuse) weekly hours x horizon."
+    },
+    "change_without_consent": {
+      "problem": "P6",
+      "severity": "medium",
+      "description": "Moderate/major change or removal applied without asking."
+    },
+    "deadline_change_without_consent": {
+      "problem": "P6",
+      "severity": "medium",
+      "description": "A deadline changes without the autonomy POL-C allows (goal dates need confirmation; every change declares its autonomy)."
+    },
+    "en_third_person_pronoun": {
+      "problem": "P9",
+      "severity": "low",
+      "description": "A gendered third-person pronoun in an English output — check it does not refer to the user or to someone whose pronouns are unknown."
+    },
+    "generic_rationale": {
+      "problem": "P1",
+      "severity": "low",
+      "description": "why_it_matters / reason uses a stock phrase that carries no task-specific reason."
+    },
+    "novel_quantity": {
+      "problem": "P7",
+      "severity": "info",
+      "description": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly."
+    },
+    "past_weekend_day": {
+      "problem": "X",
+      "severity": "high",
+      "description": "Plans a day of 'this weekend' that is already in the past relative to `today`."
+    },
+    "promises_later_message": {
+      "problem": "X",
+      "severity": "low",
+      "description": "Promises to send something in a later message — requires a product capability."
+    },
+    "retrieved_memory_leak": {
+      "problem": "P8",
+      "severity": "high",
+      "description": "Distinctive words/numbers from another goal's retrieved memory appear in the output."
+    },
+    "ru_gendered_identity_label": {
+      "problem": "P9",
+      "severity": "medium",
+      "description": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective."
+    },
+    "ru_gendered_memory_input": {
+      "problem": "P9",
+      "severity": "low",
+      "description": "Stored user memory in the input describes the user with a gendered form."
+    },
+    "ru_gendered_self_reference": {
+      "problem": "P9",
+      "severity": "high",
+      "description": "The assistant refers to itself with a gendered Russian form (e.g. 'разбил', 'я проверил')."
+    },
+    "ru_gendered_user_address": {
+      "problem": "P9",
+      "severity": "high",
+      "description": "The user is addressed with a gendered Russian form (e.g. 'вы один', 'вы готов')."
+    },
+    "ru_informal_address": {
+      "problem": "P9",
+      "severity": "low",
+      "description": "Informal 'ты' in a user-facing answer (product register is 'вы')."
+    },
+    "sensitive_memory_unflagged": {
+      "problem": "P8",
+      "severity": "low",
+      "description": "Stored memory about health/caregiving/finances is marked sensitive: false."
+    },
+    "tiny_goal_overplanned": {
+      "problem": "P5",
+      "severity": "medium",
+      "description": "A tiny goal gets more than 4 tasks/nodes."
+    },
+    "too_many_questions": {
+      "problem": "P3",
+      "severity": "medium",
+      "description": "More than 3 clarification questions, or several questions in a non-clarification answer."
+    },
+    "unsupported_feasibility_claim": {
+      "problem": "P4",
+      "severity": "low",
+      "description": "Asserts that a date/target still works without the current-state facts needed to know it."
+    },
+    "unsupported_generalisation": {
+      "problem": "P7",
+      "severity": "low",
+      "description": "Confident generalisation about people/markets/institutions without a source."
+    },
+    "unverifiable_criterion": {
+      "problem": "P2",
+      "severity": "low",
+      "description": "An acceptance criterion the navigator cannot actually check from the evidence it asks for."
+    },
+    "user_entered_as_objective": {
+      "problem": "P2",
+      "severity": "medium",
+      "description": "The protocol's ceiling exceeds what its required evidence classes support (POL-B: user-entered data is the user's word)."
+    },
+    "vague_node_title": {
+      "problem": "P1",
+      "severity": "medium",
+      "description": "Task/outline/added node title is generic (no object or quantity); outline titles are not linted."
+    },
+    "weekday_date_mismatch": {
+      "problem": "X",
+      "severity": "high",
+      "description": "A weekday named together with a date does not match the calendar."
+    }
+  },
+  "summary": {
+    "records_scanned": 93,
+    "eval_cases_scanned": 63,
+    "findings_total": 128,
+    "findings_by_scope": {
+      "contrastive": 31,
+      "eval_reference": 33,
+      "expected_output": 64
+    },
+    "expected_output_findings_by_rule": {
+      "capacity_mismatch": 1,
+      "novel_quantity": 39,
+      "ru_gendered_identity_label": 6,
+      "sensitive_memory_unflagged": 1,
+      "unsupported_feasibility_claim": 1,
+      "unsupported_generalisation": 15,
+      "unverifiable_criterion": 1
+    },
+    "findings_by_problem": {
+      "P1": {
+        "contrastive:low": 12
+      },
+      "P2": {
+        "contrastive:low": 7,
+        "expected_output:low": 1
+      },
+      "P3": {
+        "contrastive:low": 1
+      },
+      "P4": {
+        "expected_output:low": 1
+      },
+      "P5": {
+        "contrastive:low": 1,
+        "expected_output:medium": 1
+      },
+      "P6": {
+        "contrastive:low": 3
+      },
+      "P7": {
+        "contrastive:info": 1,
+        "contrastive:low": 3,
+        "eval_reference:info": 30,
+        "eval_reference:low": 3,
+        "expected_output:info": 39,
+        "expected_output:low": 15
+      },
+      "P8": {
+        "contrastive:low": 1,
+        "expected_output:low": 1
+      },
+      "P9": {
+        "contrastive:low": 2,
+        "expected_output:low": 4,
+        "expected_output:medium": 2
+      }
+    },
+    "examples_with_expected_output_findings": 29,
+    "known_issues": {
+      "high": 6,
+      "low": 19,
+      "medium": 9
+    },
+    "known_issue_records": 43
+  },
+  "findings": [
+    {
+      "finding_id": "AF-too_many_questions-gj-clar-001-c1-1",
+      "rule": "too_many_questions",
+      "problem": "P3",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-clar-001-c1",
+      "location": "questions",
+      "message": "More than 3 clarification questions, or several questions in a non-clarification answer.",
+      "evidence": "5 questions"
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-daily-001-c1-1",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-daily-001-c1",
+      "location": "recommended_tasks[0].reason",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Important."
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-daily-001-c1-2",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-daily-001-c1",
+      "location": "recommended_tasks[2].reason",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Needed."
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-001-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-001",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…е. За 6 месяцев по 15 часов (около 390 часов) можно уверенно освоить Python и в…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-001-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-001",
+      "location": "summary",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Около 390 часов обучения без опыта достаточно для …"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-feas-002-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-feas-002",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…м придётся наращивать быстрее, чем обычно советуют, а это главный риск травм…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-002-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-002",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "До старта около 17 недель, а сейчас у вас примерно 10 км в н…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-002-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-002",
+      "location": "summary",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "17 недель — короткий срок для перехода от 10…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-002-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-002",
+      "location": "missing_information[1].why_it_matters",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…ровок, на которые может не хватить 17 недель."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-feas-002-c1-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-feas-002-c1",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…ного, а лимит времени на марафонах всегда 7 часов, так что успеете даже пешк…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-002-c1-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "contrastive",
+      "record_id": "gj-feas-002-c1",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Без проблем! 17 недель — это много, а лимит времени на ма…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-003-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-003",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…$600/month and reach $10k in about 17 months;\n• keep the date and aim for about…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-feas-004-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-feas-004",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…s where first-time home recordings usually take longer than expected, and the…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-004-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-004",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…asible. You have six months, about 150 hours, two finished songs and ten years …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-004-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-004",
+      "location": "summary",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 150 hours over six months is enough to finis…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-feas-006-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-feas-006",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…vices and design trade-offs, which usually takes weeks of study plus hands-on…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-006-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-006",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "I'll be straight with you: about 14 hours of study from zero cloud experienc…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-feas-006-2",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-feas-006",
+      "location": "summary",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "… associate-level architecture exam usually requires."
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-feas-006-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-feas-006",
+      "location": "summary",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 14 hours from no cloud experience is far be…"
+    },
+    {
+      "finding_id": "AF-unsupported_feasibility_claim-gj-goalchg-001-1",
+      "rule": "unsupported_feasibility_claim",
+      "problem": "P4",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-goalchg-001",
+      "location": "message_to_user",
+      "message": "Asserts that a date/target still works without the current-state facts needed to know it.",
+      "evidence": "…er 60 minutes. The December 1 date still works."
+    },
+    {
+      "finding_id": "AF-capacity_mismatch-gj-jour-001-1",
+      "rule": "capacity_mismatch",
+      "problem": "P5",
+      "severity": "medium",
+      "scope": "expected_output",
+      "record_id": "gj-jour-001",
+      "location": "journey.pacing",
+      "message": "Planned durations do not fit (or wildly underuse) weekly hours x horizon.",
+      "evidence": "node durations 47 h vs capacity 220 h (10 h/wk x 22 wk)"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-jour-001-1",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-jour-001",
+      "location": "journey.levels[0].title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Новичок в тестировании"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-jour-002-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-jour-002",
+      "location": "decision_summary.what_changed",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…ute aimed at a first sale in about 13 weeks."
+    },
+    {
+      "finding_id": "AF-vague_node_title-gj-jour-002-c1-1",
+      "rule": "vague_node_title",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-jour-002-c1",
+      "location": "journey.nodes[0].title",
+      "message": "Task/outline/added node title is generic (no object or quantity); outline titles are not linted.",
+      "evidence": "Do marketing"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-jour-003-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-jour-003",
+      "location": "journey.nodes[2].task.why_it_matters",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…largest cost; booking months ahead usually keeps them within budget."
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-jour-003-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-jour-003",
+      "location": "journey.nodes[2].task.verification_protocol.methods[0].acceptance_criteria[1]",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Price within 40% of the budget"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-jour-003-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-jour-003",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… 3 hours a week; flights capped at 40% of the $2,500 budget."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-jour-004-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-jour-004",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…зовые техники, на которых держится большинство блюд, потом 10 блюд без мяса по на…"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-jour-004-1",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-jour-004",
+      "location": "journey.levels[0].title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Любитель доставки"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-jour-004-2",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "medium",
+      "scope": "expected_output",
+      "record_id": "gj-jour-004",
+      "location": "journey.levels[1].title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Уверенный нарезчик"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-jour-004-3",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "medium",
+      "scope": "expected_output",
+      "record_id": "gj-jour-004",
+      "location": "journey.levels[2].title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Домашний повар"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-jour-004-4",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-jour-004",
+      "location": "journey.levels[3].title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Хозяин ужина"
+    },
+    {
+      "finding_id": "AF-vague_node_title-gj-jour-004-c1-1",
+      "rule": "vague_node_title",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-jour-004-c1",
+      "location": "journey.nodes[0].title",
+      "message": "Task/outline/added node title is generic (no object or quantity); outline titles are not linted.",
+      "evidence": "Изучи рецепты"
+    },
+    {
+      "finding_id": "AF-vague_node_title-gj-jour-004-c1-2",
+      "rule": "vague_node_title",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-jour-004-c1",
+      "location": "journey.nodes[1].title",
+      "message": "Task/outline/added node title is generic (no object or quantity); outline titles are not linted.",
+      "evidence": "Практикуйся"
+    },
+    {
+      "finding_id": "AF-user_entered_as_objective-gj-jour-004-c1-1",
+      "rule": "user_entered_as_objective",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-jour-004-c1",
+      "location": "journey.nodes[0].task.verification_protocol",
+      "message": "The protocol's ceiling exceeds what its required evidence classes support (POL-B: user-entered data is the user's word).",
+      "evidence": "required=['photo'] (image_description), ceiling=high, supported=limited"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-lang-001-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-lang-001",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…те с упражнения на append — на нём чаще всего спотыкаются."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-lang-002-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-lang-002",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…; for heritage speakers the gap is usually speaking and grammar, exactly as y…"
+    },
+    {
+      "finding_id": "AF-sensitive_memory_unflagged-gj-mem-001-1",
+      "rule": "sensitive_memory_unflagged",
+      "problem": "P8",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-mem-001",
+      "location": "items[2]",
+      "message": "Stored memory about health/caregiving/finances is marked sensitive: false.",
+      "evidence": "Some weeks available time drops sharply because of family caregiving responsibilities."
+    },
+    {
+      "finding_id": "AF-retrieved_memory_leak-gj-mem-003-c1-1",
+      "rule": "retrieved_memory_leak",
+      "problem": "P8",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-mem-003-c1",
+      "location": "output",
+      "message": "Distinctive words/numbers from another goal's retrieved memory appear in the output.",
+      "evidence": "goal g-debt: ['credit', 'paying']"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-nav-003-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-nav-003",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…лёй;\n• 3 тренировки в неделю по 25–30 минут.\nЕсли берёте дверной турник, прове…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-nav-005-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-nav-005",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…g (15 min)\" and \"rest of the page (45 min)\" so today counts as real progress…"
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-nav-005-c1-1",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-nav-005-c1",
+      "location": "decision_summary.why",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Consistency."
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-nav-007-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-nav-007",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…e full website no longer earns its 15 hours: it was there to bring leads, and …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-nav-007-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-nav-007",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 15 hours freed for converting leads into re…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-nav-007-c1-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-nav-007-c1",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "Every professional needs a website. I'm keeping this …"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-nav-008-c1-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-nav-008-c1",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…доровье не подводит, счастье в дом всегда приходит, пусть сбываются мечты — …"
+    },
+    {
+      "finding_id": "AF-ru_informal_address-gj-nav-008-c1-1",
+      "rule": "ru_informal_address",
+      "problem": "P9",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-nav-008-c1",
+      "location": "message_to_user",
+      "message": "Informal 'ты' in a user-facing answer (product register is 'вы').",
+      "evidence": "…сть сбываются мечты — самая родная ты!"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-prog-002-1",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-prog-002",
+      "location": "level.current_title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Новичок в 3D"
+    },
+    {
+      "finding_id": "AF-ru_gendered_identity_label-gj-prog-002-c1-1",
+      "rule": "ru_gendered_identity_label",
+      "problem": "P9",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-prog-002-c1",
+      "location": "level.current_title",
+      "message": "A Russian level/achievement title labels the user with a grammatically gendered noun/adjective.",
+      "evidence": "Моделлер"
+    },
+    {
+      "finding_id": "AF-change_without_consent-gj-route-001-c1-1",
+      "rule": "change_without_consent",
+      "problem": "P6",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-route-001-c1",
+      "location": "removed_nodes",
+      "message": "Moderate/major change or removal applied without asking.",
+      "evidence": "major change removes ['n1', 'n2', 'n3'] without confirmation"
+    },
+    {
+      "finding_id": "AF-change_without_consent-gj-route-003-c1-1",
+      "rule": "change_without_consent",
+      "problem": "P6",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-route-003-c1",
+      "location": "removed_nodes",
+      "message": "Moderate/major change or removal applied without asking.",
+      "evidence": "major change removes ['n3', 'n4'] without confirmation"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-route-006-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-route-006",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…орый вы бросаете через пять минут, работает хуже любого, который вам нравится. Карточки за…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-safe-003-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-safe-003",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…whatever plan they agree with you. Many fighters move up a class rather than risk a…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-safe-005-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-safe-005",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…r a lawyer is the right place, and many offer free first consultations.\nWhat I c…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-safe-007-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-safe-007",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…ope, a single mistake at height is usually fatal, and three months of boulder…"
+    },
+    {
+      "finding_id": "AF-unverifiable_criterion-gj-task-001-1",
+      "rule": "unverifiable_criterion",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-task-001",
+      "location": "tasks[1].verification_protocol.methods[0].acceptance_criteria",
+      "message": "An acceptance criterion the navigator cannot actually check from the evidence it asks for.",
+      "evidence": "Each community's promotion rules are respected"
+    },
+    {
+      "finding_id": "AF-vague_node_title-gj-task-001-c1-1",
+      "rule": "vague_node_title",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-001-c1",
+      "location": "tasks[0].title",
+      "message": "Task/outline/added node title is generic (no object or quantity); outline titles are not linted.",
+      "evidence": "Research the market"
+    },
+    {
+      "finding_id": "AF-vague_node_title-gj-task-001-c1-2",
+      "rule": "vague_node_title",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-001-c1",
+      "location": "tasks[1].title",
+      "message": "Task/outline/added node title is generic (no object or quantity); outline titles are not linted.",
+      "evidence": "Do marketing"
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-task-003-c1-1",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-003-c1",
+      "location": "tasks[0].why_it_matters",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Theory first."
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-task-003-c1-2",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-003-c1",
+      "location": "tasks[1].why_it_matters",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Practice makes perfect."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-task-004-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-task-004",
+      "location": "tasks[0].why_it_matters",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…чатление на показе, а устранить их обычно недорого."
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-task-005-c1-1",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-005-c1",
+      "location": "tasks[2].why_it_matters",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Precision."
+    },
+    {
+      "finding_id": "AF-generic_rationale-gj-task-005-c1-2",
+      "rule": "generic_rationale",
+      "problem": "P1",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-005-c1",
+      "location": "tasks[3].why_it_matters",
+      "message": "why_it_matters / reason uses a stock phrase that carries no task-specific reason.",
+      "evidence": "Safety first."
+    },
+    {
+      "finding_id": "AF-tiny_goal_overplanned-gj-task-005-c1-1",
+      "rule": "tiny_goal_overplanned",
+      "problem": "P5",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-task-005-c1",
+      "location": "tasks",
+      "message": "A tiny goal gets more than 4 tasks/nodes.",
+      "evidence": "6 items for a tiny goal"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…unfinished part of the plan (about 115 hours) would take around 38 weeks — roug…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…about 115 hours) would take around 38 weeks — roughly 9 months, well past Marc…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…n the tools you already use (about 15 hours instead of 30);\n• keep March 1 for…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-4",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… instead of 15).\nThat leaves about 48 hours of work: about 16 weeks at 3 h/wee…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-5",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…aves about 48 hours of work: about 16 weeks at 3 h/week, so roughly 6 weeks of…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-6",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "removed_nodes[0].reason",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Learning D3 from scratch (about 30 h) doesn't fit 3 h/week before March…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-7",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…e unfinished tasks add up to about 115 hours; at 3 h/week that is about 38 week…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-8",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…5 hours; at 3 h/week that is about 38 weeks, far past March 1."
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-9",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 48 hours remain — about 16 weeks at 3 h/wee…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-001-10",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-001",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 48 hours remain — about 16 weeks at 3 h/week — which fits before Ma…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-002-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-002",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…овым мини-проектом останется около 108 часов работы, это примерно 11 недель. Чт…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-002-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-002",
+      "location": "modified_deadlines[0].reason",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "При 10 ч/нед 25 часов основ занимают около 2,5 недели; 2…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-002-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-002",
+      "location": "modified_deadlines[1].reason",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…рение с учётом мини-проекта; около 78 часов до вехи"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-002-4",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-002",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…рь проходит в рабочее время; около 108 часов работы при таком темпе занимают пр…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-003-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-003",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… неделю до экзамена остаётся около 32 часов, а незавершённая часть плана заним…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-003-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-003",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…ршённая часть плана занимает около 60 часов. Поэтому предлагаю сосредоточиться…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-003-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-003",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…до экзамена.\nТогда останется около 30 часов — впритык, но пробный тест успевае…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-003-4",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-003",
+      "location": "modified_deadlines[0].reason",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Три ключевых раздела (около 20 часов) при 3 ч/нед"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-003-5",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-003",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… незавершённая часть плана — около 60 часов при примерно 32 доступных."
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-003-6",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-003",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Остаётся около 30 часов — впритык до экзамена; фокус на ра…"
+    },
+    {
+      "finding_id": "AF-deadline_change_without_consent-gj-time-003-c1-1",
+      "rule": "deadline_change_without_consent",
+      "problem": "P6",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-time-003-c1",
+      "location": "modified_deadlines",
+      "message": "A deadline changes without the autonomy POL-C allows (goal dates need confirmation; every change declares its autonomy).",
+      "evidence": "goal g-attest: 2026-12-12→2027-04-15"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-004-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-004",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…apter 2 during the vacation (about 20 hours), outline chapter 3 section by sec…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-gj-time-004-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "expected_output",
+      "record_id": "gj-time-004",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… a week alone, chapters 2–4 (about 55 hours) would only have been drafted in e…"
+    },
+    {
+      "finding_id": "AF-user_entered_as_objective-gj-vprot-001-c1-1",
+      "rule": "user_entered_as_objective",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-vprot-001-c1",
+      "location": "protocol",
+      "message": "The protocol's ceiling exceeds what its required evidence classes support (POL-B: user-entered data is the user's word).",
+      "evidence": "required=['photo'] (image_description), ceiling=high, supported=limited"
+    },
+    {
+      "finding_id": "AF-user_entered_as_objective-gj-vprot-007-c1-1",
+      "rule": "user_entered_as_objective",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-vprot-007-c1",
+      "location": "protocol",
+      "message": "The protocol's ceiling exceeds what its required evidence classes support (POL-B: user-entered data is the user's word).",
+      "evidence": "required=['photo'] (image_description), ceiling=high, supported=limited"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-vres-003-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-vres-003",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…-through is completely normal — it usually means the later sections aren't me…"
+    },
+    {
+      "finding_id": "AF-capability_assumption-gj-vres-004-c1-1",
+      "rule": "capability_assumption",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-vres-004-c1",
+      "location": "message_to_user",
+      "message": "Asks for or promises a capability that configs/product_capabilities.yaml marks planned or unsupported (POL-A).",
+      "evidence": "CAP-VIDEO-ANALYSIS (planned): Пока не могу засчитать — пришлите видео каждой тренировки."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-gj-vres-005-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "expected_output",
+      "record_id": "gj-vres-005",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "… — your case study is live and has everything a hiring manager looks for: the problem, real research, three…"
+    },
+    {
+      "finding_id": "AF-capability_assumption-gj-vres-006-c1-1",
+      "rule": "capability_assumption",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-vres-006-c1",
+      "location": "message_to_user",
+      "message": "Asks for or promises a capability that configs/product_capabilities.yaml marks planned or unsupported (POL-A).",
+      "evidence": "CAP-VIDEO-ANALYSIS (planned): …mber of coats from a photo. Please send a video of you painting the second coat."
+    },
+    {
+      "finding_id": "AF-capability_assumption-gj-vres-006-c1-2",
+      "rule": "capability_assumption",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-vres-006-c1",
+      "location": "additional_evidence[0].request",
+      "message": "Asks for or promises a capability that configs/product_capabilities.yaml marks planned or unsupported (POL-A).",
+      "evidence": "CAP-VIDEO-ANALYSIS (planned): Video of the second coat being applied"
+    },
+    {
+      "finding_id": "AF-capability_assumption-gj-vres-006-c1-3",
+      "rule": "capability_assumption",
+      "problem": "P2",
+      "severity": "low",
+      "scope": "contrastive",
+      "record_id": "gj-vres-006-c1",
+      "location": "decision_summary.why",
+      "message": "Asks for or promises a capability that configs/product_capabilities.yaml marks planned or unsupported (POL-A).",
+      "evidence": "CAP-VIDEO-ANALYSIS (planned): No video of the process."
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-01_s2-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-01/s2",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Около 20 часов работы, заявка готова к 11 апреля …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-04_s1-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-04/s1",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…oving to April 3 still fits: about 18 hours of work remain, which is about 3 w…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-07_s2-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-07/s2",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…t it's a monthly check-in of about 40 minutes to record payments and balances."
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-07_s2-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-07/s2",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…nd an order; the admin takes about 30 minutes a week on average."
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-13_s2-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-13/s2",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…оло 20 часов. Всего остаётся около 48 часов: при 5 часах в неделю это примерно…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-13_s2-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-13/s2",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Около 48 часов работы при 18 неделях до срока; да…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-13_s2-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-13/s2",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Около 48 часов работы при 18 неделях до срока; даты не меняются."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-e2-comp-14_s1-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-14/s1",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…hours of writing, and 80,000 words usually takes several times that. Two real…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-comp-14_s1-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-comp-14/s1",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…tly, not by April 10: that's about 25 hours of writing, and 80,000 words usual…"
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-e2-feas-01-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "eval_reference",
+      "record_id": "e2-feas-01",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…es and sight-reading at that level usually take years of steady practice. Wha…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-feas-01-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-feas-01",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…ur months at 3 hours a week, about 50 hours, is very unlikely to be enough to …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-feas-02-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-feas-02",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… a solid base, and there are about 13 weeks until mid-January. Walk-run interv…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-feas-02-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-feas-02",
+      "location": "summary",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "A daily walking habit plus about 13 weeks of gradual walk-run training is a …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-feas-03-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-feas-03",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…cked, I'd treat the 3 weeks (about 18 hours) as tight rather than safe. Meanwh…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-gc-01-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-gc-01",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… Осталось 6 иллюстраций, это около 24 часов, то есть 6 недель при 4 часах в не…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-jour-01-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-jour-01",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 22 hours of work over roughly 21 weeks, fin…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-jour-01-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-jour-01",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…bout 22 hours of work over roughly 21 weeks, finishing a week before March 20."
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-jour-02-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-jour-02",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… на пределе: до 20 декабря — около 19 часов, а работы — около 17. Поэтому марш…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-jour-02-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-jour-02",
+      "location": "decision_summary.what_changed",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Маршрут на 17 часов: отбор, сканирование, подписи к 10…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-jour-02-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-jour-02",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "До юбилея около 19 часов при 2 часах в неделю; подписи ко в…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-01_s4-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-01/s4",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 70 hours over six months, finishing about a…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-01_s5-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-01/s5",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…n't fit the whole plan: it's about 70 hours, and at 4 hours a weekend the next…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-01_s5-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-01/s5",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…nd the report itself come to about 34 hours, finishing just before May 7. The …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-01_s5-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-01/s5",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 70 hours do not fit two months at 4 hours a…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-01_s8-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-01/s8",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…With 6 hours a week, the remaining 34 hours take about 6 weeks, and May 7 is a…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-02_s2-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-02/s2",
+      "location": "decision_summary.impact",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Около 14 часов работы при 3 часах в неделю, с зап…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-05_s1-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-05/s1",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "8 костюмов около 40 часов работы при 5 часах в неделю."
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-05_s2-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-05/s2",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…ло 25 часов. Работы осталось около 34 часов, так что без изменений не успеть. …"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-long-05_s2-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-long-05/s2",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "Около 34 часов работы при примерно 25 часах до сп…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-route-01-1",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-route-01",
+      "location": "message_to_user",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "… remaining courses add up to about 80 hours. At 5 hours a week, plus the holid…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-route-01-2",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-route-01",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "About 80 hours remain and cannot be cut; at the n…"
+    },
+    {
+      "finding_id": "AF-novel_quantity-e2-route-01-3",
+      "rule": "novel_quantity",
+      "problem": "P7",
+      "severity": "info",
+      "scope": "eval_reference",
+      "record_id": "e2-route-01",
+      "location": "decision_summary.why",
+      "message": "A quantity with a unit (hours, weeks, %, money) in user-facing text does not appear in the input; confirm it is derived correctly.",
+      "evidence": "…t; at the new pace they need about 14 weeks, roughly 2 weeks more than remain."
+    },
+    {
+      "finding_id": "AF-unsupported_generalisation-e2-vres-01-1",
+      "rule": "unsupported_generalisation",
+      "problem": "P7",
+      "severity": "low",
+      "scope": "eval_reference",
+      "record_id": "e2-vres-01",
+      "location": "message_to_user",
+      "message": "Confident generalisation about people/markets/institutions without a source.",
+      "evidence": "…warmly and the stoneware detail is exactly what buyers like. It isn't finished yet: it has abo…"
+    }
+  ],
+  "known_issues": [
+    {
+      "id": "KI-001",
+      "records": [
+        "gj-nav-006"
+      ],
+      "problem": "X temporal / E realism",
+      "severity": "high",
+      "location": "expected_output.message_to_user",
+      "description": "«позвоню в воскресенье 5-го» — 5 October 2026 is a Monday (today is Sunday 27 September). The milestone move to 14 October is stated in decision_summary.impact but is not part of proposed_changes.",
+      "proposed_revision": "«позвоню в понедельник, 5-го» (or Sunday 4 October); add the milestone m1 date change to proposed_changes or drop it from the summary.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by the weekday_date_mismatch audit rule)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-001"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-002",
+      "records": [
+        "gj-time-001"
+      ],
+      "problem": "E realism (arithmetic) / B goal understanding",
+      "severity": "high",
+      "location": "expected_output.message_to_user, decision_summary",
+      "description": "«about 140 hours of remaining work … around 11 months» counts the already verified project 1 (1,500 min). Remaining work is n2+n3+n4+n5+n6 = 6,900 min ≈ 115 h ≈ 38 weeks (≈ 9 months) at 3 h/week. The alternative's why_not («too late for the job search you planned») assumes a job search although the user has just accepted a job.",
+      "proposed_revision": "Use ≈115 h / ≈9 months in the message, decision_summary.why and the alternative; replace the job-search rationale with the user's stated purpose, or ask what the portfolio is for now.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-002"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-003",
+      "records": [
+        "gj-time-004"
+      ],
+      "problem": "E realism (arithmetic)",
+      "severity": "high",
+      "location": "expected_output.message_to_user, modified_deadlines, decision_summary.impact",
+      "description": "After 18 October the plan leaves chapter 3 (720 min) + chapter 4 (1,200 min) = 32 h at 4 h/week ≈ 8 weeks (≈ 13 December); even using the unused vacation hours it is ≈ 29 November. Moving milestone m1 to 22 November and «about three extra weeks of buffer» are not supported. The original 10 December milestone was itself infeasible (55 h at 4 h/week ≈ 31 December), which the answer should surface. new_weekly_hours_planned: 15 although the plan returns to 4 h/week after 18 October (the schema cannot express a temporary pace).",
+      "proposed_revision": "Recompute the milestone (≈ early–mid December), state that the vacation recovers the previously missing time rather than creating buffer, and resolve the temporary-pace representation (see schema weakness S2 in docs/DATASET_AUDIT_v0.1.0.md).",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-003"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-004",
+      "records": [
+        "gj-task-004"
+      ],
+      "problem": "P9 language (gender-neutral persona)",
+      "severity": "high",
+      "location": "expected_output.message_to_user",
+      "description": "The assistant refers to itself in the masculine: «Подготовку разбил на 4 задачи». The persona must not use gendered self-reference.",
+      "proposed_revision": "«Подготовка разбита на 4 задачи, каждая — блоками до двух часов.»",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by ru_gendered_self_reference)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-005"
+      ],
+      "policy_refs": [
+        "POL-B",
+        "POL-D"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-005",
+      "records": [
+        "gj-clar-007"
+      ],
+      "problem": "P9 language (never infer the user's gender)",
+      "severity": "high",
+      "location": "expected_output.message_to_user, questions[1].question",
+      "description": "The user is addressed in the masculine: «едете ли вы один или с семьёй?» / «едете ли один или с семьёй?». The user's gender is unknown. Also asserts a market generalisation («во многих немецких IT-компаниях рабочий язык английский»).",
+      "proposed_revision": "«…и планируете переезд в одиночку или с семьёй?»; hedge or drop the market claim.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by ru_gendered_user_address)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-006"
+      ],
+      "policy_refs": [
+        "POL-D",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-006",
+      "records": [
+        "gj-nav-001"
+      ],
+      "problem": "B goal understanding (invented user fact) / L external-fact discipline",
+      "severity": "high",
+      "location": "expected_output.message_to_user",
+      "description": "States the user's niche as «бюджетные путешествия с детьми», which appears nowhere in the input (node n1 «Выбрать нишу» is verified but its result is not given). Also overclaims («около двух часов вместо месяцев проб и ошибок»).",
+      "proposed_revision": "Either add the chosen niche to the input (e.g. goal.description or the verified node's result) or write «в вашей нише»; soften the time claim.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-004"
+      ],
+      "policy_refs": [
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-007",
+      "records": [
+        "gj-time-003"
+      ],
+      "problem": "E realism (ungrounded number)",
+      "severity": "medium",
+      "location": "expected_output.message_to_user, decision_summary.why",
+      "description": "«в плане — примерно 60 [часов]» is not derivable from the input: no node has a duration, and the original pacing (10 h × 11 weeks) implies ≈110 h of capacity. The ≈30 h available until 12 December is correct.",
+      "proposed_revision": "Add estimated_duration_minutes to the input nodes so that the remaining total is grounded, or phrase the comparison without a number.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-007"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-D",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-008",
+      "records": [
+        "gj-jour-001"
+      ],
+      "problem": "E realism / P5 pacing",
+      "severity": "medium",
+      "location": "expected_output.journey.pacing, milestones, achievements[a4]",
+      "description": "Pacing says 10 h/week × 22 weeks (220 h) and the message says «в темпе 10 часов в неделю», but estimated tasks total ≈47 h (job-search nodes unestimated); milestone m1 (4 weeks ≈ 40 h of capacity) contains ≈14 h of tasks. Achievement a4 «Первое собеседование» unlocks on completing n14 («20 откликов и 3 собеседования»), i.e. after the third interview.",
+      "proposed_revision": "Rebalance milestone dates or explain where the remaining weekly time goes; attach a4 to a node that represents the first interview.",
+      "status": "open",
+      "found_by": "agent inspection (confirmed by capacity_mismatch)",
+      "triage": "Not changed in v0.1.1: rebalancing the milestone capacity and moving achievement a4 to a first-interview node is a product-content decision for a reviewer. J_MILESTONE_OVERBOOKED does not fire (the problem is under-booking, not over-booking).",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-009",
+      "records": [
+        "gj-route-004"
+      ],
+      "problem": "F dependency / E realism / I user agency",
+      "severity": "medium",
+      "location": "expected_output.added_nodes[n6], message_to_user, decision_summary",
+      "description": "Mentor session 2 (n6) depends on n4 (3 run-throughs), which depends on the final deck (m1 target 25 October) — but the sessions are only offered in October, leaving about 6 days; «Сроки не меняются» ignores this. «Экономия около 7 часов» counts only the 450-min cut in n2 and ignores the 2 added mentor hours (net ≈5.5 h). Cutting n2 from 20 to 5 decks is applied as a 'minor' change without asking.",
+      "proposed_revision": "Make the October window explicit (e.g. session 2 on a draft run-through), state the net saving, and ask before reducing the user's planned task.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-008"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-010",
+      "records": [
+        "gj-route-005"
+      ],
+      "problem": "I user agency / E realism",
+      "severity": "medium",
+      "location": "expected_output.modified_deadlines, requires_user_confirmation, decision_summary.impact",
+      "description": "Milestone m1 moves 1 → 23 November with requires_user_confirmation: false and the message presents the changes as done. decision_summary says the remediation is absorbed «using the buffer» although the milestone moves three weeks. Mock exam 2 on 23 November checks a fix made ~8 weeks earlier.",
+      "proposed_revision": "Apply the (to be decided) consent policy for milestone dates; schedule the second mock shortly after the drills; make the impact statement consistent.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by deadline_change_without_consent)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-009"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-011",
+      "records": [
+        "gj-task-003"
+      ],
+      "problem": "Q privacy / G verification quality",
+      "severity": "medium",
+      "location": "expected_output.tasks[n1-t1]",
+      "description": "Asks the user to import 18 months of shop sales data into an unspecified «free browser-based SQL sandbox»; sales exports often contain customer names and addresses. The COUNT(*) check compares two numbers that are both reported by the user, yet the ceiling is 'high'.",
+      "proposed_revision": "Use a local SQLite tool (or remove personal columns before any upload); make the check compare against something the user cannot simply type (e.g. the file's line count shown in the tool) or lower the ceiling.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-012"
+      ],
+      "policy_refs": [
+        "POL-B"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-012",
+      "records": [
+        "gj-goalchg-001"
+      ],
+      "problem": "P4 missing critical question / C question minimality",
+      "severity": "medium",
+      "location": "expected_output.message_to_user",
+      "description": "«The December 1 date still works» for a sub-60-minute 10 km, although the user's current pace is unknown (7 km 'feels okay').",
+      "proposed_revision": "Ask for the current 7 km time before asserting the date (or hedge: «if your 7 km pace is around X…»); keep the minor_adjustment classification.",
+      "status": "open",
+      "found_by": "agent inspection (confirmed by unsupported_feasibility_claim)",
+      "triage": "Needs a reviewer decision between asking for the current 7 km time and hedging; the example is otherwise valid.",
+      "policy_refs": [
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-013",
+      "records": [
+        "gj-jour-004"
+      ],
+      "problem": "P9 language (gendered identity labels) / realism",
+      "severity": "medium",
+      "location": "expected_output.journey.levels, achievements[a1]",
+      "description": "Level titles label the user with masculine forms: «Любитель доставки», «Уверенный нарезчик», «Домашний повар», «Хозяин ужина». A policy for gendered identity labels in Russian does not exist yet. Achievement a1 «Первое блюдо своими руками» unlocks on the first verified task, which is knife practice, not a dish.",
+      "proposed_revision": "Gender-neutral titles naming the stage rather than the person (e.g. «Уверенная нарезка», «Домашняя кухня», «Ужин для друзей»); attach a1 to the first dish (n5) or rename it.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by ru_gendered_identity_label)",
+      "triage": "Level titles are accepted under POL-D rule 3 (badge names may use natural role nouns); achievement a1 renamed because it unlocked on a technique, not a dish.",
+      "revision_ids": [
+        "REV-0.1.1-028"
+      ],
+      "policy_refs": [
+        "POL-B",
+        "POL-D"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-014",
+      "records": [
+        "gj-vprot-001",
+        "gj-vprot-003",
+        "gj-vprot-004",
+        "gj-task-002",
+        "gj-vres-002",
+        "ev-vr-01"
+      ],
+      "problem": "P2 verification (product capability assumptions)",
+      "severity": "medium",
+      "location": "verification protocols and messages",
+      "description": "Verification relies on capabilities that no spec defines: issuing a random scramble (vprot-001), calling the user's API endpoints (vprot-003), the AI opening links (vprot-004), automatic transcription and timing of audio (task-002), and sending control tasks in a later message (vres-002, ev-vr-01). If the product lacks them, the model learns to promise features that do not exist.",
+      "proposed_revision": "Product owner publishes the capability list (docs + navigator prompt); revise the examples to match it.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by capability_assumption / promises_later_message)",
+      "triage": "Fixed in gj-vprot-001 (no video), gj-vprot-003 (no API calls) and gj-vres-002 (no later message). gj-vprot-004 (fetching submitted links) and gj-task-002 (audio transcript) use capabilities declared available — resolved by policy. ev-vr-01 stays as it is: evaluation v0.1.0 is frozen and superseded by v0.2.0, where capability promises are checked (capability_compliance).",
+      "revision_ids": [
+        "REV-0.1.1-013",
+        "REV-0.1.1-014",
+        "REV-0.1.1-015",
+        "REV-0.1.1-016"
+      ],
+      "policy_refs": [
+        "POL-A",
+        "POL-B"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-015",
+      "records": [
+        "gj-jour-001",
+        "gj-jour-002",
+        "gj-jour-003",
+        "gj-task-001",
+        "gj-task-002",
+        "gj-task-004",
+        "gj-task-005",
+        "gj-vprot-004",
+        "gj-vprot-006"
+      ],
+      "problem": "P2 verification (user-entered data treated as objective)",
+      "severity": "medium",
+      "location": "verification protocols with only structured_result required",
+      "description": "Protocols whose only required evidence is user-entered (structured_result, sometimes + follow_up_questions) are not self_report_only and have a 'medium' or 'high' ceiling. Sometimes that is defensible (rows carry links or quotes), sometimes it is not (e.g. gj-jour-002 n3 capacity, gj-task-004 n1-t3 repairs). There is no rule for when structured user data may exceed 'limited'.",
+      "proposed_revision": "Decide a policy, e.g. «structured_result alone → limited, unless every row carries an externally checkable reference (URL, document, third-party message)»; then re-rate these protocols.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by user_entered_as_objective)",
+      "triage": "Every listed protocol re-rated under POL-B: lowered to limited, given checkable references with a URL check, or declared an inspectable artifact with a reason.",
+      "revision_ids": [
+        "REV-0.1.1-005",
+        "REV-0.1.1-016",
+        "REV-0.1.1-017",
+        "REV-0.1.1-018",
+        "REV-0.1.1-019",
+        "REV-0.1.1-020",
+        "REV-0.1.1-021",
+        "REV-0.1.1-022",
+        "REV-0.1.1-023"
+      ],
+      "policy_refs": [
+        "POL-B",
+        "POL-D"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-016",
+      "records": [
+        "gj-jour-005"
+      ],
+      "problem": "M safety (expert review)",
+      "severity": "low",
+      "location": "expected_output.message_to_user, milestones[m2]",
+      "description": "Health claim «About 8 kg over five months is a gradual pace» needs medical/dietetic confirmation; milestone m2 requires following an eating plan «from professional» that the user may never obtain.",
+      "proposed_revision": "Expert sign-off on the claim; make the m2 criterion conditional on the professional's plan existing.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "Needs medical/dietetic expert sign-off (expert tier).",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-017",
+      "records": [
+        "gj-feas-002"
+      ],
+      "problem": "M safety / L external-fact discipline",
+      "severity": "low",
+      "location": "expected_output.message_to_user, record safety_category",
+      "description": "«объём придётся наращивать быстрее, чем обычно советуют, а это главный риск травм» is a sports-medicine generalisation; classifying a marathon in 17 weeks from 10 km/week as 'allowed' rather than 'sensitive' is debatable.",
+      "proposed_revision": "Expert check of the claim and the category.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "Needs sports-medicine expert sign-off of the claim and of the safety category.",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-018",
+      "records": [
+        "gj-clar-001"
+      ],
+      "problem": "C question minimality",
+      "severity": "low",
+      "location": "expected_output.questions[2]",
+      "description": "The third question (country for payments) does not change the first steps; the answer's own fallback already plans without it.",
+      "proposed_revision": "Defer the payment-country question to the step where payments are set up.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "Question minimality judgement for a reviewer.",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-019",
+      "records": [
+        "gj-clar-002",
+        "gj-vres-003",
+        "gj-vres-005",
+        "gj-route-004",
+        "gj-route-006",
+        "gj-jour-003",
+        "gj-lang-001"
+      ],
+      "problem": "L external-fact discipline / K explanation quality (overclaiming)",
+      "severity": "low",
+      "location": "user-facing text",
+      "description": "Confident generalisations without a source: «many analyst roles value exactly that domain knowledge», «those two sections are what the demo-day judges decide on», «everything a hiring manager looks for», «ценнее любого количества чужих деков», «работает хуже любого, который вам нравится», «booking months ahead usually keeps them within budget», «на нём чаще всего спотыкаются». How much general knowledge the navigator may assert is not specified.",
+      "proposed_revision": "Hedge or remove; add a rule to DATASET_SPEC on stable general knowledge vs. claims that need a source.",
+      "status": "open",
+      "found_by": "agent inspection (partly confirmed by unsupported_generalisation)",
+      "triage": "Partly addressed: the overclaims in gj-route-004 and gj-clar-007 were softened while those examples were revised. The rule on stable general knowledge vs. claims needing a source is still not specified; remaining instances stay for review.",
+      "policy_refs": [
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-020",
+      "records": [
+        "gj-nav-003"
+      ],
+      "problem": "B goal understanding (invented detail)",
+      "severity": "low",
+      "location": "expected_output.message_to_user",
+      "description": "«3 тренировки в неделю по 25–30 минут, как и было» — the original session length is not in the input (3 h/week suggests ~60 min).",
+      "proposed_revision": "Drop «как и было» or ground the length in the input.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-034"
+      ],
+      "policy_refs": [
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-021",
+      "records": [
+        "gj-nav-008"
+      ],
+      "problem": "E realism",
+      "severity": "low",
+      "location": "expected_output.message_to_user",
+      "description": "A 5–6 sentence greeting (~60–90 words) is said to count as one of the three 100-word texts.",
+      "proposed_revision": "«8–10 предложений (около 100 слов)».",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-035"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-022",
+      "records": [
+        "gj-safe-002"
+      ],
+      "problem": "M safety (internal consistency)",
+      "severity": "low",
+      "location": "expected_output.professional_referral",
+      "description": "professional_referral.needed is false while professional_type and urgency are filled (an optional referral).",
+      "proposed_revision": "Represent an optional referral explicitly (schema) or set needed: false without type/urgency.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "Needs a schema decision on optional referrals (professional_referral.needed=false with a type).",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-023",
+      "records": [
+        "gj-mem-001"
+      ],
+      "problem": "Q privacy and memory",
+      "severity": "low",
+      "location": "expected_output.items[2]",
+      "description": "The caregiving constraint is stored with sensitive: false; it is a consequence of a family member's health condition and arguably sensitive.",
+      "proposed_revision": "Reviewer decision; document the sensitivity policy for derived constraints.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "Reviewer decision on the sensitivity of derived constraints.",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-024",
+      "records": [
+        "gj-mem-002"
+      ],
+      "problem": "B goal understanding (inferred detail)",
+      "severity": "low",
+      "location": "expected_output.items[0]",
+      "description": "«400 тысяч» is stored as «400 000 рублей» — the currency is inferred, not stated.",
+      "proposed_revision": "Store «400 000 (валюта не указана)» or confirm the currency.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-026"
+      ],
+      "policy_refs": [
+        "POL-D",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-025",
+      "records": [
+        "gj-mem-003"
+      ],
+      "problem": "E realism (internal consistency)",
+      "severity": "low",
+      "location": "expected_output.total_minutes",
+      "description": "total_minutes is 30 while the message plans 40 minutes (a 10-minute comparison that is not a task).",
+      "proposed_revision": "Put the comparison into scope_note and total 40, or drop it from the message.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-036"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-026",
+      "records": [
+        "gj-feas-003"
+      ],
+      "problem": "E realism (status calibration)",
+      "severity": "low",
+      "location": "expected_output.status",
+      "description": "Status 'likely_unrealistic' while the message calls the gap «small enough to close» (≈ $235/month). The spec does not define where 'ambitious' ends and 'likely_unrealistic' begins.",
+      "proposed_revision": "Define status boundaries in DATASET_SPEC (e.g. by the size of the change needed) and re-label consistently.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "Needs status boundaries for feasibility in DATASET_SPEC before re-labelling.",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-027",
+      "records": [
+        "gj-goalchg-002"
+      ],
+      "problem": "I user agency / B goal understanding",
+      "severity": "low",
+      "location": "expected_output.updated_goal.success_criteria",
+      "description": "The success criterion «10 оплаченных заказов за месяц» is set by the navigator without asking.",
+      "proposed_revision": "Mark it as a proposal/assumption or ask for the user's target.",
+      "status": "open",
+      "found_by": "agent inspection",
+      "triage": "The success criterion set by the navigator should be marked as a proposal or asked; left for review.",
+      "policy_refs": [
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-028",
+      "records": [
+        "gj-task-001"
+      ],
+      "problem": "E realism",
+      "severity": "low",
+      "location": "expected_output.tasks[n6-t3].sessions",
+      "description": "Three onboarding calls scheduled around three testers are modelled as sessions: 1.",
+      "proposed_revision": "sessions: 3 (the 60-minute total can stay).",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-020"
+      ],
+      "policy_refs": [
+        "POL-B"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-029",
+      "records": [
+        "gj-time-002"
+      ],
+      "problem": "K explanation / I user agency",
+      "severity": "low",
+      "location": "expected_output.message_to_user, modified_deadlines",
+      "description": "«примерно втрое быстрее» while the final milestone moves only from 30 June to 28 February (~1.6×); three milestone dates change without confirmation (earlier dates are commitments too).",
+      "proposed_revision": "Align the wording with the dates; decide the consent policy for bringing dates forward.",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (partly confirmed by deadline_change_without_consent)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-011"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-030",
+      "records": [
+        "gj-route-002"
+      ],
+      "problem": "J adaptation quality (schema limitation) / L external facts",
+      "severity": "low",
+      "location": "expected_output.preserved_progress, user_options",
+      "description": "The completed node n3 (verbal agreement with «Точка») stays 'completed' although the agreement is void — the schema cannot mark completed-but-invalidated progress. The spring option assumes «Точка» will host the exhibition after reopening.",
+      "proposed_revision": "Add an invalidated-progress representation to route_adaptation (schema); hedge the spring option («если «Точка» подтвердит даты»).",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-010"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-D"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-031",
+      "records": [
+        "gj-mem-002",
+        "gj-lang-001"
+      ],
+      "problem": "P9 language (input hygiene)",
+      "severity": "low",
+      "location": "input.user_memory",
+      "description": "Stored user memory in the input describes the user with masculine forms («свободен по выходным», «даже если сам пишет»). Inputs model what the product's memory would contain, and memory_extraction outputs must be gender-neutral.",
+      "proposed_revision": "«выходные свободны», «даже если пишет вперемешку».",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by ru_gendered_memory_input)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-026",
+        "REV-0.1.1-027"
+      ],
+      "policy_refs": [
+        "POL-D",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-032",
+      "records": [
+        "gj-route-002",
+        "gj-time-003"
+      ],
+      "problem": "P contrastive quality",
+      "severity": "low",
+      "location": "contrastive outputs gj-route-002-c1, gj-time-003-c1",
+      "description": "Rejected outputs carry an untagged extra defect — gendered self-reference («я уже всё проверил», «Перенёс ваш экзамен»). A rejected output should differ from the chosen one only in its tagged failure modes.",
+      "proposed_revision": "Neutral wording in the rejected outputs («всё уже проверено», «Экзамен перенесён на весну»).",
+      "status": "fixed_pending_review",
+      "found_by": "agent inspection (confirmed by ru_gendered_self_reference on contrastive scope)",
+      "triage": "Corrected in dataset v0.1.1; see the revision ledger entry.",
+      "revision_ids": [
+        "REV-0.1.1-007",
+        "REV-0.1.1-010"
+      ],
+      "policy_refs": [
+        "POL-C",
+        "POL-D",
+        "POL-E"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-033",
+      "records": [
+        "gj-vres-007"
+      ],
+      "problem": "G verification quality (input protocol)",
+      "severity": "low",
+      "location": "input.task.verification_protocol",
+      "description": "The input protocol verifies a knowledge task (reading three chapters) only through the written list of ideas; lint warns that no required method fits the task nature (VP_NATURE_MISMATCH, warning). Found when input protocols started to be linted in v0.1.1.",
+      "proposed_revision": "Make the follow-up question required (and mention it in the expected output), or accept the list as sufficient evidence of understanding.",
+      "status": "open",
+      "found_by": "v0.1.1 input lint (warning)",
+      "human_review": "pending"
+    },
+    {
+      "id": "KI-034",
+      "records": [
+        "ev-vr-01"
+      ],
+      "problem": "P2 verification (product capability)",
+      "severity": "low",
+      "location": "evaluation/cases/v0.1.0 reference_output",
+      "description": "The frozen evaluation v0.1.0 reference answer promises control tasks in a later message (CAP-PROACTIVE-MESSAGES is planned, not available). Evaluation v0.1.0 is kept unchanged for reproducibility.",
+      "proposed_revision": "None for v0.1.0 (frozen). Evaluation v0.2.0 checks capability promises in every case (capability_compliance).",
+      "status": "wont_fix",
+      "found_by": "agent inspection (M1.5 KI-014), split out in M1.6",
+      "human_review": "pending"
+    }
+  ]
+}

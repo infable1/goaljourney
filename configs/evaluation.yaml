@@ -1,4 +1,4 @@
-cases_dir: evaluation/cases/v0.1.0
+cases_dir: evaluation/cases/v0.2.0
 reports_dir: evaluation/reports
 # The runtime prompt used for model evaluation must match SFT export.
 navigator_prompt: prompts/navigator/v0.1.1/system.md

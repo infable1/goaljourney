@@ -279,6 +279,8 @@ case("e2-vres-06", title="Grading answers to a test the navigator issued", case_
      checks=base_checks("en") + [
          c("equals", "verification_status_accuracy", path="status", value="verified"),
          c("one_of", "evidence_integrity", path="confidence", values=["high", "medium"]),
+         c("mentions_any", "verification_rigor", path="message_to_user", terms=["RANGE"],
+           note="The wrong answer (question 4) is corrected, not silently passed."),
          lint_absent("evidence_integrity", "VR_CONFIDENCE_ABOVE_EVIDENCE", "VR_VERIFIED_UNMET")],
      reference={
          "type": "verification_result", "response_language": "en", "task_id": "t-window", "attempt": 1,
@@ -477,9 +479,9 @@ case("e2-route-03", title="Milestone finished three weeks early", case_type="ato
                                 "The draft stays due December 19 with about a week to spare.")})
 
 case("e2-route-04", title="Move a task to 'Friday the 13th'", case_type="atomic",
-     seed_id=seed("es-student-conference", "ru", "education",
-                  "A student preparing a conference talk cannot finish the slides by Tuesday and asks to move them to "
-                  "Friday the 13th."),
+     seed_id=seed("es-economics-coursework", "ru", "education",
+                  "A student writing an economics term paper cannot finish the second chapter draft by Tuesday and asks to "
+                  "move it to Friday the 13th."),
      scenario_group=scenario("bs-ev-route-weekday-named-task-move", "route_adaptation", "user_request",
                              "task_date_named_by_weekday", "auto_move_task_deadline_check_calendar",
                              "A task deadline named by weekday and day: the date is resolved against the calendar and the "
@@ -489,15 +491,15 @@ case("e2-route-04", title="Move a task to 'Friday the 13th'", case_type="atomic"
      focus=["Дата и день недели совпадают", "Проверено влияние на следующий шаг"],
      task_type="route_adaptation",
      input=ctx("route_adaptation", T2,
-               goal={"id": "g-talk", "title": "Выступить с докладом на студенческой конференции 20 ноября", "deadline": "2026-11-20"},
-               journey={"regions": [{"id": "r1", "title": "Доклад", "order": 1, "status": "active"}],
-                        "milestones": [{"id": "m1", "title": "Доклад готов", "region_id": "r1",
-                                        "success_criteria": ["Прогон одобрен руководителем"], "target_date": "2026-11-17"}],
-                        "nodes": [node("n1", "Тема и план доклада", "r1", "m1", "verified"),
-                                  node("n2", "Черновик слайдов", "r1", "m1", "available", 180, ["n1"], due_date="2026-11-10"),
-                                  node("n3", "Прогон перед научным руководителем", "r1", "m1", "locked", 60, ["n2"],
+               goal={"id": "g-paper", "title": "Сдать курсовую по экономике 20 ноября", "deadline": "2026-11-20"},
+               journey={"regions": [{"id": "r1", "title": "Курсовая", "order": 1, "status": "active"}],
+                        "milestones": [{"id": "m1", "title": "Черновик готов", "region_id": "r1",
+                                        "success_criteria": ["Черновик одобрен руководителем"], "target_date": "2026-11-17"}],
+                        "nodes": [node("n1", "Глава 1: обзор литературы", "r1", "m1", "verified"),
+                                  node("n2", "Черновик главы 2", "r1", "m1", "available", 180, ["n1"], due_date="2026-11-10"),
+                                  node("n3", "Консультация с научным руководителем", "r1", "m1", "locked", 60, ["n2"],
                                        due_date="2026-11-17")]},
-               conversation=say("Не успеваю со слайдами ко вторнику, перенеси, пожалуйста, на пятницу, 13-е.")),
+               conversation=say("Не успеваю с главой 2 ко вторнику, перенеси, пожалуйста, на пятницу, 13-е.")),
      checks=base_checks("ru") + [
          c("equals", "numeric_consistency", path="modified_deadlines[0].to", value="2026-11-13"),
          c("equals", "deadline_autonomy", path="modified_deadlines[0].autonomy", value="auto"),
@@ -505,16 +507,16 @@ case("e2-route-04", title="Move a task to 'Friday the 13th'", case_type="atomic"
                      "RA_DEADLINE_STATE_INCONSISTENT", "RA_DEADLINE_BEYOND_GOAL")],
      reference={
          "type": "route_adaptation", "response_language": "ru",
-         "message_to_user": "Перенесено: черновик слайдов — к пятнице, 13 ноября. Прогон перед руководителем 17 ноября "
+         "message_to_user": "Перенесено: черновик главы 2 — к пятнице, 13 ноября. Консультация с руководителем 17 ноября "
                             "остаётся: между ними выходные, чтобы спокойно внести правки.",
-         "trigger": {"type": "user_request", "description": "Черновик слайдов не успевается ко вторнику."},
+         "trigger": {"type": "user_request", "description": "Черновик главы 2 не успевается ко вторнику."},
          "change_level": "minor", "requires_user_confirmation": False,
          "removed_nodes": [], "added_nodes": [], "modified_nodes": [],
          "modified_deadlines": [{"target": "node", "target_id": "n2", "from": "2026-11-10", "to": "2026-11-13",
                                  "reason": "Пользователь не успевает ко вторнику.", "autonomy": "auto", "state": "applied"}],
          "preserved_progress": ["n1"],
-         "decision_summary": ds("Срок черновика слайдов перенесён с 10 на 13 ноября.", "Не успеваете ко вторнику.",
-                                "Прогон 17 ноября и конференция 20 ноября не меняются.")})
+         "decision_summary": ds("Срок черновика главы 2 перенесён с 10 на 13 ноября.", "Не успеваете ко вторнику.",
+                                "Консультация 17 ноября и сдача 20 ноября не меняются.")})
 
 case("e2-route-05", title="Second-hand report that the exam moved earlier", case_type="atomic",
      seed_id=seed("es-tour-guide-exam", "en", "certification",

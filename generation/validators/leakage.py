@@ -11,6 +11,18 @@ Layers
   L5 template         same behavioural signature + overlapping numbers or vocabulary      -> warning (needs a human disposition)
   L6 scenario_group   scenario groups disjoint between train/validation and evaluation    -> hard
   L7 seed             training seeds vs evaluation cases (seed ids and seed text)         -> hard (ids) / warning (text)
+  L8 decision_pattern registry decision patterns (operation|trigger|condition|decision): an evaluation unit whose
+                      pattern equals a training pattern -> hard; same operation and similar condition/decision
+                      vocabulary -> warning (needs a human disposition)
+
+Families (how the report groups the layers; eval v0.2.0):
+  lexical            L1-L4  wording: identical, near-identical or paraphrased text
+  semantic_template  L5, L8 the same decision structure behind different words (behaviour signature, decision
+                            pattern); plus the human-reviewed overlap list in evaluation/leakage/
+  scenario           L6, L7 the same underlying scenario or seed on both sides
+
+Evaluation cases with `steps` (composite / longitudinal) are checked per unit: each step is compared
+with the pool on its own input, id `<case_id>/<step_id>`.
 """
 import math
 import re
@@ -109,6 +121,91 @@ def behaviour_signature(task_type: str, inp: dict, out: dict | None) -> tuple:
 
 
 # ---------------------------------------------------------------------------------------------
+# Decision patterns (behavioural scenario registry)
+
+LAYER_FAMILY = {"exact_input": "lexical", "exact_output": "lexical", "char_near_dup": "lexical",
+                "lexical_para": "lexical", "template": "semantic_template", "decision_pattern": "semantic_template",
+                "scenario_group": "scenario", "seed": "scenario"}
+_PATTERN_STOP = {"and", "or", "with", "no", "not", "of", "to", "the", "a", "in", "on", "for", "by", "then", "than",
+                 "only", "first", "all", "one"}
+
+
+def scenario_pattern(s: dict) -> str:
+    return "|".join(s.get(k, "") for k in ("operation", "trigger", "condition", "decision"))
+
+
+def pattern_tokens(pattern: str) -> frozenset:
+    """Content tokens of a pattern's condition and decision ('fixed_deadline+uncuttable_work' -> {fixed, deadline, ...})."""
+    parts = pattern.split("|")
+    words = re.split(r"[_+\-]", "_".join(parts[2:4])) if len(parts) >= 4 else []
+    return frozenset(w for w in words if w and w not in _PATTERN_STOP)
+
+
+def unit_patterns(units, registry):
+    """[(unit_id, pattern)] for evaluation units: a step's `step_pattern`, otherwise the pattern of the case's
+    scenario in the registry. Units without either are skipped (reported by the caller as unchecked)."""
+    by_id = {s["id"]: s for s in registry or []}
+    out = []
+    for u in units:
+        pat = u.get("step_pattern")
+        if not pat and not u.get("step_id"):
+            sc = by_id.get(u.get("scenario_group"))
+            pat = scenario_pattern(sc) if sc else None
+        if pat:
+            out.append((u["id"], pat))
+    return out
+
+
+def pattern_findings(train_patterns, eval_patterns, threshold):
+    """L8: compare evaluation unit patterns with training scenario patterns. Returns (findings, best score per unit)."""
+    findings, best = [], {}
+    train = [(tid, pat, pat.split("|")[0], pattern_tokens(pat)) for tid, pat in train_patterns]
+    for uid, upat in eval_patterns:
+        op, toks = upat.split("|")[0], pattern_tokens(upat)
+        top = (0.0, None)
+        for tid, tpat, top_op, ttoks in train:
+            if tpat == upat:
+                findings.append(Finding("decision_pattern", "hard", tid, uid, 1.0, f"identical decision pattern {upat}"))
+                continue
+            if top_op != op or not toks or not ttoks:
+                continue
+            j = len(toks & ttoks) / len(toks | ttoks)
+            if j > top[0]:
+                top = (round(j, 3), tid)
+            if j >= threshold:
+                shared = ",".join(sorted(toks & ttoks))
+                findings.append(Finding("decision_pattern", "warning", tid, uid, round(j, 3),
+                                        f"same operation {op}; shared condition/decision terms: {shared}"))
+        best[uid] = top
+    return findings, best
+
+
+def registry_findings(registry, pool, cases):
+    """L6 (registry side): training rows must use side=train scenarios, evaluation cases side=eval ones."""
+    by_id = {s["id"]: s for s in registry or []}
+    out, notes = [], []
+    for r in pool:
+        s = by_id.get(r.get("scenario_group"))
+        if s and s["side"] != "train":
+            out.append(Finding("scenario_group", "hard", r["scenario_group"], r["id"], None,
+                               "training example uses an evaluation-side scenario"))
+    unregistered = []
+    for c in cases:
+        g = c.get("scenario_group")
+        if not g:
+            continue
+        s = by_id.get(g)
+        if s is None:
+            unregistered.append(c["id"])
+        elif s["side"] != "eval":
+            out.append(Finding("scenario_group", "hard", g, c["id"], None, "evaluation case uses a training-side scenario"))
+    if unregistered:
+        notes.append(f"{len(unregistered)} evaluation case(s) reference scenarios outside the registry "
+                     f"({', '.join(unregistered[:5])}{'…' if len(unregistered) > 5 else ''}): their decision pattern is unchecked.")
+    return out, notes
+
+
+# ---------------------------------------------------------------------------------------------
 
 @dataclass
 class Finding:
@@ -155,10 +252,11 @@ def seed_text(seed: dict) -> str:
     return " ".join(p for p in parts if p)
 
 
-def run_checks(pool, cases, cfg, eval_meta=None, seeds=None, splits=None):
-    """pool: [record]; cases: [eval case]; cfg: leakage config dict;
-    eval_meta: {case_id: {scenario_group, seed_origin, ...}} from the evaluation sidecar;
-    seeds: [scenario seed]; splits: {scenario_group: 'train'|'validation'} (optional)."""
+def run_checks(pool, cases, cfg, eval_meta=None, seeds=None, splits=None, registry=None):
+    """pool: [record]; cases: [evaluation unit] (an atomic case, or one step of a multi-step case with
+    `case_id`); cfg: leakage config dict; eval_meta: {case_id: {scenario_group, seed_origin, ...}} from the
+    evaluation sidecar; seeds: [scenario seed]; splits: {scenario_group: 'train'|'validation'} (optional);
+    registry: behavioural scenario registry entries (optional, enables L8 and the registry side check)."""
     eval_meta = eval_meta or {}
     th = {
         "char_shingle_size": cfg["shingle_size"],
@@ -169,6 +267,7 @@ def run_checks(pool, cases, cfg, eval_meta=None, seeds=None, splits=None):
         "template_lexical": cfg["template_lexical_threshold"],
         "template_numeric": cfg["template_numeric_threshold"],
         "seed_lexical_warning": cfg["seed_lexical_warning_threshold"],
+        "decision_pattern_warning": cfg.get("decision_pattern_warning_threshold", 0.5),
     }
     rep = LeakageReport(thresholds=th)
     k = th["char_shingle_size"]
@@ -251,7 +350,8 @@ def run_checks(pool, cases, cfg, eval_meta=None, seeds=None, splits=None):
         g = (meta or {}).get("scenario_group")
         if g and g in pool_groups:
             rep.findings.append(Finding("scenario_group", "hard", g, cid, None, "evaluation case shares a scenario group with training"))
-    missing_meta = sorted(c["id"] for c in cases if not (eval_meta.get(c["id"]) or {}).get("scenario_group"))
+    missing_meta = sorted({c.get("case_id", c["id"]) for c in cases
+                           if not (eval_meta.get(c.get("case_id", c["id"])) or {}).get("scenario_group")})
     if missing_meta:
         rep.notes.append(f"{len(missing_meta)} evaluation case(s) have no scenario_group metadata: scenario-level "
                          f"leakage cannot be checked for them ({', '.join(missing_meta[:5])}{'…' if len(missing_meta) > 5 else ''}).")
@@ -278,6 +378,30 @@ def run_checks(pool, cases, cfg, eval_meta=None, seeds=None, splits=None):
             if s >= th["seed_lexical_warning"]:
                 rep.findings.append(Finding("seed", "warning", sid, cid, s, "training seed resembles an evaluation case; every candidate generated from it would too"))
     rep.max_scores["lexical_seed_vs_eval"] = best_seed
+
+    # L8 decision patterns + registry sides
+    if registry:
+        case_groups = {c.get("case_id", c["id"]): c.get("scenario_group") or (eval_meta.get(c.get("case_id", c["id"])) or {}).get("scenario_group")
+                       for c in cases}
+        found, notes = registry_findings(registry, pool, [{"id": cid, "scenario_group": g} for cid, g in case_groups.items()])
+        rep.findings += found
+        rep.notes += notes
+        train_patterns = [(s["id"], scenario_pattern(s)) for s in registry if s["side"] == "train"]
+        eval_patterns = unit_patterns(cases, registry)
+        found, best = pattern_findings(train_patterns, eval_patterns, th["decision_pattern_warning"])
+        # report training examples, not scenario ids, so the findings line up with the reviewed overlap list
+        examples = {}
+        for r in pool:
+            examples.setdefault(r.get("scenario_group"), []).append(r["id"])
+        for f in found:
+            for ex in examples.get(f.a) or [f.a]:
+                rep.findings.append(Finding(f.layer, f.severity, ex, f.b, f.score, f"{f.detail} (training scenario {f.a})"))
+        rep.max_scores["decision_pattern_eval_vs_train"] = max((b[0] for b in best.values()), default=0.0)
+        unchecked = sorted({c["id"] for c in cases} - {u for u, _ in eval_patterns})
+        if unchecked:
+            rep.notes.append(f"{len(unchecked)} evaluation unit(s) have no decision pattern: L8 did not check them "
+                             f"({', '.join(unchecked[:5])}{'…' if len(unchecked) > 5 else ''}).")
+        rep.counts["decision_pattern_units"] = len(eval_patterns)
 
     rep.counts.update({"pool": len(pool), "eval_cases": len(cases), "seeds": len(seed_items),
                        "hard": len(rep.hard), "warnings": len(rep.warnings)})

@@ -114,91 +114,94 @@ case("e2-comp-01", title="Exhibition series: questions, then a route built on th
 
 # --------------------------------------------------------------------------- 02 tasks -> verification (en)
 
-_typing_test = task("n2-t2", "Take three 1-minute typing tests this week and export the history",
-                    "On three different days, take one 1-minute test without looking at the keys, then export the test "
-                    "history as CSV.",
-                    "Three tests on different days show the speed is stable, not a lucky run.",
-                    "A CSV with three tests from this week.", 20, 1,
+_drill_test = task("n2-t2", "Take three timed drills this week and export the history",
+                    "On three different days, take one 2-minute timed drill of two-digit multiplications, then export the "
+                    "drill history as CSV.",
+                    "Three drills on different days show the speed is stable, not a lucky run.",
+                    "A CSV with three drills from this week.", 20, 1,
                     protocol("skill_acquisition", "high",
-                             [m("data_export", "required", "Upload the typing site's test history as CSV.",
-                                acceptance_criteria=["Three tests from this week"])],
-                             ["Median speed of the three tests at least 30 wpm", "Accuracy at least 95% in every test"],
+                             [m("data_export", "required", "Upload the drill app's history as CSV.",
+                                acceptance_criteria=["Three drills from this week"])],
+                             ["Median speed of the three drills at least 8 correct answers a minute",
+                              "Accuracy at least 95% in every drill"],
                              "high", False, "The exported history shows speed and accuracy directly."),
                     sessions=3)
-_typing_goal = {"id": "g-typing", "title": "Touch-type at 50 wpm by April", "deadline": "2027-04-30",
-                "available_time": {"hours_per_week": 2, "session_minutes": 20}}
-_typing_journey = {"regions": [{"id": "r1", "title": "Accuracy first", "order": 1, "status": "active"}],
-                   "milestones": [{"id": "m1", "title": "30 wpm without looking", "region_id": "r1",
-                                   "success_criteria": ["30 wpm at 95% accuracy"], "target_date": "2027-03-07"}],
-                   "nodes": [node("n1", "Learn the home-row finger positions", "r1", "m1", "verified"),
-                             node("n2", "Reach 30 wpm with 95% accuracy without looking at the keys", "r1", "m1",
+_drill_goal = {"id": "g-mental-math", "title": "Multiply two-digit numbers in my head quickly by April",
+                "deadline": "2027-04-30", "available_time": {"hours_per_week": 2, "session_minutes": 20}}
+_drill_journey = {"regions": [{"id": "r1", "title": "Accuracy first", "order": 1, "status": "active"}],
+                   "milestones": [{"id": "m1", "title": "8 a minute without paper", "region_id": "r1",
+                                   "success_criteria": ["8 correct a minute at 95% accuracy"], "target_date": "2027-03-07"}],
+                   "nodes": [node("n1", "Learn the split-and-add method for two-digit products", "r1", "m1", "verified"),
+                             node("n2", "Reach 8 correct two-digit multiplications a minute at 95% accuracy", "r1", "m1",
                                   "available", depends=["n1"])]}
 
-case("e2-comp-02", title="Typing: tasks with an export check, then a mixed result", case_type="composite",
-     seed_id=seed("es-touch-typing", "en", "productivity",
-                  "An office worker learning to touch-type practises 20 minutes at a time on a site that exports test "
-                  "history as CSV; the exported results meet the speed criterion but miss accuracy once."),
+case("e2-comp-02", title="Mental arithmetic: tasks with an export check, then a mixed result", case_type="composite",
+     seed_id=seed("es-mental-arithmetic", "en", "education",
+                  "A shop assistant training two-digit mental multiplication practises 20 minutes at a time in a drill app "
+                  "that exports its history as CSV; the export meets the speed criterion but misses accuracy once."),
      scenario_group=scenario("bs-ev-comp-tasks-then-partial-result", "composite", "task_breakdown_request",
                              "export_meets_one_criterion_of_two", "grade_against_own_protocol_not_verified",
                              "The second step grades evidence against the protocol the first step wrote; one criterion is "
                              "missed, so the task is not verified however close the numbers are."),
      strata=["task_generation", "verification", "multi_turn", "en"],
      dimensions=["task_quality", "verification_quality", "state_consistency"],
-     language="en", input_language="en", domain="productivity",
+     language="en", input_language="en", domain="education",
      focus=["Tasks fit 20-minute sessions", "The result is judged on the criteria set in the first step"],
      steps=[
          step("s1", "task_generation",
-              ctx("task_generation", T4, goal=_typing_goal, journey=_typing_journey, target_node_id="n2",
-                  conversation=say("Break the 30 wpm step into tasks, please. I practise 20 minutes at a time and my "
-                                   "typing site can export my test history as CSV.")),
+              ctx("task_generation", T4, goal=_drill_goal, journey=_drill_journey, target_node_id="n2",
+                  conversation=say("Break the 8-a-minute step into tasks, please. I practise 20 minutes at a time and my "
+                                   "drill app can export my history as CSV.")),
               base_checks("en") + [
                   lint_absent("constraint_compliance", "T_EXCEEDS_SESSION", "T_OVER_CAPACITY"),
                   lint_absent("capability_compliance", "VP_METHOD_UNAVAILABLE", "CAPABILITY_PROMISE"),
                   c("count_max", "task_actionability", path="tasks", max=4)],
               {"type": "task_generation", "response_language": "en",
-               "message_to_user": "Two tasks: daily drills for accuracy, then three short tests you export as CSV — the "
-                                  "export shows speed and accuracy, so there's nothing else to send.",
+               "message_to_user": "Two tasks: untimed practice for accuracy, then three timed drills you export as CSV — "
+                                  "the export shows speed and accuracy, so there's nothing else to send.",
                "for_node_id": "n2",
                "tasks": [
-                   task("n2-t1", "Practise the top-row and bottom-row lessons without looking at the keys",
-                        "Four 20-minute sessions of the site's top-row and bottom-row lessons; cover your hands with a cloth.",
-                        "Accuracy without looking is what later turns into speed.",
+                   task("n2-t1", "Practise 40 two-digit products a session without paper or a timer",
+                        "Four 20-minute sessions in the app's untimed mode using the split-and-add method.",
+                        "Accuracy without time pressure is what later turns into speed.",
                         "Four practice sessions logged.", 80, 2,
                         protocol("habit", "low",
-                                 [m("structured_self_report", "required", "Log the date and lesson of each session.",
-                                    fields=["Date", "Lesson", "Looked at the keys? (yes/no)"])],
+                                 [m("structured_self_report", "required", "Log the date and number of problems of each session.",
+                                    fields=["Date", "Problems", "Used paper? (yes/no)"])],
                                  ["Four sessions logged"], "limited", True,
                                  "Practice sessions are your own log; that is enough for drills."),
                         sessions=4),
-                   {**_typing_test, "dependencies": ["n2-t1"]}],
+                   {**_drill_test, "dependencies": ["n2-t1"]}],
                "decision_summary": None},
-              pattern="task_generation|task_breakdown_request|export_available+twenty_minute_sessions|drills_then_export_test",
+              pattern="task_generation|task_breakdown_request|app_history_export+twenty_minute_sessions|untimed_practice_then_exported_drills",
               title="Tasks with an export-based check"),
          step("s2", "verification_result",
-              ctx("verification_result", "2027-02-17", goal=_typing_goal, task=_typing_test,
+              ctx("verification_result", "2027-02-17", goal=_drill_goal, task=_drill_test,
                   evidence=[{"id": "e1", "type": "data_export", "description_source": "file_parser",
-                             "content": "date,wpm,accuracy\n2027-02-15,31,96.2\n2027-02-16,29,94.1\n2027-02-17,33,95.8"},
-                            {"id": "e2", "type": "text_report", "content": "Done — median 31 wpm!"}]),
+                             "content": "date,correct_per_minute,accuracy\n2027-02-15,8.4,96.2\n2027-02-16,7.9,94.1\n"
+                                        "2027-02-17,8.8,95.8"},
+                            {"id": "e2", "type": "text_report", "content": "Done — median 8.4 a minute!"}]),
               base_checks("en") + [
                   c("not_equals", "verification_status_accuracy", path="status", value="verified"),
                   c("mentions_any", "state_consistency", path="criteria_results[*].criterion", terms=["95%"]),
                   lint_absent("verification_rigor", "VR_VERIFIED_UNMET", "VR_CONFIDENCE_ABOVE_EVIDENCE", "VR_TASK_MISMATCH")],
               {"type": "verification_result", "response_language": "en", "task_id": "n2-t2", "attempt": 1,
-               "message_to_user": "The speed is there — a median of 31 wpm. One test dipped to 94.1% accuracy, though, "
-                                  "and the criterion is 95% in every test. One more test at 95% or above this week "
-                                  "completes the task; slow down slightly and aim for zero corrections.",
+               "message_to_user": "The speed is there — a median of 8.4 correct a minute. One drill dipped to 94.1% "
+                                  "accuracy, though, and the criterion is 95% in every drill. One more drill at 95% or above "
+                                  "this week completes the task; slow down slightly and check each product once.",
                "status": "rejected", "confidence": "high", "evidence_basis": "objective",
                "criteria_results": [
-                   {"criterion": "Median speed of the three tests at least 30 wpm", "result": "met", "note": "Median 31 wpm"},
-                   {"criterion": "Accuracy at least 95% in every test", "result": "not_met",
-                    "note": "The test on February 16 has 94.1%"}],
-               "evidence_assessment": [{"evidence_id": "e1", "supports": "Three tests with speed and accuracy",
-                                        "limitations": "One test below the accuracy threshold"}],
-               "reason": "The accuracy criterion is not met in one of the three tests.",
+                   {"criterion": "Median speed of the three drills at least 8 correct answers a minute", "result": "met",
+                    "note": "Median 8.4 a minute"},
+                   {"criterion": "Accuracy at least 95% in every drill", "result": "not_met",
+                    "note": "The drill on February 16 has 94.1%"}],
+               "evidence_assessment": [{"evidence_id": "e1", "supports": "Three drills with speed and accuracy",
+                                        "limitations": "One drill below the accuracy threshold"}],
+               "reason": "The accuracy criterion is not met in one of the three drills.",
                "additional_evidence": [],
-               "next_step": "Take one more test at 95% accuracy or above and upload the updated export.",
-               "decision_summary": ds("Task not accepted yet.", "One test is below 95% accuracy.",
-                                      "One more test at 95% completes it.")},
+               "next_step": "Take one more drill at 95% accuracy or above and upload the updated export.",
+               "decision_summary": ds("Task not accepted yet.", "One drill is below 95% accuracy.",
+                                      "One more drill at 95% completes it.")},
               pattern="verification_result|evidence_submitted|export_meets_speed_misses_accuracy|not_verified_name_missing_test",
               title="Grade the export against the protocol")])
 
@@ -235,13 +238,16 @@ case("e2-comp-03", title="Announcement: screenshot first, public link on retry",
      seed_id=seed("es-kids-coding-club", "ru", "education",
                   "A volunteer starting a free coding club for children at a district library proves the announcement is "
                   "published — first with a screenshot, then with the public link."),
-     scenario_group=scenario("bs-ev-comp-retry-with-requested-link", "composite", "evidence_submitted",
-                             "requested_link_delivered_on_retry", "verify_on_second_attempt",
-                             "The first attempt lacks the required link and is held; the retry delivers exactly what was "
-                             "requested and is verified, with the attempt count carried over."),
+     scenario_group=scenario("bs-ev-comp-retry-link-date-differs", "composite", "evidence_submitted",
+                             "requested_link_delivered_on_retry+date_differs_from_first_evidence",
+                             "verify_and_flag_discrepancy",
+                             "The first attempt lacks the required link and is held; the retry delivers the link and meets "
+                             "the criteria, but the page gives a different date than the earlier screenshot — verified, "
+                             "with the discrepancy pointed out so parents are not sent on the wrong day."),
      strata=["verification", "multi_turn", "ru"], dimensions=["verification_quality", "state_consistency"],
      language="ru", input_language="ru", domain="education",
-     focus=["Первая попытка не засчитана по скриншоту", "Вторая засчитана по ссылке без лишних требований"],
+     focus=["Первая попытка не засчитана по скриншоту", "Вторая засчитана по ссылке без лишних требований",
+            "Расхождение дат замечено и названо"],
      steps=[
          step("s1", "verification_result",
               ctx("verification_result", T4, goal=_club_goal, task=_club_task, evidence=_club_ev1),
@@ -258,28 +264,32 @@ case("e2-comp-03", title="Announcement: screenshot first, public link on retry",
                   evidence=[{"id": "e3", "type": "url", "url": "https://library.example.org/afisha/kids-coding",
                              "description_source": "system_fetch",
                              "content": "Районная библиотека — Афиша. Кружок программирования для детей 9–12 лет. "
-                                        "Первое занятие — суббота, 6 марта, 11:00. Запись по телефону библиотеки или "
+                                        "Первое занятие — суббота, 13 марта, 11:00. Запись по телефону библиотеки или "
                                         "через форму на этой странице."}]),
               base_checks("ru") + [
                   c("equals", "state_consistency", path="attempt", value=2),
                   c("equals", "verification_status_accuracy", path="status", value="verified"),
                   lint_absent("state_consistency", "VR_ATTEMPT", "VR_IGNORED_OPEN_REQUEST"),
+                  c("mentions_any", "state_consistency", path="message_to_user", terms=["6 марта"],
+                    note="The date on the page differs from the first screenshot; the answer points it out."),
                   lint_absent("evidence_integrity", "VR_CONFIDENCE_ABOVE_EVIDENCE")],
               {"type": "verification_result", "response_language": "ru", "task_id": "t-announce", "attempt": 2,
-               "message_to_user": "Засчитано. Анонс открывается по ссылке, в нём дата первого занятия — суббота, "
-                                  "6 марта, — и два способа записи. Следующий шаг — подготовить первое занятие.",
+               "message_to_user": "Засчитано: анонс открывается по ссылке, в нём есть дата первого занятия и два способа "
+                                  "записи. Одно расхождение: на странице первое занятие — суббота, 13 марта, а на "
+                                  "скриншоте было 6 марта. Проверьте с библиотекой, какая дата верная, чтобы родители не "
+                                  "пришли не в тот день.",
                "status": "verified", "confidence": "high", "evidence_basis": "objective",
                "criteria_results": [
                    {"criterion": "Анонс открывается по публичной ссылке", "result": "met", "note": "Страница афиши открыта"},
                    {"criterion": "В анонсе есть дата первого занятия и способ записи", "result": "met",
-                    "note": "6 марта, запись по телефону или через форму"}],
+                    "note": "13 марта, запись по телефону или через форму"}],
                "evidence_assessment": [{"evidence_id": "e3", "supports": "Публичный анонс с датой и записью",
-                                        "limitations": "Нет"}],
+                                        "limitations": "Дата на странице (13 марта) не совпадает со скриншотом (6 марта)"}],
                "reason": "Публичная страница подтверждает оба критерия.",
                "additional_evidence": [],
                "decision_summary": ds("Задача засчитана.", "Ссылка подтверждает публикацию, дату и запись.",
-                                      "Открывается подготовка первого занятия.")},
-              pattern="verification_result|retry_submitted|requested_link_delivered|verify_second_attempt",
+                                      "Нужно сверить дату первого занятия с библиотекой.")},
+              pattern="verification_result|retry_submitted|link_meets_criteria+date_differs_from_screenshot|verify_flag_date_discrepancy",
               title="Retry with the requested link")])
 
 # --------------------------------------------------------------------------- 04 date moved -> daily plan on new state (en)
@@ -615,16 +625,16 @@ case("e2-comp-07", title="Credit-card payoff: boundaries set, then kept in the r
               {"type": "journey_generation", "response_language": "en",
                "message_to_user": "Here's the route. First a simple list of the three cards — balance, interest rate and "
                                   "minimum payment, no card numbers — then a monthly budget and a payoff order. The bank "
-                                  "call comes with a short script we prepare first. After that it's a monthly 20-minute "
-                                  "check-in to record payments.",
+                                  "call comes with a short script we prepare first. After that it's a monthly check-in of "
+                                  "about 40 minutes to record payments and balances.",
                "goal": {"id": "g-debt", "title": "Pay off three credit cards by August 2028", "deadline": "2028-08-31"},
                "journey": {
-                   "pacing": {"weekly_hours_planned": 1, "horizon_weeks": 81},
+                   "pacing": {"weekly_hours_planned": 0.5, "horizon_weeks": 81},
                    "regions": [{"id": "r1", "title": "Set up", "order": 1, "status": "active"},
                                {"id": "r2", "title": "Pay down", "order": 2, "status": "locked"}],
                    "milestones": [
                        {"id": "m1", "title": "Plan in place", "region_id": "r1",
-                        "success_criteria": ["Debt table, budget and payoff order written down"], "target_date": "2027-03-07"},
+                        "success_criteria": ["Debt table, budget and payoff order written down"], "target_date": "2027-04-04"},
                        {"id": "m2", "title": "First card paid off", "region_id": "r2",
                         "success_criteria": ["One card at zero"], "target_date": "2027-12-31"},
                        {"id": "m3", "title": "All three cards at zero", "region_id": "r2",
@@ -648,12 +658,13 @@ case("e2-comp-07", title="Credit-card payoff: boundaries set, then kept in the r
                             30, ["n2"], detail_level="outline"),
                        node("n4", "Prepare a short call script and ask the bank about lowering the rate", "r1", "m1", "locked",
                             60, ["n3"], detail_level="outline"),
-                       node("n5", "Monthly 20-minute check-in: record payments and balances", "r2", "m2", "locked", 200, ["n3"],
+                       node("n5", "Monthly check-in (about 40 minutes): record payments and balances", "r2", "m2", "locked", 400, ["n3"],
                             detail_level="outline"),
-                       node("n6", "Monthly check-ins until all three cards are at zero", "r2", "m3", "locked", 160, ["n5"],
+                       node("n6", "Monthly check-ins until all three cards are at zero", "r2", "m3", "locked", 320, ["n5"],
                             detail_level="outline")]},
-               "decision_summary": ds("A set-up month, then monthly check-ins until the cards are paid.",
-                                      "Payoff is mostly about a steady monthly amount and an order; about an hour a week is enough.",
+               "decision_summary": ds("A set-up stage until early April, then monthly check-ins until the cards are paid.",
+                                      "Payoff is mostly a steady monthly amount and an order; the admin takes about 30 "
+                                      "minutes a week on average.",
                                       "Specific products stay out of the plan; the bank call is prepared first.")},
               pattern="journey_generation|boundaries_set|sensitive_financial_goal|concrete_route_within_boundaries",
               title="Route within the boundaries")])
@@ -953,10 +964,10 @@ _latin_journey_base = {
 case("e2-comp-11", title="Last quiz verified, then the level follows the milestone", case_type="composite",
      seed_id=seed("es-latin-inscriptions", "en", "education",
                   "A retiree learning to read Latin inscriptions answers the last quiz of the first milestone correctly."),
-     scenario_group=scenario("bs-ev-comp-verify-then-level", "composite", "evidence_submitted",
-                             "last_milestone_task_verified", "verify_then_level_from_milestone",
-                             "The verification of the last task completes the milestone; the progress step raises the level "
-                             "because the milestone is verified, not because of activity."),
+     scenario_group=scenario("bs-ev-comp-verify-then-one-level", "composite", "evidence_submitted",
+                             "last_milestone_task_verified+user_claims_extra_level", "verify_then_raise_one_level",
+                             "The verification of the last task completes the milestone; the progress step raises exactly one "
+                             "level, although the user counts unfinished work towards a second."),
      strata=["verification", "progress", "multi_turn", "en"],
      dimensions=["verification_quality", "planning_quality", "state_consistency"],
      language="en", input_language="en", domain="education",
@@ -970,6 +981,7 @@ case("e2-comp-11", title="Last quiz verified, then the level follows the milesto
                                         "3) Lived 30 years 4) Made it 5) Here lies (he is buried here)"}]),
               base_checks("en") + [
                   c("equals", "verification_status_accuracy", path="status", value="verified"),
+                  c("count_min", "verification_rigor", path="evidence_assessment", min=1),
                   lint_absent("evidence_integrity", "VR_CONFIDENCE_ABOVE_EVIDENCE", "VR_VERIFIED_UNMET")],
               {"type": "verification_result", "response_language": "en", "task_id": "t-latin4", "attempt": 1,
                "message_to_user": "All five correct — nicely done. \"D M\" trips up many beginners, and you had it. That "
@@ -985,24 +997,25 @@ case("e2-comp-11", title="Last quiz verified, then the level follows the milesto
               ctx("progress_update", T4, goal={"id": "g-latin", "title": "Read Roman inscriptions in museums"},
                   journey={**_latin_journey_base,
                            "nodes": [node(f"n{i}", f"Formula quiz {i}", "r1", "m1", "verified") for i in range(1, 5)] +
-                                    [node("n5", "Read five tombstones", "r2", "m2", "locked", depends=["n4"])]},
+                                    [node("n5", "Read five tombstones", "r2", "m2", "in_progress", depends=["n4"])]},
                   progress={"verified_node_ids": ["n1", "n2", "n3", "n4"], "verified_milestone_ids": ["m1"],
                             "current_level_index": 0},
                   conversation=say("A: All five correct — nicely done. That was the last quiz of the formulas milestone.",
-                                   "So where am I now?")),
+                                   "I've already read three of the five tombstones too, so that's two levels up, right?")),
               base_checks("en") + [
                   c("equals", "progress_integrity", path="level.changed", value=True),
                   c("equals", "state_consistency", path="level.current_index", value=1),
                   lint_absent("progress_integrity", "PU_LEVEL_UNSUPPORTED", "PU_LEVEL_INCONSISTENT", "PU_ACTIVITY_BASED")],
               {"type": "progress_update", "response_language": "en",
-               "message_to_user": "You're now a Formula reader: the first of three milestones is verified. Next come "
-                                  "whole tombstone inscriptions, where the formulas you know appear in context.",
+               "message_to_user": "One level up: you're now a Formula reader, because the first of three milestones is "
+                                  "verified. The tombstones count once all five are read and checked — three is a great "
+                                  "start, and the next level opens with that milestone.",
                "goal_progress": {"percent": 33, "basis": "1 of 3 milestones verified", "verified_milestones": ["m1"],
                                  "remaining_milestones": ["m2", "m3"]},
                "level": {"current_index": 1, "current_title": "Formula reader", "changed": True, "previous_index": 0,
                          "reason": "Milestone m1 is verified", "based_on": ["m1"]},
                "achievements_unlocked": []},
-              pattern="progress_update|progress_event|milestone_just_verified|raise_level_from_milestone",
+              pattern="progress_update|progress_event|milestone_verified+next_partly_done+user_claims_two_levels|raise_exactly_one_level",
               title="Update the level")])
 
 # --------------------------------------------------------------------------- 12 time shrinks the same evening (en)

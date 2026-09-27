@@ -13,6 +13,7 @@ paths:
   known_issues: review/known_issues_v{version}.yaml   # issues found by inspection, with proposed revisions
   audit_findings: review/audit_findings_v{version}.json
   manifest: review/review_manifest_v{version}.json
+  sample_status: review/review_sample_status_v{version}.json   # the sample in force, carried to a later version
 
 # Who may do what. A reviewer's roles, languages and expert domains are copied into every event so
 # that a later registry edit cannot change the meaning of a past decision.
@@ -50,6 +51,10 @@ tiers:
 expert_domains: [medical, mental_health, legal, financial, physical_safety, privacy, safety_policy]
 
 sampling:
+  # The review sample in force. A new dataset version keeps it unless a new sample is drawn deliberately:
+  # v0.1.1 carries the v0.1.0 sample forward (review/review_sample_status_v0.1.1.json records per item what
+  # changed); it is regenerated from the frozen v0.1.0 inputs (release files, audit findings, known issues).
+  sample_version: "0.1.0"
   seed: 20260927
   size: 30
   # Order matters: `random` is drawn first from the whole pool, so it stays an unbiased sample that

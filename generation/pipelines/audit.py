@@ -285,7 +285,12 @@ def rule_p6(c, rid, scope, tt, inp, out, lang, meta):
         if bad:
             ds = "; ".join(f"{d.get('target')} {d.get('target_id')}: {d.get('from')}→{d.get('to')}" for d in bad)
             c.add("deadline_change_without_consent", scope, rid, "modified_deadlines", ds)
-        if out.get("change_level") in ("moderate", "major") and not confirm and out.get("removed_nodes"):
+        trig = (out.get("trigger") or {}).get("type")
+        # removals that carry out a decision the user already confirmed (recorded in decision_log with the same
+        # trigger, no earlier than the latest event) are not changes "without asking"
+        last_event = max((e.get("date", "") for e in inp.get("events") or []), default="")
+        confirmed = any(d.get("trigger") == trig and d.get("date", "") >= last_event for d in inp.get("decision_log") or [])
+        if out.get("change_level") in ("moderate", "major") and not confirm and out.get("removed_nodes") and not confirmed:
             c.add("change_without_consent", scope, rid, "removed_nodes",
                   f"{out.get('change_level')} change removes {[r.get('node_id') for r in out['removed_nodes']]} without confirmation")
         if confirm:

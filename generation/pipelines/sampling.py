@@ -265,7 +265,8 @@ def build_manifest(version=None, records=None, findings=None, known=None, cfg=No
             "audit_findings_sha256": sha256_text(canonical_json(sorted(
                 [f["finding_id"], f["severity"]] for f in findings if f["scope"] in ("expected_output", "contrastive", "input")))),
             "known_issues_sha256": sha256_text(canonical_json(sorted([k["id"], k["severity"], k["status"]] for k in known))),
-            "risk_weights": weights, "sampling_config": scfg,
+            # sample_version selects which sample is in force; it is not a parameter of the draw
+            "risk_weights": weights, "sampling_config": {k: v for k, v in scfg.items() if k != "sample_version"},
         },
         "items": items,
     }
@@ -276,8 +277,35 @@ def manifest_path(version=None):
     return repo_path(RS.review_config()["paths"]["manifest"].format(version=version or versions()["dataset_version"]))
 
 
+def frozen_inputs(version):
+    """Records, audit findings and known issues exactly as they were when the sample of `version` was drawn:
+    the release files of that version (not the current pool), its committed audit report and its known issues."""
+    from .split import release_paths
+    paths = release_paths(version)
+    sources = {r["id"]: rel(p) for r, p, _ in load_pool()}
+    records = []
+    for split in ("train", "validation"):
+        for line in paths[split].read_text(encoding="utf-8").splitlines():
+            r = json.loads(line)
+            for k in ("review_status", "content_hash"):
+                r.pop(k, None)
+            records.append({**r, "_source": sources.get(r["id"], "")})
+    findings = load_json(audit._path_for("audit_findings", version))["findings"]
+    return records, findings, audit.load_known_issues(version)
+
+
+def build_sample_in_force():
+    """The manifest of the review sample in force (configs/review.yaml sampling.sample_version)."""
+    current = versions()["dataset_version"]
+    version = RS.review_config()["sampling"].get("sample_version") or current
+    if version == current:
+        return build_manifest()
+    records, findings, known = frozen_inputs(version)
+    return build_manifest(version=version, records=records, findings=findings, known=known)
+
+
 def run(write=False, check=False, as_json=False):
-    manifest = build_manifest()
+    manifest = build_sample_in_force()
     errs = schemas.validate("review_manifest", manifest)
     if errs:
         print("✗ manifest does not match schemas/review_manifest.json:", errs[:5])

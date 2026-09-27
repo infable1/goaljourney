@@ -56,6 +56,8 @@ def expand_units(case: dict) -> list:
             unit["human_review_focus"] = st["human_review_focus"]
         if st.get("title"):
             unit["step_title"] = st["title"]
+        if st.get("step_pattern"):
+            unit["step_pattern"] = st["step_pattern"]
         units.append(unit)
     return units
 
