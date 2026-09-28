@@ -43,13 +43,13 @@ capabilities:
     status: planned
     description: Reading or writing the user's calendar.
   CAP-API-CALLS:
-    status: unsupported
+    status: planned
     description: Calling the user's own services (POST/PUT/DELETE, authenticated requests) — a security boundary.
   CAP-ACCOUNT-ACCESS:
-    status: unsupported
+    status: planned
     description: Logging into user accounts or third-party platforms on the user's behalf.
   CAP-THIRD-PARTY-CONTACT:
-    status: unsupported
+    status: planned
     description: Contacting people or organisations on the user's behalf.
   CAP-LOCATION-BIOMETRICS:
     status: unsupported
