@@ -16,4 +16,11 @@ jobs:
       - name: Record review
         run: |
           python scripts/gj.py review approve gj-daily-002 --reviewer po-reviewer --rate product_usefulness=good --rate goal_understanding=good --rate actionability=good --rate realism=good --rate dependency_correctness=good --rate explanation_quality=good --rate external_fact_discipline=good --rate safety=good --rate language_quality=minor_issues --rate contrastive_quality=good --overall acceptable --notes "Minor language issue: 'Сайт подождёт до после дедлайна' is grammatically incorrect; better 'Сайт можно поправить после дедлайна'."
+      - name: Push review record
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/reviewed/review_events.jsonl data/reviewed/snapshots
+          git commit -m "record human review 20 result"
+          git push
 
