@@ -1,0 +1,187 @@
+{
+  "content_hash": "2b0753a0773e454d4c5de511d53bf464c954ddcb3efd7fa05a6ed66bc432bc9b",
+  "example_id": "gj-daily-002",
+  "task_type": "daily_plan",
+  "input": {
+    "operation": "daily_plan",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-grant",
+      "title": "Подать заявку на грант для нашего НКО",
+      "deadline": "2026-09-30",
+      "deadline_flexibility": "fixed"
+    },
+    "time_budget": {
+      "available_minutes_today": 90
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Заявка",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Заявка подана",
+          "region_id": "r1",
+          "success_criteria": [
+            "Заявка отправлена через портал до 30 сентября"
+          ],
+          "target_date": "2026-09-30"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Собрать уставные документы",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Написать раздел «Бюджет проекта»",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "depends_on": [
+            "n1"
+          ],
+          "estimated_duration_minutes": 60,
+          "priority": "critical",
+          "due_date": "2026-09-29"
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Написать раздел «Ожидаемые результаты»",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "estimated_duration_minutes": 60,
+          "priority": "critical",
+          "due_date": "2026-09-29"
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Обновить раздел «О нас» на сайте организации",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "estimated_duration_minutes": 60,
+          "priority": "optional"
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Финальная вычитка и подача заявки",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n2",
+            "n3"
+          ],
+          "estimated_duration_minutes": 60,
+          "due_date": "2026-09-30"
+        }
+      ]
+    }
+  },
+  "expected_output": {
+    "type": "daily_plan",
+    "response_language": "ru",
+    "message_to_user": "До подачи три дня, поэтому сегодня — только то, без чего заявку не отправить: раздел «Бюджет» целиком (60 минут) и первые 30 минут раздела «Ожидаемые результаты» — черновик трёх главных результатов с цифрами. Завтра останется дописать результаты, и 30-го — вычитка и подача.\nСайт подождёт до после дедлайна: на заявку он не влияет.",
+    "available_minutes": 90,
+    "recommended_tasks": [
+      {
+        "task_id": "n2",
+        "reason": "Критичный раздел со сроком 29 сентября, без него заявку не подать.",
+        "estimated_duration_minutes": 60
+      },
+      {
+        "task_id": "n3",
+        "reason": "Второй критичный раздел с тем же сроком; начинаем сегодня, чтобы завтра был запас.",
+        "estimated_duration_minutes": 30,
+        "scope_note": "Черновик трёх главных ожидаемых результатов с цифрами; формулировки — завтра."
+      }
+    ],
+    "total_minutes": 90,
+    "deferred": [
+      {
+        "task_id": "n4",
+        "reason": "Не влияет на заявку; после 30 сентября."
+      }
+    ],
+    "next_action": "Открыть шаблон бюджета и внести статьи расходов по порядку."
+  },
+  "contrastive": [
+    {
+      "id": "gj-daily-002-c1",
+      "failure_modes": [
+        "ignored_deadline"
+      ],
+      "critique": "Spends the day on the optional website update while the budget section due in two days is neither planned nor deferred.",
+      "output": {
+        "type": "daily_plan",
+        "response_language": "ru",
+        "message_to_user": "Сегодня обновим сайт и начнём результаты — это приятные задачи для разгона.",
+        "available_minutes": 90,
+        "recommended_tasks": [
+          {
+            "task_id": "n4",
+            "reason": "Сайт — лицо организации.",
+            "estimated_duration_minutes": 60
+          },
+          {
+            "task_id": "n3",
+            "reason": "Нужно для заявки.",
+            "estimated_duration_minutes": 30
+          }
+        ],
+        "total_minutes": 90,
+        "next_action": "Открыть админку сайта."
+      }
+    },
+    {
+      "id": "gj-daily-002-c2",
+      "failure_modes": [
+        "exposed_reasoning"
+      ],
+      "critique": "Leaks a hidden reasoning trace into the answer shown to the user.",
+      "output": {
+        "type": "daily_plan",
+        "response_language": "ru",
+        "message_to_user": "<think>Дедлайн 30-го, значит сначала бюджет, потом результаты, сайт не важен...</think> Сегодня: бюджет и черновик результатов.",
+        "available_minutes": 90,
+        "recommended_tasks": [
+          {
+            "task_id": "n2",
+            "reason": "Критичный раздел.",
+            "estimated_duration_minutes": 60
+          },
+          {
+            "task_id": "n3",
+            "reason": "Критичный раздел.",
+            "estimated_duration_minutes": 30
+          }
+        ],
+        "total_minutes": 90,
+        "deferred": [
+          {
+            "task_id": "n4",
+            "reason": "После дедлайна."
+          }
+        ],
+        "next_action": "Открыть шаблон бюджета."
+      }
+    }
+  ]
+}
