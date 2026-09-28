@@ -100,7 +100,7 @@ The former rule remains historical for the v0.1.1 contract and is not silently r
 *Source:* Product Owner decision 2026-09-28; supersedes D-010.
 
 **D-011 — Train future-correct behaviour, with representable capabilities only.**
-*Source:* POL-F. *Status:* adopted.
+*Source:* POL-F. *Status:* confirmed by product owner 2026-09-28.*
 
 **D-012 — The model and provider stay replaceable.**
 * The base model is unset until chosen and is recorded in `configs/versions.yaml`, never
@@ -117,7 +117,7 @@ The former rule remains historical for the v0.1.1 contract and is not silently r
 **D-013 — User data never enters training automatically.** No real user data is in the dataset.
 Any future use of product data needs explicit consent, anonymisation, a documented source and human
 review.
-*Source:* DATA_SOURCES.md. *Status:* adopted.
+*Source:* DATA_SOURCES.md. *Status:* confirmed by product owner 2026-09-28.*
 
 **D-014 — Training-ready data requires approval gates.**
 * Only content a qualified human approved, by exact content hash, reaches a training file.
@@ -125,13 +125,13 @@ review.
 * Automation never approves.
 * Gates are not loosened to produce a passing release.
 
-*Source:* DATASET_SPEC §14–16. *Status:* adopted.
+*Source:* DATASET_SPEC §14–16. *Status:* confirmed by product owner 2026-09-28.*
 
 **D-015 — Releases are immutable, and every change is traced.** A changed example gets a new
 `dataset_version` and an entry in the revision ledger (`data/revisions/v<ver>.yaml`): defect,
 correction, rationale and snapshots. `gj split` refuses an incomplete ledger. There are no silent
 edits.
-*Source:* DATASET_SPEC §15. *Status:* adopted.
+*Source:* DATASET_SPEC §15. *Status:* confirmed by product owner 2026-09-28.*
 
 **D-016 — Records are validated against the rules of their own `schema_version`.** Old data is never
 re-judged by newer rules.
