@@ -33,7 +33,7 @@ jobs:
             --rate external_fact_discipline=good \
             --rate safety=good \
             --rate language_quality=good \
-            --rate contrastive_quality=acceptable \
+            --rate contrastive_quality=good \
             --overall acceptable \
             --notes "Reviewer asked whether daily_plan should also build the full period plan. Review concluded this item correctly focuses on today; the full route is represented upstream."
       - name: Verify log
