@@ -1,0 +1,16 @@
+name: record human review 20
+on:
+  push:
+    branches:
+      - claude/fervent-keller-j517cd
+jobs:
+  record:
+    if: contains(github.event.head_commit.message, 'record human review 20')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record review
+        run: |
+          python scripts/gj.py review approve gj-daily-002 --reviewer po-reviewer --rate product_usefulness=good --rate goal_understanding=good --rate actionability=good --rate realism=good --rate dependency_correctness=good --rate explanation_quality=good --rate external_fact_discipline=good --rate safety=good --rate language_quality=minor_issues --rate contrastive_quality=good --overall acceptable --notes "Minor language issue: 'Сайт подождёт до после дедлайна' is grammatically incorrect; better 'Сайт можно поправить после дедлайна'."
