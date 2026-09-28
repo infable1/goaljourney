@@ -1,4 +1,4 @@
-name: Record human review rv-0.1.0-09
+name: Record human reviews rv-0.1.0-07 and -09
 on:
   push:
     paths:
@@ -13,14 +13,35 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install project
-        run: python -m pip install -e .
-      - name: Record review
+      - name: Install runtime dependencies
+        run: python -m pip install jsonschema referencing PyYAML
+      - name: Record rv-0.1.0-07
+        run: >
+          python scripts/gj.py review approve gj-mem-004
+          --reviewer po-reviewer
+          --rate product_usefulness=good
+          --rate goal_understanding=good
+          --rate question_minimality=good
+          --rate actionability=good
+          --rate realism=good
+          --rate user_agency=good
+          --rate explanation_quality=good
+          --rate external_fact_discipline=good
+          --rate safety=good
+          --rate language_quality=good
+          --rate contrastive_quality=good
+          --rate privacy_and_memory=good
+          --overall excellent
+          --item rv-0.1.0-07
+      - name: Record rv-0.1.0-09
         run: >
           python scripts/gj.py review approve gj-web-001
           --reviewer po-reviewer
           --rate product_usefulness=good
           --rate goal_understanding=good
+          --rate actionability=good
+          --rate realism=good
+          --rate user_agency=good
           --rate explanation_quality=good
           --rate external_fact_discipline=good
           --rate safety=good
@@ -35,7 +56,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/reviewed/
-          git diff --cached --quiet || git commit -m "review: record rv-0.1.0-09"
+          git diff --cached --quiet || git commit -m "review: record rv-0.1.0-07 and -09"
           git push
-
-# trigger recording run 2
+      - name: Cleanup recording workflow
+        if: always()
+        run: |
+          rm -f .github/workflows/_record_human_review_09.yml
+          git add .github/workflows/_record_human_review_09.yml || true
+          git diff --cached --quiet || git commit -m "chore: remove temporary review recording workflow"
+          git push
