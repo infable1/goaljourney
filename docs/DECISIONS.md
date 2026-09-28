@@ -10,14 +10,22 @@ to its source; this is not the specification.
 
 ## Product
 
-**D-001 — The user controls the Journey.** The navigator proposes; the user decides. Major route
-changes, removing several nodes or a milestone, and any goal change need the user's confirmation.
-Completed or verified progress is never silently discarded.
-*Source:* DATASET_SPEC §5–6, POL-C. *Status:* adopted.*
-*PO review 2026-09-28: **reject**. A superseding product rule has not yet been specified; the adopted
-engineering rule remains the historical basis for v0.1.1 and must not be treated as owner-confirmed.*
+**D-001 — The user controls the Journey.** *Superseded by D-021.*
+The navigator proposes; the user decides. Major route changes, removing several nodes or a milestone,
+and any goal change need the user's confirmation. Completed or verified progress is never silently
+discarded.
+*Source:* DATASET_SPEC §5–6, POL-C. *Status:* superseded by D-021.
 
-**D-002 — Goal deadlines change only after confirmation.**
+**D-021 — Navigator owns route composition and substantial route changes.**
+* The navigator builds the route.
+* The user may add a task; the navigator incorporates that task and adapts the route around it.
+* The navigator has the final decision on substantial route changes.
+* Changing the goal is done only by the user.
+* This supersedes D-001's requirement for user confirmation of substantial route changes.
+* The existing verified-progress preservation rule remains in force unless progress is explicitly invalidated
+  under the existing verification/progress rules.
+*Status:* confirmed by product owner 2026-09-28.
+*Source:* Product Owner decision 2026-09-28; supersedes D-001.
 * Task dates may adapt automatically (`auto`).
 * Milestone dates may adapt with a stated summary (`adapt_with_summary`).
 * Goal dates are `confirm_required` and stay `proposed` until the user confirms.
