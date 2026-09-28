@@ -135,7 +135,7 @@ edits.
 
 **D-016 — Records are validated against the rules of their own `schema_version`.** Old data is never
 re-judged by newer rules.
-*Source:* DATASET_SPEC §2. *Status:* adopted.
+*Source:* DATASET_SPEC §2. *Status:* confirmed by product owner 2026-09-28.*
 
 ## Evaluation
 
@@ -146,19 +146,19 @@ re-judged by newer rules.
 * Reviewed overlaps need human dispositions.
 * No report claims "no leakage".
 
-*Source:* docs/EVALUATION_V0.2_DESIGN.md, docs/LEAKAGE_CHECKS.md. *Status:* adopted.
+*Source:* docs/EVALUATION_V0.2_DESIGN.md, docs/LEAKAGE_CHECKS.md. *Status:* confirmed by product owner 2026-09-28.*
 
 **D-018 — Metrics are reported per metric and per dimension, with no overall score.** Multi-step
 cases are scored per teacher-forced step, and a case passes only if all its steps pass.
-*Source:* DATASET_SPEC §17. *Status:* adopted.
+*Source:* DATASET_SPEC §17. *Status:* confirmed by product owner 2026-09-28.*
 
 **D-019 — Evaluation cases are authored in `evaluation/builders/` and rendered to YAML.** The
 generated YAML is never edited by hand.
-*Source:* EVALUATION_V0.2_DESIGN §6. *Status:* adopted.
+*Source:* EVALUATION_V0.2_DESIGN §6. *Status:* confirmed by product owner 2026-09-28.*
 
 ## Engineering process
 
 **D-020 — The repository is the durable project state.** State lives in `docs/PROJECT_STATE.md`,
 `ACTIVE_MILESTONE.md`, `DECISIONS.md` and `ROADMAP.md`, not in chat history. One milestone is handled
 per primary session.
-*Source:* docs/CONTEXT_MANAGEMENT.md. *Status:* adopted.
+*Source:* docs/CONTEXT_MANAGEMENT.md. *Status:* confirmed by product owner 2026-09-28.*
