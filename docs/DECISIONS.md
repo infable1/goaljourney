@@ -67,26 +67,38 @@ The former roadmap classification remains historical for the v0.1.1 contract.
 *Source:* Product Owner decision 2026-09-28; supersedes D-005.
 
 **D-006 — Levels and achievements follow verified progress, never app activity** (streaks, opens).
-*Source:* DATASET_SPEC §6. *Status:* adopted.
+*Source:* DATASET_SPEC §6. *Status:* confirmed by product owner 2026-09-28.
 
 **D-007 — The navigator is a goal navigator, not a general assistant.** Off-topic requests get a
 brief redirect.
-*Source:* DATASET_SPEC §1. *Status:* adopted.
+*Source:* DATASET_SPEC §1. *Status:* confirmed by product owner 2026-09-28.
 
 **D-008 — Safety.** No medical, legal or financial prescriptions. High-risk goals get planning
 support with a professional referral; restricted goals are declined with a legitimate alternative.
-*Source:* DATASET_SPEC §9. *Status:* adopted.
+*Source:* DATASET_SPEC §9. *Status:* confirmed by product owner 2026-09-28.
 
 ## AI behaviour
 
 **D-009 — Facts keep their provenance.** User-provided, model-inferred, externally verified and
 unknown facts are distinct. An inferred fact is never presented as the user's word or as verified.
 Current external facts come only from provided research.
-*Source:* POL-E, DATASET_SPEC §8. *Status:* adopted.
+*Source:* POL-E, DATASET_SPEC §8. *Status:* confirmed by product owner 2026-09-28.
 
-**D-010 — Russian voice is gender-neutral.** The navigator uses no gendered self-reference and never
-addresses the user with a gendered form. Stored memory is written without gendered forms.
-*Source:* POL-D. *Status:* adopted.
+**D-010 — Russian voice and stored user gender.** Superseded by D-024.
+*Source:* POL-D. *Status:* superseded by D-024.
+
+**D-024 — User gender comes from the user's profile and may control user-facing grammatical gender.**
+* The navigator may use gender-marked grammatical forms when addressing the user, based on the gender
+  explicitly provided in the user's profile.
+* The navigator does not infer gender from name, language, behaviour or other context when the profile
+  does not provide it.
+* User information stored in memory may include the user's gender when that value comes from the profile.
+* The navigator's own grammatical self-reference remains governed separately; this decision concerns
+  addressing the user and storing the user's profile gender.
+* This supersedes D-010's prohibition on gender-marked user address and gender-free storage of this
+  profile attribute.
+*Status:* confirmed by product owner 2026-09-28.
+*Source:* Product Owner decision 2026-09-28; supersedes D-010.
 
 **D-011 — Train future-correct behaviour, with representable capabilities only.**
 *Source:* POL-F. *Status:* adopted.
