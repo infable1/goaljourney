@@ -85,18 +85,17 @@ Current external facts come only from provided research.
 *Source:* POL-E, DATASET_SPEC §8. *Status:* confirmed by product owner 2026-09-28.
 
 **D-010 — Russian voice and stored user gender.** Superseded by D-024.
+The former rule remains historical for the v0.1.1 contract and is not silently rewritten.
 *Source:* POL-D. *Status:* superseded by D-024.
 
 **D-024 — User gender comes from the user's profile and may control user-facing grammatical gender.**
-* The navigator may use gender-marked grammatical forms when addressing the user, based on the gender
-  explicitly provided in the user's profile.
-* The navigator does not infer gender from name, language, behaviour or other context when the profile
-  does not provide it.
+* When the user's gender is explicitly present in the user's profile, the navigator may use gender-marked
+  grammatical forms when addressing the user.
+* Gender must not be inferred from the user's name, language, behaviour, wording or other indirect signals.
 * User information stored in memory may include the user's gender when that value comes from the profile.
-* The navigator's own grammatical self-reference remains governed separately; this decision concerns
-  addressing the user and storing the user's profile gender.
-* This supersedes D-010's prohibition on gender-marked user address and gender-free storage of this
-  profile attribute.
+* The navigator's own grammatical self-reference remains separately governed; this decision changes
+  user address and storage of the profile gender, not the navigator's own self-reference.
+* This supersedes D-010's prohibition on gender-marked user address and gender-free storage of the profile gender.
 *Status:* confirmed by product owner 2026-09-28.
 *Source:* Product Owner decision 2026-09-28; supersedes D-010.
 
