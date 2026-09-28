@@ -73,6 +73,7 @@ checklist. This file is the discussion aid, not the record.
   review, proactive reminders) until the product builds them.
 - **Unresolved dependency:** tied to D-005's capability registry; a capability status change
   requires a new dataset version (see `.claude/rules/product.md`).
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ---
@@ -121,6 +122,7 @@ checklist. This file is the discussion aid, not the record.
   interactions would surface.
 - **Unresolved dependency:** none for the current milestone; relevant if/when a future milestone
   proposes incorporating real user data.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-014 — Training-ready data requires approval gates
@@ -135,6 +137,7 @@ checklist. This file is the discussion aid, not the record.
   least 2 RU + 2 EN reviewers plus domain experts.
 - **Unresolved dependency:** directly blocks/depends on Milestone 1.7 (reviewer registration,
   calibration) and the 5 open licensing items in `configs/licensing_status.yaml`.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-015 — Releases are immutable, and every change is traced
@@ -149,6 +152,7 @@ checklist. This file is the discussion aid, not the record.
   overhead than editing in place.
 - **Unresolved dependency:** none identified; already enforced by `gj revisions check`/`sync` and
   tests.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-016 — Records are validated against the rules of their own `schema_version`
