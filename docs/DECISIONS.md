@@ -13,31 +13,40 @@ to its source; this is not the specification.
 **D-001 — The user controls the Journey.** The navigator proposes; the user decides. Major route
 changes, removing several nodes or a milestone, and any goal change need the user's confirmation.
 Completed or verified progress is never silently discarded.
-*Source:* DATASET_SPEC §5–6, POL-C. *Status:* adopted.
+*Source:* DATASET_SPEC §5–6, POL-C. *Status:* adopted.*
+*PO review 2026-09-28: **reject**. A superseding product rule has not yet been specified; the adopted
+engineering rule remains the historical basis for v0.1.1 and must not be treated as owner-confirmed.*
 
 **D-002 — Goal deadlines change only after confirmation.**
 * Task dates may adapt automatically (`auto`).
 * Milestone dates may adapt with a stated summary (`adapt_with_summary`).
 * Goal dates are `confirm_required` and stay `proposed` until the user confirms.
 
-*Source:* POL-C. *Status:* adopted.
+*Source:* POL-C. *Status:* confirmed by product owner 2026-09-28.
 
 **D-003 — A photo or screenshot alone never verifies completion.** It can be part of a
 combination, together with an explanation, questions or an artifact.
-*Source:* DATASET_SPEC §7 (`VP_PHOTO_ONLY`). *Status:* adopted.
+*Source:* DATASET_SPEC §7 (`VP_PHOTO_ONLY`). *Status:* adopted.*
+*PO review 2026-09-28: **revise**. Replacement product rule not yet specified; current text remains
+the adopted engineering rule for the existing v0.1.1 dataset until superseded.*
 
-**D-004 — Self-report is legitimate, but its confidence is limited.**
-* Confidence follows the evidence class: self-report, user-entered data and image descriptions give
-  at most *limited*.
+**D-004 — Evidence-class confidence has explicit ceilings and exceptions.**
+* `self_report` gives at most *limited* and cannot reach medium alone.
+* `user_entered_data` gives at most *limited* alone, but may reach *medium* when every row has a
+  checkable reference and the protocol spot-checks those references.
+* `image_description` gives at most *limited* alone and is never sufficient by itself, but may reach
+  *medium* when combined with another required non-image method.
 * Insufficient evidence leads to `needs_more_evidence`, not rejection.
 
-*Source:* POL-B. *Status:* adopted.
+*Source:* POL-B. *Status:* confirmed by product owner 2026-09-28 (choice B).*
 
 **D-005 — Only capabilities the product has are used or promised.** The capability registry
 (`configs/product_capabilities.yaml`) marks capabilities available, planned or unsupported. Video,
 reminders and calendar access are planned; API calls, account access and contacting third parties
 are unsupported.
-*Source:* POL-A. *Status:* adopted.
+*Source:* POL-A. *Status:* adopted.*
+*PO review 2026-09-28: **revise**. The capability boundary/roadmap needs a replacement product
+decision; current text remains the adopted engineering rule for v0.1.1 until superseded.*
 
 **D-006 — Levels and achievements follow verified progress, never app activity** (streaks, opens).
 *Source:* DATASET_SPEC §6. *Status:* adopted.
