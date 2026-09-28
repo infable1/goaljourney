@@ -46,7 +46,6 @@ The former rule remains historical for the v0.1.1 contract and is not silently r
 *Source:* DATASET_SPEC §7 (`VP_PHOTO_ONLY`). *Status:* superseded by D-022.
 
 **D-004 — Evidence-class confidence has explicit ceilings and exceptions.**
-**D-004 — Evidence-class confidence has explicit ceilings and exceptions.**
 * `self_report` gives at most *limited* and cannot reach medium alone.
 * `user_entered_data` gives at most *limited* alone, but may reach *medium* when every row has a
   checkable reference and the protocol spot-checks those references.
