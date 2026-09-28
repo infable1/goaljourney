@@ -166,6 +166,7 @@ checklist. This file is the discussion aid, not the record.
   still considered valid under their own version — a reviewer must know which rules applied when
   judging older content.
 - **Unresolved dependency:** none identified.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ---
@@ -186,6 +187,7 @@ checklist. This file is the discussion aid, not the record.
   reusing/perturbing training scenarios.
 - **Unresolved dependency:** 100 reviewed overlaps in `evaluation/leakage/v0.2.0.yaml` (plus 27 in
   v0.1.0) currently have no human disposition — this is explicitly Milestone 1.7 task 6.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-018 — Metrics are reported per metric and per dimension, with no overall score
@@ -199,6 +201,7 @@ checklist. This file is the discussion aid, not the record.
 - **Trade-off:** harder to communicate a single "how good is the model" headline number to
   stakeholders outside the team.
 - **Unresolved dependency:** none identified.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-019 — Evaluation cases are authored in `evaluation/builders/` and rendered to YAML
@@ -212,6 +215,7 @@ checklist. This file is the discussion aid, not the record.
   directly.
 - **Unresolved dependency:** none identified; already enforced (`gj eval build-cases --check`
   passes today).
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ---
@@ -233,6 +237,7 @@ checklist. This file is the discussion aid, not the record.
   `claude/fervent-keller-j517cd`, while the actual current branch is
   `claude/blissful-einstein-vtgg7w` — a small state-file drift worth the owner noting, though not
   a product decision.
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ---
