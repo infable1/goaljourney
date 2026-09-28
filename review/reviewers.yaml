@@ -21,4 +21,10 @@
 #     expert_domains: []
 #     human: true
 #     active: true
-reviewers: []
+reviewers:
+  - id: po-reviewer
+    roles: [dataset_reviewer]
+    languages: [ru, en]
+    expert_domains: []
+    human: true
+    active: true
