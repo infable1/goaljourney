@@ -3,11 +3,10 @@
 *Only the active milestone lives here. When it completes, move its summary to `PROJECT_STATE.md`
 and `CHANGELOG.md`, then replace this file with the next milestone.*
 
-## Milestone 1.7 — Human Review Round 1 (proposed, not started)
+## Milestone 1.7 — Human Review Round 1 (in progress)
 
-**Status:** proposed. It follows the recommended next step of `docs/DATASET_AUDIT_v0.1.1.md` §12.
-The owner has not issued a brief for it yet. If the owner defines a different next milestone,
-replace this section.
+**Status:** in progress. The product owner explicitly directed the project to proceed with
+Human Review Round 1 on 2026-09-28. Nothing here trains a model or generates new data.
 
 ### Objective
 
@@ -44,7 +43,7 @@ The column says who performs each task; the agent never records review decisions
 
 ### Progress
 
-0%. No reviewers are registered and no decisions are recorded (no decision log in `data/reviewed/`
+0%. Milestone started; no reviewers are registered and no decisions are recorded (no decision log in `data/reviewed/`
 yet).
 
 Groundwork: the orchestration setup of 2026-09-28 added the `/dataset-review` skill and the reviewer
