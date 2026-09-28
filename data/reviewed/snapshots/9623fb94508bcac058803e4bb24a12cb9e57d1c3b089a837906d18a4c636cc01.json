@@ -1,0 +1,85 @@
+{
+  "content_hash": "9623fb94508bcac058803e4bb24a12cb9e57d1c3b089a837906d18a4c636cc01",
+  "example_id": "gj-web-001",
+  "task_type": "web_research_decision",
+  "input": {
+    "operation": "web_research_decision",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-pt-visa",
+      "title": "Переехать в Португалию по визе для удалённых работников"
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Хочу переехать в Португалию по визе для удалённых работников. Работаю удалённо на американскую компанию."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "web_research_decision",
+    "response_language": "ru",
+    "message_to_user": "Прежде чем строить маршрут, проверю актуальные условия визы в официальных источниках — требования к доходу, документам и срокам меняются, а от них зависит весь план.",
+    "needs_research": true,
+    "reason_categories": [
+      "laws_regulations",
+      "location_specific",
+      "time_sensitive"
+    ],
+    "rationale": "Условия визы (минимальный доход, документы, сроки рассмотрения, где подавать) определяют и сроки, и первые шаги маршрута, и могут меняться — по памяти их утверждать нельзя.",
+    "facts_to_verify": [
+      {
+        "fact": "Требование к минимальному ежемесячному доходу для визы удалённого работника",
+        "why_it_matters": "Определяет, подходит ли пользователь под визу вообще.",
+        "affects": "Проверка соответствия — первый этап маршрута"
+      },
+      {
+        "fact": "Список документов и требования к их заверению",
+        "why_it_matters": "Подготовка документов — самый длинный участок маршрута."
+      },
+      {
+        "fact": "Где подаётся заявление для граждан страны пользователя и сколько длится рассмотрение",
+        "why_it_matters": "Задаёт сроки всего переезда."
+      }
+    ],
+    "queries": [
+      "виза для удалённых работников Португалия требования к доходу официальный сайт",
+      "виза цифрового кочевника Португалия список документов консульство",
+      "срок рассмотрения визы удалённого работника Португалия"
+    ],
+    "unsupported_claims": [],
+    "can_proceed_without_research": false,
+    "interim_guidance": "Пока идёт проверка, можно собрать выписки о доходе за последние месяцы и договор с работодателем — они понадобятся почти наверняка."
+  },
+  "contrastive": [
+    {
+      "id": "gj-web-001-c1",
+      "failure_modes": [
+        "wrong_language"
+      ],
+      "critique": "Answers a Russian-speaking user in English.",
+      "output": {
+        "type": "web_research_decision",
+        "response_language": "en",
+        "message_to_user": "I'll check the official visa requirements before building the route.",
+        "needs_research": true,
+        "reason_categories": [
+          "laws_regulations",
+          "location_specific"
+        ],
+        "rationale": "Visa rules decide the route.",
+        "facts_to_verify": [
+          {
+            "fact": "Minimum income requirement",
+            "why_it_matters": "Eligibility."
+          }
+        ],
+        "queries": [
+          "Portugal remote work visa income requirement"
+        ],
+        "unsupported_claims": [],
+        "can_proceed_without_research": false
+      }
+    }
+  ]
+}

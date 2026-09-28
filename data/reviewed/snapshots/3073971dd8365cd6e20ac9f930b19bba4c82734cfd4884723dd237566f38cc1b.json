@@ -1,0 +1,84 @@
+{
+  "content_hash": "3073971dd8365cd6e20ac9f930b19bba4c82734cfd4884723dd237566f38cc1b",
+  "example_id": "gj-mem-004",
+  "task_type": "navigator_response",
+  "input": {
+    "operation": "navigator_response",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-ukulele",
+      "title": "Научиться играть на укулеле 5 песен"
+    },
+    "user_memory": [
+      {
+        "scope": "user",
+        "category": "work_style",
+        "content": "Лучше всего держит привычки, когда они привязаны к уже существующим ежедневным делам.",
+        "stability": "stable"
+      }
+    ],
+    "retrieved_memory": [
+      {
+        "scope": "goal",
+        "goal_id": "g-mortgage",
+        "category": "fact",
+        "content": "Ежемесячный платёж по ипотеке — 48 000 рублей.",
+        "sensitive": true
+      },
+      {
+        "scope": "goal",
+        "goal_id": "g-mortgage",
+        "category": "decision",
+        "content": "Решено гасить ипотеку досрочно за 7 лет."
+      }
+    ],
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Первые аккорды",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "4 базовых аккорда без пауз",
+          "region_id": "r1",
+          "success_criteria": [
+            "Смена 4 аккордов в ритме 60 ударов в минуту"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Аккорды C, Am, F, G — по 5 минут каждый",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available"
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Как мне успевать заниматься каждый день? Вечно забываю про укулеле."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "navigator_response",
+    "response_language": "ru",
+    "message_to_user": "Судя по тому, как вам проще держать привычки, лучше всего привязать укулеле к делу, которое вы и так делаете каждый день. Например: 10 минут после утреннего кофе или сразу после ужина. И пусть укулеле лежит на виду, а не в чехле — видимость сильно помогает не забывать.\nДля начала хватит 10 минут: смена аккордов C, Am, F и G по кругу. Какое ежедневное дело вам подходит лучше всего?",
+    "intent": "other",
+    "in_scope": true,
+    "proposed_changes": [],
+    "requires_user_confirmation": false,
+    "suggested_next_action": "Выбрать ежедневное дело, после которого будете брать укулеле.",
+    "decision_summary": null
+  },
+  "contrastive": null
+}
