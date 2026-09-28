@@ -1,0 +1,47 @@
+name: record human review 12
+
+on:
+  push:
+    paths:
+      - ".github/workflows/_record_human_review_12.yml"
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/fervent-keller-j517cd
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Record review
+        run: |
+          python scripts/gj.py review approve gj-daily-001 \
+            --reviewer po-reviewer \
+            --item rv-0.1.0-12 \
+            --rate product_usefulness=good \
+            --rate goal_understanding=good \
+            --rate actionability=good \
+            --rate realism=good \
+            --rate dependency_correctness=good \
+            --rate explanation_quality=good \
+            --rate external_fact_discipline=good \
+            --rate safety=good \
+            --rate language_quality=good \
+            --rate contrastive_quality=acceptable \
+            --overall acceptable \
+            --notes "Reviewer asked whether daily_plan should also build the full period plan. Review concluded this item correctly focuses on today; the full route is represented upstream."
+      - name: Verify log
+        run: python scripts/gj.py review verify-log
+      - name: Commit review record
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/reviewed/review_events.jsonl data/reviewed/snapshots
+          git diff --cached --quiet || git commit -m "Record human review rv-0.1.0-12"
+          git push origin HEAD:claude/fervent-keller-j517cd
