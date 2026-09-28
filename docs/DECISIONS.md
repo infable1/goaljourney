@@ -26,18 +26,26 @@ discarded.
   under the existing verification/progress rules.
 *Status:* confirmed by product owner 2026-09-28.
 *Source:* Product Owner decision 2026-09-28; supersedes D-001.
+
+**D-002 — Goal deadlines change only after confirmation.**
 * Task dates may adapt automatically (`auto`).
 * Milestone dates may adapt with a stated summary (`adapt_with_summary`).
 * Goal dates are `confirm_required` and stay `proposed` until the user confirms.
-
 *Source:* POL-C. *Status:* confirmed by product owner 2026-09-28.
 
-**D-003 — A photo or screenshot alone never verifies completion.** It can be part of a
-combination, together with an explanation, questions or an artifact.
-*Source:* DATASET_SPEC §7 (`VP_PHOTO_ONLY`). *Status:* adopted.*
-*PO review 2026-09-28: **revise**. Replacement product rule not yet specified; current text remains
-the adopted engineering rule for the existing v0.1.1 dataset until superseded.*
+**D-022 — Photo and screenshot evidence can be sufficient proof.**
+* A photo or screenshot may fully verify completion when the task criterion is directly and reliably determinable from the submitted image.
+* A photo or screenshot may also be one component of a multi-method verification when the image alone is insufficient or ambiguous.
+* The model must not claim stronger verification than the actual image evidence supports.
+* This supersedes D-003.
+*Status:* confirmed by product owner 2026-09-28.
+*Source:* Product Owner decision 2026-09-28; supersedes D-003.
 
+**D-003 — A photo or screenshot alone never verifies completion.** Superseded by D-022.
+The former rule remains historical for the v0.1.1 contract and is not silently rewritten.
+*Source:* DATASET_SPEC §7 (`VP_PHOTO_ONLY`). *Status:* superseded by D-022.
+
+**D-004 — Evidence-class confidence has explicit ceilings and exceptions.**
 **D-004 — Evidence-class confidence has explicit ceilings and exceptions.**
 * `self_report` gives at most *limited* and cannot reach medium alone.
 * `user_entered_data` gives at most *limited* alone, but may reach *medium* when every row has a
@@ -48,13 +56,16 @@ the adopted engineering rule for the existing v0.1.1 dataset until superseded.*
 
 *Source:* POL-B. *Status:* confirmed by product owner 2026-09-28 (choice B).*
 
-**D-005 — Only capabilities the product has are used or promised.** The capability registry
-(`configs/product_capabilities.yaml`) marks capabilities available, planned or unsupported. Video,
-reminders and calendar access are planned; API calls, account access and contacting third parties
-are unsupported.
-*Source:* POL-A. *Status:* adopted.*
-*PO review 2026-09-28: **revise**. The capability boundary/roadmap needs a replacement product
-decision; current text remains the adopted engineering rule for v0.1.1 until superseded.*
+**D-005 — Capability roadmap.** Superseded by D-023.
+The former roadmap classification remains historical for the v0.1.1 contract.
+*Source:* POL-A. *Status:* superseded by D-023.
+**D-023 — Product capabilities beyond the MVP are planned roadmap capabilities.**
+* Video analysis, proactive reminders, calendar access, API calls, account access and third-party contact are planned.
+* They remain unavailable to the current v0.1.1 training contract until the product ships them.
+* A future capability becoming available requires a corresponding product capability update and new versioned dataset/prompt work where that capability is used.
+* This supersedes D-005's classification of API calls, account access and third-party contact as unsupported.
+*Status:* confirmed by product owner 2026-09-28.
+*Source:* Product Owner decision 2026-09-28; supersedes D-005.
 
 **D-006 — Levels and achievements follow verified progress, never app activity** (streaks, opens).
 *Source:* DATASET_SPEC §6. *Status:* adopted.
