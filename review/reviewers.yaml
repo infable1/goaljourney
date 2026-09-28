@@ -28,3 +28,9 @@ reviewers:
     expert_domains: []
     human: true
     active: true
+  - id: po-reviewer-two
+    roles: [dataset_reviewer]
+    languages: [ru, en]
+    expert_domains: []
+    human: true
+    active: true
