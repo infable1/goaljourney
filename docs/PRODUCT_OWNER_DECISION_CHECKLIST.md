@@ -135,16 +135,12 @@ checklist. This file is the discussion aid, not the record.
 ## C. Verification (D-003, D-004, D-005)
 
 ### D-003 — A photo or screenshot alone never verifies completion
-- **Current decision:** a photo/screenshot can be part of a combination (with an explanation,
-  questions or an artifact) but never verifies alone (`VP_PHOTO_ONLY`).
-- **Why it matters:** photos are the easiest evidence to fake or misrepresent; this closes the
-  weakest verification path.
-- **If confirmed:** protocols requiring only a photo continue to fail validation; this is already
-  enforced and tested.
-- **Trade-off:** users with genuinely simple, visually-provable tasks face slightly more friction
-  (an added question or artifact requirement).
-- **Unresolved dependency:** none identified.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **revise**, superseded by confirmed **D-022**. A photo/screenshot may fully verify when
+  the task criterion is directly and reliably determinable from the image; otherwise it may be part of
+  a combined verification.
+- **Implementation note:** v0.1.1 keeps its existing versioned contract; D-022 requires versioned
+  schema/validator/prompt work before it governs a new release.
+- **Recommended status:** ☐ confirmed ☑ revise ☐ reject ☐ needs discussion
 
 ### D-004 — Self-report is legitimate, but its confidence is limited
 - **Current decision:** self-report, user-entered data and image descriptions cap confidence at
@@ -162,26 +158,12 @@ checklist. This file is the discussion aid, not the record.
 - **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-005 — Only capabilities the product has are used or promised
-- **Current decision:** the capability registry (`configs/product_capabilities.yaml`) marks each
-  capability available / planned / unsupported. Video, reminders and calendar access are planned;
-  API calls, account access and third-party contact are unsupported.
-- **Why it matters:** prevents the model from promising features that don't exist in the shipped
-  product — a direct source of user-facing broken promises if violated.
-- **If confirmed:** `VP_METHOD_UNAVAILABLE`, `EVIDENCE_SOURCE_UNAVAILABLE` and
-  `CAPABILITY_PROMISE` stay enforced; a capability only moves to `available` when the product
-  ships it, and new examples using it are added in a new dataset version rather than rewriting old
-  ones.
-- **Trade-off:** verification methods stay limited to what's implemented (text, self-report,
-  images-as-description, one-shot URL GET, file text, audio transcript), which is less rich than a
-  fully capable assistant.
-- **Unresolved dependency:** the *planned* capabilities (video analysis, tracker sync, proactive
-  messages, calendar) have no committed ship date in this repository; product owner should confirm
-  whether the planned/unsupported split still matches the actual product roadmap.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
-
----
-
-## D. Data governance / dataset & training (D-013, D-014, D-015, D-016)
+- **PO outcome:** **revise**, superseded by confirmed **D-023**. Video, proactive reminders, calendar
+  access, API calls, account access and third-party contact are planned roadmap capabilities; they remain
+  unavailable to the current v0.1.1 training contract until shipped.
+- **Implementation note:** the current training contract remains unchanged; versioned follow-up work
+  incorporates the new capability roadmap.
+- **Recommended status:** ☐ confirmed ☑ revise ☐ reject ☐ needs discussion
 
 ### D-013 — User data never enters training automatically
 - **Current decision:** no real user data is in the dataset. Any future use of product data needs
