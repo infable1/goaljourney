@@ -33,88 +33,33 @@ checklist. This file is the discussion aid, not the record.
 - **Recommended status:** ☐ confirmed ☑ reject ☐ revise ☐ needs discussion
 
 ### D-002 — Goal deadlines change only after confirmation
-- **Current decision:** task dates adapt automatically (`auto`); milestone dates adapt with a
-  stated summary (`adapt_with_summary`); goal dates are `confirm_required` and stay `proposed`
-  until the user confirms.
-- **Why it matters:** defines exactly how much autonomy the model has over dates at each level —
-  the most concrete, validator-enforced expression of D-001.
-- **If confirmed:** the three-tier autonomy split (task/milestone/goal) stays fixed in schemas
-  (`route_adaptation.json`, `navigator_response.json`) and validator codes (`RA_DEADLINE_*`,
-  `NAV_RESCHEDULE_*`, `GC_DEADLINE_NO_CONFIRM`, `J_GOAL_DEADLINE_CHANGED`).
-- **Trade-off:** automatic task-date shifts could surprise a user who wanted to be asked about
-  every change, however small.
-- **Unresolved dependency:** none found beyond POL-C's own arithmetic/calendar rules.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
+- **Confirmed rule:** task deadline may be adapted automatically; milestone deadline adaptation requires a summary; goal deadline change requires confirmation.
+- **Recommended status:** ☑ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-006 — Levels and achievements follow verified progress, never app activity
-- **Current decision:** streaks, opens and other app-activity signals never drive levels or
-  achievements; only verified progress does.
-- **Why it matters:** protects the meaning of a level/achievement as a truthful signal of real
-  progress, not engagement.
-- **If confirmed:** no gamification-by-engagement examples are ever trained; achievement logic in
-  the product must stay verification-driven.
-- **Trade-off:** may reduce short-term engagement hooks common in habit apps.
-- **Unresolved dependency:** none identified.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
+- **Recommended status:** ☑ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-007 — The navigator is a goal navigator, not a general assistant
-- **Current decision:** off-topic requests get a brief redirect back to the goal.
-- **Why it matters:** defines product scope and prevents scope creep into general-assistant
-  behaviour, which the dataset and prompts are not designed to support safely.
-- **If confirmed:** off-topic redirection stays a trained behaviour; no general Q&A capability is
-  promised.
-- **Trade-off:** users with adjacent but off-topic requests get redirected rather than helped
-  directly.
-- **Unresolved dependency:** none identified.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
+- **Recommended status:** ☑ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-008 — Safety
-- **Current decision:** no medical, legal or financial prescriptions. High-risk goals get planning
-  support plus a professional referral; restricted goals are declined with a legitimate
-  alternative.
-- **Why it matters:** the core safety boundary; also underlies the safety-category table in
-  DATASET_SPEC §9 (allowed / sensitive / high_risk / needs_professional_support / restricted) and
-  hard-gate M in the review rubric.
-- **If confirmed:** the five-category safety model and its behaviours stay fixed; expert review is
-  required for non-`allowed` categories.
-- **Trade-off:** conservative refusals/referrals on borderline goals may frustrate some users who
-  wanted direct help.
-- **Unresolved dependency:** requires domain experts to be registered for medical, mental_health,
-  legal, financial, physical_safety, privacy and safety_policy tiers (Milestone 1.7 task 1) before
-  any expert-tier example can be approved.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
-
----
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
+- **Recommended status:** ☑ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ## B. AI behaviour (D-009, D-010, D-011)
 
 ### D-009 — Facts keep their provenance
-- **Current decision:** `user_provided`, `model_inferred`, `externally_verified` and `unknown` are
-  kept distinct. An inferred fact is never presented as the user's word or as verified. Current
-  external facts come only from provided research.
-- **Why it matters:** prevents the model from fabricating certainty about facts it inferred or
-  guessed, a core honesty guarantee (POL-E).
-- **If confirmed:** `facts_used` provenance stays required/validated wherever a response states
-  something specific about the user (`FACT_NOT_GROUNDED`, `FACT_BAD_REF`,
-  `FACT_VERIFIED_WITHOUT_SOURCE`).
-- **Trade-off:** more verbose or hedged phrasing when facts are inferred rather than confirmed.
-- **Unresolved dependency:** none identified.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **accept** → confirmed by product owner 2026-09-28.
+- **Recommended status:** ☑ confirmed ☐ revise ☐ reject ☐ needs discussion
 
 ### D-010 — Russian voice is gender-neutral
-- **Current decision:** no gendered self-reference by the navigator, no gendered address of the
-  user, and memory stored about the user is written without gendered forms.
-- **Why it matters:** the user's gender is never known; this is both a privacy/fairness principle
-  and a hard requirement for Russian output quality (POL-D, rubric criterion N, validators
-  `RU_GENDERED_*`).
-- **If confirmed:** all Russian training/eval text continues to be linted and human-reviewed for
-  gendered forms; level/badge titles keep using natural role nouns (not linted, info-level only).
-- **Trade-off:** neutral phrasing is sometimes less colloquial than gendered forms Russian speakers
-  use casually.
-- **Unresolved dependency:** POL-D flags level/badge titles ("a policy decision is pending; flag
-  every case" per `docs/HUMAN_REVIEW_GUIDE.md` §8) as a narrower open question within this larger
-  decision — see Decision Conflicts note below.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **revise**, superseded by confirmed **D-024**.
+- **New product rule:** user gender comes from the explicit user profile; the navigator may use gender-marked forms when addressing the user and may store that profile gender. Gender is not inferred from indirect signals.
+- **Implementation note:** v0.1.1 keeps its existing versioned contract; D-024 requires versioned schema, memory and prompt work before it governs a new release.
+- **Recommended status:** ☐ confirmed ☑ revise ☐ reject ☐ needs discussion
 
 ### D-011 — Train future-correct behaviour, with representable capabilities only
 - **Current decision:** examples show idealised behaviour (exact arithmetic, correct dates,
