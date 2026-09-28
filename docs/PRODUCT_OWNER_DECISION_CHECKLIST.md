@@ -28,7 +28,9 @@ checklist. This file is the discussion aid, not the record.
   edits, and to preserve verified progress across adaptations.
 - **Trade-off:** more confirmation prompts can feel slower than a fully autonomous planner.
 - **Unresolved dependency:** none identified; DATASET_SPEC §5–6 and POL-C already operationalise it.
-- **Recommended status:** ☐ confirmed ☐ revise ☐ reject ☐ needs discussion
+- **PO outcome:** **reject**. Superseded by confirmed D-021: the navigator owns route composition and substantial route changes; the user may add tasks, the navigator adapts the route and has final route decision; goal changes remain user-only.
+- **Implementation note:** v0.1.1's existing schema/validator contract is not rewritten in place; D-021 requires a new versioned contract/revision work.
+- **Recommended status:** ☐ confirmed ☑ reject ☐ revise ☐ needs discussion
 
 ### D-002 — Goal deadlines change only after confirmation
 - **Current decision:** task dates adapt automatically (`auto`); milestone dates adapt with a
