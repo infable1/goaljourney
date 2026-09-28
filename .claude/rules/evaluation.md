@@ -1,0 +1,37 @@
+---
+paths:
+  - "evaluation/**"
+---
+# Evaluation cases and leakage metadata
+
+Design: `docs/EVALUATION_V0.2_DESIGN.md`. Workflow: `/evaluation`.
+
+- **Builders are the source.** Write v0.2.0 cases in `evaluation/builders/v0_2_0/*.py` and render
+  them with `gj eval build-cases`. Never edit the generated files:
+  - `evaluation/cases/v0.2.0/*.yaml`;
+  - `evaluation/seeds/v0.2.0.yaml`;
+  - the eval side of `data/scenarios/behavioural_scenarios.yaml`;
+  - the `cases:` block of `evaluation/leakage/v0.2.0.yaml`.
+
+  `gj eval build-cases --check` and the tests catch drift.
+- **Frozen sets.** `evaluation/cases/v0.1.0/` is frozen. `evaluation/cases/v0.2.0/` is the test
+  split of release v0.1.1. Changing or adding a case therefore means a new `evaluation_version`, and
+  a new `dataset_version` before the next `gj split`. Don't mutate a set that is inside a release.
+- **Independence (D-017).**
+  - Every case starts from its own seed and its own eval-side scenario.
+  - The `operation|trigger|condition|decision` pattern must differ from every training pattern.
+  - Never paraphrase a training example or reuse its topic. Check `data/raw/examples/` and
+    `generation/scenarios/` first.
+- **Multi-step cases are teacher-forced.** Each step's input contains the *reference* results of
+  earlier steps: earlier replies as assistant turns, and confirmed changes applied to `goal`,
+  `journey` and `decision_log`. Give each step its own `step_pattern`.
+- **References are drafts** (`reference_status: draft_unreviewed`), not gold answers.
+- **Every unit** needs `schema_valid`, `semantic_clean` and a `language` check, plus checks that the
+  naive baseline fails.
+- **Leakage metadata** in `evaluation/leakage/v<ver>.yaml`:
+  - record every new automated candidate or hand-found overlap under `template_overlaps`, with
+    strength, relation and `proposed_disposition`;
+  - `disposition` stays `open` until a human decides;
+  - the file never claims "no leakage".
+- **Reports** under `evaluation/reports/` are git-ignored run outputs. Read `report.md`, not
+  `predictions.jsonl`.

@@ -16,6 +16,28 @@ evaluation/reports/*/
 exports/
 scratch/
 
+# Model artefacts and training outputs (never committed)
+checkpoints/
+*.safetensors
+*.gguf
+*.ckpt
+*.pt
+*.pth
+*.onnx
+pytorch_model*.bin
+wandb/
+mlruns/
+lightning_logs/
+
+# Local caches
+.cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Claude Code: personal settings stay local (project settings in .claude/settings.json are committed)
+.claude/settings.local.json
+
 # OS / editors
 .DS_Store
 .idea/

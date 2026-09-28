@@ -1,0 +1,126 @@
+# Durable decisions
+
+Architectural and product decisions that every change must respect. Each entry is short and points
+to its source; this is not the specification.
+
+* Add an entry when a milestone makes a lasting decision.
+* Never delete an entry. Supersede it with a new one that references the old id.
+* "Status: confirmed" means decided by the product owner. "Status: adopted" means decided by dataset
+  engineering and awaiting owner confirmation.
+
+## Product
+
+**D-001 — The user controls the Journey.** The navigator proposes; the user decides. Major route
+changes, removing several nodes or a milestone, and any goal change need the user's confirmation.
+Completed or verified progress is never silently discarded.
+*Source:* DATASET_SPEC §5–6, POL-C. *Status:* adopted.
+
+**D-002 — Goal deadlines change only after confirmation.**
+* Task dates may adapt automatically (`auto`).
+* Milestone dates may adapt with a stated summary (`adapt_with_summary`).
+* Goal dates are `confirm_required` and stay `proposed` until the user confirms.
+
+*Source:* POL-C. *Status:* adopted.
+
+**D-003 — A photo or screenshot alone never verifies completion.** It can be part of a
+combination, together with an explanation, questions or an artifact.
+*Source:* DATASET_SPEC §7 (`VP_PHOTO_ONLY`). *Status:* adopted.
+
+**D-004 — Self-report is legitimate, but its confidence is limited.**
+* Confidence follows the evidence class: self-report, user-entered data and image descriptions give
+  at most *limited*.
+* Insufficient evidence leads to `needs_more_evidence`, not rejection.
+
+*Source:* POL-B. *Status:* adopted.
+
+**D-005 — Only capabilities the product has are used or promised.** The capability registry
+(`configs/product_capabilities.yaml`) marks capabilities available, planned or unsupported. Video,
+reminders and calendar access are planned; API calls, account access and contacting third parties
+are unsupported.
+*Source:* POL-A. *Status:* adopted.
+
+**D-006 — Levels and achievements follow verified progress, never app activity** (streaks, opens).
+*Source:* DATASET_SPEC §6. *Status:* adopted.
+
+**D-007 — The navigator is a goal navigator, not a general assistant.** Off-topic requests get a
+brief redirect.
+*Source:* DATASET_SPEC §1. *Status:* adopted.
+
+**D-008 — Safety.** No medical, legal or financial prescriptions. High-risk goals get planning
+support with a professional referral; restricted goals are declined with a legitimate alternative.
+*Source:* DATASET_SPEC §9. *Status:* adopted.
+
+## AI behaviour
+
+**D-009 — Facts keep their provenance.** User-provided, model-inferred, externally verified and
+unknown facts are distinct. An inferred fact is never presented as the user's word or as verified.
+Current external facts come only from provided research.
+*Source:* POL-E, DATASET_SPEC §8. *Status:* adopted.
+
+**D-010 — Russian voice is gender-neutral.** The navigator uses no gendered self-reference and never
+addresses the user with a gendered form. Stored memory is written without gendered forms.
+*Source:* POL-D. *Status:* adopted.
+
+**D-011 — Train future-correct behaviour, with representable capabilities only.**
+*Source:* POL-F. *Status:* adopted.
+
+**D-012 — The model and provider stay replaceable.**
+* The base model is unset until chosen and is recorded in `configs/versions.yaml`, never
+  hard-coded.
+* Teacher providers sit behind one interface: Anthropic SDK, any OpenAI-compatible endpoint, or
+  replay.
+* SFT exports are chat-template-agnostic.
+* Evaluation prompts the model exactly as the SFT export does.
+
+*Source:* ARCHITECTURE §6. *Status:* adopted.
+
+## Data governance
+
+**D-013 — User data never enters training automatically.** No real user data is in the dataset.
+Any future use of product data needs explicit consent, anonymisation, a documented source and human
+review.
+*Source:* DATA_SOURCES.md. *Status:* adopted.
+
+**D-014 — Training-ready data requires approval gates.**
+* Only content a qualified human approved, by exact content hash, reaches a training file.
+* The release must also pass every gate in `configs/release_gates.yaml`.
+* Automation never approves.
+* Gates are not loosened to produce a passing release.
+
+*Source:* DATASET_SPEC §14–16. *Status:* adopted.
+
+**D-015 — Releases are immutable, and every change is traced.** A changed example gets a new
+`dataset_version` and an entry in the revision ledger (`data/revisions/v<ver>.yaml`): defect,
+correction, rationale and snapshots. `gj split` refuses an incomplete ledger. There are no silent
+edits.
+*Source:* DATASET_SPEC §15. *Status:* adopted.
+
+**D-016 — Records are validated against the rules of their own `schema_version`.** Old data is never
+re-judged by newer rules.
+*Source:* DATASET_SPEC §2. *Status:* adopted.
+
+## Evaluation
+
+**D-017 — Evaluation is independent of training.**
+* Separate seeds.
+* Eval-side behavioural scenarios whose decision patterns differ from every training pattern.
+* No shared scenario groups.
+* Reviewed overlaps need human dispositions.
+* No report claims "no leakage".
+
+*Source:* docs/EVALUATION_V0.2_DESIGN.md, docs/LEAKAGE_CHECKS.md. *Status:* adopted.
+
+**D-018 — Metrics are reported per metric and per dimension, with no overall score.** Multi-step
+cases are scored per teacher-forced step, and a case passes only if all its steps pass.
+*Source:* DATASET_SPEC §17. *Status:* adopted.
+
+**D-019 — Evaluation cases are authored in `evaluation/builders/` and rendered to YAML.** The
+generated YAML is never edited by hand.
+*Source:* EVALUATION_V0.2_DESIGN §6. *Status:* adopted.
+
+## Engineering process
+
+**D-020 — The repository is the durable project state.** State lives in `docs/PROJECT_STATE.md`,
+`ACTIVE_MILESTONE.md`, `DECISIONS.md` and `ROADMAP.md`, not in chat history. One milestone is handled
+per primary session.
+*Source:* docs/CONTEXT_MANAGEMENT.md. *Status:* adopted.

@@ -32,6 +32,11 @@ Next step: human review, starting with the 8 calibration items.
 | [`docs/EVALUATION_EXPANSION_PLAN.md`](docs/EVALUATION_EXPANSION_PLAN.md) | From 30 to 200–500 independent evaluation cases |
 | [`docs/LEAKAGE_CHECKS.md`](docs/LEAKAGE_CHECKS.md) | What each leakage layer can and cannot establish |
 | [`CHANGELOG.md`](CHANGELOG.md) | Version history |
+| [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) | Current state: versions, health, blockers — updated at every milestone |
+| [`docs/ACTIVE_MILESTONE.md`](docs/ACTIVE_MILESTONE.md) | The milestone in progress: tasks, acceptance criteria, progress, next action |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Durable product, data and engineering decisions (D-001…) |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Milestone plan and standing constraints |
+| [`docs/CONTEXT_MANAGEMENT.md`](docs/CONTEXT_MANAGEMENT.md) | How work is split across Claude Code sessions: state, recovery, compaction, subagents |
 
 ## Quick start
 
@@ -169,7 +174,40 @@ docs/             architecture, policy decisions, audits, review guide, leakage 
 configs/          versions, dataset, generation, evaluation, export, coverage targets, review, release gates, licensing
 scripts/gj.py     CLI
 tests/            pytest suite
+CLAUDE.md, .claude/   Claude Code project memory, settings, path-scoped rules, skills, subagents
 ```
+
+## Working with Claude Code
+
+The project is built across many independent Claude Code sessions. The repository, not chat history,
+carries the state (`docs/CONTEXT_MANAGEMENT.md`).
+
+* **Loaded every session.** `CLAUDE.md` (under 200 lines) holds the principles, rules, conventions
+  and critical commands.
+* **Loaded when relevant.**
+  * `.claude/rules/*.md` load when matching files are touched: product, ai, dataset, evaluation,
+    testing, security.
+  * Skills load on demand:
+
+    | Skill | Use |
+    |---|---|
+    | `/start-session` | recover the state |
+    | `/milestone-complete` | completion protocol |
+    | `/dataset-review` | human-review round |
+    | `/dataset-generation` | synthetic generation |
+    | `/evaluation` | eval cases and runs |
+    | `/release-check` | releases, gates, pre-training checklist |
+
+* **Subagents.** `.claude/agents/` defines six narrow, mostly read-only reviewers: dataset-auditor,
+  evaluation-engineer, verification-reviewer, safety-reviewer, architecture-reviewer and
+  code-reviewer. Agents never record review decisions.
+* **State files.** The files in `docs/` (`PROJECT_STATE`, `ACTIVE_MILESTONE`, `DECISIONS`,
+  `ROADMAP`) are updated at checkpoints and before a milestone is declared complete.
+* **Context.** Auto-compaction triggers at 75% (`.claude/settings.json`). One major milestone per
+  primary session.
+
+`tests/test_orchestration.py` keeps these files well-formed. It also checks that
+`docs/PROJECT_STATE.md` matches `configs/versions.yaml`.
 
 ## Principles the tooling enforces
 

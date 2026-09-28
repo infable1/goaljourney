@@ -3,6 +3,36 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-09-28 — Project orchestration & context management (no version change)
+
+This is infrastructure and documentation only. Dataset, schema, prompts, pipeline and evaluation
+versions are unchanged (0.1.1 / 0.1.1 / 0.1.1 / 0.3.0 / 0.2.0), and no example, eval case, release
+or review record changed. No model was trained.
+
+- **State files.** `docs/PROJECT_STATE.md`, `docs/ACTIVE_MILESTONE.md` (M1.7 Human Review Round 1,
+  *proposed*), `docs/DECISIONS.md` (D-001…D-020, consolidated from the spec, policies and
+  architecture) and `docs/ROADMAP.md`.
+- **Context strategy.** `docs/CONTEXT_MANAGEMENT.md` defines the session, state, recovery and
+  compaction rules, when to use subagents, and what stays out of `CLAUDE.md`.
+- **Project memory.** `CLAUDE.md` (under 200 lines) and `.claude/settings.json`:
+  - auto-compaction at 75% via `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`;
+  - reading `.env` denied.
+- **Rules and skills.**
+  - Path-scoped rules in `.claude/rules/`: product, ai, dataset, evaluation, testing, security.
+  - Skills: `/start-session`, `/milestone-complete`, `/dataset-review`, `/dataset-generation`,
+    `/evaluation`, `/release-check`.
+  - A model-training skill was considered and deferred to M3. The pre-training checklist is in
+    `/release-check`.
+- **Subagents.** `.claude/agents/` holds dataset-auditor, evaluation-engineer, verification-reviewer,
+  safety-reviewer, architecture-reviewer and code-reviewer. Each is narrow and read-only, except
+  evaluation-engineer: on explicit delegation, it may edit `evaluation/builders/` and the leakage
+  metadata.
+- **`.gitignore`.** Now also covers model checkpoints and weights, experiment logs, local caches and
+  `.claude/settings.local.json`.
+- **`tests/test_orchestration.py`.** Checks CLAUDE.md length and references, settings, secret-like
+  values, skill, agent and rule well-formedness (rule globs must match files), state-file sections,
+  PROJECT_STATE versions against `configs/versions.yaml`, and `.gitignore` coverage.
+
 ## [0.1.1] — 2026-09-27 — Milestone 1.6: Dataset Calibration
 
 This is dataset 0.1.1, schema 0.1.1, navigator and generation prompts 0.1.1, pipeline 0.3.0 and
