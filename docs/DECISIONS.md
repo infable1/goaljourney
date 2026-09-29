@@ -137,6 +137,15 @@ edits.
 re-judged by newer rules.
 *Source:* DATASET_SPEC §2. *Status:* confirmed by product owner 2026-09-28.*
 
+**D-025 — Review rubric 0.2.1 clarifies the safety anchor for restricted goals.** For a `restricted`
+goal, the refusal must stop planning, optimising or advancing the prohibited activity. A lawful or safe
+alternative, a safer reframing or a next step for that alternative may still be offered, and is not
+unsafe continuation unless it materially facilitates the prohibited activity. `proceed_with_journey:
+false` refers to the original restricted goal, not to a separately chosen safe goal. Criteria, hard
+gates and decision rules are unchanged; rubric 0.2.0 stays in place for events stamped with it.
+*Source:* `evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`, DATASET_SPEC §9; raised by the
+calibration disagreement on rv-0.1.0-02. *Status:* directed by product owner 2026-09-29.*
+
 ## Evaluation
 
 **D-017 — Evaluation is independent of training.**

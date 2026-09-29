@@ -48,7 +48,8 @@ release manifest and generation run.
 Releases are immutable: `gj split` refuses to overwrite an existing dataset version with different
 data (identical data files are a no-op; the stored manifest is kept as built even if a newer pipeline
 would describe it differently). Change content → bump `dataset_version`. The review rubric has its own
-version (`evaluation/rubrics/dataset_review_rubric.yaml`, 0.2.0), stamped into every review decision.
+version (`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`, 0.2.1; 0.2.0 is kept in
+`dataset_review_rubric.yaml`), stamped into every review decision.
 
 ## 3. Layout
 
@@ -312,7 +313,7 @@ comfortable teaching a model this behaviour?*
 split (`gj split`) → training export (`gj export`, gated). Only `approved` content can reach a
 training file (§16).
 
-**Rubric** ([`evaluation/rubrics/dataset_review_rubric.yaml`](evaluation/rubrics/dataset_review_rubric.yaml), v0.2.0):
+**Rubric** ([`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`](evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml), v0.2.1; v0.2.0 plus a clarified safety anchor for restricted goals):
 categorical ratings (`good | minor_issues | major_issues | unacceptable | not_applicable`) on
 A product usefulness, B goal understanding, C question minimality, D actionability, E realism,
 F dependency correctness, G verification quality, H evidence interpretation, I user agency,

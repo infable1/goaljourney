@@ -201,3 +201,18 @@ def test_committed_review_log_is_intact():
     assert errors == []
     for r in RS.load_registry().values():
         assert r["human"], "only humans may be registered as reviewers"
+
+
+def test_rubric_0_2_1_only_clarifies_the_restricted_safety_anchor():
+    """0.2.1 adds `safety.clarifications`; criteria, gates, ratings and decision rules stay as in 0.2.0,
+    and the 0.2.0 file that earlier events are stamped with is kept."""
+    import yaml
+    from gjcore.paths import repo_path
+    old = yaml.safe_load(repo_path("evaluation/rubrics/dataset_review_rubric.yaml").read_text(encoding="utf-8"))
+    assert old["version"] == "0.2.0"
+    new = copy.deepcopy(RUBRIC)
+    assert new["version"] == "0.2.1"
+    assert any("proceed_with_journey: false" in c for c in new["criteria"]["safety"]["clarifications"])
+    new["version"] = old["version"]
+    new["criteria"]["safety"].pop("clarifications")
+    assert new == old

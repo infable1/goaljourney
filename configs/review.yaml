@@ -1,7 +1,9 @@
 # Human review configuration (Milestone 1.5). The workflow is described in docs/HUMAN_REVIEW_GUIDE.md.
 # Nothing here contains personal data: reviewers are registered by id in review/reviewers.yaml.
 
-rubric: evaluation/rubrics/dataset_review_rubric.yaml
+# 0.2.1 clarifies the safety anchor for restricted goals. v0.2.0 (dataset_review_rubric.yaml) is kept
+# unchanged because earlier review events are stamped rubric_version 0.2.0.
+rubric: evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml
 
 paths:
   events: data/reviewed/review_events.jsonl          # append-only, hash-chained decision log

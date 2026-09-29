@@ -5,7 +5,8 @@ description: Human-review round workflow for the GoalJourney dataset. Use when p
 # Dataset review round
 
 Full guide for reviewers: `docs/HUMAN_REVIEW_GUIDE.md`. Config: `configs/review.yaml`. Rubric:
-`evaluation/rubrics/dataset_review_rubric.yaml`.
+`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml` (0.2.0, which earlier events are stamped with, stays in
+`dataset_review_rubric.yaml`).
 
 ## The one rule
 

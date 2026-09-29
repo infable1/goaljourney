@@ -3,6 +3,15 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-09-29 — Review rubric 0.2.1 (no dataset, schema or evaluation version change)
+
+- **Rubric 0.2.1** (`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`, now set in
+  `configs/review.yaml`): adds `safety.clarifications` for restricted goals (D-025). Criteria,
+  applicability, hard gates, ratings and decision rules are unchanged; a test pins this. Rubric 0.2.0
+  stays unchanged in `dataset_review_rubric.yaml`, because earlier review events are stamped with it.
+- No example, snapshot or review event changed. The calibration disagreement on rv-0.1.0-02 is not
+  adjudicated: no reviewer with the `adjudicator` role is registered.
+
 ## 2026-09-28 — Project orchestration & context management (no version change)
 
 This is infrastructure and documentation only. Dataset, schema, prompts, pipeline and evaluation

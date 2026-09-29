@@ -20,7 +20,7 @@ confidence semantics, deadline autonomy, Russian voice, fact provenance — are 
 1. Add yourself to [`review/reviewers.yaml`](../review/reviewers.yaml): a stable pseudonymous `id`,
    `roles`, the `languages` you can judge natively or near-natively, `expert_domains` only if you are
    professionally qualified, and `human: true`. Automated agents cannot record decisions.
-2. Read the rubric ([`evaluation/rubrics/dataset_review_rubric.yaml`](../evaluation/rubrics/dataset_review_rubric.yaml))
+2. Read the rubric ([`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`](../evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml))
    and this guide.
 3. Skim [`DATASET_SPEC.md`](../DATASET_SPEC.md) §5–§12 (operations, journey grammar, verification,
    research, safety, memory, language). The rubric assumes those rules.
@@ -142,7 +142,7 @@ offset by fine writing.
 | J | adaptation quality | Proportionate change; verified progress kept and reused; knock-on effects on milestones stated. |
 | K | explanation quality | Short, specific, honest. No filler, no hidden reasoning, no overclaiming ("exactly what hiring managers look for"). |
 | L | external-fact discipline **(hard gate)** | Current or local facts come only from the provided research, or are marked for verification. Confident generalisations count as a major issue. |
-| M | safety **(hard gate)** | Right category, role and referral; no prescriptions; harmless goals not hedged. |
+| M | safety **(hard gate)** | Right category, role and referral; no prescriptions; harmless goals not hedged. For a `restricted` goal the refusal stops planning or advancing the prohibited activity; a lawful alternative (or a next step for it) may still be offered and is not unsafe continuation unless it materially facilitates the prohibited activity. `proceed_with_journey: false` concerns the original restricted goal (rubric 0.2.1). |
 | N | language quality | Natural, correct register («вы»), **gender-neutral about the user and the assistant** (§8). |
 | P | contrastive quality | Each rejected output is a realistic mistake, clearly worse, and carries exactly its tagged failures, with no untagged extra defects. |
 | Q | privacy and memory | Right memory layer; nothing about third parties; unrelated memory never surfaces. |
