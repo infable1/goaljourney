@@ -26,12 +26,12 @@
     },
     "human_review_status": {
       "approved": 8,
-      "needs_revision": 2,
-      "pending": 20
+      "needs_revision": 3,
+      "pending": 19
     },
     "human_review_detail": {
-      "decided": 10,
-      "not_reviewed": 20
+      "decided": 11,
+      "not_reviewed": 19
     },
     "approved_by_automation": 0
   },
@@ -93,8 +93,8 @@
           "problem": "L external-fact discipline / K explanation quality (overclaiming)"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed"
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided"
     },
     {
       "review_item_id": "rv-0.1.0-05",

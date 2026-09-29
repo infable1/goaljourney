@@ -1,0 +1,151 @@
+{
+  "content_hash": "fb1ab4eb1b7893da55366f6a402d21fc33e3ff1118a905beb6c012927c45cc1e",
+  "example_id": "gj-route-006",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-italian",
+      "title": "Выучить итальянский до уровня A2 к поездке в мае",
+      "deadline": "2027-05-01",
+      "available_time": {
+        "hours_per_week": 4
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Базовый словарь и фразы",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "500 слов и базовые фразы",
+          "region_id": "r1",
+          "success_criteria": [
+            "Тест на 500 слов — 80% и выше"
+          ],
+          "target_date": "2026-12-15"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Алфавит и произношение",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Ежедневно 15 минут карточек в приложении",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "in_progress",
+          "depends_on": [
+            "n1"
+          ]
+        },
+        {
+          "id": "n3",
+          "type": "verification",
+          "title": "Тест на 500 слов",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n2"
+          ]
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Я честно пытался две недели, но карточки в приложении — это пытка, бросаю их через пять минут. Мне больше нравится слушать подкасты и болтать. Можно поменять?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "ru",
+    "message_to_user": "Конечно — метод, который вы бросаете через пять минут, работает хуже любого, который вам нравится. Карточки заменены на две вещи:\n• подкаст для начинающих три раза в неделю: слушаете выпуск и выписываете 10 полезных фраз;\n• онлайн-разговорный клуб для начинающих раз в неделю.\nЦель и итоговый тест на 500 слов не меняются; фразы из подкастов как раз и будут вашим словарём.",
+    "trigger": {
+      "type": "preference_changed",
+      "description": "Пользователю не подходят карточки; предпочитает подкасты и разговорную практику."
+    },
+    "change_level": "minor",
+    "requires_user_confirmation": false,
+    "removed_nodes": [
+      {
+        "node_id": "n2",
+        "reason": "Формат не подходит пользователю — заменён на подкасты и разговорный клуб."
+      }
+    ],
+    "added_nodes": [
+      {
+        "id": "n4",
+        "type": "task",
+        "title": "Подкаст для начинающих 3 раза в неделю и 10 выписанных фраз с каждого выпуска",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "available",
+        "detail_level": "outline",
+        "depends_on": [
+          "n1"
+        ],
+        "estimated_duration_minutes": 30,
+        "created_by": "ai"
+      },
+      {
+        "id": "n5",
+        "type": "task",
+        "title": "Онлайн-разговорный клуб для начинающих раз в неделю",
+        "region_id": "r1",
+        "milestone_id": "m1",
+        "status": "available",
+        "detail_level": "outline",
+        "depends_on": [
+          "n1"
+        ],
+        "estimated_duration_minutes": 60,
+        "created_by": "ai"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "node_id": "n3",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n2"
+            ],
+            "to": [
+              "n4",
+              "n5"
+            ]
+          }
+        ],
+        "reason": "Словарь теперь набирается из подкастов и разговоров."
+      }
+    ],
+    "modified_deadlines": [],
+    "preserved_progress": [
+      "n1"
+    ],
+    "decision_summary": {
+      "what_changed": "Карточки заменены на подкасты с выписыванием фраз и еженедельный разговорный клуб.",
+      "why": "Вы бросаете карточки через несколько минут, а подкасты и разговор вам нравятся — регулярность важнее метода.",
+      "impact": "Около 2,5 часа в неделю вместо 1,75; укладывается в ваши 4 часа; срок и итоговый тест не меняются."
+    }
+  },
+  "contrastive": null
+}
