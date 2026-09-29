@@ -149,7 +149,7 @@ was `calibration_agreement`, which is now N/A rather than passed.
 
 `make -k check` passes (after the rv-0.1.0-01 independence correction, every target):
 
-* 440 tests passed and 2 skipped (9 in `tests/test_orchestration.py`, 16 in
+* 445 tests passed and 2 skipped (9 in `tests/test_orchestration.py`, 21 in
   `tests/test_solo_review.py`);
 * the builder, ledger and sample drift checks;
 * reference 106/106, naive 0/106;
@@ -167,10 +167,9 @@ was `calibration_agreement`, which is now N/A rather than passed.
    * In solo mode the owner reviews alone. `reviewer_diversity` and `calibration_agreement` are N/A
      and no longer block. Under `multi_reviewer` mode, `reviewer_diversity` would still fail:
      `po-reviewer` approved every approved row.
-   * **Known defect (not fixed):** the informational `reviewer_diversity` detail reads "largest share
-     111%". The gate counts approve *events*, so the corrective re-approval of `gj-feas-005` is
-     counted twice. It does not affect any gate outcome in solo mode, where the gate is N/A. It
-     needs a separate fix with a test that counts one approval per reviewer per approved row.
+   * `reviewer_diversity` counts one approval per reviewer per approved row (fixed after the
+     corrective re-approval of `gj-feas-005` made the informational share read 111%). Its
+     informational share is now 100%.
    * **No qualified `domain_expert`:** expert-tier items stay `awaiting_expert` and are not
      training-eligible. rv-0.1.0-02 needs `medical` and `physical_safety`, rv-0.1.0-30 needs
      `legal`, rv-0.1.0-28 needs `financial`.

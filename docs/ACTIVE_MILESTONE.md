@@ -160,8 +160,3 @@ subagents. It changed no data.
    with `--independent-rating no` (as for rv-0.1.0-01).
 3. **Agent** (on request): once decisions are recorded, apply the revise decisions through a new
    `dataset_version` and the ledger (`/dataset-review` §5), and keep these state files current.
-4. **Agent** (on request, in a separate commit): fix the `reviewer_diversity` counting defect.
-   * The gate counts approve events, so the informational share reads 111% after the rv-0.1.0-01
-     corrective event.
-   * It should count one approval per reviewer per approved row, with a test.
-   * No gate outcome changes in solo mode, where the gate is N/A.

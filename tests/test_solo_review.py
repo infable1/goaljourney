@@ -187,6 +187,84 @@ def test_multi_reviewer_adjudication_still_overrides(store):
     assert RS.resolve(rec, store.events())["status"] == "approved"
 
 
+# ---- reviewer_diversity counts one approval per reviewer per approved row ----------------------------
+
+TWO = {"alice": _reviewer("alice"), "bob": _reviewer("bob")}
+
+
+def _human_tier_rows(n):
+    ids = sorted(i for i, r in POOL.items() if not RS.required_expert_domains(r) and r["language"] in ("en", "ru"))
+    return [copy.deepcopy(POOL[i]) for i in ids[:n]]
+
+
+def _diversity(rows, events, mode="multi_reviewer"):
+    results = gates.evaluate("0.1.1", rows={"train": rows, "validation": []}, events=events, mode=mode)
+    return next(r for r in results if r.id == "reviewer_diversity")
+
+
+def _share(result):
+    return int(result.detail.split("largest share ")[1].rstrip("%"))
+
+
+def test_repeated_approvals_by_one_reviewer_of_the_same_row_count_once(store):
+    rows = _human_tier_rows(2)
+    for rec in rows:
+        decide(store, TWO, rec, "alice")
+        decide(store, TWO, rec, "alice")            # a corrective re-approval of the same content hash
+    decide(store, TWO, rows[0], "bob")
+    res = _diversity(rows, store.events())
+    assert res.detail == "2 distinct approving reviewer(s); largest share 100%"
+    assert _share(res) <= 100
+
+
+def test_the_rv_0_1_0_01_correction_event_cannot_push_a_share_above_100_percent():
+    events = RS.ReviewStore.default().events()
+    mine = [e for e in events if e["example_id"] == "gj-feas-005" and e["reviewer_id"] == "po-reviewer"
+            and e["action"] == "approve"]
+    assert len(mine) >= 2 and mine[-1]["independent_rating"] is False       # the recorded correction
+    res = {r.id: r for r in gates.evaluate("0.1.1", events=events, mode="multi_reviewer")}["reviewer_diversity"]
+    assert 0 < _share(res) <= 100
+    assert not res.passed                        # still fails: po-reviewer approved every approved row
+    solo = {r.id: r for r in gates.evaluate("0.1.1", events=events, mode="solo_owner")}
+    assert solo["reviewer_diversity"].state == "N/A"
+
+
+def test_a_genuine_multi_reviewer_distribution_computes_the_expected_shares(store):
+    rows = _human_tier_rows(5)
+    for rec in rows[:3]:
+        decide(store, TWO, rec, "alice")
+    for rec in rows[2:]:
+        decide(store, TWO, rec, "bob")
+    decide(store, TWO, rows[0], "alice")             # repeats change nothing
+    res = _diversity(rows, store.events())
+    assert res.detail == "2 distinct approving reviewer(s); largest share 60%" and res.passed is True
+
+    skewed = _human_tier_rows(5)
+    for rec in skewed:
+        decide(store, TWO, rec, "alice")
+    decide(store, TWO, skewed[0], "bob")
+    res = _diversity(skewed, store.events())
+    assert res.detail == "2 distinct approving reviewer(s); largest share 100%" and res.passed is False
+
+
+def test_an_approval_of_an_older_content_version_does_not_count_for_the_current_one(store):
+    rec = _human_tier_rows(1)[0]
+    decide(store, TWO, rec, "alice")
+    edited = copy.deepcopy(rec)
+    edited["expected_output"]["message_to_user"] = (edited["expected_output"].get("message_to_user") or "") + " Edited."
+    decide(store, TWO, edited, "bob")
+    res = _diversity([edited], store.events())
+    assert res.detail == "1 distinct approving reviewer(s); largest share 100%"     # only bob approved this content
+
+
+def test_solo_mode_keeps_reviewer_diversity_na_with_repeated_approvals(store):
+    rows = _human_tier_rows(1)
+    decide(store, {"owner": OWNER}, rows[0], "owner")
+    decide(store, {"owner": OWNER}, rows[0], "owner")
+    res = _diversity(rows, store.events(), mode="solo_owner")
+    assert (res.applicable, res.passed, res.state) == (False, None, "N/A")
+
+
 # ---- no fake pass ----------------------------------------------------------------------------------
 
 def test_solo_mode_reports_pairwise_gates_as_na_never_passed(committed_results, capsys):

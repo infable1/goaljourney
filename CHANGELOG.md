@@ -3,6 +3,15 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-09-29 — Fix: `reviewer_diversity` counts one approval per reviewer per approved row (no version change)
+
+- `generation/pipelines/gates.py` counted approve *events*, so a corrective re-approval by the same
+  reviewer (rv-0.1.0-01, `rev-a1a061cc1487`) raised the informational share to 111%. It now counts
+  each reviewer whose latest decision on the row's current content hash is approve (`resolve()`
+  decisions), at most once per approved row. Thresholds, solo behaviour (N/A) and event meanings
+  are unchanged; v0.1.1 in multi-reviewer mode still fails the gate (share 100%).
+- Five tests in `tests/test_solo_review.py`; three of them fail on the old counting.
+
 ## 2026-09-29 — Solo-owner-first review governance (pipeline 0.4.0, release gates 1.1; no dataset, schema or evaluation version change)
 
 The project moves from **multi-reviewer-first governance** to **solo-owner-first governance with

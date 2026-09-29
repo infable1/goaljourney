@@ -126,13 +126,15 @@ def evaluate(version=None, rows=None, purpose="sft", events=None, manifest=None,
         + (f": {[k['id'] for k in open_ki][:10]}" if open_ki else ""))
 
     # reviewer_diversity
+    # One approval per reviewer per approved row: `decisions` holds each reviewer's latest decision on the row's
+    # current content hash (review_store.resolve), so repeated approval events do not count twice.
     approvers = Counter()
     for r in all_rows:
         if infos[r["id"]]["status"] != "approved":
             continue
-        for e in events:
-            if e["example_id"] == r["id"] and e["content_hash"] == infos[r["id"]]["content_hash"] and e["action"] == "approve":
-                approvers[e["reviewer_id"]] += 1
+        for reviewer_id, action in infos[r["id"]]["decisions"].items():
+            if action == "approve":
+                approvers[reviewer_id] += 1
     g = cfg["reviewer_diversity"]
     top = _share(max(approvers.values()), approved) if approvers and approved else 1.0
     add("reviewer_diversity", len(approvers) >= g["min_distinct_reviewers"] and top <= g["max_share_single_reviewer"],
