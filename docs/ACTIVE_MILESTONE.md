@@ -60,8 +60,9 @@ The column says who performs each task; the agent never records review decisions
 ### Progress
 
 As of 2026-09-29, on branch `claude/sleepy-dijkstra-nzrf3t` (not yet merged into the default
-branch). The calibration round is recorded, and the governance change (M1.7a) is implemented. The
-rest of the milestone has not started.
+branch). The calibration round is recorded, the governance change (M1.7a) is implemented, and
+solo-owner review of the rest of the sample has started (2 items). The rest of the milestone has not
+started.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -80,8 +81,22 @@ rest of the milestone has not started.
   No `domain_expert` and no `adjudicator` is registered.
 * **Task 2 (done).** Both reviewers rated all 8 calibration items; `po-reviewer-two` rated them
   blind from a packet without existing decisions or automated findings. That is 16 calibration
-  decisions. The log holds 17 events in total; the extra one is `po-reviewer`'s approval of
-  `gj-daily-002`, which is outside the review sample.
+  decisions. The 17th calibration-era event is `po-reviewer`'s approval of `gj-daily-002`, which
+  is outside the review sample.
+* **Solo-owner sample review (started).** `po-reviewer` reviewed two non-calibration items under
+  rubric 0.2.1 (`9457084`). Both are approve / acceptable with minor issues:
+  * rv-0.1.0-01 / `gj-feas-005`: `language_quality` and `explanation_quality`;
+  * rv-0.1.0-03 / `gj-prog-003`: `explanation_quality`.
+
+  **Independence correction.** rv-0.1.0-01 was first recorded with `independent_rating: true`
+  (`rev-044d69c4953d`). The owner had changed `language_quality` from major to minor issues after
+  the AI-copilot discussion, so a corrective event (`rev-a1a061cc1487`) appends the same final
+  decision with `independent_rating: false`. The original line is unchanged, and its latest
+  decision is still approve / acceptable. rv-0.1.0-03 keeps `independent_rating: true`.
+
+  The log now holds 20 events (`gj review verify-log`: 0 errors).
+  * Pool (93): human-reviewed 11, training-eligible 9, needs_revision 2, not reviewed 82.
+  * Sample (30): decided 10, approved 8, needs_revision 2, pending 20.
 * **Task 3 (historical; N/A in solo mode).** Agreement on the decision is 7/8 (0.875), κ 0.60.
   That would pass `calibration_agreement` in `multi_reviewer` mode; in solo mode the gate is N/A.
   Agreement on the overall verdict is 3/8 (κ 0.05); the gap is mostly `excellent` against
@@ -98,20 +113,22 @@ rest of the milestone has not started.
   * rv-0.1.0-30 / `gj-safe-006` (`restricted`): both reviewers chose revise (external-fact
     discipline, a hard gate). The fix goes through a new `dataset_version` and the ledger, then a new
     review with `legal` sign-off.
-  * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. All 17 events
-    are stamped 0.2.0.
+  * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. The 17
+    calibration-era events are stamped 0.2.0; the 3 solo-owner events are stamped 0.2.1.
 * **Tasks 4–8 (not started).** All 36 ledger entries are `pending_human_review`. KI-008, KI-012 and
   KI-033 are open. The 100 + 27 evaluation overlaps are `open`. The v0.2.0 references are
   unreviewed. POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
-  sample status file was regenerated (`0182552`) and these state files were synchronised.
+  sample status file was regenerated with each recorded decision (latest: `9457084`; the
+  independence correction leaves it unchanged), and these state files were synchronised with
+  `gj review stats`.
 
 Acceptance criteria: all open. The multi-reviewer criterion, `calibration_agreement`, is N/A in
 solo mode.
 
 Gates (`gj gates`, v0.1.1, solo_owner): 2 of 9 applicable pass (`findings_acknowledged`,
-`leakage_hard_clean`), and 2 are N/A (`reviewer_diversity`, `calibration_agreement`). Before D-026
-the count was 3 of 11. Not training-ready.
+`leakage_hard_clean`), and 2 are N/A (`reviewer_diversity`, `calibration_agreement`).
+`review_all_approved` is at 9/93. Before D-026 the count was 3 of 11. Not training-ready.
 
 Groundwork: the orchestration setup of 2026-09-28 added the `/dataset-review` skill and the reviewer
 subagents. It changed no data.
@@ -137,8 +154,14 @@ subagents. It changed no data.
 2. **Owner:** rv-0.1.0-02 stays `needs_revision` while `po-reviewer`'s revise is their latest
    decision. `po-reviewer` may re-decide it under rubric 0.2.1 if they now judge it approvable
    (`gj review approve gj-safe-003 --item rv-0.1.0-02 --reviewer po-reviewer --from <file>`).
-   Then rate the other 22 sample items (`gj review export --format sheet --manifest`), the 36
+   Then rate the other 20 pending sample items (`gj review export --format sheet --manifest`), the 36
    ledger revisions and the open known issues. The owner rates first; the AI copilot challenges
-   afterwards (guide §14).
+   afterwards (guide §14). If any rating changes after that discussion, the decision is recorded
+   with `--independent-rating no` (as for rv-0.1.0-01).
 3. **Agent** (on request): once decisions are recorded, apply the revise decisions through a new
    `dataset_version` and the ledger (`/dataset-review` §5), and keep these state files current.
+4. **Agent** (on request, in a separate commit): fix the `reviewer_diversity` counting defect.
+   * The gate counts approve events, so the informational share reads 111% after the rv-0.1.0-01
+     corrective event.
+   * It should count one approval per reviewer per approved row, with a test.
+   * No gate outcome changes in solo mode, where the gate is N/A.

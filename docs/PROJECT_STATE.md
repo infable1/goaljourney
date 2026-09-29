@@ -1,7 +1,8 @@
 # Project state
 
 *Last updated: 2026-09-29 · during Milestone 1.7 (Human Review Round 1), after the move to
-solo-owner-first review governance (D-026, pipeline 0.4.0). Update this file before declaring any
+solo-owner-first review governance (D-026, pipeline 0.4.0) and the first solo-owner reviews
+(rv-0.1.0-01, rv-0.1.0-03). Update this file before declaring any
 milestone complete (`/milestone-complete`).*
 
 **Governance change (D-026).** The project has moved from **multi-reviewer-first governance** to
@@ -33,7 +34,7 @@ truth; chat history is not.
 |---|---|
 | Repository | `infable1/goaljourney` — dataset, validation and evaluation pipeline for the GoalJourney Navigator model |
 | Working branch | Default branch `claude/fervent-keller-j517cd` (there is no `main`). The M1.7 review round after `ae21c7d` is on `claude/sleepy-dijkstra-nzrf3t`, which also merged the rv-0.1.0-29 record from `claude/compassionate-noether-1o9iyx`; it is not merged into the default branch. No open pull request (infable1/goaljourney#1 and infable1/goaljourney#2 were closed unmerged) |
-| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) (latest commits: `git log --oneline -5`) |
+| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084` and the rv-0.1.0-01 independence correction (latest commits: `git log --oneline -5`) |
 | Language / stack | Python ≥ 3.10; jsonschema, referencing, PyYAML, pytest; CLI `scripts/gj.py`; `make check` |
 | Mobile app / product code | not in this repository |
 
@@ -62,12 +63,24 @@ truth; chat history is not.
     `domain_expert` is registered. `gj review stats` notes the 2 active reviewers in solo mode.
     Whether `po-reviewer-two` keeps reviewing (or is set `active: false`; past events keep their
     snapshot) is the owner's decision.
-  * **Decisions:** 17 review events (`po-reviewer` 9, `po-reviewer-two` 8), all stamped rubric 0.2.0.
-    16 are on the 8 calibration items. 1 (`rev-da39af4d1363`, approve of `gj-daily-002`) is on an
-    example outside the review sample.
-  * **Counts:**
-    * pool (93): human-reviewed 9, training-eligible 7, needs_revision 2, not reviewed 84;
-    * review sample (30): human-reviewed 8, training-eligible 6.
+  * **Decisions:** 20 review events (`po-reviewer` 12, `po-reviewer-two` 8).
+    * The first 17 are stamped rubric 0.2.0: 16 on the 8 calibration items, plus 1
+      (`rev-da39af4d1363`, approve of `gj-daily-002`) on an example outside the review sample.
+    * The last 3 are stamped rubric 0.2.1. They are the first solo-owner reviews by `po-reviewer`,
+      both approve / acceptable with minor issues:
+      * rv-0.1.0-01 / `gj-feas-005`: `rev-044d69c4953d`, followed by the corrective
+        `rev-a1a061cc1487`;
+      * rv-0.1.0-03 / `gj-prog-003`: `rev-599dbd07516e`.
+  * **Independence correction.** `rev-044d69c4953d` was recorded with `independent_rating: true`,
+    but the owner had changed `language_quality` from major to minor issues after the AI-copilot
+    discussion. The corrective event appends the same final decision with
+    `independent_rating: false`; the original line is unchanged. rv-0.1.0-03 keeps
+    `independent_rating: true`, because no rating changed there. Across all events:
+    `independent_rating` is absent on 16, `true` on 3, `false` on 1.
+  * **Counts (`gj review stats`):**
+    * pool (93): human-reviewed 11, training-eligible 9, needs_revision 2, not reviewed 82;
+    * review sample (30): decided 10, approved 8, needs_revision 2, pending 20
+      (`review/review_sample_status_v0.1.1.json`).
   * **Historical calibration (informational in solo mode):** all 8 items rated by both reviewers
     (`po-reviewer-two` from a blind packet). Decision agreement is 7/8 (0.875, κ 0.60) and
     overall-verdict agreement 3/8 (κ 0.05). The events are unchanged and still count as recorded.
@@ -103,7 +116,7 @@ was `calibration_agreement`, which is now N/A rather than passed.
   `data/revisions/v0.1.1.yaml` records 36 revised examples.
 * **Review.**
   * A rubric (0.2.1; 0.2.0 kept).
-  * An append-only, hash-chained decision log (17 events).
+  * An append-only, hash-chained decision log (20 events).
   * A reviewer registry (2 human dataset reviewers; one owner is enough) and expert tiers.
   * Governance modes `solo_owner` (default) and `multi_reviewer`.
   * Training-eligibility states (human-reviewed / expert-reviewed / training-eligible / not
@@ -134,26 +147,30 @@ was `calibration_agreement`, which is now N/A rather than passed.
 
 ## Health (at last update)
 
-`make -k check` passes (for the D-026 governance change, every target):
+`make -k check` passes (after the rv-0.1.0-01 independence correction, every target):
 
 * 440 tests passed and 2 skipped (9 in `tests/test_orchestration.py`, 16 in
   `tests/test_solo_review.py`);
 * the builder, ledger and sample drift checks;
 * reference 106/106, naive 0/106;
 * leakage: 0 hard findings;
-* `gj review verify-log`: 17 events, 0 errors, 1 warning. The warning is the expected fork left by
+* `gj review verify-log`: 20 events, 0 errors, 1 warning. The warning is the expected fork left by
   merging two branches that both appended to the log (guide §11).
 
 `gj validate` has 1 warning: gj-vres-007 (KI-033).
 
 ## Blockers
 
-1. **Human review is at an early stage.** 17 decisions. 22 of the 30 sample items and the 36 ledger
-   revisions (all `pending_human_review`) are not reviewed.
-   * `review_all_approved`: 7/93 approved.
+1. **Human review is at an early stage.** 20 review events so far. 20 of the 30 sample items and the
+   36 ledger revisions (all `pending_human_review`) are not reviewed.
+   * `review_all_approved`: 9/93 approved.
    * In solo mode the owner reviews alone. `reviewer_diversity` and `calibration_agreement` are N/A
-     and no longer block. Under `multi_reviewer` mode, `reviewer_diversity` would still fail (one
-     reviewer holds a 100% approval share).
+     and no longer block. Under `multi_reviewer` mode, `reviewer_diversity` would still fail:
+     `po-reviewer` approved every approved row.
+   * **Known defect (not fixed):** the informational `reviewer_diversity` detail reads "largest share
+     111%". The gate counts approve *events*, so the corrective re-approval of `gj-feas-005` is
+     counted twice. It does not affect any gate outcome in solo mode, where the gate is N/A. It
+     needs a separate fix with a test that counts one approval per reviewer per approved row.
    * **No qualified `domain_expert`:** expert-tier items stay `awaiting_expert` and are not
      training-eligible. rv-0.1.0-02 needs `medical` and `physical_safety`, rv-0.1.0-30 needs
      `legal`, rv-0.1.0-28 needs `financial`.
