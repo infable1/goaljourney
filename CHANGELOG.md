@@ -23,6 +23,13 @@ defined in `configs/versions.yaml`; releases are immutable.
     time, so it is rebuilt from the review log as it stood then (it reproduces byte-identically); a
     rebuild from the live log must not rewrite the release (it is refused: 2 rows are now
     `needs_revision`). Getting review decisions into a release needs a new `dataset_version`.
+- **State files synchronised** (documentation only): `docs/PROJECT_STATE.md`,
+  `docs/ACTIVE_MILESTONE.md` and `docs/ROADMAP.md` now describe M1.7 as in progress:
+  - 2 human dataset reviewers; 17 review events;
+  - calibration 8/8 double-reviewed, decision agreement 0.875, κ 0.60;
+  - `reviewer_diversity` failing; 3/11 gates pass;
+  - rv-0.1.0-02 not adjudicated (no adjudicator);
+  - no domain experts registered.
 
 ## 2026-09-28 — Project orchestration & context management (no version change)
 
