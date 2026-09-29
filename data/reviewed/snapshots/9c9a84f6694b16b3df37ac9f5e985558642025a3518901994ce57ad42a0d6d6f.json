@@ -1,0 +1,285 @@
+{
+  "content_hash": "9c9a84f6694b16b3df37ac9f5e985558642025a3518901994ce57ad42a0d6d6f",
+  "example_id": "gj-route-003",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-game",
+      "title": "Publish my first mobile puzzle game",
+      "deadline": "2027-03-01",
+      "available_time": {
+        "hours_per_week": 7
+      },
+      "resources": [
+        "$400 set aside for a freelance pixel artist"
+      ]
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Core game",
+          "order": 1,
+          "status": "completed"
+        },
+        {
+          "id": "r2",
+          "title": "Art and polish",
+          "order": 2,
+          "status": "active"
+        },
+        {
+          "id": "r3",
+          "title": "Release",
+          "order": 3,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Playable prototype",
+          "region_id": "r1",
+          "success_criteria": [
+            "20 levels playable"
+          ],
+          "status": "verified"
+        },
+        {
+          "id": "m2",
+          "title": "Final art in the game",
+          "region_id": "r2",
+          "success_criteria": [
+            "All placeholder art replaced"
+          ],
+          "target_date": "2026-12-15"
+        },
+        {
+          "id": "m3",
+          "title": "Game published",
+          "region_id": "r3",
+          "success_criteria": [
+            "Live in at least one app store"
+          ],
+          "target_date": "2027-03-01"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Build the core puzzle mechanic and 20 levels",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Create an art style moodboard",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "completed"
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Hire a freelance pixel artist for 40 sprites",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "available",
+          "depends_on": [
+            "n2"
+          ]
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Integrate final art and animations",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n3"
+          ]
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Prepare the store listing",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "depends_on": [
+            "n4"
+          ]
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "resource_lost",
+        "date": "2026-09-25",
+        "description": "Unexpected car repair used up the $400 art budget."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Bad news, my car broke down and the $400 for the artist is gone. I really don't want to delay the game. What now?"
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "en",
+    "message_to_user": "Sorry about the car. The game doesn't have to wait: instead of hiring an artist, use a free asset pack that matches your moodboard and learn to recolour and tweak sprites yourself so it still looks like your game. The March release date stays.\nOne thing to check carefully: the asset pack's licence must allow commercial use and modification — that's part of the first new task.\nIf you'd rather keep the original plan, the alternative is to pause art until you've saved the budget again, which would likely push the release. Shall I apply the asset-pack route?",
+    "trigger": {
+      "type": "resource_lost",
+      "description": "The $400 art budget is no longer available."
+    },
+    "change_level": "moderate",
+    "requires_user_confirmation": true,
+    "removed_nodes": [
+      {
+        "node_id": "n3",
+        "reason": "There is no budget left to hire an artist."
+      }
+    ],
+    "added_nodes": [
+      {
+        "id": "n6",
+        "type": "task",
+        "title": "Choose a free asset pack that matches the moodboard and confirm its licence allows commercial use",
+        "region_id": "r2",
+        "milestone_id": "m2",
+        "status": "available",
+        "detail_level": "outline",
+        "depends_on": [
+          "n2"
+        ],
+        "estimated_duration_minutes": 120,
+        "created_by": "ai"
+      },
+      {
+        "id": "n7",
+        "type": "task",
+        "title": "Recolour and edit 5 sprites to match your palette",
+        "region_id": "r2",
+        "milestone_id": "m2",
+        "status": "locked",
+        "detail_level": "outline",
+        "depends_on": [
+          "n6"
+        ],
+        "estimated_duration_minutes": 300,
+        "created_by": "ai"
+      }
+    ],
+    "modified_nodes": [
+      {
+        "node_id": "n4",
+        "changes": [
+          {
+            "field": "depends_on",
+            "from": [
+              "n3"
+            ],
+            "to": [
+              "n6",
+              "n7"
+            ]
+          }
+        ],
+        "reason": "Final art now comes from the edited asset pack."
+      }
+    ],
+    "modified_deadlines": [],
+    "preserved_progress": [
+      "n1",
+      "n2"
+    ],
+    "user_options": [
+      "Use a free asset pack now and commission custom art for a later update",
+      "Pause art until the budget is saved again (release likely moves)"
+    ],
+    "external_claims": [
+      {
+        "claim": "Licence terms of the chosen asset pack permit commercial use and modification.",
+        "status": "needs_verification",
+        "affects": "Whether the pack can be used in a published game (task n6)"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Replaced hiring an artist with a free asset pack plus your own sprite edits.",
+      "why": "The art budget is gone, and waiting to save it again would put the March release at risk.",
+      "impact": "Release date unchanged; about 7 extra hours of your own art work; the licence must be checked before use.",
+      "alternatives_considered": [
+        {
+          "option": "Pause art until the budget returns",
+          "why_not": "Likely delays the release by months."
+        }
+      ]
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-route-003-c1",
+      "failure_modes": [
+        "silent_route_change"
+      ],
+      "critique": "Makes a major change to the game's look and scope without asking, and presents it as already done.",
+      "output": {
+        "type": "route_adaptation",
+        "response_language": "en",
+        "message_to_user": "I've switched your game to a minimal black-and-white style and cut the art milestone.",
+        "trigger": {
+          "type": "resource_lost",
+          "description": "Art budget gone."
+        },
+        "change_level": "major",
+        "requires_user_confirmation": false,
+        "removed_nodes": [
+          {
+            "node_id": "n3",
+            "reason": "No budget."
+          },
+          {
+            "node_id": "n4",
+            "reason": "Not needed in minimal style."
+          }
+        ],
+        "added_nodes": [],
+        "modified_nodes": [
+          {
+            "node_id": "n5",
+            "changes": [
+              {
+                "field": "depends_on",
+                "from": [
+                  "n4"
+                ],
+                "to": [
+                  "n2"
+                ]
+              }
+            ],
+            "reason": "Art step removed."
+          }
+        ],
+        "modified_deadlines": [],
+        "preserved_progress": [
+          "n1",
+          "n2"
+        ],
+        "decision_summary": {
+          "what_changed": "Art removed.",
+          "why": "No budget.",
+          "impact": "Minimal style."
+        }
+      }
+    }
+  ]
+}
