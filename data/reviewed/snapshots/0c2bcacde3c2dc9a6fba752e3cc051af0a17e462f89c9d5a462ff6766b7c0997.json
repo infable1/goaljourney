@@ -1,0 +1,41 @@
+{
+  "content_hash": "0c2bcacde3c2dc9a6fba752e3cc051af0a17e462f89c9d5a462ff6766b7c0997",
+  "example_id": "gj-clar-008",
+  "task_type": "goal_clarification",
+  "input": {
+    "operation": "goal_clarification",
+    "today": "2026-09-27",
+    "goal": {
+      "title": "Get promoted to Senior Engineer",
+      "deadline": "2027-09-01"
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I'm a mid-level backend engineer at a fintech company, three years there. I want to be promoted to Senior by next September. My manager is supportive."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "goal_clarification",
+    "response_language": "en",
+    "message_to_user": "A supportive manager and a clear date make this very workable. One question decides how the route is built:\nDoes your company have a written career ladder or promotion rubric for Senior, and when is the next promotion cycle before September?\nIf there's no written rubric, the first step will be a conversation with your manager to agree on concrete criteria.",
+    "ready_to_plan": false,
+    "questions": [
+      {
+        "question": "Is there a written career ladder or promotion rubric for Senior, and when is the next promotion cycle?",
+        "targets": [
+          "success_criteria",
+          "external_dependencies"
+        ],
+        "impact": "The route is built backwards from the rubric's gaps and the cycle date — the evidence has to exist before the review, not just before September."
+      }
+    ],
+    "known_context_used": [
+      "Mid-level backend engineer, three years at the company",
+      "Target: Senior by 2027-09-01",
+      "Manager is supportive"
+    ]
+  },
+  "contrastive": null
+}
