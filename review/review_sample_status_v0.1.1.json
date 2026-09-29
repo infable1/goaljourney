@@ -25,10 +25,13 @@
       "open": 4
     },
     "human_review_status": {
-      "pending": 30
+      "approved": 6,
+      "needs_revision": 2,
+      "pending": 22
     },
     "human_review_detail": {
-      "not_reviewed": 30
+      "decided": 8,
+      "not_reviewed": 22
     },
     "approved_by_automation": 0
   },
@@ -56,8 +59,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
       "note": "calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -125,8 +128,8 @@
           "problem": "E realism (arithmetic) / B goal understanding"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over; calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -139,8 +142,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -166,8 +169,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -206,8 +209,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -426,8 +429,8 @@
           "problem": "L external-fact discipline / K explanation quality (overclaiming)"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over; calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -574,8 +577,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "calibration item: every reviewer rates it independently, before other items"
     },
     {
@@ -588,8 +591,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
       "note": "calibration item: every reviewer rates it independently, before other items"
     }
   ]

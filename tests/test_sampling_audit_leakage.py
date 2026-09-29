@@ -265,12 +265,24 @@ def test_training_export_is_refused_and_draft_is_marked(tmp_path):
     assert export("eval", out_dir=str(tmp_path)) == 0
 
 
-def test_existing_release_is_idempotent():
+def test_existing_release_is_idempotent(monkeypatch):
     # Never build a release from a test: only re-run the build when the current version is already released.
     paths = split.release_paths(versions()["dataset_version"])
     if not all(p.exists() for p in paths.values()):
         pytest.skip("current dataset version not released yet")
+    from datetime import datetime
+    from generation.pipelines.pool import load_review_events
+    before = {k: p.read_bytes() for k, p in paths.items()}
+    # Release rows snapshot each row's review status at build time, and human decisions recorded after the
+    # release legitimately change what a rebuild selects. Rebuilding from the release's own inputs (the review
+    # log as it stood when the release was built) must reproduce it exactly.
+    built = datetime.fromisoformat(load_json(paths["manifest"])["created_at"])
+    at_release = [e for e in load_review_events() if datetime.fromisoformat(e["timestamp"].replace("Z", "+00:00")) <= built]
+    monkeypatch.setattr(split, "load_review_events", lambda: at_release)
     assert split.build_release() == 0
+    monkeypatch.undo()
+    split.build_release()   # live review state: identical data is a no-op, different data is refused
+    assert {k: p.read_bytes() for k, p in paths.items()} == before, "an existing release must never be rewritten"
 
 
 # ---- v0.1.1: revisions, sample status, release ------------------------------------------------
@@ -291,7 +303,17 @@ def test_sample_status_carries_the_frozen_sample_and_approves_nothing():
     assert [i["review_item_id"] for i in doc["items"]] == [i["review_item_id"] for i in frozen["items"]]
     assert doc["calibration_items"] == sorted(frozen["calibration"]["items"]) and len(doc["calibration_items"]) == 8
     assert doc["summary"]["approved_by_automation"] == 0
-    assert all(i["human_review_status"] == "pending" for i in doc["items"])  # no human decisions recorded yet
+    # Statuses come only from human decisions in the review log; an approved item needs a human approval of
+    # its exact current content (the log started empty; human review round 1 has since recorded decisions).
+    from generation.pipelines import review_store as RS
+    from generation.pipelines.pool import load_review_events
+    events = load_review_events()
+    for i in doc["items"]:
+        info = RS.resolve(BY_ID[i["example_id"]], events)
+        assert (i["human_review_status"], i["human_review_detail"]) == (info["status"], info["detail"]), i["example_id"]
+        if i["human_review_status"] == "approved":
+            assert any(e["example_id"] == i["example_id"] and e["content_hash"] == i["current_content_hash"]
+                       and e["action"] == "approve" and e["reviewer"]["human"] for e in events), i["example_id"]
     for i in doc["items"]:
         assert i["changed_since_sampling"] == (i["sampled_content_hash"] != i["current_content_hash"])
         assert bool(i["revision_ids"]) == i["changed_since_sampling"], i["example_id"]

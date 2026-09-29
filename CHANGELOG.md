@@ -11,6 +11,18 @@ defined in `configs/versions.yaml`; releases are immutable.
   stays unchanged in `dataset_review_rubric.yaml`, because earlier review events are stamped with it.
 - No example, snapshot or review event changed. The calibration disagreement on rv-0.1.0-02 is not
   adjudicated: no reviewer with the `adjudicator` role is registered.
+- **Sample status regenerated** (`gj review sample-status --write`): the file predated the first
+  human decision. It now shows the 8 calibration items as decided (6 approved, 2 needs_revision),
+  exactly as the review log resolves them; nothing else changed and `approved_by_automation` stays 0.
+- **Test expectations repaired** (no gate or pipeline change):
+  - `test_release_is_not_training_ready_for_the_right_reasons` (eec3c19): `calibration_agreement` is no
+    longer expected to fail (8/8 double-reviewed).
+  - `test_sample_status_…`: instead of "every item pending", statuses must equal what the human log
+    resolves, and every approved item needs a human approval of its current content.
+  - `test_existing_release_is_idempotent`: the frozen v0.1.1 release snapshots review status at build
+    time, so it is rebuilt from the review log as it stood then (it reproduces byte-identically); a
+    rebuild from the live log must not rewrite the release (it is refused: 2 rows are now
+    `needs_revision`). Getting review decisions into a release needs a new `dataset_version`.
 
 ## 2026-09-28 — Project orchestration & context management (no version change)
 
