@@ -1,0 +1,203 @@
+{
+  "content_hash": "e343978a6d2ed6098493ac2601ec4b57b7f25de315665d80de8e23c4516edffe",
+  "example_id": "gj-prog-003",
+  "task_type": "progress_update",
+  "input": {
+    "operation": "progress_update",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-bikes",
+      "title": "Get 10 recurring clients for my mobile bike repair service"
+    },
+    "progress": {
+      "verified_node_ids": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5"
+      ],
+      "verified_milestone_ids": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "current_level_index": 2,
+      "unlocked_achievement_ids": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "outcome_metrics": {
+        "recurring_clients": 12
+      }
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Launch",
+          "order": 1,
+          "status": "completed"
+        },
+        {
+          "id": "r2",
+          "title": "Growth",
+          "order": 2,
+          "status": "completed"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "First paying client",
+          "region_id": "r1",
+          "success_criteria": [
+            "Paid invoice"
+          ],
+          "status": "verified"
+        },
+        {
+          "id": "m2",
+          "title": "5 recurring clients",
+          "region_id": "r2",
+          "success_criteria": [
+            "5 clients with 2+ bookings"
+          ],
+          "status": "verified"
+        },
+        {
+          "id": "m3",
+          "title": "10 recurring clients",
+          "region_id": "r2",
+          "success_criteria": [
+            "10 clients with 2+ bookings"
+          ],
+          "status": "verified"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n5",
+          "type": "verification",
+          "title": "Booking records for recurring clients",
+          "region_id": "r2",
+          "milestone_id": "m3",
+          "status": "verified"
+        }
+      ],
+      "levels": [
+        {
+          "index": 0,
+          "title": "Mechanic with a van",
+          "unlock_criteria": "Start"
+        },
+        {
+          "index": 1,
+          "title": "Paid mechanic",
+          "unlock_milestone_id": "m1",
+          "unlock_criteria": "First paying client"
+        },
+        {
+          "index": 2,
+          "title": "Trusted local mechanic",
+          "unlock_milestone_id": "m2",
+          "unlock_criteria": "5 recurring clients"
+        },
+        {
+          "index": 3,
+          "title": "Established business",
+          "unlock_milestone_id": "m3",
+          "unlock_criteria": "10 recurring clients"
+        }
+      ],
+      "achievements": [
+        {
+          "id": "a1",
+          "title": "First paid job",
+          "unlock": {
+            "type": "first_real_world_result",
+            "ref": "m1"
+          }
+        },
+        {
+          "id": "a2",
+          "title": "Regulars",
+          "unlock": {
+            "type": "milestone_verified",
+            "ref": "m2"
+          }
+        },
+        {
+          "id": "a3",
+          "title": "Growth region done",
+          "unlock": {
+            "type": "region_completed",
+            "ref": "r2"
+          }
+        },
+        {
+          "id": "a4",
+          "title": "Goal reached",
+          "unlock": {
+            "type": "goal_completed"
+          }
+        },
+        {
+          "id": "a5",
+          "title": "Beyond the target",
+          "unlock": {
+            "type": "goal_exceeded"
+          }
+        }
+      ]
+    }
+  },
+  "expected_output": {
+    "type": "progress_update",
+    "response_language": "en",
+    "message_to_user": "You did it — and then some: the booking records confirm 12 recurring clients against a target of 10. That completes the goal and unlocks both \"Goal reached\" and \"Beyond the target\". You're now an \"Established business\".\nIf you want to keep going, we could set a new goal — for example raising your average booking value or taking on a second van.",
+    "goal_progress": {
+      "percent": 100,
+      "basis": "All 3 milestones verified; 12 recurring clients against a target of 10",
+      "verified_milestones": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "remaining_milestones": []
+    },
+    "level": {
+      "current_index": 3,
+      "current_title": "Established business",
+      "changed": true,
+      "previous_index": 2,
+      "reason": "Milestone m3 (10 recurring clients) verified",
+      "based_on": [
+        "m3",
+        "n5"
+      ]
+    },
+    "achievements_unlocked": [
+      {
+        "achievement_id": "a4",
+        "title": "Goal reached",
+        "reason": "All milestones verified",
+        "evidence_refs": [
+          "m3"
+        ]
+      },
+      {
+        "achievement_id": "a5",
+        "title": "Beyond the target",
+        "reason": "Verified booking records show 12 recurring clients, above the target of 10",
+        "evidence_refs": [
+          "m3",
+          "n5"
+        ]
+      }
+    ],
+    "suggested_next_action": "Decide whether to set a follow-up goal."
+  },
+  "contrastive": null
+}
