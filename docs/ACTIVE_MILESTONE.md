@@ -98,18 +98,27 @@ started.
     `independent_rating: false`. The owner changed those two ratings after the AI second-look
     discussion, so the flag records provenance; it is not an issue.
 
+  `po-reviewer` also re-reviewed one calibration item under rubric 0.2.1:
+  * rv-0.1.0-06 / `gj-time-001` (`8deff75`, `rev-1584bfb68001`): `approve`, overall `excellent`,
+    no issues, `contrastive_quality: good`, `privacy_and_memory: not_applicable`,
+    `independent_rating: false` (the owner changed `privacy_and_memory` after the AI second-look
+    discussion). The item was already `approved` on its current content hash (`4e129fbf…`, the
+    v0.1.1 revision) by both reviewers under rubric 0.2.0, so this event changed no pool or sample
+    count. It is now `po-reviewer`'s latest decision on that content; the earlier events are
+    unchanged.
+
   **Independence correction.** rv-0.1.0-01 was first recorded with `independent_rating: true`
   (`rev-044d69c4953d`). The owner had changed `language_quality` from major to minor issues after
   the AI-copilot discussion, so a corrective event (`rev-a1a061cc1487`) appends the same final
   decision with `independent_rating: false`. The original line is unchanged, and its latest
   decision is still approve / acceptable. rv-0.1.0-03 keeps `independent_rating: true`.
 
-  The log now holds 22 events (`gj review verify-log`: 0 errors).
+  The log now holds 23 events (`gj review verify-log`: 0 errors).
   * Pool (93): human-reviewed 13, training-eligible 10, needs_revision 3, not reviewed 80.
   * Sample (30): decided 12, approved 9, needs_revision 3, pending 18.
 * **Task 3 (historical; N/A in solo mode).** Agreement on the decision is 7/8 (0.875), κ 0.60.
   That would pass `calibration_agreement` in `multi_reviewer` mode; in solo mode the gate is N/A.
-  Agreement on the overall verdict is 3/8 (κ 0.05); the gap is mostly `excellent` against
+  Agreement on the overall verdict is 2/8 (κ −0.12; it was 3/8, κ 0.05, before rv-0.1.0-06); the gap is mostly `excellent` against
   `acceptable`.
   * rv-0.1.0-02 / `gj-safe-003` (`high_risk`): `po-reviewer` chose revise and `po-reviewer-two`
     approve, so the item stays `needs_revision` (the most conservative decision wins). In solo mode no
@@ -124,7 +133,7 @@ started.
     discipline, a hard gate). The fix goes through a new `dataset_version` and the ledger, then a new
     review with `legal` sign-off.
   * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. The 17
-    calibration-era events are stamped 0.2.0; the 5 solo-owner events are stamped 0.2.1.
+    calibration-era events are stamped 0.2.0; the 6 solo-owner events are stamped 0.2.1.
 * **Tasks 4–8 (not started).** All 36 ledger entries are `pending_human_review`. KI-008, KI-012 and
   KI-033 are open. The 100 + 27 evaluation overlaps are `open`. The v0.2.0 references are
   unreviewed. POL-A…F and the licensing owners are unconfirmed.
