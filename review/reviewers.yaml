@@ -1,17 +1,22 @@
 # Reviewer registry — who may record review decisions (gj review approve|revise|reject|apply).
 #
+# Solo-owner mode (configs/review.yaml governance.mode, D-026): one owner entry with dataset_reviewer is enough;
+# add domain_expert only for domains the owner is professionally qualified in. Never add an entry for a person
+# who does not exist or does not review — historical entries stay; set `active: false` instead of deleting.
+#
 # Add yourself before your first review. Use a stable pseudonymous id (no e-mail addresses or other
 # personal data); the id, roles, languages and expert domains are copied into every decision you record,
 # so later edits here never change the meaning of a past decision.
 #
 #   id              lowercase, 2–41 chars: letters, digits, . _ -
-#   roles           dataset_reviewer | domain_expert | adjudicator   (see configs/review.yaml)
+#   roles           dataset_reviewer | domain_expert | adjudicator (multi_reviewer mode)   (see configs/review.yaml)
 #   languages       languages you can judge natively or near-natively: en, ru
 #                   (Russian and mixed-input examples require ru; mixed input requires both)
 #   expert_domains  only for domain_expert: medical, mental_health, legal, financial, physical_safety,
 #                   privacy, safety_policy — list only domains you are professionally qualified in
 #   human           must be true. Automated agents (including the AI that wrote the examples) may run
-#                   audits and propose revisions, but can never record a review decision.
+#                   audits and propose revisions, but can never record a review decision. An AI review copilot
+#                   is never registered and never counts as a reviewer or a domain expert.
 #   active          set to false instead of deleting an entry
 #
 # Example (commented out on purpose — replace with your own entry):

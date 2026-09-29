@@ -7,7 +7,8 @@ eval        {"id", "case_id", "step_id", "case_type", "messages": [system, user]
 
 Training formats (sft, preference) are gated:
   * --review-policy require_approved (default): only rows whose exact content is `approved` NOW
-    (review decisions are resolved live against the content hash stored in the release);
+    (review decisions are resolved live against the content hash stored in the release) — so rows awaiting an
+    expert, needing revision, rejected or not reviewed never reach a training file, in any review mode;
   * the release gates (configs/release_gates.yaml) must pass — otherwise the export is refused, unless
     --allow-draft is given, which writes to exports/v<ver>-draft/ with training_eligible: false on every
     record and a DRAFT_NOT_FOR_TRAINING marker (pipeline smoke tests only);
@@ -75,13 +76,13 @@ def export(fmt, version=None, out_dir=None, review_policy="require_approved", al
         return 1
 
     from . import review_store as RS
-    from .gates import evaluate, training_ready
+    from .gates import evaluate, failing as failing_gates, training_ready
     if review_policy == "allow_pending" and not allow_draft:
         print("✗ --review-policy allow_pending exports unreviewed rows; it requires --allow-draft (output is marked not-for-training).")
         return 1
     results = evaluate(version, purpose=fmt)
     ready = training_ready(results)
-    failing = [r.id for r in results if r.blocking and not r.passed]
+    failing = failing_gates(results)
     if not ready and not allow_draft:
         print(f"✗ release v{version} is not training_ready — failing gates: {', '.join(failing)}.")
         print("  Run `gj gates` for details. For a pipeline smoke test use --allow-draft (writes exports/v<ver>-draft/, "

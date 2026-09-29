@@ -3,6 +3,55 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-09-29 — Solo-owner-first review governance (pipeline 0.4.0, release gates 1.1; no dataset, schema or evaluation version change)
+
+The project moves from **multi-reviewer-first governance** to **solo-owner-first governance with
+optional expert escalation** (D-026, directed by the product owner). The reason: the project has
+one owner, and the pairwise gates could be met only by a second person it does not have, or by a
+fabricated identity.
+
+- **Governance mode.** `configs/review.yaml` `governance.mode: solo_owner`. A config without a
+  mode means `multi_reviewer`.
+  - The mode decides which gates apply. It never changes how decisions resolve, so historical
+    multi-reviewer events keep their meaning.
+  - With one reviewer, their latest decision on a content hash is final.
+- **Gate scopes** (`configs/release_gates.yaml` 1.1; `generation/pipelines/gates.py`).
+  - Every gate carries `scope: always` or `scope: multi_reviewer`. Only `reviewer_diversity` and
+    `calibration_agreement` are `multi_reviewer`.
+  - In solo mode they are reported **N/A**: `passed` is null, they never count as passed, and they
+    never block. `gj gates` prints the mode, PASS / FAIL / N/A and the applicable count.
+  - No threshold changed; every other gate stays blocking in both modes.
+- **Training eligibility** (`review_store.training_eligibility`, `split.plan_release` /
+  `build_release`).
+  - Release manifests gain `review_mode` and `training_eligibility`: the eligible count, counts per
+    reason, and every example that is not training-eligible, with its reason (`awaiting_expert`
+    with missing domains, `needs_revision`, `rejected`, `not_reviewed`, `content_changed`) and
+    whether it is in the release as a draft row.
+  - `resolve()` also reports `covered_expert_domains`. Status logic is unchanged.
+- **Stats.** `gj review stats` shows the mode, the human reviewers, and pool and sample counts
+  (human-reviewed, training-eligible, awaiting expert, needs revision, rejected, not reviewed,
+  content changed). Pair calibration and reviewer diversity show as N/A. Historical pair agreement
+  is labelled informational.
+- **Independence flag.** `gj review approve|revise|reject --independent-rating yes|no`. `no`
+  records that a rating was changed after seeing findings or AI critique.
+- **Docs.**
+  - `docs/HUMAN_REVIEW_GUIDE.md`: a solo-owner preface, then §14 AI review copilot (it may
+    explain, challenge and recalculate; it never records, impersonates, counts as an expert or
+    changes decisions), §15 "I'm unsure" (notes, no new state), §16 expert tier and training
+    eligibility, §17 multi-reviewer compatibility.
+  - Also updated: DATASET_SPEC §2, §14 and §15; D-026 (D-014 refined); the `/dataset-review` and
+    `/release-check` skills; the state files; and the registry header.
+- **Tests.** `tests/test_solo_review.py` has 16 tests: the solo path, no fake pass, the expert
+  tier, the AI copilot, historical compatibility, multi-reviewer mode, invalidation on revision,
+  and manifest and export eligibility. `test_release_is_not_training_ready_for_the_right_reasons`
+  now expects the pairwise gates to be N/A, not passed. No test was loosened.
+- **Unchanged.**
+  - No review event, snapshot, example, ledger entry, release file or manifest.
+  - Both registry entries are unchanged; `po-reviewer-two` is still `active` (an owner decision).
+  - v0.1.1 rebuilds byte-identically from its release-time review log.
+  - `gj gates` is 2 of 9 applicable passed plus 2 N/A (before: 3 of 11 passed, one of them
+    `calibration_agreement`). Not training-ready.
+
 ## 2026-09-29 — Review rubric 0.2.1 (no dataset, schema or evaluation version change)
 
 - **Rubric 0.2.1** (`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`, now set in

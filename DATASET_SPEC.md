@@ -5,8 +5,9 @@ is, what each AI operation must return, which behaviours are enforced automatica
 are reviewed, split, versioned and exported. The architectural rationale is in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-**Status of v0.1.1:** 93 agent-authored synthetic examples, **none human-reviewed yet** (release
-`draft_unreviewed`). Synthetic data is not ground truth — see §14.
+**Status of v0.1.1:** 93 agent-authored synthetic examples; human review is in progress and was
+not complete when v0.1.1 was built (release `draft_unreviewed`; live counts: `gj review stats`).
+Synthetic data is not ground truth — see §14.
 
 * **Milestone 1.5** added the human-review system, audits, layered leakage checks and release gates.
 * **Milestone 1.6** made the following changes:
@@ -41,7 +42,7 @@ release manifest and generation run.
 | `schema_version` | 0.1.1 | `schemas/*.json` (`$id` contains `v0.1.1`); earlier versions frozen in `schemas/archive/v<ver>/`; every record is validated with the schemas and lint rules of its own `schema_version` |
 | `navigator_prompt_version` | 0.1.1 | `prompts/navigator/v0.1.1/system.md` (runtime prompt used in SFT export and eval; adds POL-A…E) |
 | `generation_prompt_version` | 0.1.1 | `prompts/generation/v0.1.1/` (teacher prompts; policies and new failure modes) |
-| `pipeline_version` | 0.3.0 | `gjcore/`, `generation/` code (0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders) |
+| `pipeline_version` | 0.4.0 | `gjcore/`, `generation/` code (0.4.0: review governance modes, solo_owner default, gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders) |
 | `evaluation_version` | 0.2.0 | `evaluation/cases/v0.2.0/` (generated from `evaluation/builders/v0_2_0/`) + check semantics; v0.1.0 kept frozen |
 | `base_model` | unset | chosen later; recorded here, never hard-coded |
 
@@ -341,21 +342,46 @@ content is preserved in `data/reviewed/snapshots/<hash>.json`.
 
 Rules:
 
-* The latest decision per reviewer counts.
+* The latest decision per reviewer counts. With one reviewer, their latest decision on the current
+  content hash is final.
 * The most conservative decision wins.
 * An adjudicator's decision is final.
 * The log is append-only: a changed example gets a new decision; old ones are never rewritten.
 
+**Governance mode** (`configs/review.yaml` `governance.mode`, D-026). `solo_owner` (the default
+since pipeline 0.4.0): one human owner reviews; the inter-reviewer gates `reviewer_diversity` and
+`calibration_agreement` are **N/A** — reported as N/A, never as passed, and never satisfied by
+self-agreement. `multi_reviewer`: several independent reviewers; those two gates are blocking. A
+config without `governance.mode` (every config before D-026) means `multi_reviewer`. The mode never
+changes how decisions resolve, so historical multi-reviewer events keep their meaning in either
+mode.
+
 **Qualifications and tiers** (`configs/review.yaml`): reviewers are registered in
-`review/reviewers.yaml` and must be human. Approval requires a reviewer who reads the example's
-languages (RU; mixed input needs RU+EN). Examples with a non-`allowed` safety category or a risk tag
-are `expert_review_required` and need sign-off from `domain_expert`s covering their expert domains.
-No example is ever approved automatically.
+`review/reviewers.yaml` and must be human; one owner entry is enough. Approval requires a reviewer
+who reads the example's languages (RU; mixed input needs RU+EN). Examples with a non-`allowed`
+safety category or a risk tag are `expert_review_required` and need sign-off from `domain_expert`s
+covering their expert domains. The owner may hold `domain_expert` only for domains they are
+qualified in. Otherwise the item stays `pending` / `awaiting_expert` and is not training-eligible.
+No example is ever approved automatically, and an AI review copilot never records a decision, never
+counts as a reviewer or an expert, and never changes a rating
+([guide §14](docs/HUMAN_REVIEW_GUIDE.md)). A rating that the reviewer changed after seeing findings
+or AI critique is recorded with `--independent-rating no`.
+
+**Review and training states** (`review_store.training_eligibility`) are kept apart:
+
+| State | Meaning |
+|---|---|
+| human-reviewed | at least one human decision on the current content hash |
+| expert-reviewed | every required expert domain covered by a human `domain_expert` approval |
+| training-eligible | status `approved` (which includes the expert tier) |
+| not eligible | `not_reviewed`, `content_changed`, `awaiting_expert`, `needs_revision` or `rejected`, always with that reason |
+| training-ready release | a release whose every *applicable* gate passes (§15) |
 
 **Sample.** `gj review sample` builds a deterministic 30-item manifest
 (`review/review_manifest_v<ver>.json`, schema `schemas/review_manifest.json`): 40% random (drawn first,
 unbiased), 30% highest risk, 20% contrastive, 10% edge; coverage repair (every operation/behaviour,
-RU, EN, mixed, contrastive, ≥ 3 expert-tier); 8 calibration items reviewed by everyone first.
+RU, EN, mixed, contrastive, ≥ 3 expert-tier); 8 calibration items reviewed by everyone first (in
+`solo_owner` mode they are ordinary sample items).
 A new dataset version keeps the sample in force unless a new one is drawn deliberately.
 v0.1.1 keeps the v0.1.0 sample (`configs/review.yaml` `sampling.sample_version`), regenerated from
 the frozen v0.1.0 inputs. `gj review sample-status` writes `review/review_sample_status_v<ver>.json`.
@@ -402,12 +428,23 @@ gj review history ID                gj review stats             gj review verify
   release only when approved, under either policy. Content that is `needs_revision` or `rejected` is
   always excluded; under `allow_pending`, `pending` authored content of any detail (`not_reviewed`,
   `content_changed`, `awaiting_expert`) is released only as a draft.
+* **Training eligibility in the manifest.** Every release manifest (pipeline ≥ 0.4.0) records
+  `review_mode` and `training_eligibility`: the eligible count, counts per reason, and every
+  pool example that is not training-eligible, with its reason, status, origin, whether it is in the
+  release as a draft row, and the missing expert domains for `awaiting_expert`. Nothing is dropped
+  silently. Earlier manifests (v0.1.0, v0.1.1) are frozen as built and lack these keys.
 * **Release status:** `draft_unreviewed` (pending rows) → `reviewed_not_training_ready` (all rows
-  approved but a release gate fails) → `training_ready` (every gate in
-  [`configs/release_gates.yaml`](configs/release_gates.yaml) passes: strict validation, 100% approval,
-  acknowledged findings, no open medium/high known issues, ≥ 2 reviewers, calibration agreement,
-  leakage clean and dispositioned, coverage minimums, evaluation readiness, licensing resolved).
-  `gj gates` evaluates them live.
+  approved but an applicable release gate fails) → `training_ready` (every *applicable* gate in
+  [`configs/release_gates.yaml`](configs/release_gates.yaml) passes). Gates, by scope:
+  * **always:** strict validation, 100% approval, acknowledged findings, no open medium/high known
+    issues, leakage clean and dispositioned, coverage minimums, evaluation readiness, licensing
+    resolved;
+  * **multi_reviewer only:** ≥ 2 reviewers (`reviewer_diversity`) and calibration agreement
+    (`calibration_agreement`). In `solo_owner` mode these are N/A: shown, never counted as passed,
+    and never blocking.
+
+  Every gate guards training readiness only; none blocks review work. `gj gates` evaluates them
+  live and prints the mode, the state of each gate (PASS / FAIL / N/A) and the applicable count.
 
 ## 16. Export formats
 

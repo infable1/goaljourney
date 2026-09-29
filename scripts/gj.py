@@ -106,9 +106,10 @@ def cmd_review(args):
     if c == "template":
         return review.cmd_template(args.id, out=args.out)
     if c in ("approve", "revise", "reject"):
+        independent = None if args.independent_rating is None else args.independent_rating == "yes"
         return review.cmd_decide(c, args.id, args.reviewer, decision_file=args.from_file, rates=args.rate or [],
                                  overall=args.overall, notes=args.notes, issues=args.issue or [],
-                                 acknowledge=args.acknowledge_findings, item_id=args.item)
+                                 acknowledge=args.acknowledge_findings, item_id=args.item, independent=independent)
     if c == "apply":
         return review.cmd_apply(args.file, reviewer=args.reviewer, acknowledge=args.acknowledge_findings)
     if c == "history":
@@ -239,6 +240,9 @@ def main(argv=None):
         d.add_argument("--item", help="review item id (defaults to the manifest's)")
         d.add_argument("--acknowledge-findings", action="store_true",
                        help="approve although high-severity findings are open (after reading them)")
+        d.add_argument("--independent-rating", choices=["yes", "no"],
+                       help="no = you changed a rating after reading automated findings or AI-copilot critique "
+                            "(recorded as independent_rating: false)")
     ra = rs.add_parser("apply", help="record every filled entry of a review sheet")
     ra.add_argument("file")
     ra.add_argument("--reviewer", required=True)

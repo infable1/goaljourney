@@ -6,44 +6,65 @@
 # Thresholds are floors for the FIRST real training run of a ~4B navigator. They are not derived from
 # experiments (none exist yet); each rationale says what the number protects against, and all of them
 # should be revisited with evidence after the first pilot fine-tune.
-version: "1.0"
+#
+# Every gate is a training-readiness gate: it decides a release's `release_status` and whether `gj export` writes
+# training files. No gate blocks review work itself (reviewing, recording decisions, revising examples).
+#
+# `scope` (added in 1.1 with review governance modes, D-026; configs/review.yaml `governance.mode`):
+#   always          applies in every mode. Covers validation, human approval of every training row (which includes
+#                   qualified expert sign-off for expert-tier rows), findings, known issues, leakage, coverage,
+#                   evaluation and licensing. Solo-owner mode applies all of these unchanged.
+#   multi_reviewer  inter-reviewer checks (reviewer_diversity, calibration_agreement): they apply only in
+#                   multi_reviewer mode. In solo_owner mode `gj gates` reports them N/A — never as passed — and
+#                   `training_ready` ignores them. There is no self-agreement substitute.
+# `applies_to` restricts a gate to an export purpose (preference_minimums: preference exports only).
+version: "1.1"
 
 gates:
   validation_strict:
     blocking: true
+    scope: always
     description: Every released example passes schema + semantic lint + contrastive self-test with warnings treated as errors.
     rationale: Warnings are cheap to fix at this scale; a warning left in training data is a behaviour the model learns.
 
   review_all_approved:
     blocking: true
+    scope: always
     min_approved_share: 1.0
     description: Every train/validation row has a qualified human approval of its exact content (status `approved`,
-      which already includes expert sign-off for expert-tier examples and language-qualified reviewers).
+      which already includes expert sign-off for expert-tier examples and language-qualified reviewers). Rows awaiting
+      an expert, needing revision, rejected or not reviewed are not training-eligible; release manifests list them
+      with a reason (`training_eligibility`).
     rationale: Synthetic, agent-authored data is not ground truth. 100% because a single wrong example (e.g. a wrong
       date or a gendered address) is learned as readily as a right one, and there is no downstream filter.
 
   findings_acknowledged:
     blocking: true
+    scope: always
     description: Every released example that has a high-severity audit finding or open known issue was approved with
       that finding explicitly acknowledged (after an independent rating).
     rationale: Keeps reviewer independence (rate first) while guaranteeing that no known red flag was simply missed.
 
   known_issues_closed:
     blocking: true
+    scope: always
     max_open_severity: low
     description: No open known issue of severity medium or high references a released example.
     rationale: Known issues are concrete, located defects; shipping them knowingly defeats the register.
 
   reviewer_diversity:
     blocking: true
+    scope: multi_reviewer
     min_distinct_reviewers: 2
     max_share_single_reviewer: 0.8
     description: At least two reviewers approved released rows, and no single reviewer approved more than 80% of them.
     rationale: One person's blind spots become the model's. 0.8 still lets a lead reviewer carry most of the load in a
-      small team; the calibration gate checks that the reviewers actually agree.
+      small team; the calibration gate checks that the reviewers actually agree. Multi-reviewer mode only — with one
+      accountable owner (solo_owner mode) there is no second reviewer to diversify, and none is invented.
 
   calibration_agreement:
     blocking: true
+    scope: multi_reviewer
     min_shared_items: 8
     min_decision_agreement: 0.75
     min_decision_kappa: 0.40
@@ -52,21 +73,25 @@ gates:
     rationale: 75% = at most 2 disagreements in 8. Kappa 0.40 is the conventional lower bound of "moderate" agreement
       (Landis & Koch 1977). With 8 items kappa's confidence interval is wide, so this gate detects a rubric that is
       being read differently — it does not certify reliability. Raise both after the first 100 double-reviewed items.
+      Multi-reviewer mode only, because agreement needs independent reviewers; one person agreeing with themselves proves nothing.
 
   leakage_hard_clean:
     blocking: true
+    scope: always
     description: No hard finding in any leakage layer (exact / near-duplicate / lexical paraphrase / scenario group / seed id)
       and the evaluation metadata is complete and valid.
     rationale: These are the only layers precise enough to block automatically; see docs/LEAKAGE_CHECKS.md.
 
   leakage_dispositions:
     blocking: true
+    scope: always
     description: Every reviewed template or seed overlap has a human disposition, and no decided rewrite is still pending.
     rationale: Most real overlaps are behavioural templates that text similarity cannot see (several are cross-lingual);
       only a person can decide whether a pair is intended in-distribution testing or leakage.
 
   coverage_minimums:
     blocking: true
+    scope: always
     min_approved_train: 1000
     min_per_task_type: 20
     min_language_share: {ru: 0.35, en: 0.35}
@@ -81,6 +106,7 @@ gates:
 
   preference_minimums:
     blocking: true
+    scope: always
     applies_to: [preference]
     min_per_failure_mode: 5
     description: For preference export only — every failure mode has at least 5 approved rejected outputs.
@@ -88,6 +114,7 @@ gates:
 
   eval_readiness:
     blocking: true
+    scope: always
     min_cases: 200
     min_cases_per_task_type: 10
     description: The evaluation set that will judge the trained model is large enough and has leakage metadata for every case.
@@ -97,6 +124,7 @@ gates:
 
   licensing_resolved:
     blocking: true
+    scope: always
     file: configs/licensing_status.yaml
     description: Every open licensing question is resolved and recorded.
     rationale: Training on data whose usage rights are unclear (teacher-model terms, base-model licence) creates a

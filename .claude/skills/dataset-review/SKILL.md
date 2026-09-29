@@ -1,12 +1,21 @@
 ---
 name: dataset-review
-description: Human-review round workflow for the GoalJourney dataset. Use when preparing review packets or sheets, checking review status, calibration agreement or release gates, recording decisions a human reviewer has made, or applying revisions requested by reviewers. The agent prepares and verifies; only registered humans decide.
+description: Human-review round workflow for the GoalJourney dataset (solo-owner governance by default, D-026). Use when preparing review packets or sheets, acting as the AI review copilot after the owner has rated, checking review status, training eligibility or release gates, recording decisions a human reviewer has made, or applying revisions requested by reviewers. The agent prepares, explains and verifies; only registered humans decide.
 ---
 # Dataset review round
 
 Full guide for reviewers: `docs/HUMAN_REVIEW_GUIDE.md`. Config: `configs/review.yaml`. Rubric:
 `evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml` (0.2.0, which earlier events are stamped with, stays in
 `dataset_review_rubric.yaml`).
+
+**Governance mode** (`configs/review.yaml` `governance.mode`, D-026). The default is `solo_owner`:
+
+- one human owner reviews, and their latest decision on a content hash is final;
+- there is no second reviewer, adjudication or pairwise calibration to arrange;
+- `reviewer_diversity` and `calibration_agreement` show as N/A. Never report them as passed.
+
+In `multi_reviewer` mode, the pairwise gates and adjudication apply (guide §17). Never create or
+suggest a second identity to satisfy a gate.
 
 ## The one rule
 
@@ -17,6 +26,11 @@ Full guide for reviewers: `docs/HUMAN_REVIEW_GUIDE.md`. Config: `configs/review.
 - Never pass `--acknowledge-findings` for someone.
 - Never add an entry to `review/reviewers.yaml`, and never edit `data/reviewed/` by hand.
 - Validation, audits and subagent findings are not reviews. Don't describe them as one.
+- As the **AI review copilot** (guide §14), you may explain, challenge and recalculate, but only
+  after the owner has rated the item.
+  - You are never a reviewer or a domain expert, and never the source of a qualification.
+  - You never change a rating. If the owner changes one after your critique, they record it with
+    `--independent-rating no`.
 
 ## 1. Preconditions
 
@@ -47,6 +61,8 @@ python3 scripts/gj.py gates                      # which review gates are still 
   findings afterwards (guide §5).
 - Expert-tier items need a registered `domain_expert` for every required domain. List those items
   and their domains for the owner. Never tell a reviewer outside a domain that they may approve.
+- Without a qualified expert, an expert-tier item stays `pending` / `awaiting_expert` and is not
+  training-eligible. Release manifests list it with its reason; it is never dropped silently.
 
 ## 4. Record decisions (only a human's own filled file)
 
@@ -63,13 +79,15 @@ Then verify:
 
 ```bash
 python3 scripts/gj.py review verify-log        # hash chain + snapshots intact
-python3 scripts/gj.py review stats             # statuses, agreement on calibration items
+python3 scripts/gj.py review stats             # mode, human-reviewed / training-eligible counts, N/A items
 python3 scripts/gj.py review sample-status --write
 python3 scripts/gj.py gates
 ```
 
-Calibration agreement below the gate (guide §9) is resolved by discussion and an `adjudicator`.
-The agent can summarise the disagreements, but never resolves them.
+In `multi_reviewer` mode, calibration agreement below the gate (guide §9) is resolved by
+discussion and an `adjudicator`. In solo mode, an owner who is unsure writes that in the notes
+(guide §15); no new state is needed. The agent can summarise disagreements or doubts, but never
+resolves them.
 
 ## 5. Act on `revise` and `reject` decisions
 
@@ -97,5 +115,10 @@ to the owner and the known-issues register, never into a reviewer's packet befor
 
 ## Finish
 
-Update Progress and Next action in `docs/ACTIVE_MILESTONE.md`. Record counts in
-`docs/PROJECT_STATE.md`: approved, pending, calibration agreement, gates.
+Update Progress and Next action in `docs/ACTIVE_MILESTONE.md`. Record these counts in
+`docs/PROJECT_STATE.md`:
+
+- the governance mode;
+- human-reviewed and training-eligible counts;
+- awaiting expert;
+- applicable gates passed, and the N/A gates.

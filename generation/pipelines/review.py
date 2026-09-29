@@ -409,8 +409,24 @@ def compute_stats(version=None):
         if rp[s].exists():
             released |= {row["id"] for row in read_jsonl(rp[s]) if content_hash(row) == infos.get(row["id"], {}).get("content_hash")}
     errors, warnings = store.verify()
+    mode = RS.review_mode()
+    registry = RS.load_registry()
+    active = [r for r in registry.values() if r["human"] and r["active"]]
+    solo = mode == "solo_owner"
     return {
         "dataset_version": version,
+        "review_mode": mode,
+        "governance": {
+            "active_human_reviewers": [{"id": r["id"], "roles": r["roles"], "expert_domains": r["expert_domains"]}
+                                       for r in active],
+            "active_dataset_reviewers": sum(1 for r in active if "dataset_reviewer" in r["roles"]),
+            "qualified_expert_domains": sorted({d for r in active if "domain_expert" in r["roles"] for d in r["expert_domains"]}),
+            # inter-reviewer checks only mean something with several independent reviewers (configs/release_gates.yaml)
+            "independent_pair_calibration": "N/A" if solo else "gate calibration_agreement (see `gj gates`)",
+            "reviewer_diversity": "N/A" if solo else "gate reviewer_diversity (see `gj gates`)",
+        },
+        "review_state_pool": _review_state(records, infos),
+        "review_state_sample": _review_state([pool[i][0] for i in items if i in pool], infos) if items else None,
         "status": dict(sorted(Counter(i["status"] for i in infos.values()).items())),
         "status_by_tier": by("tier"), "status_by_language": by("language"), "status_by_task_type": by("task_type"),
         "manifest": {"present": bool(manifest), "items": len(items), "items_with_decisions": len(reviewed_items),
@@ -430,6 +446,15 @@ def compute_stats(version=None):
     }
 
 
+def _review_state(records, infos):
+    """Human-reviewed / training-eligible / ineligibility reasons for a set of examples."""
+    te = [RS.training_eligibility(infos[r["id"]]) for r in records]
+    reasons = Counter(t["reason"] for t in te if not t["training_eligible"])
+    return {"total": len(te), "human_reviewed": sum(t["human_reviewed"] for t in te),
+            "training_eligible": sum(t["training_eligible"] for t in te),
+            **{k: reasons.get(k, 0) for k in RS.INELIGIBILITY_REASONS}}
+
+
 def _group(records, infos, key):
     out = defaultdict(Counter)
     for r in records:
@@ -443,6 +468,25 @@ def cmd_stats(as_json=False, version=None):
     if as_json:
         print(json.dumps(s, ensure_ascii=False, indent=2))
         return 0
+    g, solo = s["governance"], s["review_mode"] == "solo_owner"
+    print(f"Review mode: {s['review_mode']} (configs/review.yaml governance.mode)")
+    print(f"Human reviewers (registered, active): {len(g['active_human_reviewers'])} — "
+          + (", ".join(f"{r['id']} {r['roles']}" for r in g["active_human_reviewers"]) or "none")
+          + f"; qualified expert domains: {', '.join(g['qualified_expert_domains']) or 'none'}")
+    if solo and g["active_dataset_reviewers"] > 1:
+        print(f"  note: {g['active_dataset_reviewers']} active dataset reviewers in solo_owner mode. Their recorded decisions "
+              "all count; set `active: false` for anyone no longer reviewing (past events keep their snapshot), or switch "
+              "to multi_reviewer mode.")
+    for label, key in (("Pool", "review_state_pool"), ("Review sample", "review_state_sample")):
+        rs = s[key]
+        if rs:
+            print(f"{label} ({rs['total']}): human-reviewed {rs['human_reviewed']}/{rs['total']} · training-eligible "
+                  f"{rs['training_eligible']}/{rs['total']} · awaiting expert {rs['awaiting_expert']} · needs revision "
+                  f"{rs['needs_revision']} · rejected {rs['rejected']} · not reviewed {rs['not_reviewed']} · content changed "
+                  f"{rs['content_changed']}")
+    why = " (solo_owner mode — applies only with several independent reviewers)" if solo else ""
+    print(f"Independent pair calibration: {g['independent_pair_calibration']}{why}")
+    print(f"Reviewer diversity: {g['reviewer_diversity']}{why}\n")
     f = s["funnel"]
     print(f"Review status v{s['dataset_version']}: " + ", ".join(f"{k}={v}" for k, v in s["status"].items()))
     print(f"Pipeline funnel: raw {f['raw']} -> valid {f['valid']} -> decided {f['decided']} -> approved {f['approved']} "
@@ -460,7 +504,8 @@ def cmd_stats(as_json=False, version=None):
         print(f"Severe ratings (major/unacceptable) by criterion: {s['severe_ratings_by_criterion']}")
     for label, ag in (("all items", s["agreement_all"]), ("calibration items", s["agreement_calibration"])):
         if ag and ag["pairs"]:
-            print(f"\nAgreement ({label}, {ag['items_with_2plus_reviewers']} item(s) with 2+ reviewers):")
+            print(f"\n{'Historical reviewer-pair agreement — informational, not a gate in solo_owner mode' if solo else 'Agreement'} "
+                  f"({label}, {ag['items_with_2plus_reviewers']} item(s) with 2+ reviewers):")
             for p in ag["pairs"]:
                 print(f"  {p['reviewers'][0]} vs {p['reviewers'][1]}: n={p['items']} decision {p['decision_agreement']} "
                       f"(kappa {p['decision_kappa']}), overall {p['overall_agreement']} (kappa {p['overall_kappa']}), "

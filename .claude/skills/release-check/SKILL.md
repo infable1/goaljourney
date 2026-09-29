@@ -41,6 +41,10 @@ Never loosen a gate, a threshold or a review policy to get a pass (CLAUDE.md).
    - Report every failing gate with its reason line. Failing gates are expected until human review,
      licensing and coverage are done.
    - They are findings, not tasks to "fix" by editing gates.
+   - State the review mode. Gates scoped `multi_reviewer` show **N/A** in `solo_owner` mode (D-026).
+     Report them as N/A, never as passed.
+   - Report the manifest's `training_eligibility`: eligible count, and ineligible examples by
+     reason.
 7. **Afterwards.**
    - `gj audit --write` and `gj review sample-status --write` (new version files).
    - Update `docs/PROJECT_STATE.md` (versions table — a test checks it), `CHANGELOG.md` and the
@@ -64,7 +68,7 @@ reports readiness; it never starts training.
 
 | # | Check | Evidence |
 |---|---|---|
-| 1 | `gj gates` passes all 11 gates for the release and purpose | command output |
+| 1 | `gj gates` passes every gate applicable in the review mode (solo_owner: 9, multi_reviewer: 11) for the release and purpose; no expert-tier row lacks qualified expert sign-off | command output, manifest `training_eligibility` |
 | 2 | Licensing LIC-001…005 resolved by a person, with evidence | `configs/licensing_status.yaml` |
 | 3 | Base model chosen and recorded, and its licence permits the use (LIC-003) | `configs/versions.yaml` `base_model` |
 | 4 | Prompt parity: the SFT export and the eval runner use the same navigator prompt version | `configs/export.yaml`, `configs/evaluation.yaml` |

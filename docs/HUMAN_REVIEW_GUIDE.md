@@ -15,11 +15,45 @@ quality.** Your judgement is the quality gate. The policies you review against �
 confidence semantics, deadline autonomy, Russian voice, fact provenance — are in
 [`POLICY_DECISIONS_v0.1.1.md`](POLICY_DECISIONS_v0.1.1.md).
 
+## Review governance: solo owner first (D-026)
+
+The dataset is reviewed by **one accountable human owner**, helped by an **AI review copilot**, with a
+**qualified external expert** only where an expert-tier example needs one
+(`configs/review.yaml` → `governance.mode: solo_owner`).
+
+> The project needs rigorous human judgement, not bureaucratic multiplication of humans.
+> AI can be a reviewer coach, but the human remains the accountable decision-maker.
+> Expert qualification is a real-world requirement, not something the software or AI can simulate.
+
+```text
+                 ┌──────────────────────┐
+                 │   AI review copilot   │   explains, challenges, recalculates, compares readings (§14)
+                 └──────────┬───────────┘   never decides, never approves, is never an expert
+                            ▼
+┌──────────────┐     ┌───────────────┐
+│ Dataset item │ ──▶ │  Human owner  │ ──▶ approve / revise / reject   (latest decision on the content is final)
+└──────────────┘     └───────┬───────┘
+                   ordinary  │  expert-tier
+                     item ◀──┴──▶ item: a qualified human domain expert signs off (the owner only if qualified);
+                  human final     without one it stays `pending / awaiting_expert` and never enters training (§16)
+```
+
+* No second reviewer, reviewer-diversity check, adjudicator or pairwise calibration is required. The
+  release gates `reviewer_diversity` and `calibration_agreement` are reported **N/A** in this mode, never
+  as passed.
+* Nothing about quality changes: the rubric A–Q, the hard gates L and M, exact content-hash binding,
+  immutable snapshots, the append-only history, re-review after any edit, independence from automated
+  findings and expert sign-off all apply exactly as before.
+* Decisions recorded by several reviewers earlier (the 2026-09-28/29 calibration round) keep their
+  meaning: on that content version every reviewer's latest decision still counts.
+* A second reviewer can be added later; see §17.
+
 ## 1. Before you start
 
 1. Add yourself to [`review/reviewers.yaml`](../review/reviewers.yaml): a stable pseudonymous `id`,
    `roles`, the `languages` you can judge natively or near-natively, `expert_domains` only if you are
-   professionally qualified, and `human: true`. Automated agents cannot record decisions.
+   professionally qualified, and `human: true`. In solo_owner mode one entry — the owner — is enough.
+   Automated agents, including the AI copilot, are never registered and cannot record decisions.
 2. Read the rubric ([`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`](../evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml))
    and this guide.
 3. Skim [`DATASET_SPEC.md`](../DATASET_SPEC.md) §5–§12 (operations, journey grammar, verification,
@@ -29,9 +63,9 @@ confidence semantics, deadline autonomy, Russian voice, fact provenance — are 
 
 | Role | Can do | Notes |
 |---|---|---|
-| `dataset_reviewer` | approve, revise or reject examples in the languages they list | Russian and mixed-input examples need a reviewer who reads Russian; mixed input needs both languages |
-| `domain_expert` | the same, and signs off expert-tier examples in their `expert_domains` | expert-tier examples stay `pending` (detail `awaiting_expert`) until approvals cover every required domain |
-| `adjudicator` | resolves disagreements; their latest decision on a content version is final | use sparingly, and write the reasoning in `notes` |
+| `dataset_reviewer` | approve, revise or reject examples in the languages they list | the owner, in solo_owner mode. Russian and mixed-input examples need a reviewer who reads Russian; mixed input needs both languages |
+| `domain_expert` | the same, and signs off expert-tier examples in their `expert_domains` | a professionally qualified human only — the owner if genuinely qualified, otherwise an external expert; never an AI, never self-study. Expert-tier examples stay `pending` (detail `awaiting_expert`) until approvals cover every required domain |
+| `adjudicator` | resolves disagreements; their latest decision on a content version is final | multi_reviewer mode only (§17); not used in solo_owner mode. Use sparingly, and write the reasoning in `notes` |
 
 **Expert tier** means a non-`allowed` safety category or an explicit risk tag, which covers 10
 examples in v0.1.0. The required domains are shown by `gj review show` and `gj review list`: medical,
@@ -80,10 +114,11 @@ you how good the dataset is, and the random draw is the only unbiased estimate w
 operation, behaviour family, both languages, mixed input, rejected outputs and at least 3 expert-tier
 examples appear. Repairs never touch the random stratum, and each is recorded in the manifest.
 
-**Calibration items** (8, marked `*` in `gj review list --manifest`): every reviewer reviews these
-**first and independently**. The agreement on them (§9) is a release gate. They are chosen for
-diversity: at least 3 RU, at least 3 EN, mixed input, 2 expert-tier, rejected outputs, and distinct
-operations.
+**Calibration items** (8, marked `*` in `gj review list --manifest`), chosen for diversity: at least 3
+RU, at least 3 EN, mixed input, 2 expert-tier, rejected outputs, and distinct operations. In solo_owner
+mode they are ordinary sample items that are worth reviewing first. In multi_reviewer mode every
+reviewer reviews them first and independently, and their agreement is a release gate (§17). The
+historical double reviews of these items are kept.
 
 ## 5. Independence: rate first, then look
 
@@ -93,8 +128,9 @@ looking elsewhere.
 
 1. Read the example (`gj review show ID`).
 2. Fill the rubric (`gj review template ID --out my/ID.yaml`).
-3. Then look at the automated side (`gj review show ID --show-automated`). If it shows something you
-   missed, change your rating and set `independent_rating: false` in the decision file.
+3. Then look at the automated side (`gj review show ID --show-automated`) and, if you want, ask the AI
+   copilot for a critique (§14). If either makes you change a rating, record it with
+   `independent_rating: false` in the decision file (or `--independent-rating no` with quick flags).
 4. Approving an example with an open **high-severity** finding or known issue requires
    `--acknowledge-findings`. The acknowledged ids are logged, and a release gate checks them.
 
@@ -108,7 +144,7 @@ python3 scripts/gj.py review template gj-nav-006 --out reviews/me/gj-nav-006.yam
 python3 scripts/gj.py review revise gj-nav-006 --reviewer me --from reviews/me/gj-nav-006.yaml
 python3 scripts/gj.py review show gj-nav-006 --show-automated   # compare with the machine view
 python3 scripts/gj.py review history gj-nav-006              # all decisions + diffs between versions
-python3 scripts/gj.py review stats                           # progress, agreement, pipeline funnel
+python3 scripts/gj.py review stats                           # mode, human-reviewed / training-eligible, funnel
 python3 scripts/gj.py review verify-log                      # integrity of the log
 ```
 
@@ -174,15 +210,12 @@ forms themselves («я прочитал»), which is fine in the input. The outp
 * **revise**: the idea is right but something must change. Give at least one issue with
   `criterion`, `severity` (minor, major or critical), `description` and ideally `proposed_fix`.
 * **reject**: it teaches the wrong behaviour or cannot be fixed in place. A note is required.
-* With several reviewers, **the most conservative decision wins** (reject > revise > approve) until an
-  adjudicator decides.
-* `gj review stats` reports per-pair agreement on the decision and on the overall verdict, with
-  Cohen's kappa, criterion-level exact agreement, and how often reviewers disagree on whether an
-  issue is severe. Release gate: on the calibration items, every reviewer pair agrees on at least 75%
-  of decisions with kappa ≥ 0.40 (rationale in `configs/release_gates.yaml`). With only 8 items this
-  detects a rubric that people read differently; it does not certify reliability. When reviewers
-  disagree, **discuss the item, write down the resolution, and clarify the rubric anchor.** Do not
-  just re-vote.
+* **One reviewer (solo_owner mode):** your latest decision on a content version is final. To change
+  your mind, record a new decision and say why in `notes` (§11). There is nobody to adjudicate and no
+  self-agreement to measure. If unsure, use §15.
+* **Several reviewers** (historical decisions, or multi_reviewer mode): every reviewer's latest decision
+  counts and **the most conservative decision wins** (reject > revise > approve) until an adjudicator
+  decides. Agreement, calibration and disagreement handling are in §17.
 
 ## 10. Revisions and history
 
@@ -232,8 +265,7 @@ forms themselves («я прочитал»), which is fine in the input. The outp
 ## 12. Effort
 
 Expect 10–20 minutes per example for a careful first pass (longer for journeys and route adaptations),
-5–10 minutes once calibrated. The 30-item sample is roughly one working day per reviewer. The 8
-calibration items plus the discussion afterwards take about half a day.
+5–10 minutes with practice. The 30-item sample is roughly one working day.
 
 ## 13. Do not
 
@@ -242,3 +274,106 @@ calibration items plus the discussion afterwards take about half a day.
 * Fix an example in place without recording a `revise` decision.
 * Approve outside your languages or expertise; ask for an expert instead.
 * Edit `review_events.jsonl` or the snapshots by hand.
+* Let the AI copilot choose, record or phrase your decision as if it were yours; count its output as expert
+  sign-off; or approve an uncertain item because the copilot's answer sounds plausible (§14, §15).
+* Register a second identity for yourself, or an expert domain you are not professionally qualified in, to
+  make a gate or a status move.
+
+## 14. AI review copilot
+
+The copilot (an AI assistant such as Claude Code, working in this repository) helps you judge; it never
+judges for you.
+
+| The copilot may | The copilot may not |
+|---|---|
+| explain any rubric criterion and why it may or may not apply | record, apply or "confirm" a decision, or impersonate a reviewer |
+| point out contradictions, unsupported factual claims and provenance gaps | count as a human approval or as a domain expert |
+| recalculate arithmetic, check dates and weekdays against `today`, inspect dependency order | create or imply professional qualification |
+| point out possible safety, privacy, memory or Russian-voice problems | change your rating or decision, silently or otherwise |
+| compare two plausible readings of the rubric and explain minor vs major | turn an uncertain answer into an approval because it sounds plausible |
+| suggest questions to reconsider, and explain what approve / revise / reject would lead to | register reviewers or expert domains on its own initiative |
+| dry-check a filled decision file against the decision rules (nothing is recorded) | see your ratings before you have recorded them, if you want an independent first pass |
+
+The software enforces the hard part: only a registered `human: true` reviewer can record a decision,
+only approvals by human `domain_expert`s cover expert domains, and a dry check writes nothing
+(`tests/test_solo_review.py`).
+
+**Order of work** (keeps your first rating independent, §5):
+
+1. Read the item.
+2. Rate it and write down your initial decision (the decision file, or notes).
+3. Only then look at automated findings and ask the copilot for a critique.
+4. Reconsider.
+5. If you change a rating because of that assistance, record it with `independent_rating: false`
+   (`--independent-rating no`), and say in `notes` what changed and why.
+6. Record your final decision yourself, or explicitly ask the agent to record exactly the ratings,
+   decision and notes you gave it, under your own reviewer id. The agent never fills gaps.
+
+**Asking for clarification.** Useful prompts: "Explain criterion E for this item and where the arithmetic
+is", "Is anything in this answer a current external fact without a source?", "Give me the strongest case
+for major and for minor on K, with evidence from the item", "Which rubric anchor decides this?".
+
+## 15. When you are unsure
+
+There is no "uncertain" verdict. Uncertainty is resolved by reasoning, and the reasoning is recorded.
+
+```text
+You:      "I am unsure whether this is a major issue or acceptable."
+Copilot:  points to the rubric anchor; names the competing interpretations; quotes the evidence in the
+          item; says what would make each interpretation correct — and does not choose.
+You:      choose the rating and decision, and write the reasoning in notes, e.g.
+          "Unsure between minor and major on L; chose major because the claim is jurisdiction-specific
+           and unsourced. Copilot consulted after my initial rating (independent_rating: false)."
+```
+
+If you still cannot decide, `revise` with an issue that states the doubt is the safe choice: the item
+stays out of training until its content or your judgement settles. For expert-tier content the doubt
+is not yours to settle: leave it to a qualified expert (§16).
+
+## 16. Expert-tier items and training eligibility
+
+Expert-tier examples (§2) need sign-off from a qualified human `domain_expert` for every required
+domain, in every governance mode.
+
+* **You are genuinely qualified** in the required domain: hold the `domain_expert` role with that
+  domain in `review/reviewers.yaml`, under the same qualification standard as always. Your approval then
+  covers it.
+* **You are not qualified:** review the item normally — your decision still counts as the human review —
+  but do not add the domain to your entry. The item stays `pending / awaiting_expert`, lists the missing
+  domains, and is **not training-eligible** until a qualified expert approves it. It does not block your
+  review of anything else. Self-study and AI assistance are not a qualification.
+
+Review states, per exact content version (`review_store.training_eligibility`, `gj review stats`):
+
+| State | Meaning |
+|---|---|
+| human-reviewed | a human decision exists on the current content |
+| expert-reviewed | no expert domain is required, or qualified human experts cover every required domain |
+| training-eligible | the current content is `approved`: human approval, expert coverage, no open objection |
+| not training-eligible | with a reason: `not_reviewed`, `content_changed`, `awaiting_expert` (with the missing domains), `needs_revision` or `rejected` |
+| training-ready release | every training row is eligible and every applicable release gate passes (`gj gates`) |
+
+Every release manifest (`gj split`) records `review_mode` and a `training_eligibility` section that
+lists **every** pool example that is not training-eligible, with its reason, missing expert domains and
+whether it is in the release as a draft row. `require_approved` releases leave such rows out;
+`allow_pending` drafts may carry them, clearly marked. `gj export` writes only `approved` rows to
+training formats, and only for a release whose applicable gates all pass. Nothing is dropped silently.
+
+## 17. Multi-reviewer mode (compatibility)
+
+Set `governance.mode: multi_reviewer` when there really are several independent reviewers. Then:
+
+* **Calibration becomes meaningful.** Every reviewer rates the 8 calibration items first and
+  independently. The `calibration_agreement` gate requires every reviewer pair with at least 8 shared
+  items (same content versions) to agree on at least 75% of decisions with kappa ≥ 0.40. With 8 items
+  this detects a rubric that people read differently; it does not certify reliability.
+* **Reviewer diversity becomes meaningful.** The `reviewer_diversity` gate requires at least two
+  approving reviewers, with no one above 80% of the approved rows.
+* **Adjudication is available.** An `adjudicator`'s latest decision on a content version overrides
+  everyone. Roles are copied into each event, so any event recorded under an entry that includes
+  `adjudicator` is decisive; grant the role for adjudication, not for routine review.
+* **Disagreements:** discuss the item, write down the resolution, and clarify the rubric anchor. Do
+  not just re-vote. `gj review stats` reports per-pair agreement on decisions and overall verdicts
+  (Cohen's kappa, criterion-level agreement, severity disagreement).
+
+Switching modes never rewrites the review log; it changes which gates apply.

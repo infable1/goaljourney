@@ -1,5 +1,16 @@
-# Human review configuration (Milestone 1.5). The workflow is described in docs/HUMAN_REVIEW_GUIDE.md.
-# Nothing here contains personal data: reviewers are registered by id in review/reviewers.yaml.
+# Human review configuration (Milestone 1.5; governance modes since pipeline 0.4.0, D-026). The workflow is
+# described in docs/HUMAN_REVIEW_GUIDE.md. Nothing here contains personal data: reviewers are registered by id
+# in review/reviewers.yaml.
+
+# Review governance (D-026). The mode decides which release gates apply; it never changes how a recorded
+# decision resolves (review_store.resolve), so historical events keep their meaning in either mode.
+#   solo_owner      one accountable human owner reviews; an AI copilot may assist but never decides; a qualified
+#                   domain expert signs off expert-tier items when one is available. Gates scoped `multi_reviewer`
+#                   (reviewer_diversity, calibration_agreement) are reported N/A — never as passed.
+#   multi_reviewer  several independent human reviewers; pairwise calibration, reviewer diversity and adjudication
+#                   apply (the M1.5 design).
+governance:
+  mode: solo_owner
 
 # 0.2.1 clarifies the safety anchor for restricted goals. v0.2.0 (dataset_review_rubric.yaml) is kept
 # unchanged because earlier review events are stamped rubric_version 0.2.0.
@@ -20,15 +31,15 @@ paths:
 # Who may do what. A reviewer's roles, languages and expert domains are copied into every event so
 # that a later registry edit cannot change the meaning of a past decision.
 roles:
-  dataset_reviewer: Approves, revises or rejects examples written in a language they list.
-  domain_expert: Signs off expert-tier examples in their expert_domains (in addition to or instead of a dataset reviewer).
-  adjudicator: Resolves disagreements; the adjudicator's latest decision on a content hash is final.
+  dataset_reviewer: Approves, revises or rejects examples written in a language they list. In solo_owner mode the owner.
+  domain_expert: Signs off expert-tier examples in their expert_domains (in addition to or instead of a dataset reviewer). Only a professionally qualified human; never an AI.
+  adjudicator: Multi-reviewer mode only. Resolves disagreements; the adjudicator's latest decision on a content hash is final.
 
 approval:
   # An approval counts only if the reviewer is a registered, active human with the example's languages.
   require_language_match: true
-  # Expert-tier examples stay `approved_pending_expert` until approvals from experts cover every
-  # required expert domain.
+  # Expert-tier examples stay `pending` (detail `awaiting_expert`) until approvals from qualified domain experts
+  # cover every required expert domain. They are not training-eligible until then, in every governance mode.
   expert_tier_requires_expert: true
   # Approving an example that has open automated findings or known issues of these severities requires
   # --acknowledge-findings (after rating independently; see the guide). The acknowledged ids are logged.

@@ -125,7 +125,8 @@ review.
 * Automation never approves.
 * Gates are not loosened to produce a passing release.
 
-*Source:* DATASET_SPEC §14–16. *Status:* confirmed by product owner 2026-09-28.*
+*Source:* DATASET_SPEC §14–16. *Status:* confirmed by product owner 2026-09-28.* *Refined by D-026:*
+"every gate" means every gate applicable in the governance mode in force.
 
 **D-015 — Releases are immutable, and every change is traced.** A changed example gets a new
 `dataset_version` and an entry in the revision ledger (`data/revisions/v<ver>.yaml`): defect,
@@ -145,6 +146,39 @@ false` refers to the original restricted goal, not to a separately chosen safe g
 gates and decision rules are unchanged; rubric 0.2.0 stays in place for events stamped with it.
 *Source:* `evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`, DATASET_SPEC §9; raised by the
 calibration disagreement on rv-0.1.0-02. *Status:* directed by product owner 2026-09-29.*
+
+**D-026 — Solo-owner-first review governance with optional expert escalation.** This replaces
+multi-reviewer-first governance.
+
+* **Solo-owner mode.** `configs/review.yaml` `governance.mode: solo_owner` is the default. One
+  human owner is a complete review workflow: there is no second reviewer, adjudicator or pairwise
+  calibration, and the owner's latest valid decision on a content hash is final.
+* **Inter-reviewer gates.** `reviewer_diversity` and `calibration_agreement` have
+  `scope: multi_reviewer`. In solo mode they are reported as N/A, never as passed, and never
+  satisfied by self-agreement. In `multi_reviewer` mode they stay blocking. A config without a mode
+  means `multi_reviewer`.
+* **What does not change.** The rubric (A–Q, hard gates L and M), content-hash binding, write-once
+  snapshots, the append-only chained log, invalidation on revision, the independence of ratings from
+  automated findings, and the expert tier. Every other gate stays blocking in every mode.
+* **Expert escalation.** An item needing a domain the owner is not qualified in stays `pending` /
+  `awaiting_expert`. It is not training-eligible, and it is listed with its reason and missing
+  domains in the release manifest's `training_eligibility`.
+* **AI review copilot.** AI may explain, challenge and recalculate. It never records a decision,
+  never counts as a reviewer or an expert, and never changes a rating. The human rates first. A
+  rating changed after findings or AI critique is recorded with `independent_rating: false`.
+  Uncertainty goes into notes, with no new workflow state.
+
+*Why:* the project has one product owner. The pairwise gates could be satisfied only by a second
+person the project does not have, or by a fabricated identity, which the review rules forbid. Solo
+mode keeps every quality check that one careful human can honestly perform. It is explicit about
+what one person cannot provide: independent agreement, and expertise they lack. That gap stays
+visible as N/A gates and `awaiting_expert` items rather than disappearing.
+
+*History:* resolution is unchanged, so historical multi-reviewer events (po-reviewer and
+po-reviewer-two, calibration round 0.1.0) keep their meaning. v0.1.1 artefacts are untouched, and
+`multi_reviewer` mode reproduces the earlier gate semantics.
+*Source:* `configs/review.yaml`, `configs/release_gates.yaml` (1.1), DATASET_SPEC §14–15,
+HUMAN_REVIEW_GUIDE §14–17; pipeline 0.4.0. *Status:* directed by product owner 2026-09-29.*
 
 ## Evaluation
 

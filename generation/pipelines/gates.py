@@ -2,6 +2,10 @@
 
 Gates are evaluated live: review decisions, known issues and leakage dispositions change after a
 release is built, while the release content itself is immutable.
+
+Each gate has a `scope` in the config: `always` (applies in every review governance mode) or
+`multi_reviewer` (applies only when configs/review.yaml `governance.mode` is multi_reviewer). A gate outside
+the current mode is reported N/A — it is neither passed nor failed, and `training_ready` ignores it.
 """
 import json
 from collections import Counter
@@ -15,16 +19,24 @@ from gjcore.records import content_hash, load_eval_cases
 from . import review_store as RS
 
 
+SCOPES = ("always", "multi_reviewer")
+
+
 @dataclass
 class GateResult:
     id: str
-    passed: bool
+    passed: object          # True / False; None when the gate does not apply in the current review mode
     detail: str
     rationale: str
     blocking: bool = True
+    applicable: bool = True
+
+    @property
+    def state(self) -> str:
+        return "N/A" if not self.applicable else ("PASS" if self.passed else "FAIL")
 
     def to_dict(self):
-        return asdict(self)
+        return {**asdict(self), "state": self.state}
 
 
 def load_gates():
@@ -46,9 +58,13 @@ def _share(n, d):
     return n / d if d else 0.0
 
 
-def evaluate(version=None, rows=None, purpose="sft", events=None, manifest=None):
-    """rows: {"train": [...], "validation": [...]} (defaults to the built release)."""
+def evaluate(version=None, rows=None, purpose="sft", events=None, manifest=None, mode=None):
+    """rows: {"train": [...], "validation": [...]} (defaults to the built release).
+    mode: review governance mode (defaults to configs/review.yaml `governance.mode`)."""
     version = version or versions()["dataset_version"]
+    mode = mode or RS.review_mode()
+    if mode not in RS.REVIEW_MODES:
+        raise ValueError(f"unknown review mode {mode!r}")
     cfg = load_gates()["gates"]
     rows = rows if rows is not None else release_rows(version)
     if rows is None:
@@ -60,7 +76,15 @@ def evaluate(version=None, rows=None, purpose="sft", events=None, manifest=None)
 
     def add(gid, passed, detail):
         g = cfg[gid]
-        results.append(GateResult(gid, bool(passed), detail, " ".join(str(g.get("rationale", "")).split()), g.get("blocking", True)))
+        scope = g.get("scope", "always")
+        if scope not in SCOPES:
+            raise ValueError(f"configs/release_gates.yaml: gate {gid} has unknown scope {scope!r} (use one of {SCOPES})")
+        rationale = " ".join(str(g.get("rationale", "")).split())
+        if scope == "always" or scope == mode:
+            results.append(GateResult(gid, bool(passed), detail, rationale, g.get("blocking", True)))
+        else:   # computed for information only; never reported as passed
+            results.append(GateResult(gid, None, f"N/A in {mode} mode (applies only in {scope} mode); informational: {detail}",
+                                      rationale, g.get("blocking", True), applicable=False))
 
     # validation_strict
     from generation.validators.records import validate_example
@@ -192,20 +216,28 @@ def evaluate(version=None, rows=None, purpose="sft", events=None, manifest=None)
 
 
 def training_ready(results) -> bool:
-    return all(r.passed for r in results if r.blocking)
+    """Every applicable blocking gate passes. N/A gates (other review mode) are neither passed nor failed."""
+    return all(r.passed is True for r in results if r.blocking and r.applicable)
+
+
+def failing(results) -> list:
+    return [r.id for r in results if r.blocking and r.applicable and not r.passed]
 
 
 def run(version=None, purpose="sft", as_json=False):
     version = version or versions()["dataset_version"]
-    results = evaluate(version, purpose=purpose)
+    mode = RS.review_mode()
+    results = evaluate(version, purpose=purpose, mode=mode)
     ready = training_ready(results)
+    applicable = [r for r in results if r.applicable]
     if as_json:
-        print(json.dumps({"dataset_version": version, "purpose": purpose, "training_ready": ready,
+        print(json.dumps({"dataset_version": version, "purpose": purpose, "review_mode": mode, "training_ready": ready,
                           "gates": [r.to_dict() for r in results]}, ensure_ascii=False, indent=2))
     else:
-        print(f"Release gates for v{version} ({purpose}): {'TRAINING_READY' if ready else 'NOT training_ready'} "
-              f"({sum(r.passed for r in results)}/{len(results)} passed)\n")
+        print(f"Release gates for v{version} ({purpose}, review mode {mode}): "
+              f"{'TRAINING_READY' if ready else 'NOT training_ready'} ({sum(r.passed is True for r in applicable)}/"
+              f"{len(applicable)} applicable passed; {len(results) - len(applicable)} N/A)\n")
         for r in results:
-            print(f"  {'PASS' if r.passed else 'FAIL'}  {r.id:24} {r.detail}")
-        print("\nThresholds and rationale: configs/release_gates.yaml")
+            print(f"  {r.state:4}  {r.id:24} {r.detail}")
+        print("\nThresholds, scopes and rationale: configs/release_gates.yaml")
     return 0 if ready else 1

@@ -245,10 +245,12 @@ def test_release_is_not_training_ready_for_the_right_reasons(version):
         # reviewer decision (KI-033) — the gate is left failing rather than loosened
         assert not results["validation_strict"].passed and "['gj-vres-007']" in results["validation_strict"].detail
         assert any(k["id"] == "KI-033" and k["status"] == "open" for k in audit.load_known_issues(version))
-    # calibration_agreement is no longer expected to fail: all 8 calibration items were double-reviewed blind in
-    # human review round 1 and passed the gate's own thresholds. The gate itself is unchanged.
     for gid in ("review_all_approved", "eval_readiness", "licensing_resolved", "coverage_minimums"):
         assert not results[gid].passed, gid
+    # solo_owner governance (D-026): the inter-reviewer gates are N/A — neither passed nor failed. Their
+    # multi_reviewer behaviour is covered in tests/test_solo_review.py.
+    for gid in ("reviewer_diversity", "calibration_agreement"):
+        assert results[gid].state == "N/A" and results[gid].passed is None, gid
 
 
 def test_training_export_is_refused_and_draft_is_marked(tmp_path):

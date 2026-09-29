@@ -17,8 +17,14 @@
     rejected        decided           a reviewer rejected the current content
   Only `approved` is training-eligible. With several reviewers, the latest decision of each counts and
   the most conservative wins (reject > revise > approve); an adjudicator's latest decision overrides everyone.
+  With one reviewer this reduces to: their latest decision on the content hash is final.
   Log v0.2 (statuses `stale`, `approved_pending_expert`) was never written to; v0.3 events record the
   canonical status plus `new_status_detail`.
+* Governance mode (configs/review.yaml `governance.mode`, D-026): `solo_owner` or `multi_reviewer`. The mode
+  decides which release gates apply; it never changes status resolution, so historical events keep their meaning.
+* Training eligibility (`training_eligibility`) separates "human-reviewed" (a decision exists on the current
+  content), "expert-reviewed" (required domains covered by qualified human experts) and "training-eligible"
+  (status approved); every ineligible example gets a reason, which release manifests list.
 """
 import re
 from dataclasses import dataclass
@@ -48,6 +54,17 @@ class ReviewError(ValueError):
 
 def review_config():
     return load_config("review")
+
+
+REVIEW_MODES = ("solo_owner", "multi_reviewer")
+
+
+def review_mode(cfg=None) -> str:
+    """The governance mode in force. A config without `governance.mode` predates D-026: multi_reviewer."""
+    mode = ((cfg if cfg is not None else review_config()).get("governance") or {}).get("mode", "multi_reviewer")
+    if mode not in REVIEW_MODES:
+        raise ReviewError(f"configs/review.yaml governance.mode must be one of {REVIEW_MODES} (got {mode!r})")
+    return mode
 
 
 def load_rubric(path=None):
@@ -311,7 +328,7 @@ def resolve(record, events, cfg=None) -> dict:
     info = {"status": "pending", "detail": "not_reviewed", "content_hash": h,
             "tier": "expert_review_required" if doms else "human_review_required",
             "required_languages": langs, "required_expert_domains": doms, "decisions": {}, "events": 0,
-            "missing_expert_domains": []}
+            "missing_expert_domains": [], "covered_expert_domains": []}
     evs = [e for e in events if e.get("example_id") == record.get("id")]
     info["events"] = len(evs)
     if not evs:
@@ -324,6 +341,10 @@ def resolve(record, events, cfg=None) -> dict:
     for e in cur:
         latest[e["reviewer_id"]] = e
     info["decisions"] = {r: e["action"] for r, e in latest.items()}
+    # reported only (does not decide the status): domains signed off by qualified human experts' latest approvals
+    info["covered_expert_domains"] = sorted(set(doms) & {
+        d for e in latest.values() if e["action"] == "approve" and e["reviewer"]["human"]
+        and "domain_expert" in e["reviewer"]["roles"] and _qualifies_language(e, langs) for d in e["reviewer"]["expert_domains"]})
     adj = [e for e in cur if "adjudicator" in e["reviewer"]["roles"]]
     decisive = [adj[-1]] if adj else list(latest.values())
     actions = {e["action"] for e in decisive}
@@ -349,6 +370,39 @@ def resolve(record, events, cfg=None) -> dict:
 def statuses(records, events=None, cfg=None) -> dict:
     events = ReviewStore.default().events() if events is None else events
     return {r["id"]: resolve(r, events, cfg) for r in records}
+
+
+# Why a content version is not training-eligible (release manifests list every such example with its reason).
+INELIGIBILITY_REASONS = {
+    "not_reviewed": "no human decision on the current content",
+    "content_changed": "the content changed after its last decision; the current version needs review",
+    "awaiting_expert": "human review done, but a required expert domain has no qualified expert approval",
+    "needs_revision": "a human reviewer asked for a revision",
+    "rejected": "a human reviewer rejected it",
+}
+
+
+def training_eligibility(info) -> dict:
+    """Separate the review states for one resolved example (see `resolve`).
+
+    human_reviewed    a human decision exists on the current content hash
+    expert_reviewed   no expert domain is required, or qualified human experts cover every required domain
+    training_eligible the exact current content is `approved` (human approval + expert coverage, no objection)
+    reason            why it is not training-eligible (a key of INELIGIBILITY_REASONS), else None
+    """
+    eligible = info["status"] in TRAINING_ELIGIBLE
+    if eligible:
+        reason = None
+    elif info["status"] in ("needs_revision", "rejected"):
+        reason = info["status"]
+    else:
+        reason = info["detail"]
+    return {"human_reviewed": bool(info["decisions"]),
+            "expert_required": bool(info["required_expert_domains"]),
+            "expert_reviewed": set(info["required_expert_domains"]) <= set(info.get("covered_expert_domains") or []),
+            "training_eligible": eligible, "reason": reason,
+            "missing_expert_domains": (sorted(set(info["required_expert_domains"]) - set(info.get("covered_expert_domains") or []))
+                                       if info["required_expert_domains"] else [])}
 
 
 # ---------------------------------------------------------------------------------------------

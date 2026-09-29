@@ -302,6 +302,10 @@ perform any of these steps.)
 4. **Agreement target (release gate)** — on the calibration items, every reviewer pair with ≥ 8
    shared items must agree on the decision (approve/revise/reject) in ≥ 75% of items with Cohen's
    kappa ≥ 0.40 (`configs/release_gates.yaml`, gate `calibration_agreement`).
+
+   *Note added 2026-09-29 (D-026):* items 3 and 4 and the adjudicator in item 5 now apply only in
+   `multi_reviewer` mode. In the default `solo_owner` mode, the owner reviews alone, and the
+   pairwise gates are N/A (not passed). Item 6 is unchanged.
 5. **Review statuses** — decisions are `approved`, `needs_revision` or `rejected` (derived, never
    authored); `pending` covers `not_reviewed`, `content_changed` or `awaiting_expert`. Only
    `approved` content can ever reach a training file. With multiple reviewers, the most
