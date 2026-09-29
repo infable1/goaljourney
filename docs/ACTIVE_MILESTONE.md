@@ -61,7 +61,7 @@ The column says who performs each task; the agent never records review decisions
 
 As of 2026-09-29, on branch `claude/sleepy-dijkstra-nzrf3t` (not yet merged into the default
 branch). The calibration round is recorded, the governance change (M1.7a) is implemented, and
-solo-owner review of the rest of the sample has started (2 items). The rest of the milestone has not
+solo-owner review of the rest of the sample has started (3 items). The rest of the milestone has not
 started.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
@@ -83,10 +83,16 @@ started.
   blind from a packet without existing decisions or automated findings. That is 16 calibration
   decisions. The 17th calibration-era event is `po-reviewer`'s approval of `gj-daily-002`, which
   is outside the review sample.
-* **Solo-owner sample review (started).** `po-reviewer` reviewed two non-calibration items under
-  rubric 0.2.1 (`9457084`). Both are approve / acceptable with minor issues:
-  * rv-0.1.0-01 / `gj-feas-005`: `language_quality` and `explanation_quality`;
-  * rv-0.1.0-03 / `gj-prog-003`: `explanation_quality`.
+* **Solo-owner sample review (started).** `po-reviewer` reviewed three non-calibration items under
+  rubric 0.2.1:
+  * rv-0.1.0-01 / `gj-feas-005` (`9457084`): approve / acceptable; minor issues on
+    `language_quality` and `explanation_quality`;
+  * rv-0.1.0-03 / `gj-prog-003` (`9457084`): approve / acceptable; minor issue on
+    `explanation_quality`;
+  * rv-0.1.0-04 / `gj-route-006` (`5b3f7c4`, `rev-612c1a60c45a`): `revise`, overall
+    `needs_revision`, `user_agency: major_issues`, `language_quality: minor_issues`,
+    `independent_rating: true`. It is `needs_revision`, so not training-eligible; the fix goes
+    through a new `dataset_version` and the ledger.
 
   **Independence correction.** rv-0.1.0-01 was first recorded with `independent_rating: true`
   (`rev-044d69c4953d`). The owner had changed `language_quality` from major to minor issues after
@@ -94,9 +100,9 @@ started.
   decision with `independent_rating: false`. The original line is unchanged, and its latest
   decision is still approve / acceptable. rv-0.1.0-03 keeps `independent_rating: true`.
 
-  The log now holds 20 events (`gj review verify-log`: 0 errors).
-  * Pool (93): human-reviewed 11, training-eligible 9, needs_revision 2, not reviewed 82.
-  * Sample (30): decided 10, approved 8, needs_revision 2, pending 20.
+  The log now holds 21 events (`gj review verify-log`: 0 errors).
+  * Pool (93): human-reviewed 12, training-eligible 9, needs_revision 3, not reviewed 81.
+  * Sample (30): decided 11, approved 8, needs_revision 3, pending 19.
 * **Task 3 (historical; N/A in solo mode).** Agreement on the decision is 7/8 (0.875), κ 0.60.
   That would pass `calibration_agreement` in `multi_reviewer` mode; in solo mode the gate is N/A.
   Agreement on the overall verdict is 3/8 (κ 0.05); the gap is mostly `excellent` against
@@ -119,8 +125,8 @@ started.
   KI-033 are open. The 100 + 27 evaluation overlaps are `open`. The v0.2.0 references are
   unreviewed. POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
-  sample status file was regenerated with each recorded decision (latest: `9457084`; the
-  independence correction leaves it unchanged), and these state files were synchronised with
+  sample status file was regenerated with each recorded decision (latest: `5b3f7c4`; the
+  independence correction `2438dd4` left it unchanged), and these state files were synchronised with
   `gj review stats`.
 
 Acceptance criteria: all open. The multi-reviewer criterion, `calibration_agreement`, is N/A in
@@ -154,7 +160,7 @@ subagents. It changed no data.
 2. **Owner:** rv-0.1.0-02 stays `needs_revision` while `po-reviewer`'s revise is their latest
    decision. `po-reviewer` may re-decide it under rubric 0.2.1 if they now judge it approvable
    (`gj review approve gj-safe-003 --item rv-0.1.0-02 --reviewer po-reviewer --from <file>`).
-   Then rate the other 20 pending sample items (`gj review export --format sheet --manifest`), the 36
+   Then rate the other 19 pending sample items (`gj review export --format sheet --manifest`), the 36
    ledger revisions and the open known issues. The owner rates first; the AI copilot challenges
    afterwards (guide §14). If any rating changes after that discussion, the decision is recorded
    with `--independent-rating no` (as for rv-0.1.0-01).
