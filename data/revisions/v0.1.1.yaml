@@ -241,7 +241,14 @@ revisions:
     где рабочий язык английский … станет видно на этапе поиска»; facts_used lists the known facts and the unknown ones; the rejected output is
     tagged missed_critical_question as well.
   rationale: Never infer the user's gender (POL-D, RU_GENDERED_USER_ADDRESS); general claims about markets are not stated as facts.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:36:11Z'
+    content_hash: 949f477f31fd2566fb2276325a0518cbd8b999dd10be942569a5f1c571c754ae
+    independent_rating: true
+    notes: 'Подтверждено: исправлены гендерная формулировка и неподтверждённое рыночное обобщение, известные и неизвестные факты разделены, а
+      пропущенная critical question теперь размечена в rejected output.'
   previous_content_hash: a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2
   content_hash: 949f477f31fd2566fb2276325a0518cbd8b999dd10be942569a5f1c571c754ae
   changed_paths:
@@ -269,7 +276,14 @@ revisions:
     12 December; workload block added; the milestone move is sized to the work (8 → 15 November, adapt_with_summary, proposed) and named in the
     summary; the rejected output says «Экзамен перенесён на весну» and declares its silent goal-deadline change.
   rationale: Numbers in explanations must be grounded in the plan; the rejected output must differ only in its tagged failure modes.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:36:14Z'
+    content_hash: e5e92c524fc51d84272b2c81963af89cc9ef1e794f2f2cfba2325521ceba0960
+    independent_rating: true
+    notes: 'Подтверждено: расчёты workload приведены в соответствие с длительностями задач, фиксированная дата экзамена сохранена, а перенос milestone
+      явно оформлен как предложенный.'
   previous_content_hash: b5cc77aecc850b92ee447709898db0d9d7f2760666600a9799d6a008a64b46ef
   content_hash: e5e92c524fc51d84272b2c81963af89cc9ef1e794f2f2cfba2325521ceba0960
   changed_paths:
@@ -315,7 +329,14 @@ revisions:
     is cited in facts_used; an overclaim («ценнее любого количества чужих деков») is softened.'
   rationale: A saving is the net change in remaining work (ARITH_TEXT_UNDERIVABLE); resources with a time window must be scheduled inside it;
     reducing the user's own task is proposed, not imposed.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:36:16Z'
+    content_hash: 6ca936010d02bd18d307ee96de96fe8631791f6d2433f40182e45ed987d38f96
+    independent_rating: true
+    notes: 'Подтверждено: net-экономия пересчитана до 5,5 часа, mentor session помещена в допустимое октябрьское окно, а изменение пользовательской
+      задачи требует подтверждения.'
   previous_content_hash: ffdf68a9d80c9d338848b7e7d17abaf5808ec8b486557b91bde5729af16cf4a6
   content_hash: 6ca936010d02bd18d307ee96de96fe8631791f6d2433f40182e45ed987d38f96
   changed_paths:
@@ -347,7 +368,14 @@ revisions:
     adapt_with_summary, applied) and named in decision_summary; mock exam 2 is due 14 October, right after the drills; the section scores are
     cited in facts_used.'
   rationale: Milestone autonomy is now defined (adapt_with_summary); the date and the explanation must agree.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:36:19Z'
+    content_hash: 66c0fbeea7ff86e414a501affcfd01d161645526d638db17faf2c3ddbb96ce13
+    independent_rating: true
+    notes: 'Подтверждено: 9,5 часа дополнительной работы точно отражены в новых задачах, проверка поставлена после drills, сохранён завершённый
+      прогресс, дата экзамена не меняется.'
   previous_content_hash: 006fed774c8e7e8eb8de4da7801abf0f3fec561a7585a9515899a07ea5388d86
   content_hash: 66c0fbeea7ff86e414a501affcfd01d161645526d638db17faf2c3ddbb96ce13
   changed_paths:
@@ -380,7 +408,14 @@ revisions:
     / proposed and the summary is phrased as a proposal; the spring option is hedged («если после ремонта она подтвердит даты»); the rejected
     output says «всё уже проверено».
   rationale: Schema v0.1.1 can represent invalidated progress; the rejected output must differ only in its tagged failure.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:36:22Z'
+    content_hash: c9812c892ab2a24d20f427420569d783f2a446c4878c280eafc28c55e1005fde
+    independent_rating: true
+    notes: 'Подтверждено: недействительная договорённость перенесена в invalidated_progress, перенос milestone оформлен как proposal, весенний
+      вариант сделан условным, внешний факт снабжён источником.'
   previous_content_hash: ad82ad29353ed674be7804884af5d83979d5f378d574bcffd8d9d12bf6426cdf
   content_hash: c9812c892ab2a24d20f427420569d783f2a446c4878c280eafc28c55e1005fde
   changed_paths:
