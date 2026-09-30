@@ -61,8 +61,8 @@ The column says who performs each task; the agent never records review decisions
 
 As of 2026-09-30, on branch `claude/sleepy-dijkstra-nzrf3t` (not yet merged into the default
 branch). The calibration round is recorded, the governance change (M1.7a) is implemented, and
-solo-owner review of the rest of the sample has started (18 items). The rest of the milestone has not
-started.
+solo-owner review of the rest of the sample is done (22 non-calibration items), so all 30 sample
+items are decided. Tasks 4–8 have not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -83,7 +83,7 @@ started.
   blind from a packet without existing decisions or automated findings. That is 16 calibration
   decisions. The 17th calibration-era event is `po-reviewer`'s approval of `gj-daily-002`, which
   is outside the review sample.
-* **Solo-owner sample review (started).** `po-reviewer` reviewed eighteen non-calibration items under
+* **Solo-owner sample review (done).** `po-reviewer` reviewed all twenty-two non-calibration items under
   rubric 0.2.1:
   * rv-0.1.0-01 / `gj-feas-005` (`9457084`): approve / acceptable; minor issues on
     `language_quality` and `explanation_quality`;
@@ -191,7 +191,34 @@ started.
     and empty issue list with `independent_rating: false`; the original event is unchanged. The
     effective latest decision is `approve` / `excellent` with `independent_rating: false`. The
     reviewed version is the revised hash `356dc499…`, not the sampled `2cbbbe61…`. It was
-    `pending` and is now `approved`.
+    `pending` and is now `approved`;
+  * rv-0.1.0-25 / `gj-vprot-005` (`1e2e9b2`, `rev-8c9847364149`): a `contrastive` item, unchanged
+    since sampling (no ledger revision, no known issue); `approve`, overall `excellent`, no issues;
+    C, F, H, I, J and Q `not_applicable`, the other 10 `good`; `independent_rating: false` (the
+    owner changed the applicability of C, F, H, I, J and Q after the AI second-look discussion).
+    The reviewed version is the sampled hash `67b754a0…`. It was `pending` and is now `approved`;
+  * rv-0.1.0-26 / `gj-clar-006` (`3af4cae`, `rev-5cd828a81332`): a `contrastive` item, unchanged
+    since sampling (no ledger revision, no known issue); `approve`, overall `excellent`, no issues;
+    G, H, J and Q `not_applicable`, the other 12 `good`; `independent_rating: false` (the owner
+    changed the applicability of G, H, J and Q after the AI second-look discussion). The reviewed
+    version is the sampled hash `3a263322…`. It was `pending` and is now `approved`;
+  * rv-0.1.0-27 / `gj-vretry-002` (`73c22db`, `rev-aeb597251ce5`): a `contrastive` item, unchanged
+    since sampling (no ledger revision, no known issue); `approve`, overall `excellent`, no issues;
+    C, F, J and Q `not_applicable`, the other 12 `good`; `independent_rating: false` (the owner
+    changed the applicability of C, F, J and Q after the AI second-look discussion). The reviewed
+    version is the sampled hash `9690cc62…`. It was `pending` and is now `approved`;
+  * rv-0.1.0-28 / `gj-safe-002` (`2f2511f`, `rev-fef976fb4399`): an `edge` item, expert tier
+    (`financial`), unchanged since sampling (no ledger revision); `revise`, overall
+    `needs_revision`; issue `external_fact_discipline` major (an unsupported claim that repaying
+    about 300,000 of credit-card debt within a year is "quite achievable"); C, D, E, F, G, H, J and
+    Q `not_applicable`, the other 7 `good`; `independent_rating: false` (the owner changed L, the
+    applicability of C, D, E, F, G, H, J and Q, and the decision after the AI second-look
+    discussion). The reviewed version is the sampled hash `5d0d0c50…`. It was `pending` and is now
+    `needs_revision`; `KI-022` (low) remains `open`. Approving a revised version will still need
+    `financial` sign-off.
+
+  With rv-0.1.0-28 the 30-item sample is fully decided: every item has a human decision on its
+  current content hash (20 `approved`, 10 `needs_revision`, none `pending` or `awaiting_expert`).
 
   `po-reviewer` also re-reviewed two calibration items under rubric 0.2.1:
   * rv-0.1.0-06 / `gj-time-001` (`8deff75`, `rev-1584bfb68001`): `approve`, overall `excellent`,
@@ -216,9 +243,9 @@ started.
   decision with `independent_rating: false`. The original line is unchanged, and its latest
   decision is still approve / acceptable. rv-0.1.0-03 keeps `independent_rating: true`.
 
-  The log now holds 41 events (`gj review verify-log`: 0 errors).
-  * Pool (93): human-reviewed 27, training-eligible 18, needs_revision 9, not reviewed 66.
-  * Sample (30): decided 26, approved 17, needs_revision 9, pending 4.
+  The log now holds 45 events (`gj review verify-log`: 0 errors).
+  * Pool (93): human-reviewed 31, training-eligible 21, needs_revision 10, not reviewed 62.
+  * Sample (30): decided 30, approved 20, needs_revision 10, pending 0.
 * **Task 3 (historical; N/A in solo mode).** Agreement on the decision is 7/8 (0.875), κ 0.60.
   That would pass `calibration_agreement` in `multi_reviewer` mode; in solo mode the gate is N/A.
   Agreement on the overall verdict is 3/8 (κ 0.05; it was 2/8 while rv-0.1.0-06 stood alone, before rv-0.1.0-07); the gap is mostly `excellent` against
@@ -236,21 +263,24 @@ started.
     discipline, a hard gate). The fix goes through a new `dataset_version` and the ledger, then a new
     review with `legal` sign-off.
   * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. The 17
-    calibration-era events are stamped 0.2.0; the 24 solo-owner events are stamped 0.2.1.
+    calibration-era events are stamped 0.2.0; the 28 solo-owner events are stamped 0.2.1.
 * **Tasks 4–8 (not started).** All 36 ledger entries are `pending_human_review`. KI-008, KI-012 and
   KI-033 are open. The 100 + 27 evaluation overlaps are `open`. The v0.2.0 references are
   unreviewed. POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
-  sample status file was regenerated with each recorded decision (latest: `26e98e5`; the
+  sample status file was regenerated with each recorded decision (latest: `2f2511f`; the
   independence correction `2438dd4` left it unchanged), and these state files were synchronised with
   `gj review stats`.
 
-Acceptance criteria: all open. The multi-reviewer criterion, `calibration_agreement`, is N/A in
-solo mode.
+Acceptance criteria: the sample part of the first criterion is met: every sample item has a human
+decision on its current content hash, and none is `awaiting_expert` (the three expert-tier items
+are `needs_revision`). The other criteria (ledger `reviewer_status`, the open known issues and
+`validation_strict`, overlap dispositions, and the final `make check` and state-file updates at
+completion) are open. The multi-reviewer criterion, `calibration_agreement`, is N/A in solo mode.
 
 Gates (`gj gates`, v0.1.1, solo_owner): 2 of 9 applicable pass (`findings_acknowledged`,
 `leakage_hard_clean`), and 2 are N/A (`reviewer_diversity`, `calibration_agreement`).
-`review_all_approved` is at 18/93. Before D-026 the count was 3 of 11. Not training-ready.
+`review_all_approved` is at 21/93. Before D-026 the count was 3 of 11. Not training-ready.
 
 Groundwork: the orchestration setup of 2026-09-28 added the `/dataset-review` skill and the reviewer
 subagents. It changed no data.
@@ -271,17 +301,14 @@ subagents. It changed no data.
 
 1. **Owner:** decide whether `po-reviewer-two` stays active. Register a `domain_expert` only for a
    real, qualified person (the owner included): `medical` and `physical_safety` (rv-0.1.0-02),
-   `legal` (rv-0.1.0-30), `financial` (rv-0.1.0-28). Without one, those items stay
-   `awaiting_expert`.
+   `legal` (rv-0.1.0-30), `financial` (rv-0.1.0-28). All three are `needs_revision` now; without
+   an expert, approving a revised version leaves the item `awaiting_expert`.
 2. **Owner:** rv-0.1.0-02 stays `needs_revision` while `po-reviewer`'s revise is their latest
    decision. `po-reviewer` may re-decide it under rubric 0.2.1 if they now judge it approvable
    (`gj review approve gj-safe-003 --item rv-0.1.0-02 --reviewer po-reviewer --from <file>`).
-   Then rate the other 4 pending sample items (`gj review export --format sheet --manifest`), the
-   36 ledger revisions and the open known issues. The next pending item is
-   rv-0.1.0-25 / `gj-vprot-005` (`contrastive` stratum, `verification_protocol_design`); its
-   content is unchanged since sampling (the current hash equals the sampled hash `67b754a0…`) and
-   the sample status attaches no known issue. The owner rates first; the AI copilot challenges
-   afterwards (guide §14). If any rating changes after that discussion, the decision is recorded
+   The 30-item sample has no pending item. Next, review the 36 ledger revisions (Task 4,
+   `gj revisions diff ID`) and decide the open known issues (Task 5). The owner rates first; the
+   AI copilot challenges afterwards (guide §14). If any rating changes after that discussion, the decision is recorded
    with `--independent-rating no` (as for rv-0.1.0-01).
 3. **Agent** (on request): once decisions are recorded, apply the revise decisions through a new
    `dataset_version` and the ledger (`/dataset-review` §5), and keep these state files current.
