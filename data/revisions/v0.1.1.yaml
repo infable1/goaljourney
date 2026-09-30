@@ -805,7 +805,14 @@ revisions:
   correction: self_report_only, limited, objective_verifiability low; the rationale says the feedback is the user's word and is sufficient for
     the next step.
   rationale: 'POL-B: user-entered data is limited without checkable references.'
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:54:16Z'
+    content_hash: 23c95b159faf992faa0189a15bba36f3785052f14598034fc8bbedee19bc1583
+    independent_rating: true
+    notes: 'Подтверждено: отзывы слушателей корректно остаются self_report_only, limited и с низкой объективной проверяемостью; пользовательские
+      заметки подходят как основание для следующего шага.'
   previous_content_hash: 96f0bfce3713ad203a46cce8ea6aeffca329c91c46d64187df27176d6c314bac
   content_hash: 23c95b159faf992faa0189a15bba36f3785052f14598034fc8bbedee19bc1583
   changed_paths:
@@ -826,7 +833,14 @@ revisions:
   defect: The mounting task was rated medium on the user's notes with an optional photo.
   correction: The photo of the mounted birdhouse is required together with the placement notes (image + non-image required → medium).
   rationale: 'POL-B: an image description reaches medium only together with another required non-image method.'
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:54:19Z'
+    content_hash: 235a864d3657bf5ac23a15a35f966bc1b622f82160480bb20f3f3a9f2316f4c3
+    independent_rating: true
+    notes: 'Подтверждено: фото установленного скворечника теперь обязательно вместе с заметками о размещении, что соответствует проверке физического
+      результата и обосновывает medium.'
   previous_content_hash: 24c943915ff9f8a71c7adfcaabe13eb8934e7438519f2027806079fa2f271318
   content_hash: 235a864d3657bf5ac23a15a35f966bc1b622f82160480bb20f3f3a9f2316f4c3
   changed_paths:
@@ -848,7 +862,14 @@ revisions:
   correction: self_report_only, limited, objective_verifiability low; the message says the check rests on the user's word and the notes are what
     the next step needs.
   rationale: Confidently worded or detailed user data is still the user's word (POL-B).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:54:21Z'
+    content_hash: 62d84d101e8d95b8acdb3e55014c1c4c18a0b94a2ca4ab177a563d4d6fd36779
+    independent_rating: true
+    notes: 'Подтверждено: интервью и их цитаты остаются пользовательским отчётом без нарушения приватности; limited и низкая объективная проверяемость
+      соответствуют доступным доказательствам.'
   previous_content_hash: 091e01eb58f9a4adf2156858b924b1f6d49fbd9de3cabf730092b5d808671cc9
   content_hash: 62d84d101e8d95b8acdb3e55014c1c4c18a0b94a2ca4ab177a563d4d6fd36779
   changed_paths:
@@ -870,7 +891,14 @@ revisions:
   correction: The list of ideas is the deliverable of the task, so the input protocol declares it an inspectable artifact; the expected output
     (needs_more_evidence, limited) is unchanged.
   rationale: Input protocols are linted from v0.1.1; this one is consistent with POL-B once the deliverable is named.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:54:23Z'
+    content_hash: f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1
+    independent_rating: true
+    notes: 'Подтверждено: список идей является результатом самой задачи, поэтому inspectable_artifact для input-протокола обоснован; при отсутствии
+      списка verification_result корректно запрашивает недостающий результат.'
   previous_content_hash: 0dadf511071aed03b97d26a376a9bf9b2e485ec295679cb51765f206ed9aa9d8
   content_hash: f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1
   changed_paths:
@@ -889,7 +917,14 @@ revisions:
   correction: 'Input protocol: self_report_only, limited, objective_verifiability low; output: confidence limited, evidence_basis self_report;
     the rejected output uses the same confidence so it differs only in premature rejection.'
   rationale: User-entered data is the user's word (POL-B, VR_CONFIDENCE_ABOVE_EVIDENCE).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:54:26Z'
+    content_hash: 14bf6ca2fac993d73b369bf829ce4186ab39845d6389e4dd5eb5fd60b151a6a9
+    independent_rating: true
+    notes: 'Подтверждено: при наличии 3 из 5 интервью задача корректно остаётся открытой, а не отвергается; confidence limited и evidence_basis
+      self_report согласованы с протоколом.'
   previous_content_hash: 69516730fe6afddd07a1718c3454a407b3dae7325c32771b17e3dca7734bb69f
   content_hash: 14bf6ca2fac993d73b369bf829ce4186ab39845d6389e4dd5eb5fd60b151a6a9
   changed_paths:
