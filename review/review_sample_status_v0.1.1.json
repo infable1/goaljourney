@@ -26,12 +26,12 @@
     },
     "human_review_status": {
       "approved": 16,
-      "needs_revision": 6,
-      "pending": 8
+      "needs_revision": 7,
+      "pending": 7
     },
     "human_review_detail": {
-      "decided": 22,
-      "not_reviewed": 8
+      "decided": 23,
+      "not_reviewed": 7
     },
     "approved_by_automation": 0
   },
@@ -452,8 +452,8 @@
           "problem": "E realism (arithmetic)"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
     },
     {
