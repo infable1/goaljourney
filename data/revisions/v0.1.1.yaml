@@ -639,7 +639,14 @@ revisions:
     «Навигатор открывает».
   rationale: A spot-check of referenced user data justifies medium, not high (POL-B). Fetching a submitted public URL is an available capability,
     so the method itself stays.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:49:00Z'
+    content_hash: 555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1
+    independent_rating: true
+    notes: 'Подтверждено: обязательные ссылки и выборочная проверка 1–2 ссылок устраняют проблему с безусловно высокой уверенностью; medium соответствует
+      непроверенным строкам таблицы.'
   previous_content_hash: b812376629ecf9629af8cb9969d560d6834ccdd0058ef10f8c8496cc2d164be7
   content_hash: 555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1
   changed_paths:
@@ -662,7 +669,14 @@ revisions:
   correction: Each row carries the posting link (references_required), the navigator spot-checks 3 links (url_review), ceiling medium; the rationale
     explains why unchecked rows remain the user's word.
   rationale: User-entered data reaches medium only with checkable references and a spot-check (POL-B).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:49:02Z'
+    content_hash: b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1
+    independent_rating: true
+    notes: 'Подтверждено: ссылки на вакансии обязательны, три ссылки проверяются выборочно, а непроверенные строки остаются данными пользователя;
+      medium соответствует уровню проверки.'
   previous_content_hash: 77906c26aadd8e8ccdf42ac6b24e7869d505894c1738fcac39e999798066d56e
   content_hash: b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1
   changed_paths:
@@ -693,7 +707,14 @@ revisions:
   correction: 'n1: references_required and a required check of every linked official page, ceiling high (confidence rests on the pages); n3: self_report_only,
     limited, objective_verifiability low.'
   rationale: Confidence follows the evidence class (POL-B).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:49:05Z'
+    content_hash: ea4354db36efc7ef9163988205916e0bad314494cd9accdf6545e46ad18e016c
+    independent_rating: true
+    notes: 'Подтверждено: для комиссий обязательна проверка каждой официальной страницы, поэтому high обоснован; собственный production log корректно
+      ограничен до self_report_only, limited и низкой объективной проверяемости.'
   previous_content_hash: 1f3f2bfb751fd1abb85bb9dfd51115acf8a35ebf4e465a0441fb4e66a2536b51
   content_hash: ea4354db36efc7ef9163988205916e0bad314494cd9accdf6545e46ad18e016c
   changed_paths:
@@ -721,7 +742,14 @@ revisions:
   correction: 'n1: references_required plus a required check of each cited official page (ceiling high); n2: the route table is the deliverable
     itself (evidence_class inspectable_artifact), ceiling medium because train availability is confirmed later.'
   rationale: 'POL-B: a structured result that is the deliverable is an inspectable artifact; otherwise user-entered data needs checkable references.'
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:49:07Z'
+    content_hash: 541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4
+    independent_rating: true
+    notes: 'Подтверждено: требования для въезда проверяются по официальным источникам, маршрутная таблица является deliverable, а доступность
+      поездов оставлена на последующую проверку, поэтому medium обоснован.'
   previous_content_hash: 360c792cb6a4e278b238241f749acd13c5b851d970f7faa8afdd299fc96dbb13
   content_hash: 541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4
   changed_paths:
@@ -747,7 +775,14 @@ revisions:
   correction: 'Self-report only, limited, objective_verifiability low (calls are not recorded out of respect for the testers'' privacy); sessions:
     3.'
   rationale: Detailed wording is not evidence (POL-B).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:49:09Z'
+    content_hash: 74421dc92f8396f91b7cd9b2051d647c45ddbd35f601cb4f77097113384b62c9
+    independent_rating: true
+    notes: 'Подтверждено: незаписанные onboarding calls корректно остаются self_report_only, limited и с низкой объективной проверяемостью; три
+      отдельных звонка теперь явно отражены как 3 sessions.'
   previous_content_hash: 21220c58f980737f3a01521e10f47b4793fd862d7f4b4397fa0c5f1782c339fd
   content_hash: 74421dc92f8396f91b7cd9b2051d647c45ddbd35f601cb4f77097113384b62c9
   changed_paths:
