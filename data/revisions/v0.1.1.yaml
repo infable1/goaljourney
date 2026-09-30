@@ -952,7 +952,14 @@ revisions:
     masculine («свободен по выходным»).
   correction: Stored as «400 тысяч (валюта не указана)»; input memory «выходные свободны».
   rationale: Inferences must not be upgraded into user facts (POL-E, MEM_SOURCE_NOT_GROUNDED); stored memory is gender-neutral (POL-D).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:07:07Z'
+    content_hash: 38fbc83124116bc3ebf33720c4f835a300949fd0a3638133d1d5f6c793a7d2b3
+    independent_rating: true
+    notes: 'Подтверждено: извлечение памяти больше не приписывает валюту к «400 тысячам», устаревший график 5/2 заменён на смены 2/2, а командировка
+      сохранена как временное ограничение.'
   previous_content_hash: e97a1d33e6f40a40c22e2324364acdd46229612626e476438838ec94a4441e79
   content_hash: 38fbc83124116bc3ebf33720c4f835a300949fd0a3638133d1d5f6c793a7d2b3
   changed_paths:
@@ -971,7 +978,13 @@ revisions:
   defect: Input memory described the user in the masculine («даже если сам пишет вперемешку»).
   correction: «даже если пишет вперемешку».
   rationale: Memory the model learns from is gender-neutral (POL-D, RU_GENDERED_MEMORY).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:07:09Z'
+    content_hash: 86a13ed2ff0f951dd2a4f32c635e05591c487060d965146f2db113f11cfe6faa
+    independent_rating: true
+    notes: 'Подтверждено: исправлена только гендерная форма в user memory, смысл пользовательского предпочтения сохранён без изменений.'
   previous_content_hash: 6111e852d488c53c4808104725d2a1888e20ed4d76751546cd76dfe857e4fe58
   content_hash: 86a13ed2ff0f951dd2a4f32c635e05591c487060d965146f2db113f11cfe6faa
   changed_paths:
@@ -992,7 +1005,14 @@ revisions:
   correction: a1 renamed «Первая техника освоена»; the level titles stay (POL-D rule 3 accepts natural role nouns as badge names); the rejected
     output keeps the goal deadline and is also tagged overconfident_verification.
   rationale: Titles must describe what unlocks them; rejected outputs differ only in their tagged failures.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:07:12Z'
+    content_hash: dd7a3b8ff8a00a46a5ee0c6ddb0b78ec0b18c68edf3b1bd3ea2ab9afb5ca0e9b
+    independent_rating: true
+    notes: 'Подтверждено: achievement теперь соответствует фактически первому verified task; deadline в rejected output сохранён, а дополнительный
+      overconfident_verification корректно размечен.'
   previous_content_hash: 875498360a039cba9c3b29cc3c837d8f051b1f9739d5cddc40f835122aa68468
   content_hash: dd7a3b8ff8a00a46a5ee0c6ddb0b78ec0b18c68edf3b1bd3ea2ab9afb5ca0e9b
   changed_paths:
@@ -1013,7 +1033,14 @@ revisions:
     an error) — an untagged defect.
   correction: The rejected output's goal carries the deadline, so it fails only on its tagged modes (pretended professional, unsafe compliance).
   rationale: Contrastive quality (KI-032 principle).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:07:14Z'
+    content_hash: 0b450cde1a381a65ec5ee43d55b6a2a6f114db0034aef7833218cf26e01aef6b
+    independent_rating: true
+    notes: 'Подтверждено: rejected output больше не скрывает deadline пользователя и после исправления должен отличаться только заявленными failure
+      modes.'
   previous_content_hash: 6476a8b8b626a4627c8e5d52938095da84a3062fdae2f96131cd3b01a1424fb6
   content_hash: 0b450cde1a381a65ec5ee43d55b6a2a6f114db0034aef7833218cf26e01aef6b
   changed_paths:
@@ -1030,7 +1057,14 @@ revisions:
   defect: The rejected photo-only protocol also claims more confidence than a photo supports; this was not tagged.
   correction: Tagged overconfident_verification in addition to photo_as_proof; the critique says so.
   rationale: Tags must describe every defect of a rejected output.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:07:16Z'
+    content_hash: 4f863a0005e32e88ff2d96be1110b5ab449c756b7b227186be576e81f08096e0
+    independent_rating: true
+    notes: 'Подтверждено: photo_as_proof и overconfident_verification обе отражены в failure_modes и critique, при этом основной протокол limited
+      self-report остаётся согласованным.'
   previous_content_hash: dde477bddf3f786b00f51b8bd7a2b34035370af74dbf2bf818a2c1e3f4560f6c
   content_hash: 4f863a0005e32e88ff2d96be1110b5ab449c756b7b227186be576e81f08096e0
   changed_paths:
