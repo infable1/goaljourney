@@ -1,0 +1,167 @@
+{
+  "content_hash": "626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac",
+  "example_id": "gj-nav-006",
+  "task_type": "navigator_response",
+  "input": {
+    "operation": "navigator_response",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-tutor",
+      "title": "Набрать 5 постоянных учеников по репетиторству математики",
+      "deadline": "2026-12-01"
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Первые ученики",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "3 пробных урока проведены",
+          "region_id": "r1",
+          "success_criteria": [
+            "3 пробных урока"
+          ],
+          "target_date": "2026-10-10"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Объявление в 3 родительских чатах",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Созвониться с 3 родителями, откликнувшимися на объявление",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "due_date": "2026-09-30",
+          "depends_on": [
+            "n4"
+          ]
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Провести 3 пробных урока",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "depends_on": [
+            "n5"
+          ],
+          "due_date": "2026-10-10"
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "На этой неделе завал на работе. Хочу перенести звонки родителям на следующую неделю."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "navigator_response",
+    "response_language": "ru",
+    "message_to_user": "Перенести можно. Предлагаю звонки на понедельник, 5 октября, но важно одно: родители откликнулись сейчас, и через неделю часть из них может найти другого репетитора. Поэтому компромисс: сегодня-завтра отправить всем троим короткое сообщение — «спасибо за отклик, позвоню в понедельник, 5 октября, удобно?» — это 5 минут.\nПробные уроки и веха «3 пробных урока проведены» тогда сдвинутся с 10 на 14 октября. Переносим?",
+    "intent": "reschedule",
+    "in_scope": true,
+    "proposed_changes": [
+      {
+        "action": "reschedule",
+        "target_id": "n5",
+        "target_type": "node",
+        "new_date": "2026-10-05",
+        "description": "Перенести звонки родителям с 30 сентября на 5 октября; до этого отправить трём родителям короткое сообщение с предложением времени звонка."
+      },
+      {
+        "action": "reschedule",
+        "target_id": "n6",
+        "target_type": "node",
+        "new_date": "2026-10-14",
+        "description": "Сдвинуть пробные уроки с 10 на 14 октября."
+      },
+      {
+        "action": "reschedule",
+        "target_id": "m1",
+        "target_type": "milestone",
+        "new_date": "2026-10-14",
+        "description": "Сдвинуть веху «3 пробных урока проведены» с 10 на 14 октября вслед за пробными уроками."
+      }
+    ],
+    "requires_user_confirmation": true,
+    "risks": [
+      "Родители, откликнувшиеся сейчас, могут выбрать другого репетитора, если ждать неделю без ответа."
+    ],
+    "suggested_next_action": "Отправить трём родителям сообщение с предложением звонка 5 октября.",
+    "facts_used": [
+      {
+        "value": "На этой неделе завал на работе",
+        "source_type": "user_provided",
+        "source_ref": "conversation[0]"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Предлагается перенести звонки на 5 октября, пробные уроки и веху «3 пробных урока проведены» — на 14 октября, а до звонков отправить родителям короткое сообщение.",
+      "why": "На этой неделе у вас нет времени на звонки.",
+      "impact": "Веха «3 пробных урока проведены» сдвигается на 4 дня, срок цели 1 декабря не меняется; риск потерять откликнувшихся снижается сообщением."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-nav-006-c1",
+      "failure_modes": [
+        "wrong_language"
+      ],
+      "critique": "The user writes in Russian; the answer switches to English.",
+      "output": {
+        "type": "navigator_response",
+        "response_language": "en",
+        "message_to_user": "Sure, I'll move the calls to October 5 and the trial lessons to October 14. Send the parents a quick message first.",
+        "intent": "reschedule",
+        "in_scope": true,
+        "proposed_changes": [
+          {
+            "action": "reschedule",
+            "target_id": "n5",
+            "target_type": "node",
+            "new_date": "2026-10-05",
+            "description": "Move the calls to October 5."
+          },
+          {
+            "action": "reschedule",
+            "target_id": "n6",
+            "target_type": "node",
+            "new_date": "2026-10-14",
+            "description": "Move the trial lessons to October 14."
+          },
+          {
+            "action": "reschedule",
+            "target_id": "m1",
+            "target_type": "milestone",
+            "new_date": "2026-10-14",
+            "description": "Move the trial-lesson milestone to October 14."
+          }
+        ],
+        "requires_user_confirmation": true,
+        "decision_summary": {
+          "what_changed": "Calls moved to October 5.",
+          "why": "Busy week.",
+          "impact": "Trial lessons move by 4 days."
+        }
+      }
+    }
+  ]
+}

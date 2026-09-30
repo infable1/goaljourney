@@ -25,13 +25,13 @@
       "open": 4
     },
     "human_review_status": {
-      "approved": 15,
+      "approved": 16,
       "needs_revision": 5,
-      "pending": 10
+      "pending": 9
     },
     "human_review_detail": {
-      "decided": 20,
-      "not_reviewed": 10
+      "decided": 21,
+      "not_reviewed": 9
     },
     "approved_by_automation": 0
   },
@@ -371,8 +371,8 @@
           "problem": "X temporal / E realism"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
     },
     {
