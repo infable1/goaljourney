@@ -26,12 +26,12 @@
     },
     "human_review_status": {
       "approved": 16,
-      "needs_revision": 5,
-      "pending": 9
+      "needs_revision": 6,
+      "pending": 8
     },
     "human_review_detail": {
-      "decided": 21,
-      "not_reviewed": 9
+      "decided": 22,
+      "not_reviewed": 8
     },
     "approved_by_automation": 0
   },
@@ -400,8 +400,8 @@
           "problem": "P contrastive quality"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
     },
     {

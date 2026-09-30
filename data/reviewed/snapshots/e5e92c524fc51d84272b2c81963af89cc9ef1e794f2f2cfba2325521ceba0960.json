@@ -1,0 +1,329 @@
+{
+  "content_hash": "e5e92c524fc51d84272b2c81963af89cc9ef1e794f2f2cfba2325521ceba0960",
+  "example_id": "gj-time-003",
+  "task_type": "route_adaptation",
+  "input": {
+    "operation": "route_adaptation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-attest",
+      "title": "Сдать внутренний аттестационный экзамен на кредитного аналитика",
+      "deadline": "2026-12-12",
+      "deadline_flexibility": "fixed",
+      "available_time": {
+        "hours_per_week": 10
+      }
+    },
+    "time_budget": {
+      "hours_per_week": 3,
+      "previous_hours_per_week": 10
+    },
+    "journey": {
+      "pacing": {
+        "weekly_hours_planned": 10,
+        "horizon_weeks": 11
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Теория",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Практика и пробные тесты",
+          "order": 2,
+          "status": "locked"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Теория пройдена",
+          "region_id": "r1",
+          "success_criteria": [
+            "Все 6 разделов пройдены"
+          ],
+          "target_date": "2026-11-08"
+        },
+        {
+          "id": "m2",
+          "title": "Готов к экзамену",
+          "region_id": "r2",
+          "success_criteria": [
+            "Пробный тест — 75% и выше"
+          ],
+          "target_date": "2026-12-06"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Раздел 1: финансовая отчётность",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Раздел 2: анализ денежных потоков",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "in_progress",
+          "priority": "critical",
+          "estimated_duration_minutes": 360
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Раздел 3: кредитные рейтинги",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "priority": "critical",
+          "estimated_duration_minutes": 420
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "Раздел 4: история банковского регулирования",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "priority": "optional",
+          "estimated_duration_minutes": 660
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "Раздел 5: залоги и обеспечение",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "priority": "high",
+          "estimated_duration_minutes": 420
+        },
+        {
+          "id": "n6",
+          "type": "task",
+          "title": "Раздел 6: отраслевые обзоры",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "priority": "optional",
+          "estimated_duration_minutes": 660
+        },
+        {
+          "id": "n7",
+          "type": "task",
+          "title": "Разбор 5 кейсов кредитных заявок",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n2",
+            "n3",
+            "n5"
+          ],
+          "estimated_duration_minutes": 600
+        },
+        {
+          "id": "n8",
+          "type": "verification",
+          "title": "Два пробных теста",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "depends_on": [
+            "n7"
+          ],
+          "estimated_duration_minutes": 480
+        }
+      ]
+    },
+    "events": [
+      {
+        "type": "less_time",
+        "date": "2026-09-26",
+        "description": "Закрытие квартала — до конца года остаётся около 3 часов в неделю."
+      }
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "content": "У нас закрытие квартала, до конца года смогу заниматься часа три в неделю, не больше. А экзамен 12 декабря, перенести нельзя."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "route_adaptation",
+    "response_language": "ru",
+    "message_to_user": "Понятно: дата фиксирована, времени втрое меньше. При 3 часах в неделю до экзамена остаётся около 32 часов, а незавершённая часть плана занимает около 60 часов. Поэтому предлагаю сосредоточиться на том, что даёт больше всего баллов:\n• разделы 4 (история регулирования) и 6 (отраслевые обзоры) убрать из обязательных — они помечены как второстепенные;\n• денежные потоки, рейтинги и залоги остаются;\n• 5 кейсов сократить до 3, один пробный тест вместо двух — за неделю до экзамена.\nТогда останется около 30 часов — впритык, но пробный тест успевает к 6 декабря, а теория — к 15 ноября вместо 8-го.\nРиск честно назову: если раздел 4 или 6 всё же будет на экзамене, там можно потерять баллы. Подтверждаете такой вариант?",
+    "trigger": {
+      "type": "less_time",
+      "description": "Время сократилось с 10 до 3 часов в неделю при фиксированной дате экзамена."
+    },
+    "change_level": "major",
+    "requires_user_confirmation": true,
+    "removed_nodes": [
+      {
+        "node_id": "n4",
+        "reason": "Второстепенный раздел; не помещается в 3 часа в неделю до фиксированной даты."
+      },
+      {
+        "node_id": "n6",
+        "reason": "Второстепенный раздел; не помещается в 3 часа в неделю до фиксированной даты."
+      }
+    ],
+    "added_nodes": [],
+    "modified_nodes": [
+      {
+        "node_id": "n7",
+        "changes": [
+          {
+            "field": "title",
+            "from": "Разбор 5 кейсов кредитных заявок",
+            "to": "Разбор 3 кейсов кредитных заявок"
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 600,
+            "to": 360
+          }
+        ],
+        "reason": "Три кейса дают основную практику за меньшее время."
+      },
+      {
+        "node_id": "n8",
+        "changes": [
+          {
+            "field": "title",
+            "from": "Два пробных теста",
+            "to": "Один пробный тест за неделю до экзамена"
+          },
+          {
+            "field": "estimated_duration_minutes",
+            "from": 480,
+            "to": 240
+          }
+        ],
+        "reason": "Экономия времени при сохранении итоговой проверки готовности."
+      }
+    ],
+    "modified_deadlines": [
+      {
+        "target": "milestone",
+        "target_id": "m1",
+        "from": "2026-11-08",
+        "to": "2026-11-15",
+        "reason": "Три ключевых раздела (около 20 часов) при 3 ч/нед",
+        "autonomy": "adapt_with_summary",
+        "state": "proposed"
+      }
+    ],
+    "new_weekly_hours_planned": 3,
+    "workload": {
+      "weekly_hours": 3,
+      "remaining_minutes_before": 3600,
+      "remaining_minutes_after": 1800,
+      "horizon": {
+        "target": "goal",
+        "target_id": "g-attest",
+        "date": "2026-12-12"
+      },
+      "weeks_needed": 10,
+      "weeks_available": 10.9,
+      "fits": true
+    },
+    "preserved_progress": [
+      "n1"
+    ],
+    "user_options": [
+      "Сосредоточиться на ключевых разделах (предложено)",
+      "Оставить все разделы и пройти их конспективно, рискуя глубиной"
+    ],
+    "facts_used": [
+      {
+        "value": "До конца года — около 3 часов в неделю",
+        "source_type": "user_provided",
+        "source_ref": "conversation[0]"
+      },
+      {
+        "value": "Экзамен 12 декабря, перенести нельзя",
+        "source_type": "user_provided",
+        "source_ref": "conversation[0]"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Предложено убрать два второстепенных раздела, сократить кейсы и пробные тесты и сдвинуть веху «Теория пройдена» с 8 на 15 ноября; темп — 3 часа в неделю.",
+      "why": "Дату экзамена перенести нельзя, а незавершённая часть плана — около 60 часов при примерно 32 доступных.",
+      "impact": "Остаётся около 30 часов — впритык до экзамена; фокус на разделах с наибольшим весом; риск потери баллов по разделам 4 и 6 назван явно.",
+      "alternatives_considered": [
+        {
+          "option": "Перенести экзамен",
+          "why_not": "Дата фиксирована."
+        }
+      ]
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-time-003-c1",
+      "failure_modes": [
+        "silent_route_change",
+        "ignored_deadline"
+      ],
+      "critique": "Moves the fixed exam date without asking — the user said it cannot be moved — and presents it as done.",
+      "output": {
+        "type": "route_adaptation",
+        "response_language": "ru",
+        "message_to_user": "Экзамен перенесён на весну, так будет спокойнее.",
+        "trigger": {
+          "type": "less_time",
+          "description": "Меньше времени."
+        },
+        "change_level": "moderate",
+        "requires_user_confirmation": false,
+        "removed_nodes": [],
+        "added_nodes": [],
+        "modified_nodes": [],
+        "modified_deadlines": [
+          {
+            "target": "goal",
+            "target_id": "g-attest",
+            "from": "2026-12-12",
+            "to": "2027-04-15",
+            "reason": "Меньше времени.",
+            "autonomy": "confirm_required",
+            "state": "applied"
+          }
+        ],
+        "new_weekly_hours_planned": 3,
+        "workload": {
+          "weekly_hours": 3,
+          "remaining_minutes_before": 3600,
+          "remaining_minutes_after": 3600,
+          "horizon": {
+            "target": "goal",
+            "target_id": "g-attest",
+            "date": "2027-04-15"
+          },
+          "weeks_needed": 20,
+          "weeks_available": 28.6,
+          "fits": true
+        },
+        "preserved_progress": [
+          "n1"
+        ],
+        "decision_summary": {
+          "what_changed": "Срок перенесён.",
+          "why": "Меньше времени.",
+          "impact": "Экзамен весной."
+        }
+      }
+    }
+  ]
+}
