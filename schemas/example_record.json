@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.1/example_record.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/example_record.json",
   "title": "Training example record",
   "description": "Envelope for one training example. `expected_output` is validated separately against the schema of `task_type`; `contrastive[].output` against the same schema. `annotations` are author knowledge for validators/reviewers and are never shown to the model.",
   "type": "object",

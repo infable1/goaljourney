@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.1/eval_leakage_metadata.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/eval_leakage_metadata.json",
   "title": "Evaluation leakage metadata",
   "description": "Evaluation-side provenance used by `gj leakage`: scenario group, behavioural template and seed origin of every case, and the reviewed overlaps between evaluation cases and training examples. Kept outside the case files so that adding it does not change released test data.",
   "type": "object",

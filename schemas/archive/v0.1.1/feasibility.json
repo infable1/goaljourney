@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/feasibility.json",
+  "title": "Operation output: feasibility_assessment (Type B)",
+  "description": "Qualitative, argued feasibility judgement. Not a prediction engine. The user makes the final decision; adjustments are options, not orders.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "response_language", "message_to_user", "status", "summary", "assumptions", "risks", "missing_information", "recommended_adjustments", "needs_web_research"],
+  "properties": {
+    "type": { "const": "feasibility_assessment" },
+    "response_language": { "$ref": "common.json#/$defs/language" },
+    "message_to_user": { "$ref": "common.json#/$defs/message" },
+    "status": { "type": "string", "enum": ["feasible", "uncertain", "likely_unrealistic"] },
+    "summary": { "$ref": "common.json#/$defs/text" },
+    "assumptions": { "$ref": "common.json#/$defs/text_list" },
+    "risks": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["risk", "severity"],
+        "properties": {
+          "risk": { "$ref": "common.json#/$defs/text" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+          "mitigation": { "$ref": "common.json#/$defs/text" }
+        }
+      }
+    },
+    "missing_information": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item", "why_it_matters"],
+        "properties": {
+          "item": { "$ref": "common.json#/$defs/short_text" },
+          "why_it_matters": { "$ref": "common.json#/$defs/short_text" },
+          "target": { "$ref": "common.json#/$defs/clarification_target" }
+        }
+      }
+    },
+    "recommended_adjustments": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["option", "description", "tradeoff"],
+        "properties": {
+          "option": {
+            "type": "string",
+            "enum": ["extend_deadline", "reduce_scope", "change_approach", "increase_time", "change_outcome", "add_resource", "other"]
+          },
+          "description": { "$ref": "common.json#/$defs/text" },
+          "tradeoff": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "needs_web_research": { "type": "boolean" },
+    "research_topics": {
+      "type": "array",
+      "maxItems": 5,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "external_claims": { "$ref": "common.json#/$defs/external_claims" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" }
+  }
+}

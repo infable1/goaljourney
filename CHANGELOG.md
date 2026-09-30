@@ -3,6 +3,30 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-09-30 — Human reviews of revision-ledger entries (schema 0.1.2, pipeline 0.4.1; no dataset or evaluation version change)
+
+On the owner's direction (D-027), a ledger entry's human decision is now recorded with its reviewer,
+notes and independence, not only as a bare `reviewer_status`.
+
+- **Schema 0.1.2.** `schemas/revision_ledger.json` gains an optional per-entry `review` block
+  (`reviewer_id`, `timestamp`, `content_hash`, `independent_rating`, `notes`). It is required when
+  `reviewer_status` is `confirmed` or `disputed`, and forbidden while `pending_human_review`. The
+  0.1.1 schemas are archived byte-identical in `schemas/archive/v0.1.1/`. No record changes: examples
+  stay at `schema_version` 0.1.1 and validate against the archived set, and no lint rule changed.
+- **`gj revisions review REV-ID --reviewer --status confirmed|disputed --notes --independent-rating
+  yes|no [--replace]`** (`generation/pipelines/revisions.py`). It refuses unless the ledger passes
+  `gj revisions check`, the reviewer is a registered, active human who reads the example's
+  languages, and notes are given. The decision is bound to the entry's current `content_hash`. A
+  second review of the same entry needs `--replace`; git keeps the earlier block.
+- **`gj revisions check`** now also fails when a review's `content_hash` differs from its entry's
+  (the correction changed after the decision) or names a reviewer who is not a registered human.
+  `gj revisions diff` shows the review.
+- **First decisions** (po-reviewer): REV-0.1.1-001, -004 and -005 `confirmed`
+  (`independent_rating: true`); REV-0.1.1-002 and -003 `disputed` (`independent_rating: false`, the
+  owner changed them from confirmed after an AI second-look). No example, snapshot, known issue,
+  review event or release changed; the disputed corrections are not fixed here.
+- Seven tests in `tests/test_revision_reviews.py`.
+
 ## 2026-09-29 — Fix: `reviewer_diversity` counts one approval per reviewer per approved row (no version change)
 
 - `generation/pipelines/gates.py` counted approve *events*, so a corrective re-approval by the same

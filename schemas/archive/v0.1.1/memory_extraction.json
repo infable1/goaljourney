@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/memory_extraction.json",
+  "title": "Operation output: memory_extraction",
+  "description": "Extracts memory items from a conversation into the right layer (user vs goal). Third-party details and sensitive data not needed for the goal are not stored.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "items", "not_stored"],
+  "properties": {
+    "type": { "const": "memory_extraction" },
+    "items": {
+      "type": "array",
+      "maxItems": 12,
+      "items": { "$ref": "memory.json" }
+    },
+    "not_stored": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["content", "reason"],
+        "properties": {
+          "content": { "$ref": "common.json#/$defs/short_text" },
+          "reason": { "type": "string", "enum": ["irrelevant_to_goal", "third_party_information", "sensitive_not_needed", "already_stored", "too_transient"] }
+        }
+      }
+    },
+    "updates": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["memory_id", "action"],
+        "properties": {
+          "memory_id": { "$ref": "common.json#/$defs/id" },
+          "action": { "type": "string", "enum": ["update", "expire"] },
+          "new_content": { "$ref": "common.json#/$defs/text" }
+        }
+      }
+    }
+  }
+}

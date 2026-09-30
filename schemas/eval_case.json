@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.1/eval_case.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/eval_case.json",
   "title": "Evaluation case",
   "description": "A behavioural test. `checks` are automated assertions (each tagged with a metric); `human_review_focus` lists what a human reviewer should judge. `reference_output` is one acceptable answer, used to self-test the checks — it is not the only correct answer. Atomic cases are one model call; composite and longitudinal cases are ordered `steps`, each one model call on a canonical (teacher-forced) state, so every step is scored independently and cross-step consistency is checked through the step checks.",
   "type": "object",

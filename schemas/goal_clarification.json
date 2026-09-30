@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.1/goal_clarification.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/goal_clarification.json",
   "title": "Operation output: goal_clarification (Type A)",
   "description": "Only the next useful questions. Each question names what it targets (controlled vocabulary) and how the answer changes the plan. If nothing material is missing, ready_to_plan=true and no questions are asked.",
   "type": "object",

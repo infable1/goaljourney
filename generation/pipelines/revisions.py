@@ -14,8 +14,11 @@ manifest). The ledger records every difference between the current pool and that
 computed field is stale (content edited after `sync`), when a snapshot is missing or does not match
 its hash, or when the base release no longer matches the sha256 recorded in its manifest.
 
-The ledger author is not a reviewer: `reviewer_status` stays `pending_human_review` until a human
-decision is recorded in the review log.
+The ledger author is not a reviewer: `reviewer_status` stays `pending_human_review` until a registered
+human reviewer's decision is recorded with `gj revisions review` (schema 0.1.2). That writes
+`reviewer_status` (`confirmed` or `disputed`) and a `review` block — reviewer, timestamp, the content
+hash the decision was made on, `independent_rating` and notes. `check` fails when the reviewed hash no
+longer matches the entry, or the reviewer is not a registered human.
 """
 from collections import Counter
 
@@ -40,12 +43,16 @@ _HEADER = """# Revision ledger — dataset v{version} (base: v{base}).
 # example_id, kind, known_issues, policies, defect, correction, rationale, reviewer_status.
 # Computed fields (previous_content_hash, content_hash, changed_paths, snapshots) are written by
 # `gj revisions sync`; `gj revisions check` fails on any unrecorded or stale change.
-# reviewer_status is a human decision: it stays pending_human_review until a reviewer records one.
+# reviewer_status is a human decision: it stays pending_human_review until a registered reviewer's
+# decision is recorded with `gj revisions review`, which also writes the entry's `review` block.
 """
 
 
 class RevisionError(ValueError):
     pass
+
+
+REVIEW_STATUSES = ("confirmed", "disputed")
 
 
 def ledger_path(version=None):
@@ -216,12 +223,85 @@ def check(version=None):
         for ki in e["known_issues"]:
             if ki not in ki_known:
                 errors.append(f"{e['id']}: unknown known issue {ki}")
+    errors += _review_errors(ledger)
     summary = {"base_version": ledger["base_version"], "dataset_version": ledger["dataset_version"],
                "revised_examples": len(changed), "ledger_entries": len(ledger["revisions"]),
                "by_kind": dict(Counter(e["kind"] for e in ledger["revisions"])),
                "reviewer_status": dict(Counter(e["reviewer_status"] for e in ledger["revisions"])),
                "metadata_changes": meta, "added": added, "removed": removed}
     return errors, summary
+
+
+def _review_errors(ledger):
+    """Recorded ledger reviews must be bound to the entry's current content hash and name a registered human."""
+    reviewed = [e for e in ledger["revisions"] if isinstance(e.get("review"), dict)]
+    if not reviewed:
+        return []
+    from .review_store import load_registry
+    registry, errors = load_registry(), []
+    for e in reviewed:
+        rv = e["review"]
+        if rv.get("content_hash") != e.get("content_hash"):
+            errors.append(f"{e['id']}: the review by {rv.get('reviewer_id')} was made on content {str(rv.get('content_hash'))[:12]}, "
+                          f"but the entry is now at {str(e.get('content_hash'))[:12]} — record a new review")
+        who = registry.get(rv.get("reviewer_id"))
+        if who is None or not who["human"]:
+            errors.append(f"{e['id']}: reviewer {rv.get('reviewer_id')!r} is not a registered human reviewer")
+    return errors
+
+
+def record_review(rev_id, reviewer_id, status, notes, independent_rating, version=None, replace=False, timestamp=None):
+    """Record a registered human reviewer's decision on one ledger entry: set reviewer_status and the review block.
+
+    The decision is bound to the entry's content_hash, which must match the current content (the ledger has to
+    pass `check` first). An entry that already has a review is refused unless `replace` is set; git keeps the
+    earlier block. Returns the updated entry."""
+    from .review_store import load_registry, now_utc, required_languages, review_config
+    if status not in REVIEW_STATUSES:
+        raise RevisionError(f"status must be one of {list(REVIEW_STATUSES)}, got {status!r}")
+    if not isinstance(independent_rating, bool):
+        raise RevisionError("independent_rating must be given (yes or no)")
+    if not (notes or "").strip():
+        raise RevisionError("notes are required: state the decision and the reason")
+    ledger = load_ledger(version)
+    if ledger is None:
+        raise RevisionError(f"no ledger at {rel(ledger_path(version))}")
+    errors, _ = check(ledger["dataset_version"])
+    if errors:
+        raise RevisionError(f"the ledger does not pass `gj revisions check` ({len(errors)} problem(s)); first: {errors[0]}")
+    entry = next((e for e in ledger["revisions"] if e["id"] == rev_id), None)
+    if entry is None:
+        raise RevisionError(f"no ledger entry {rev_id} in {rel(ledger_path(ledger['dataset_version']))}")
+    if entry.get("review") and not replace:
+        raise RevisionError(f"{rev_id} already has a review by {entry['review']['reviewer_id']} "
+                            f"({entry['reviewer_status']}); pass --replace to record a new decision")
+    reviewer = load_registry().get(reviewer_id)
+    if reviewer is None:
+        raise RevisionError(f"unknown reviewer {reviewer_id!r} — add yourself to review/reviewers.yaml first")
+    if not reviewer["human"]:
+        raise RevisionError(f"reviewer {reviewer_id!r} is not marked human: true — automated agents cannot record decisions")
+    if not reviewer["active"]:
+        raise RevisionError(f"reviewer {reviewer_id!r} is inactive")
+    record = _current()[entry["example_id"]]
+    langs = required_languages(record)
+    if review_config()["approval"]["require_language_match"] and not set(langs) <= set(reviewer["languages"]):
+        raise RevisionError(f"{entry['example_id']} needs a reviewer who reads {langs}; {reviewer_id} lists {reviewer['languages']}")
+    review = {"reviewer_id": reviewer_id, "timestamp": timestamp or now_utc(), "content_hash": entry["content_hash"],
+              "independent_rating": independent_rating, "notes": notes.strip()}
+    updated = {}
+    for k, v in entry.items():
+        if k == "review":
+            continue
+        updated[k] = status if k == "reviewer_status" else v
+        if k == "reviewer_status":
+            updated["review"] = review
+    entry.clear()
+    entry.update(updated)
+    problems = schemas.validate("revision_ledger", ledger)
+    if problems:
+        raise RevisionError("ledger schema: " + "; ".join(problems))
+    _write(ledger)
+    return entry
 
 
 def _known_issue_ids(ledger):
@@ -263,7 +343,7 @@ def _at(obj, path):
     return obj
 
 
-def run(action, version=None, example=None):
+def run(action, version=None, example=None, **kw):
     if action == "sync":
         ledger = sync(version)
         print(f"Synced {len(ledger['revisions'])} ledger entries -> {rel(ledger_path(ledger['dataset_version']))}")
@@ -289,10 +369,20 @@ def run(action, version=None, example=None):
             print(f"{e['id']} {e['example_id']} [{e['kind']}; {', '.join(e['known_issues'] + e['policies'])}] "
                   f"reviewer_status={e['reviewer_status']}")
             print(f"  defect:     {e['defect']}\n  correction: {e['correction']}\n  rationale:  {e['rationale']}")
+            if e.get("review"):
+                rv = e["review"]
+                print(f"  review:     {rv['reviewer_id']} {rv['timestamp']} on {rv['content_hash'][:12]}, "
+                      f"independent_rating={str(rv['independent_rating']).lower()}: {rv['notes']}")
             old = load_json(repo_path(e["snapshots"]["previous"]))
             new = load_json(repo_path(e["snapshots"]["current"]))
             for p in e["changed_paths"]:
                 print(f"  ~ {p}\n      - {_short(_at(old, p))}\n      + {_short(_at(new, p))}")
+        return 0
+    if action == "review":
+        e = record_review(kw["revision"], kw["reviewer"], kw["status"], kw["notes"], kw["independent_rating"],
+                          version=version, replace=kw.get("replace", False))
+        print(f"Recorded {e['id']} ({e['example_id']}): reviewer_status={e['reviewer_status']} by {e['review']['reviewer_id']} "
+              f"on content {e['content_hash'][:12]}, independent_rating={str(e['review']['independent_rating']).lower()}")
         return 0
     raise ValueError(action)
 

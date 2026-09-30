@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.1/memory.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/memory.json",
   "title": "Memory item",
   "description": "Two layers. scope=user: stable, cross-goal facts (work style, learning style, recurring schedule, general preferences, stable constraints). scope=goal: everything bound to one goal (journey decisions, task/verification history, goal-specific preferences). Goal-scoped items must never inform another goal.",
   "type": "object",

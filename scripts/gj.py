@@ -7,7 +7,7 @@
     python scripts/gj.py generate ...        # synthetic candidates via a teacher LLM (needs credentials)
     python scripts/gj.py review sample|sample-status|list|show|template|approve|revise|reject|apply|history|stats|export|verify-log
     python scripts/gj.py audit               # heuristic audits (Problems 1-9) + known issues register
-    python scripts/gj.py revisions check|sync|diff   # revision ledger vs. the base release (no silent edits)
+    python scripts/gj.py revisions check|sync|diff|review   # revision ledger vs. the base release (no silent edits)
     python scripts/gj.py leakage             # layered train/eval/seed leakage report
     python scripts/gj.py split               # immutable train/validation/test release + manifest
     python scripts/gj.py gates               # is the release training_ready? (configs/release_gates.yaml)
@@ -131,7 +131,11 @@ def cmd_audit(args):
 
 def cmd_revisions(args):
     from generation.pipelines import revisions
-    return revisions.run(args.rev_cmd, version=args.version, example=getattr(args, "example", None))
+    extra = {}
+    if args.rev_cmd == "review":
+        extra = {"revision": args.revision, "reviewer": args.reviewer, "status": args.status, "notes": args.notes,
+                 "independent_rating": args.independent_rating == "yes", "replace": args.replace}
+    return revisions.run(args.rev_cmd, version=args.version, example=getattr(args, "example", None), **extra)
 
 
 def cmd_leakage(args):
@@ -275,6 +279,14 @@ def main(argv=None):
     rvs.add_parser("sync", help="fill computed fields (hashes, changed paths) and write snapshots")
     rvd = rvs.add_parser("diff", help="show the ledger entry and field-level diff for one example")
     rvd.add_argument("example")
+    rvr = rvs.add_parser("review", help="record a human reviewer's decision on one ledger entry (confirmed|disputed)")
+    rvr.add_argument("revision", help="ledger entry id, e.g. REV-0.1.1-001")
+    rvr.add_argument("--reviewer", required=True, help="your id in review/reviewers.yaml")
+    rvr.add_argument("--status", required=True, choices=["confirmed", "disputed"])
+    rvr.add_argument("--notes", required=True, help="the decision and its reason")
+    rvr.add_argument("--independent-rating", required=True, choices=["yes", "no"],
+                     help="no = you changed the decision after automated findings or AI-copilot critique")
+    rvr.add_argument("--replace", action="store_true", help="replace an existing review of this entry")
     rv.add_argument("--version")
     rv.set_defaults(func=cmd_revisions)
 

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/review_event.json",
+  "title": "Human review event (review log v0.2)",
+  "description": "One line of the append-only, hash-chained review log data/reviewed/review_events.jsonl. A decision applies only to the exact content it names (content_hash); the reviewed content is preserved under data/reviewed/snapshots/<content_hash>.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "log_version", "example_id", "content_hash", "reviewer_id", "reviewer", "timestamp",
+               "action", "old_status", "new_status", "rubric_version", "rubric", "overall", "notes", "issues",
+               "review_tier", "snapshot", "prev_event_hash", "event_hash"],
+  "properties": {
+    "event_id": { "type": "string", "pattern": "^rev-[0-9a-f]{12}$" },
+    "log_version": { "description": "0.3.0 (Milestone 1.6): canonical statuses. No 0.2.0 events were ever written.", "const": "0.3.0" },
+    "example_id": { "type": "string", "minLength": 1 },
+    "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "reviewer_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,40}$" },
+    "reviewer": {
+      "description": "Snapshot of the reviewer's registry entry at decision time.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roles", "languages", "expert_domains", "human"],
+      "properties": {
+        "roles": { "type": "array", "items": { "enum": ["dataset_reviewer", "domain_expert", "adjudicator"] }, "minItems": 1 },
+        "languages": { "type": "array", "items": { "type": "string", "pattern": "^[a-z]{2}$" }, "minItems": 1 },
+        "expert_domains": { "type": "array", "items": { "type": "string" } },
+        "human": { "const": true }
+      }
+    },
+    "timestamp": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" },
+    "action": { "enum": ["approve", "revise", "reject"] },
+    "old_status": { "$ref": "#/$defs/status" },
+    "new_status": { "$ref": "#/$defs/status" },
+    "rubric_version": { "type": "string" },
+    "rubric": {
+      "type": "object",
+      "propertyNames": { "enum": ["product_usefulness", "goal_understanding", "question_minimality", "actionability",
+                                  "realism", "dependency_correctness", "verification_quality", "evidence_interpretation",
+                                  "user_agency", "adaptation_quality", "explanation_quality", "external_fact_discipline",
+                                  "safety", "language_quality", "contrastive_quality", "privacy_and_memory"] },
+      "additionalProperties": { "enum": ["good", "minor_issues", "major_issues", "unacceptable", "not_applicable"] }
+    },
+    "overall": { "enum": ["excellent", "acceptable", "needs_revision", "incorrect"] },
+    "notes": { "type": "string", "maxLength": 5000 },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion", "severity", "description"],
+        "properties": {
+          "criterion": { "type": "string" },
+          "severity": { "enum": ["minor", "major", "critical"] },
+          "description": { "type": "string", "minLength": 3, "maxLength": 2000 },
+          "proposed_fix": { "type": "string", "maxLength": 3000 },
+          "location": { "type": "string", "maxLength": 300 }
+        }
+      }
+    },
+    "new_status_detail": {
+      "description": "Why a pending example is pending: not_reviewed, content_changed (decided on an earlier version) or awaiting_expert.",
+      "enum": ["not_reviewed", "content_changed", "awaiting_expert", "decided"]
+    },
+    "review_tier": { "enum": ["human_review_required", "expert_review_required"] },
+    "required_languages": { "type": "array", "items": { "type": "string" } },
+    "required_expert_domains": { "type": "array", "items": { "type": "string" } },
+    "review_item_id": { "type": ["string", "null"] },
+    "independent_rating": {
+      "description": "Reviewer's declaration that the rubric was filled in before looking at automated findings.",
+      "type": "boolean"
+    },
+    "acknowledged_findings": { "type": "array", "items": { "type": "string" } },
+    "snapshot": { "type": "string" },
+    "prev_event_hash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+    "event_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "$defs": {
+    "status": { "enum": ["pending", "approved", "needs_revision", "rejected"] }
+  }
+}

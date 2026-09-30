@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/task.json",
+  "title": "Task",
+  "description": "An operational task: a concrete action with an observable expected result. The verification protocol is optional on the entity (a task can be sent to the model to have a protocol designed) but required wherever the model outputs new tasks (task_generation, full journey nodes).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "description",
+    "why_it_matters",
+    "expected_result",
+    "estimated_duration_minutes",
+    "difficulty"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 160
+    },
+    "description": {
+      "$ref": "common.json#/$defs/text"
+    },
+    "why_it_matters": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "expected_result": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "estimated_duration_minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 600
+    },
+    "sessions": {
+      "description": "Number of sittings the task is expected to take, when it cannot fit one session.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 30
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "dependencies": {
+      "$ref": "common.json#/$defs/id_list"
+    },
+    "due_date": {
+      "oneOf": [
+        {
+          "$ref": "common.json#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "verification_protocol": {
+      "$ref": "verification_protocol.json"
+    }
+  }
+}

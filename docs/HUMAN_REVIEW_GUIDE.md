@@ -249,6 +249,20 @@ forms themselves («я прочитал»), which is fine in the input. The outp
   `reviewer_status` is a human decision; it stays `pending_human_review` until you record one. Bump
   `dataset_version` before building a release with the new content; releases are immutable, and
   `gj split` refuses a version whose ledger is incomplete.
+* **Reviewing a ledger entry** (`gj revisions diff EXAMPLE` shows the defect, correction and
+  field-level diff). Decide whether the correction fixes the stated defect without new problems, then
+  record it (D-027):
+
+  ```
+  gj revisions review REV-0.1.1-001 --reviewer <you> --status confirmed|disputed \
+      --independent-rating yes|no --notes "<decision and reason>"
+  ```
+
+  The decision is bound to the entry's content hash. Use `--independent-rating no` if you changed it
+  after automated findings or AI critique (§5, §14). A second decision on the same entry needs
+  `--replace`. `disputed` does not fix anything: the fix goes through a new `dataset_version` and
+  ledger entry. A ledger decision does not change the example's own review status; rate the example
+  with `gj review` for that.
 * The known-issues register is a list of *proposed* revisions from inspection. Confirm an issue with
   `gj review revise`, or mark it `disputed` or `wont_fix` with a reason.
 

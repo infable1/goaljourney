@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.1/task_generation.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/task_generation.json",
   "title": "Operation output: task_generation (Type D)",
   "description": "Operational tasks for one node/milestone, each with a task-specific verification protocol.",
   "type": "object",

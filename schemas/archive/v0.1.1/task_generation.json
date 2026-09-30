@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/task_generation.json",
+  "title": "Operation output: task_generation (Type D)",
+  "description": "Operational tasks for one node/milestone, each with a task-specific verification protocol.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "type",
+    "response_language",
+    "message_to_user",
+    "tasks"
+  ],
+  "properties": {
+    "type": {
+      "const": "task_generation"
+    },
+    "response_language": {
+      "$ref": "common.json#/$defs/language"
+    },
+    "message_to_user": {
+      "$ref": "common.json#/$defs/message"
+    },
+    "for_node_id": {
+      "$ref": "common.json#/$defs/id"
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "allOf": [
+          {
+            "$ref": "task.json"
+          },
+          {
+            "required": [
+              "verification_protocol"
+            ]
+          }
+        ]
+      }
+    },
+    "decision_summary": {
+      "oneOf": [
+        {
+          "$ref": "decision_summary.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

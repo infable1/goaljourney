@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/review_record.json",
+  "title": "Human review record",
+  "description": "One line of the append-only review log. Approval is valid only while the example's content_hash still matches.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["example_id", "content_hash", "reviewer", "reviewed_at", "decision", "scores"],
+  "properties": {
+    "example_id": { "type": "string" },
+    "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "reviewed_at": { "$ref": "common.json#/$defs/date" },
+    "decision": { "type": "string", "enum": ["approved", "rejected", "needs_revision"] },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "correctness": { "$ref": "#/$defs/score" },
+        "relevance": { "$ref": "#/$defs/score" },
+        "minimality": { "$ref": "#/$defs/score" },
+        "actionability": { "$ref": "#/$defs/score" },
+        "realism": { "$ref": "#/$defs/score" },
+        "dependency_correctness": { "$ref": "#/$defs/score" },
+        "verification_validity": { "$ref": "#/$defs/score" },
+        "non_hallucination": { "$ref": "#/$defs/score" },
+        "user_agency": { "$ref": "#/$defs/score" },
+        "safety": { "$ref": "#/$defs/score" },
+        "language_quality": { "$ref": "#/$defs/score" },
+        "contrastive_quality": { "$ref": "#/$defs/score" }
+      }
+    },
+    "notes": { "type": "string", "maxLength": 3000 }
+  },
+  "$defs": {
+    "score": {
+      "description": "1-4 per the dataset quality rubric; null = not applicable.",
+      "oneOf": [ { "type": "integer", "minimum": 1, "maximum": 4 }, { "type": "null" } ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.1/decision_summary.json",
+  "title": "Decision summary",
+  "description": "Concise, user-facing explanation of an important decision or change. This is NOT hidden reasoning: it states what changed, why, and the impact, in the user's language.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["what_changed", "why", "impact"],
+  "properties": {
+    "what_changed": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "why": { "type": "string", "minLength": 1, "maxLength": 600 },
+    "impact": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "alternatives_considered": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["option", "why_not"],
+        "properties": {
+          "option": { "$ref": "common.json#/$defs/short_text" },
+          "why_not": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    }
+  }
+}

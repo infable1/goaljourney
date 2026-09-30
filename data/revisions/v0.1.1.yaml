@@ -5,7 +5,8 @@
 # example_id, kind, known_issues, policies, defect, correction, rationale, reviewer_status.
 # Computed fields (previous_content_hash, content_hash, changed_paths, snapshots) are written by
 # `gj revisions sync`; `gj revisions check` fails on any unrecorded or stale change.
-# reviewer_status is a human decision: it stays pending_human_review until a reviewer records one.
+# reviewer_status is a human decision: it stays pending_human_review until a registered reviewer's
+# decision is recorded with `gj revisions review`, which also writes the entry's `review` block.
 ledger_version: '1.0'
 dataset_version: 0.1.1
 base_version: 0.1.0
@@ -30,7 +31,14 @@ revisions:
     failure (wrong_language).
   rationale: Weekday labels must be computed from the calendar (DATE_WEEKDAY_MISMATCH); a milestone change the user is asked to confirm has to
     be part of the proposed changes, not only of the explanation (POL-C, NAV_RESCHEDULE_UNDECLARED).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:13:29Z'
+    content_hash: 626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac
+    independent_rating: true
+    notes: 'Подтверждено: исправление календарной даты и явное объявление всех переносимых целей в proposed_changes устраняют заявленные дефекты;
+      срок цели 1 декабря сохранён.'
   previous_content_hash: 5c93d67245033ae10a2ebbb7a618afc6c108cbf8490bf241074d65ac381bff2b
   content_hash: 626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac
   changed_paths:
@@ -67,7 +75,14 @@ revisions:
     only in ignoring the time budget.'
   rationale: Arithmetic in the message must follow from the plan (ARITH_TEXT_UNDERIVABLE, ARITH_*); an unjustified date change and an invented
     user purpose teach the wrong behaviour.
-  reviewer_status: pending_human_review
+  reviewer_status: disputed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:13:31Z'
+    content_hash: 4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207
+    independent_rating: false
+    notes: 'Оспорено: в текущем исправлении остаётся внутренняя несогласованность — user_options предлагает перенос срока на начало мая, а alternatives_considered
+      описывает вариант с переносом на конец июня.'
   previous_content_hash: f82c0fc070edc834ae47b1de4fa3de2bf098ffd3050098ecf4e848386246aded
   content_hash: 4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207
   changed_paths:
@@ -101,7 +116,14 @@ revisions:
     the n2 due date is declared in modified_deadlines (autonomy auto, applied); new_weekly_hours_planned is the steady 4.
   rationale: The vacation closes a gap rather than creating spare time; saying otherwise teaches false buffers. POL-C requires deadline changes
     to be declared and new dates to fit the remaining work.
-  reviewer_status: pending_human_review
+  reviewer_status: disputed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:13:33Z'
+    content_hash: d8536ef0c23618a7edbc8f7326a531f93d12d1f90dc0befc63d3a2e964946110
+    independent_rating: false
+    notes: 'Оспорено: заявленный запас около 12 дней до milestone 10 декабря не следует из приведённого workload и графика после 18 октября; итоговый
+      расчёт остаётся внутренне несогласованным.'
   previous_content_hash: 83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984
   content_hash: d8536ef0c23618a7edbc8f7326a531f93d12d1f90dc0befc63d3a2e964946110
   changed_paths:
@@ -135,7 +157,14 @@ revisions:
     with source_ref goal_memory:gm1; the unsupported time-saving claim is removed.
   rationale: A navigator must never present an invented detail as the user's fact (POL-E, FACT_NOT_GROUNDED); grounding the fact in the input
     keeps the example's useful behaviour.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:13:35Z'
+    content_hash: 90acb23582a8ee40e773912861195fbcff62219a78456dbddb17c3cab5d3c85a
+    independent_rating: true
+    notes: 'Подтверждено: ранее неподтверждённая ниша теперь явно заземлена через goal_memory:gm1 и facts_used, а прежний неподтверждённый overclaim
+      удалён.'
   previous_content_hash: 3289d3d7463fc2736d07b7fcdf4c6942640032384462860a5a0996f1d91f4b89
   content_hash: 90acb23582a8ee40e773912861195fbcff62219a78456dbddb17c3cab5d3c85a
   changed_paths:
@@ -162,7 +191,14 @@ revisions:
     low (documents stay private).'
   rationale: The assistant has no grammatical gender (POL-D); confidence follows the class of evidence, and user-entered data is the user's word
     (POL-B).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:13:37Z'
+    content_hash: 7254399c3565ace09660c9a31ab3f8a4120bad1653eee1b3312dc5af7f8c7fc7
+    independent_rating: true
+    notes: 'Подтверждено: формулировка стала гендерно нейтральной, а verification_protocols приведены в соответствие с классом доказательств и
+      ограничениями user-entered data.'
   previous_content_hash: 36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e
   content_hash: 7254399c3565ace09660c9a31ab3f8a4120bad1653eee1b3312dc5af7f8c7fc7
   changed_paths:

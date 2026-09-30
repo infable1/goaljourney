@@ -44,8 +44,8 @@ truth; chat history is not.
 | Artefact | Version | Notes |
 |---|---|---|
 | dataset | 0.1.1 | release `draft_unreviewed`: train 81, validation 12, test 63 eval cases. v0.1.0 is immutable and kept |
-| schema | 0.1.1 | v0.1.0 archived in `schemas/archive/v0.1.0/` |
-| pipeline | 0.4.0 | review governance modes (`solo_owner` default), gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders |
+| schema | 0.1.2 | 0.1.2 adds the revision-ledger `review` block; v0.1.0 and v0.1.1 archived in `schemas/archive/`. Records stay at `schema_version` 0.1.1 and validate against the archived set |
+| pipeline | 0.4.1 | `gj revisions review` (human decisions on ledger entries, bound to the content hash); 0.4.0: review governance modes (`solo_owner` default), gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders |
 | evaluation | 0.2.0 | 63 cases / 106 model calls (43 atomic, 14 composite, 6 longitudinal). v0.1.0 (30 cases) frozen |
 | navigator prompt / generation prompts | 0.1.1 / 0.1.1 | `prompts/navigator/v0.1.1/`, `prompts/generation/v0.1.1/` |
 | base model | unset | chosen later, recorded in `configs/versions.yaml` |

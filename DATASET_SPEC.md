@@ -418,7 +418,9 @@ gj review history ID                gj review stats             gj review verify
   example, and each entry records:
   * the defect, the correction and the rationale;
   * the known issues and policies involved;
-  * `reviewer_status`;
+  * `reviewer_status`, and once a human has decided (`confirmed` or `disputed`), a `review` block with
+    the reviewer, timestamp, reviewed content hash, `independent_rating` and notes (schema 0.1.2,
+    `gj revisions review`, D-027);
   * computed content hashes, changed paths and snapshots of both versions.
 
   `gj revisions check` fails on any unrecorded or stale change; `gj split` refuses to build without a

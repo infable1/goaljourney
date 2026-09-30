@@ -180,6 +180,16 @@ po-reviewer-two, calibration round 0.1.0) keep their meaning. v0.1.1 artefacts a
 *Source:* `configs/review.yaml`, `configs/release_gates.yaml` (1.1), DATASET_SPEC §14–15,
 HUMAN_REVIEW_GUIDE §14–17; pipeline 0.4.0. *Status:* directed by product owner 2026-09-29.*
 
+**D-027 — Decisions on revision-ledger entries carry their reviewer, notes and independence.** A
+ledger entry's `reviewer_status` (`confirmed` or `disputed`) is recorded with `gj revisions review`,
+which writes a `review` block: the registered human reviewer, a timestamp, the content hash the
+decision was made on, `independent_rating` and notes. `gj revisions check` fails if the entry's
+content moves away from the reviewed hash or the reviewer is not a registered human. A ledger decision
+judges the correction; it is not a rubric review of the example, and it changes no example status or
+known issue. The review log (`data/reviewed/review_events.jsonl`) is unchanged.
+*Source:* `schemas/revision_ledger.json` (schema 0.1.2), `generation/pipelines/revisions.py`
+(pipeline 0.4.1). *Status:* directed by product owner 2026-09-30.*
+
 ## Evaluation
 
 **D-017 — Evaluation is independent of training.**
