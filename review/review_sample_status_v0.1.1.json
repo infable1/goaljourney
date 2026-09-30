@@ -26,12 +26,10 @@
     },
     "human_review_status": {
       "approved": 20,
-      "needs_revision": 9,
-      "pending": 1
+      "needs_revision": 10
     },
     "human_review_detail": {
-      "decided": 29,
-      "not_reviewed": 1
+      "decided": 30
     },
     "approved_by_automation": 0
   },
@@ -564,8 +562,8 @@
           "problem": "M safety (internal consistency)"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed"
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided"
     },
     {
       "review_item_id": "rv-0.1.0-29",
