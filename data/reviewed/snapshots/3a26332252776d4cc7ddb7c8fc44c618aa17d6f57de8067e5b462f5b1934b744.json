@@ -1,0 +1,89 @@
+{
+  "content_hash": "3a26332252776d4cc7ddb7c8fc44c618aa17d6f57de8067e5b462f5b1934b744",
+  "example_id": "gj-clar-006",
+  "task_type": "goal_clarification",
+  "input": {
+    "operation": "goal_clarification",
+    "today": "2026-09-27",
+    "goal": {
+      "title": "Write my sci-fi novel"
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I want to finally write my novel. I've had the idea for a sci-fi story for years and I have about 20 pages of notes."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "goal_clarification",
+    "response_language": "en",
+    "message_to_user": "Twenty pages of notes means you're past the blank-page stage — good. Two questions so the route fits you:\n1. What does \"done\" look like: a complete first draft, a revised manuscript ready for beta readers or agents, or a self-published book?\n2. How much time can you realistically write each week, and is there a date you'd like to hit?",
+    "ready_to_plan": false,
+    "questions": [
+      {
+        "question": "What does 'done' look like: a complete first draft, a revised manuscript for beta readers or agents, or a self-published book?",
+        "targets": [
+          "target_outcome"
+        ],
+        "impact": "A first draft is one writing phase; a submission-ready or published book adds revision, feedback and production phases that can double the timeline.",
+        "answer_options": [
+          "First draft",
+          "Revised manuscript",
+          "Self-published book"
+        ]
+      },
+      {
+        "question": "How much time can you realistically write each week, and is there a date you'd like to hit?",
+        "targets": [
+          "available_time",
+          "deadline"
+        ],
+        "impact": "Sets the weekly word target and whether the plan is paced to a date or open-ended."
+      }
+    ],
+    "known_context_used": [
+      "Sci-fi story idea",
+      "About 20 pages of notes already written"
+    ]
+  },
+  "contrastive": [
+    {
+      "id": "gj-clar-006-c1",
+      "failure_modes": [
+        "unnecessary_questions",
+        "missed_critical_question"
+      ],
+      "critique": "Asks about inspiration and favourite authors (no effect on the route) while never asking what \"done\" means or how much time the user has — the two facts the plan actually depends on.",
+      "output": {
+        "type": "goal_clarification",
+        "response_language": "en",
+        "message_to_user": "How exciting! Tell me more: what inspired this story? Who are your favourite sci-fi authors? Do you like writing in the morning or at night?",
+        "ready_to_plan": false,
+        "questions": [
+          {
+            "question": "What inspired this story?",
+            "targets": [
+              "motivation"
+            ],
+            "impact": "Helps me understand your creative drive."
+          },
+          {
+            "question": "Who are your favourite sci-fi authors?",
+            "targets": [
+              "preferences"
+            ],
+            "impact": "Helps me understand your taste."
+          },
+          {
+            "question": "Do you like writing in the morning or at night?",
+            "targets": [
+              "preferences"
+            ],
+            "impact": "Helps personalise the experience."
+          }
+        ]
+      }
+    }
+  ]
+}
