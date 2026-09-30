@@ -1,0 +1,98 @@
+{
+  "content_hash": "67b754a0b472f5e1fab5bddc3f8c215ad16397fb65ff30b9fb600170e509ea43",
+  "example_id": "gj-vprot-005",
+  "task_type": "verification_protocol_design",
+  "input": {
+    "operation": "verification_protocol_design",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-walk",
+      "title": "Build a daily walking habit"
+    },
+    "task": {
+      "id": "t-steps",
+      "title": "Walk at least 40 minutes a day for 7 days",
+      "description": "Take a brisk walk of at least 40 minutes every day this week.",
+      "why_it_matters": "A week of daily walks is the first proof that the habit fits your schedule.",
+      "expected_result": "7 days with a walk of at least 40 minutes each.",
+      "estimated_duration_minutes": 40,
+      "sessions": 7,
+      "difficulty": 2
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Just so you know, I don't have a fitness tracker and I usually leave my phone at home when I walk."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "verification_protocol_design",
+    "response_language": "en",
+    "message_to_user": "Since you walk without a phone or tracker, there's no data to export — and that's fine. You'll log each walk in 20 seconds (date, minutes, route), and at the end of the week I'll ask one reflection question. This counts as self-reported progress, which is the honest level of proof for this kind of task.",
+    "task_id": "t-steps",
+    "protocol": {
+      "task_nature": "physical_activity",
+      "objective_verifiability": "low",
+      "methods": [
+        {
+          "method": "structured_self_report",
+          "role": "required",
+          "instructions": "Log each walk on the day you do it.",
+          "fields": [
+            "Date",
+            "Minutes walked",
+            "Route or place"
+          ]
+        },
+        {
+          "method": "follow_up_questions",
+          "role": "supplementary",
+          "instructions": "One reflection at the end of the week.",
+          "questions": [
+            "Which time of day made the walk easiest to fit in?"
+          ]
+        }
+      ],
+      "pass_criteria": [
+        "7 daily entries of at least 40 minutes"
+      ],
+      "confidence_ceiling": "limited",
+      "self_report_only": true,
+      "rationale": "Without a tracker there is no objective record; same-day structured logs are the most reliable evidence available, and confidence is marked as limited."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-vprot-005-c1",
+      "failure_modes": [
+        "assumed_user_info",
+        "ignored_preferences"
+      ],
+      "critique": "Requires a GPS export the user has just said they cannot produce; the task becomes impossible to complete for reasons unrelated to walking.",
+      "output": {
+        "type": "verification_protocol_design",
+        "response_language": "en",
+        "message_to_user": "Please export your GPS walking data for each day from your fitness app.",
+        "task_id": "t-steps",
+        "protocol": {
+          "task_nature": "physical_activity",
+          "objective_verifiability": "high",
+          "methods": [
+            {
+              "method": "data_export",
+              "role": "required",
+              "instructions": "Export GPS data for each walk from your fitness app."
+            }
+          ],
+          "pass_criteria": [
+            "7 GPS tracks of at least 40 minutes"
+          ],
+          "confidence_ceiling": "high",
+          "self_report_only": false,
+          "rationale": "GPS data is objective."
+        }
+      }
+    }
+  ]
+}
