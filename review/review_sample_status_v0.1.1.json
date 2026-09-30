@@ -25,13 +25,13 @@
       "open": 4
     },
     "human_review_status": {
-      "approved": 13,
+      "approved": 14,
       "needs_revision": 4,
-      "pending": 13
+      "pending": 12
     },
     "human_review_detail": {
-      "decided": 17,
-      "not_reviewed": 13
+      "decided": 18,
+      "not_reviewed": 12
     },
     "approved_by_automation": 0
   },
@@ -296,8 +296,8 @@
           "problem": "P2 verification (user-entered data treated as objective)"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
     },
     {
