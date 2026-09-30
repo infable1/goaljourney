@@ -444,7 +444,14 @@ revisions:
     the pace («втрое с лишним») and the work instead of a speed-up factor; each milestone change is adapt_with_summary / applied and named with
     its new date; workload block added; the source of the extra time is cited in facts_used.
   rationale: Milestone moves may be applied automatically only with an explicit summary (POL-C); numbers must follow from the plan.
-  reviewer_status: pending_human_review
+  reviewer_status: disputed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:42:54Z'
+    content_hash: 19ca0dd658adf0fd4d1215e4baa0c16812c0e1816176ac8ae3ee53c97a232f08
+    independent_rating: false
+    notes: 'Оспорено: в текущем исправлении остаётся внутренняя арифметическая несогласованность — для вехи m2 в плане получается 53 часа работы,
+      тогда как в modified_deadlines указано «около 78 часов».'
   previous_content_hash: 43d22dfb1e541a2c9276c67ed1af29dc9f5bbf09f5088a4dd1d1d72c63419bd7
   content_hash: 19ca0dd658adf0fd4d1215e4baa0c16812c0e1816176ac8ae3ee53c97a232f08
   changed_paths:
@@ -482,7 +489,14 @@ revisions:
   correction: The task uses a local SQLite tool (or deleting personal columns before any online tool); the check asks for the query, its output
     and the spreadsheet's row count; the query is checked directly and the counts are pasted, so the ceiling is medium.
   rationale: Customer data should not leave the user's computer without need; confidence follows what is actually inspected (POL-B).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:42:56Z'
+    content_hash: a01895fc8f1be54acb86c985c877dcb9afd8c5a4e63e3151df8722cf2451e0a4
+    independent_rating: true
+    notes: 'Подтверждено: чувствительные данные из CSV остаются на компьютере пользователя либо очищаются перед онлайн-инструментом, а проверка
+      COUNT(*) больше не выдаёт пользовательские числа за напрямую проверенный факт; потолок уверенности снижен до medium.'
   previous_content_hash: a6ca24e044fb90f1f04c6b310a362f20374f69642957543821b92a50576de03c
   content_hash: a01895fc8f1be54acb86c985c877dcb9afd8c5a4e63e3151df8722cf2451e0a4
   changed_paths:
@@ -510,7 +524,14 @@ revisions:
     tagged overconfident_verification.
   rationale: The example shows the best verification with available capabilities and states the resulting limit instead of teaching the model
     to ask for video (POL-A, POL-F).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:42:58Z'
+    content_hash: 01f2af999d6934aa1d1d787083d3e8e4fb972209233697f7541b3b99fba8c1b4
+    independent_rating: true
+    notes: 'Подтверждено: недоступное видео заменено доступными методами проверки, self-report отделён от непосредственно проверяемых ответов,
+      ограничение метода явно указано, rejected output дополнительно размечен как overconfident_verification.'
   previous_content_hash: 1698ce56fc4deffb478e2febf4251eca74e03160d411be25e238ad25a5ead59f
   content_hash: 01f2af999d6934aa1d1d787083d3e8e4fb972209233697f7541b3b99fba8c1b4
   changed_paths:
@@ -547,7 +568,14 @@ revisions:
   correction: The app fetches GET /todos once; the repository is uploaded and reviewed (tests and README); create/delete are shown by a pasted
     curl session; ceiling medium because the write calls are the user's paste; the message says what the app cannot do.
   rationale: Unsupported capabilities must never be promised (CAPABILITY_PROMISE); the limit is stated honestly.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:43:00Z'
+    content_hash: 50802264ef9811af237e5ac3d32000b6abfcbe379c8239cf4fe3f927d34b1826
+    independent_rating: true
+    notes: 'Подтверждено: протокол больше не обещает неподдерживаемые POST/DELETE-вызовы от приложения, GET и repository проверяются напрямую,
+      пользовательский curl-output отделён как менее проверяемый источник, потолок medium.'
   previous_content_hash: c81e9e89335e56344d2113224af4967b86825f3ee4b4afe29fd69411f6f1a506
   content_hash: 50802264ef9811af237e5ac3d32000b6abfcbe379c8239cf4fe3f927d34b1826
   changed_paths:
@@ -583,7 +611,14 @@ revisions:
   correction: The three control problems are written into the current reply; «пока я вижу только одну страницу» becomes «на фото только одна страница»
     (the model receives a description, not the image).
   rationale: Whatever the user needs now goes into the current reply (POL-A, CAP-PROACTIVE-MESSAGES is planned).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T15:43:02Z'
+    content_hash: ea333ce51a91634250d9bc24ec54edb9dcf523742d70a4b584e469637d067e2a
+    independent_rating: true
+    notes: 'Подтверждено: необходимые контрольные задачи теперь выдаются в текущем ответе, а утверждение о том, что модель видит всю страницу,
+      заменено корректным описанием доступного фото.'
   previous_content_hash: a95a311b190953f74f4344df0757addbf8843720438abd06cd7da91af7531659
   content_hash: ea333ce51a91634250d9bc24ec54edb9dcf523742d70a4b584e469637d067e2a
   changed_paths:
