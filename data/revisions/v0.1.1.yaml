@@ -1083,7 +1083,14 @@ revisions:
     not have — untagged.
   correction: Tagged unavailable_capability as well; the critique names it.
   rationale: Tags must describe every defect of a rejected output (POL-A).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:13:04Z'
+    content_hash: 356dc499cec8916231bd00023782601cc41f5bf6cf52161d64fb5143c114171f
+    independent_rating: true
+    notes: 'Подтверждено: correction полно и точно добавляет unavailable_capability к требованию видео, при этом допустимый self-report и остальная
+      логика verification_result не изменены.'
   previous_content_hash: 2cbbbe61bbc211ae95da412c38f59ddf6493639d1a4651bcd9a7d166645b35db
   content_hash: 356dc499cec8916231bd00023782601cc41f5bf6cf52161d64fb5143c114171f
   changed_paths:
@@ -1101,7 +1108,14 @@ revisions:
   defect: The rejected output demands a video of the painting process — an unavailable capability, untagged.
   correction: Tagged unavailable_capability as well; the critique names it.
   rationale: Tags must describe every defect of a rejected output (POL-A).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:13:06Z'
+    content_hash: ce610c175812f53e77c78e3616abe3708b20f4a514ef98428532e3b736768091
+    independent_rating: true
+    notes: 'Подтверждено: correction добавляет unavailable_capability к уже размеченному дефекту rejected output; critique отражает обе проблемы,
+      а expected protocol остаётся согласованным.'
   previous_content_hash: a7dee044cde2fe51260f2cbddf04612cdea4b78a58ee36b06d3176db48f3c2a1
   content_hash: ce610c175812f53e77c78e3616abe3708b20f4a514ef98428532e3b736768091
   changed_paths:
@@ -1118,7 +1132,14 @@ revisions:
   defect: The rejected output asks five questions but none about the critical unknowns — the missed critical question was not tagged.
   correction: Tagged missed_critical_question in addition to unnecessary_questions and asked_known_information; the critique says so.
   rationale: Tags must describe every defect of a rejected output.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:13:08Z'
+    content_hash: 2ac9da78a4f935d02dda27fa6106ad278f6ef0bce68a206386ca601910052124
+    independent_rating: true
+    notes: 'Подтверждено: rejected output теперь явно размечен missed_critical_question наряду с unnecessary_questions и asked_known_information;
+      пропущенный критический вопрос соответствует содержанию ожидаемого output.'
   previous_content_hash: f3b3509748637a3b8ece45444b4e7ae9797c19e8782c10d84397ef28b6a03d03
   content_hash: 2ac9da78a4f935d02dda27fa6106ad278f6ef0bce68a206386ca601910052124
   changed_paths:
@@ -1137,7 +1158,13 @@ revisions:
   defect: «3 тренировки в неделю по 25–30 минут, как и было» — the earlier session length is not in the input.
   correction: «как и было» removed.
   rationale: No invented details about the user's past plan (POL-E).
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:13:11Z'
+    content_hash: d48cd96f3b2f84263021ec69bb5250d33636046023a29c040b72c7718dc577c1
+    independent_rating: true
+    notes: 'Подтверждено: неподтверждённое «как и было» удалено без изменения фактически предложенной адаптации маршрута.'
   previous_content_hash: 17cce1257cb6a793a25f2dbd03370b7a9d183455f484a15f99c215a9b241479b
   content_hash: d48cd96f3b2f84263021ec69bb5250d33636046023a29c040b72c7718dc577c1
   changed_paths:
@@ -1154,7 +1181,14 @@ revisions:
   defect: A greeting of 5–6 sentences (about 60–90 words) was said to count as one of the three 100-word texts.
   correction: «8–10 предложений (около 100 слов)».
   rationale: Quantities in advice must be consistent.
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-09-30T16:13:13Z'
+    content_hash: d0cddcdc6e7f52a2520f39bbe70ce182b4c8636c5f44553eea6a1520c9e1a21a
+    independent_rating: true
+    notes: 'Подтверждено: объём поздравления приведён в соответствие с требуемым текстом примерно на 100 слов; исправление устраняет арифметическую
+      несогласованность без изменения цели навигатора.'
   previous_content_hash: bbdb93870ad21d84263280a41bd0ebc5d83f05cd36d641143a2ad7aab43de535
   content_hash: d0cddcdc6e7f52a2520f39bbe70ce182b4c8636c5f44553eea6a1520c9e1a21a
   changed_paths:
