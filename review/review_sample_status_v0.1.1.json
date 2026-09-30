@@ -25,13 +25,13 @@
       "open": 4
     },
     "human_review_status": {
-      "approved": 11,
+      "approved": 12,
       "needs_revision": 3,
-      "pending": 16
+      "pending": 15
     },
     "human_review_detail": {
-      "decided": 14,
-      "not_reviewed": 16
+      "decided": 15,
+      "not_reviewed": 15
     },
     "approved_by_automation": 0
   },
@@ -196,8 +196,8 @@
       "changed_since_sampling": false,
       "revision_ids": [],
       "known_issues": [],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed"
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
     },
     {
       "review_item_id": "rv-0.1.0-12",

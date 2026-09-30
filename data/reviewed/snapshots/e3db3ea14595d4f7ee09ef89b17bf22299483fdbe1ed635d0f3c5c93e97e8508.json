@@ -1,0 +1,83 @@
+{
+  "content_hash": "e3db3ea14595d4f7ee09ef89b17bf22299483fdbe1ed635d0f3c5c93e97e8508",
+  "example_id": "gj-web-004",
+  "task_type": "web_research_decision",
+  "input": {
+    "operation": "web_research_decision",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-rental",
+      "title": "Начать сдавать квартиру посуточно"
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Хочу сдавать свою вторую квартиру посуточно. Друг сказал, что у нас в городе для этого теперь вообще ничего не нужно регистрировать, так что можно сразу выставлять объявление."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "web_research_decision",
+    "response_language": "ru",
+    "message_to_user": "Возможно, друг прав, но правила посуточной аренды часто меняются и зависят от города, а ошибка здесь может стоить штрафа. Поэтому проверю это в официальных источниках, прежде чем ставить в маршрут размещение объявления. Готовить квартиру и делать фото можно уже сейчас.",
+    "needs_research": true,
+    "reason_categories": [
+      "laws_regulations",
+      "location_specific"
+    ],
+    "rationale": "Нужна ли регистрация или уведомление для посуточной аренды — юридический и местный вопрос, от которого зависит, можно ли сразу публиковать объявление. Слова друга — не источник.",
+    "facts_to_verify": [
+      {
+        "fact": "Нужна ли регистрация или уведомление для посуточной сдачи жилья в городе пользователя",
+        "why_it_matters": "Определяет, можно ли размещать объявление сразу.",
+        "affects": "Этап «Размещение объявления»"
+      },
+      {
+        "fact": "Как нужно платить налог с дохода от посуточной аренды",
+        "why_it_matters": "Влияет на расчёт цены и доходности."
+      }
+    ],
+    "queries": [
+      "правила посуточной аренды квартир в городе пользователя официальный сайт",
+      "налог с посуточной сдачи квартиры физическим лицом"
+    ],
+    "unsupported_claims": [
+      {
+        "claim": "Для посуточной сдачи в городе теперь не нужно ничего регистрировать.",
+        "origin": "user_hearsay",
+        "handling": "Проверить в официальных источниках до размещения объявления."
+      }
+    ],
+    "can_proceed_without_research": true,
+    "interim_guidance": "Начните с подготовки квартиры и фото; объявление — после проверки правил."
+  },
+  "contrastive": [
+    {
+      "id": "gj-web-004-c1",
+      "failure_modes": [
+        "unverified_current_facts"
+      ],
+      "critique": "Records the friend's claim but treats it as settled and skips research, so the user may publish a listing that breaks local rules.",
+      "output": {
+        "type": "web_research_decision",
+        "response_language": "ru",
+        "message_to_user": "Отлично, раз регистрироваться не нужно, можно сразу выставлять объявление!",
+        "needs_research": false,
+        "reason_categories": [
+          "none"
+        ],
+        "rationale": "Пользователь уже знает правила.",
+        "facts_to_verify": [],
+        "queries": [],
+        "unsupported_claims": [
+          {
+            "claim": "Регистрация не нужна.",
+            "origin": "user_hearsay",
+            "handling": "Принять как факт."
+          }
+        ],
+        "can_proceed_without_research": true
+      }
+    }
+  ]
+}
