@@ -26,12 +26,12 @@
     },
     "human_review_status": {
       "approved": 16,
-      "needs_revision": 7,
-      "pending": 7
+      "needs_revision": 8,
+      "pending": 6
     },
     "human_review_detail": {
-      "decided": 23,
-      "not_reviewed": 7
+      "decided": 24,
+      "not_reviewed": 6
     },
     "approved_by_automation": 0
   },
@@ -475,8 +475,8 @@
           "problem": "P9 language (gendered identity labels) / realism"
         }
       ],
-      "human_review_status": "pending",
-      "human_review_detail": "not_reviewed",
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
       "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
     },
     {
