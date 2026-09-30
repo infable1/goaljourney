@@ -14,6 +14,11 @@ manifest). The ledger records every difference between the current pool and that
 computed field is stale (content edited after `sync`), when a snapshot is missing or does not match
 its hash, or when the base release no longer matches the sha256 recorded in its manifest.
 
+A ledger always describes one dataset version. For the current version its content is the working pool; for an
+earlier, released version it is that version's own immutable release, so later edits (recorded in later ledgers)
+never make an old ledger look stale (`version_records`). `revision_history` follows the chain of ledgers back
+through their base versions, e.g. v0.1.2 -> v0.1.1 -> v0.1.0.
+
 The ledger author is not a reviewer: `reviewer_status` stays `pending_human_review` until a registered
 human reviewer's decision is recorded with `gj revisions review` (schema 0.1.2). That writes
 `reviewer_status` (`confirmed` or `disputed`) and a `review` block — reviewer, timestamp, the content
@@ -66,19 +71,78 @@ def load_ledger(version=None):
     return load_yaml(path)
 
 
-def base_release(ledger):
-    """{id: record} of the base release, and the list of integrity problems of its files."""
-    manifest = load_json(repo_path(ledger["base_release_manifest"]))
+def release_records(manifest_path, label="base"):
+    """{id: record} of a built release (train + validation, release-only fields removed), and the list of
+    integrity problems of its files."""
+    manifest = load_json(repo_path(manifest_path))
     records, problems = {}, []
     for split in ("train", "validation"):
         info = manifest["files"][split]
         path = repo_path(info["path"])
         text = path.read_text(encoding="utf-8")
         if sha256_text(text) != info["sha256"]:
-            problems.append(f"base release file {info['path']} no longer matches the sha256 in its manifest")
+            problems.append(f"{label} release file {info['path']} no longer matches the sha256 in its manifest")
         for r in read_jsonl(path):
             records[r["id"]] = {k: v for k, v in r.items() if k not in _RELEASE_ONLY}
     return records, problems
+
+
+def base_release(ledger):
+    """{id: record} of the base release, and the list of integrity problems of its files."""
+    return release_records(ledger["base_release_manifest"])
+
+
+def release_manifest_path(version):
+    return DATA_DIR / "manifests" / f"goaljourney-v{version}.json"
+
+
+def is_current(version):
+    return str(version) == str(versions()["dataset_version"])
+
+
+def version_records(ledger):
+    """({id: record}, reconstructed ids, integrity problems) of the content a ledger describes.
+
+    The current dataset version is the working pool. An earlier version is its own immutable release: later
+    edits belong to later ledgers. A release may leave rows out (content that was needs_revision or rejected
+    when it was built); those are reconstructed from the base release, with the hashed content of the ledger's
+    current snapshot when the example was revised, and are listed so the metadata count can skip them."""
+    version = ledger["dataset_version"]
+    if is_current(version):
+        return {r["id"]: r for r, _, _ in load_pool()}, set(), []
+    manifest = release_manifest_path(version)
+    if not manifest.exists():
+        raise RevisionError(f"v{version} is not the current dataset version and has no release at {rel(manifest)}")
+    records, problems = release_records(rel(manifest), label=f"v{version}")
+    base, _ = base_release(ledger)
+    snapshots = {e["example_id"]: (e.get("snapshots") or {}).get("current") for e in ledger["revisions"]}
+    reconstructed = set()
+    for rid, old in base.items():
+        if rid in records:
+            continue
+        rec = dict(old)
+        sp = snapshots.get(rid)
+        if sp and repo_path(sp).exists():
+            snap = load_json(repo_path(sp))
+            rec.update({k: snap.get(k) for k in HASHED_FIELDS})
+        records[rid] = rec
+        reconstructed.add(rid)
+    return records, reconstructed, problems
+
+
+def records_for_version(version=None):
+    """{id: record} of a dataset version: the pool for the current version, else the version's content
+    (its ledger when it has one, otherwise its release)."""
+    version = version or versions()["dataset_version"]
+    if is_current(version):
+        return {r["id"]: r for r, _, _ in load_pool()}
+    ledger = load_ledger(version)
+    if ledger:
+        return version_records(ledger)[0]
+    manifest = release_manifest_path(version)
+    if not manifest.exists():
+        raise RevisionError(f"v{version} is not the current dataset version and has no release at {rel(manifest)}")
+    return release_records(rel(manifest), label=f"v{version}")[0]
 
 
 def changed_paths(a, b, path="", limit=40):
@@ -135,18 +199,17 @@ def metadata_diff(base, current):
     return dict(sorted(counts.items()))
 
 
-def _current():
-    return {r["id"]: r for r, _, _ in load_pool()}
-
-
 def sync(version=None):
     ledger = load_ledger(version)
     if ledger is None:
         raise RevisionError(f"no ledger at {rel(ledger_path(version))}")
+    if not is_current(ledger["dataset_version"]):
+        raise RevisionError(f"v{ledger['dataset_version']} is released and no longer current: its ledger is only checked, "
+                            "never re-synced (record new changes in the current version's ledger)")
     base, problems = base_release(ledger)
     if problems:
         raise RevisionError("; ".join(problems))
-    cur = _current()
+    cur, _, _ = version_records(ledger)
     for entry in ledger["revisions"]:
         rid = entry["example_id"]
         if rid not in cur or rid not in base:
@@ -175,7 +238,8 @@ def check(version=None):
     errors = [f"ledger schema: {e}" for e in schemas.validate("revision_ledger", ledger)]
     base, problems = base_release(ledger)
     errors += problems
-    cur = _current()
+    cur, reconstructed, problems = version_records(ledger)
+    errors += problems
     by_example = {}
     ids = Counter(e["id"] for e in ledger["revisions"])
     errors += [f"duplicate revision id {i}" for i, n in ids.items() if n > 1]
@@ -211,13 +275,17 @@ def check(version=None):
         errors.append(f"examples_added {ledger['examples_added']} != actual {added}")
     if removed != sorted(ledger["examples_removed"]):
         errors.append(f"examples_removed {ledger['examples_removed']} != actual {removed}")
-    meta = metadata_diff(base, cur)
+    meta = metadata_diff(base, {rid: rec for rid, rec in cur.items() if rid not in reconstructed})
     listed = {m["field"]: m["examples"] for m in ledger["metadata_changes"]}
+    # rows a historical release left out carry only reconstructed content, so their metadata is unknown: the
+    # listed count may then exceed what the released rows show by at most that many rows (exact otherwise)
+    slack = len(reconstructed)
     for field, n in meta.items():
-        if listed.get(field) != n:
+        if not (listed.get(field) is not None and n <= listed[field] <= n + slack):
             errors.append(f"metadata field {field!r} changed on {n} example(s) but the ledger lists {listed.get(field)}")
     for field in set(listed) - set(meta):
-        errors.append(f"metadata change {field!r} is listed but no example differs in it")
+        if listed[field] > slack:
+            errors.append(f"metadata change {field!r} is listed but no example differs in it")
     ki_known = _known_issue_ids(ledger)
     for e in ledger["revisions"]:
         for ki in e["known_issues"]:
@@ -282,7 +350,7 @@ def record_review(rev_id, reviewer_id, status, notes, independent_rating, versio
         raise RevisionError(f"reviewer {reviewer_id!r} is not marked human: true — automated agents cannot record decisions")
     if not reviewer["active"]:
         raise RevisionError(f"reviewer {reviewer_id!r} is inactive")
-    record = _current()[entry["example_id"]]
+    record = version_records(ledger)[0][entry["example_id"]]
     langs = required_languages(record)
     if review_config()["approval"]["require_language_match"] and not set(langs) <= set(reviewer["languages"]):
         raise RevisionError(f"{entry['example_id']} needs a reviewer who reads {langs}; {reviewer_id} lists {reviewer['languages']}")
@@ -310,6 +378,24 @@ def _known_issue_ids(ledger):
     for v in (ledger["base_version"], ledger["dataset_version"]):
         ids |= {k["id"] for k in load_known_issues(v)}
     return ids
+
+
+def revision_history(version=None, since=None):
+    """{example_id: [revision ids]} over the chain of ledgers from `version` back through each ledger's base
+    version, stopping before `since` (e.g. the version a review sample was drawn from). Oldest first."""
+    chain, v, seen = [], str(version or versions()["dataset_version"]), set()
+    while v and v != (str(since) if since else None) and v not in seen:
+        seen.add(v)
+        ledger = load_ledger(v)
+        if not ledger:
+            break
+        chain.append(ledger)
+        v = str(ledger["base_version"])
+    out = {}
+    for ledger in reversed(chain):
+        for e in ledger["revisions"]:
+            out.setdefault(e["example_id"], []).append(e["id"])
+    return out
 
 
 def revision_info(version=None):

@@ -3,6 +3,61 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-09-30 — Dataset v0.1.2: owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2; no schema or evaluation version change)
+
+The product owner decided the three open known issues (Milestone 1.7, task 5): KI-008 option B, KI-012 option A
+and KI-033 option A. v0.1.1 is released, so the fixes go into dataset v0.1.2 (base v0.1.1), with a new ledger
+`data/revisions/v0.1.2.yaml` and a draft release (`draft_unreviewed`: train 72, validation 12, test 63; the
+9 `needs_revision` examples are excluded).
+
+- **REV-0.1.2-001 / `gj-jour-001` (KI-008).** Pacing stays at 10 h/week and the milestone dates are unchanged.
+  - The weekly time the learning tasks leave is planned as job-search time:
+    - background nodes n17–n19 in region r4 (now active): 25.5 h, 36 h and 40.5 h;
+    - a new first-interview node n16 (13.5 h);
+    - estimates on n14 (45 h) and n15 (10.5 h).
+  - Each milestone window is within capacity: cumulative 39.5/40, 99.5/100, 149/150 and 218/220 h.
+  - `pacing.notes`, the r4 description, the strategy summary, the message and the impact state the split:
+    47 h learning, portfolio and CV; 102 h background search; 69 h active search.
+  - Achievement a4 «Первое собеседование» unlocks on n16.
+- **REV-0.1.2-002 / `gj-goalchg-001` (KI-012).**
+  - The message asks for the current 7 km time before judging whether December 1 fits a sub-60 finish.
+  - `facts_used` marks that time as unknown.
+  - `minor_adjustment`, the updated goal and the preserved progress are unchanged.
+- **REV-0.1.2-003 / `gj-vres-007` (KI-033).**
+  - The follow-up question is a required method, with a pass criterion for its answer.
+  - The expected output asks for the answer as well.
+  - The required list of ideas and the medium ceiling are kept.
+  - This removes the only `VP_NATURE_MISMATCH` warning, so `validation_strict` passes on v0.1.2.
+- **Known issues.** `review/known_issues_v0.1.2.yaml` carries v0.1.1 forward.
+  - KI-008, KI-012 and KI-033 are `fixed_pending_review`, with the owner's decision under `resolution`, their
+    revision ids, and `human_review: pending`.
+  - The v0.1.1 register is unchanged.
+- **Review state.** No review event changed.
+  - Human review of the new content is pending: the three ledger entries are `pending_human_review`.
+  - rv-0.1.0-14 / `gj-jour-001` is `pending` (`content_changed`) on its new hash. Its rv-0.1.0-14 decision stays
+    in the log for the old hash.
+  - That decision's `external_fact_discipline` and `explanation_quality` issues were not part of the KI-008
+    fix.
+- **Pipeline 0.4.2** (`generation/pipelines/revisions.py`, `sample_status.py`).
+  - A released, no-longer-current version's ledger and sample status are judged against that version's own
+    release (`version_records`, `records_for_version`), not the working pool. The v0.1.2 edits therefore do
+    not make the v0.1.1 ledger, its 36 human reviews or `review/review_sample_status_v0.1.1.json` look
+    stale.
+  - Rows a release left out are reconstructed from the base and the ledger's current snapshot.
+  - A released ledger is never re-synced.
+  - The sample status lists revision ids along the ledger chain back to the sample version
+    (`revision_history`).
+- **Generated outputs:** `review/audit_findings_v0.1.2.json`, `review/review_sample_status_v0.1.2.json`,
+  revision snapshots, and the v0.1.2 release files.
+- **Gates.** `gj gates` on v0.1.2 passes 4 of 9 applicable (`validation_strict` and `known_issues_closed` now
+  pass). It is not training-ready.
+- **Tests** in `tests/test_sampling_audit_leakage.py`:
+  - the v0.1.2 ledger, register and release;
+  - the ledger chain;
+  - historical checks, including reconstructed rows;
+  - no re-sync of a released ledger;
+  - sample status for both versions.
+
 ## 2026-09-30 — Human reviews of revision-ledger entries (schema 0.1.2, pipeline 0.4.1; no dataset or evaluation version change)
 
 On the owner's direction (D-027), a ledger entry's human decision is now recorded with its reviewer,

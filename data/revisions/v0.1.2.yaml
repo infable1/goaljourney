@@ -1,0 +1,124 @@
+# Revision ledger — dataset v0.1.2 (base: v0.1.1).
+#
+# Every example whose trainable content (task_type, input, expected_output, contrastive) differs from
+# the base release has one entry here; metadata changes are counted below. Authored fields: id,
+# example_id, kind, known_issues, policies, defect, correction, rationale, reviewer_status.
+# Computed fields (previous_content_hash, content_hash, changed_paths, snapshots) are written by
+# `gj revisions sync`; `gj revisions check` fails on any unrecorded or stale change.
+# reviewer_status is a human decision: it stays pending_human_review until a registered reviewer's
+# decision is recorded with `gj revisions review`, which also writes the entry's `review` block.
+ledger_version: '1.0'
+dataset_version: 0.1.2
+base_version: 0.1.1
+base_release_manifest: data/manifests/goaljourney-v0.1.1.json
+author: dataset engineering, Milestone 1.7 (AI agent implementing the product owner's decisions; not a reviewer)
+note: REV-0.1.2-001..003 implement the product owner's decisions of 2026-09-30 on the open known issues KI-008 (option B), KI-012 (option A) and
+  KI-033 (option A) (Milestone 1.7, task 5). The owner chose each fix; nobody has reviewed the corrected content yet, so every entry awaits human
+  review. Automated validation passing is not a review.
+revisions:
+- id: REV-0.1.2-001
+  example_id: gj-jour-001
+  kind: defect_fix
+  known_issues:
+  - KI-008
+  policies:
+  - POL-C
+  defect: 'Pacing says 10 h/week for 22 weeks (220 h), but the node estimates total about 47 h and the job-search nodes have no estimates, so
+    most of the weekly time is unexplained (milestone m1: 14 h of tasks in 40 h of capacity). Achievement a4 «Первое собеседование» unlocks on
+    n14 «20 откликов и 3 собеседования», i.e. after the third interview.'
+  correction: 'Pacing stays at 10 h/week and the milestone dates are unchanged. The capacity each week leaves after the learning tasks is planned
+    as job-search time: background job-search nodes n17 (weeks 1–4, 25.5 h), n18 (weeks 5–10, 36 h) and n19 (weeks 11–15, 40.5 h) in region r4
+    (now active), and estimates on the job-search nodes n16 (new, «Первое собеседование», 13.5 h), n14 (45 h) and n15 (10.5 h), each with a breakdown.
+    Every milestone window is within capacity (39.5/40, 99.5/100, 149/150, 218/220 h cumulative). pacing.notes, the region description, the strategy
+    summary, the message and decision_summary.impact state the split (47 h learning, portfolio and CV; 102 h background search; 69 h active search).
+    a4 now unlocks on n16, the first interview.'
+  rationale: 'Product owner decision on KI-008, option B: keep 10 h/week, account for the remaining weekly capacity as job-search time with inspectable
+    node estimates, and attach a4 to the first interview. Pacing and node estimates must tell the same story (POL-C: hour arithmetic follows from
+    the plan).'
+  reviewer_status: pending_human_review
+  previous_content_hash: b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1
+  content_hash: a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb
+  changed_paths:
+  - expected_output/decision_summary/impact
+  - expected_output/journey/achievements/3/unlock/ref
+  - expected_output/journey/nodes/13/description
+  - expected_output/journey/nodes/13/estimated_duration_minutes
+  - expected_output/journey/nodes/13/id
+  - expected_output/journey/nodes/13/title
+  - expected_output/journey/nodes/14/depends_on/0
+  - expected_output/journey/nodes/14/description
+  - expected_output/journey/nodes/14/estimated_duration_minutes
+  - expected_output/journey/nodes/14/id
+  - expected_output/journey/nodes/14/title
+  - expected_output/journey/nodes/14/type
+  - expected_output/journey/nodes/15
+  - expected_output/journey/nodes/16
+  - expected_output/journey/nodes/17
+  - expected_output/journey/nodes/18
+  - expected_output/journey/pacing/notes
+  - expected_output/journey/regions/3/description
+  - expected_output/journey/regions/3/status
+  - expected_output/journey/strategy_summary
+  - expected_output/message_to_user
+  snapshots:
+    previous: data/revisions/snapshots/b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1.json
+    current: data/revisions/snapshots/a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb.json
+- id: REV-0.1.2-002
+  example_id: gj-goalchg-001
+  kind: defect_fix
+  known_issues:
+  - KI-012
+  policies:
+  - POL-E
+  defect: «The December 1 date still works» asserts that a sub-60-minute 10 km fits the deadline although the user's current pace is unknown (only
+    that 7 km 'feels okay').
+  correction: 'The message no longer asserts the date: it asks for the current 7 km time first and makes the judgement conditional on it. facts_used
+    records the user''s statement (conversation[0]) and the 7 km time as unknown; decision_summary.impact says the deadline is unchanged but not
+    yet confirmed for a sub-60 finish. Classification (minor_adjustment), updated goal, preserved progress and the contrastive output are unchanged.'
+  rationale: 'Product owner decision on KI-012, option A: ask for the current 7 km time before judging feasibility. A feasibility claim needs
+    its facts (POL-E); the missing fact is the one question whose answer changes the plan.'
+  reviewer_status: pending_human_review
+  previous_content_hash: 625b109a4a2e46236c8ce8aa533135826a335e000f2e8013c3238b12536bac0c
+  content_hash: 445f64dad355eeb15ef6a81999527d4b3eb4790d6b7adf4d13e5b1d67642ee57
+  changed_paths:
+  - expected_output/decision_summary/impact
+  - expected_output/facts_used
+  - expected_output/message_to_user
+  snapshots:
+    previous: data/revisions/snapshots/625b109a4a2e46236c8ce8aa533135826a335e000f2e8013c3238b12536bac0c.json
+    current: data/revisions/snapshots/445f64dad355eeb15ef6a81999527d4b3eb4790d6b7adf4d13e5b1d67642ee57.json
+- id: REV-0.1.2-003
+  example_id: gj-vres-007
+  kind: defect_fix
+  known_issues:
+  - KI-033
+  policies:
+  - POL-B
+  defect: The input protocol verifies a knowledge task (reading three chapters) only through the written list of ideas; the follow-up question
+    was supplementary, so no required method fits the task nature (VP_NATURE_MISMATCH warning, the only validation_strict failure of v0.1.1).
+  correction: 'The follow-up question is now a required method, with a second pass criterion for the answer. The required structured list (inspectable_artifact)
+    and the confidence ceiling (medium) are unchanged. The expected output asks for the answer as well: message, a second criteria_results entry
+    (unclear), a second additional_evidence request, reason, evidence limitation and decision summary. Status stays needs_more_evidence.'
+  rationale: 'Product owner decision on KI-033, option A: make the follow-up question required and say so in the expected output. Understanding
+    of what was read is checked by a required answer, not only by the list (POL-B).'
+  reviewer_status: pending_human_review
+  previous_content_hash: f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1
+  content_hash: 304cb64b0fadf22a40c179c8c46e935e34557eba6ed819e351765a59939bad91
+  changed_paths:
+  - expected_output/additional_evidence/1
+  - expected_output/criteria_results/1
+  - expected_output/decision_summary/impact
+  - expected_output/decision_summary/what_changed
+  - expected_output/evidence_assessment/0/limitations
+  - expected_output/message_to_user
+  - expected_output/reason
+  - input/task/verification_protocol/methods/1/instructions
+  - input/task/verification_protocol/methods/1/role
+  - input/task/verification_protocol/pass_criteria/1
+  - input/task/verification_protocol/rationale
+  snapshots:
+    previous: data/revisions/snapshots/f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1.json
+    current: data/revisions/snapshots/304cb64b0fadf22a40c179c8c46e935e34557eba6ed819e351765a59939bad91.json
+metadata_changes: []
+examples_added: []
+examples_removed: []

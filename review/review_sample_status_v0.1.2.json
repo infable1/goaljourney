@@ -1,0 +1,600 @@
+{
+  "status_version": "1.0",
+  "dataset_version": "0.1.2",
+  "sample_manifest": "review/review_manifest_v0.1.0.json",
+  "sample_id": "rs-v0.1.0-a",
+  "calibration_items": [
+    "rv-0.1.0-02",
+    "rv-0.1.0-06",
+    "rv-0.1.0-07",
+    "rv-0.1.0-09",
+    "rv-0.1.0-12",
+    "rv-0.1.0-20",
+    "rv-0.1.0-29",
+    "rv-0.1.0-30"
+  ],
+  "summary": {
+    "items": 30,
+    "changed_since_sampling": 12,
+    "unchanged": 18,
+    "calibration_items": 8,
+    "calibration_items_changed": 2,
+    "items_with_known_issues": 13,
+    "known_issue_links_by_status": {
+      "fixed_pending_review": 16,
+      "open": 3
+    },
+    "human_review_status": {
+      "approved": 20,
+      "needs_revision": 9,
+      "pending": 1
+    },
+    "human_review_detail": {
+      "content_changed": 1,
+      "decided": 29
+    },
+    "approved_by_automation": 0
+  },
+  "items": [
+    {
+      "review_item_id": "rv-0.1.0-01",
+      "example_id": "gj-feas-005",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "27ed3f4af507d1402ed0acfb77536683d2178dbc000c60e9aed2f404d27edf7a",
+      "current_content_hash": "27ed3f4af507d1402ed0acfb77536683d2178dbc000c60e9aed2f404d27edf7a",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-02",
+      "example_id": "gj-safe-003",
+      "calibration": true,
+      "stratum": "random",
+      "sampled_content_hash": "d421870aa132e687835b461bbe8601374d0c72202bd11660c7a67531287eb002",
+      "current_content_hash": "d421870aa132e687835b461bbe8601374d0c72202bd11660c7a67531287eb002",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
+      "note": "calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-03",
+      "example_id": "gj-prog-003",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "e343978a6d2ed6098493ac2601ec4b57b7f25de315665d80de8e23c4516edffe",
+      "current_content_hash": "e343978a6d2ed6098493ac2601ec4b57b7f25de315665d80de8e23c4516edffe",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-04",
+      "example_id": "gj-route-006",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "fb1ab4eb1b7893da55366f6a402d21fc33e3ff1118a905beb6c012927c45cc1e",
+      "current_content_hash": "fb1ab4eb1b7893da55366f6a402d21fc33e3ff1118a905beb6c012927c45cc1e",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [
+        {
+          "id": "KI-019",
+          "status": "open",
+          "severity": "low",
+          "problem": "L external-fact discipline / K explanation quality (overclaiming)"
+        }
+      ],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-05",
+      "example_id": "gj-route-003",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "9c9a84f6694b16b3df37ac9f5e985558642025a3518901994ce57ad42a0d6d6f",
+      "current_content_hash": "9c9a84f6694b16b3df37ac9f5e985558642025a3518901994ce57ad42a0d6d6f",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-06",
+      "example_id": "gj-time-001",
+      "calibration": true,
+      "stratum": "random",
+      "sampled_content_hash": "f82c0fc070edc834ae47b1de4fa3de2bf098ffd3050098ecf4e848386246aded",
+      "current_content_hash": "4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-002"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-002",
+          "status": "fixed_pending_review",
+          "severity": "high",
+          "problem": "E realism (arithmetic) / B goal understanding"
+        }
+      ],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over; calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-07",
+      "example_id": "gj-mem-004",
+      "calibration": true,
+      "stratum": "random",
+      "sampled_content_hash": "3073971dd8365cd6e20ac9f930b19bba4c82734cfd4884723dd237566f38cc1b",
+      "current_content_hash": "3073971dd8365cd6e20ac9f930b19bba4c82734cfd4884723dd237566f38cc1b",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-08",
+      "example_id": "gj-goalchg-004",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "da4220541c7217df695f2bc9db724ea16bf85524294f638e2bc6e147d14cb274",
+      "current_content_hash": "da4220541c7217df695f2bc9db724ea16bf85524294f638e2bc6e147d14cb274",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-09",
+      "example_id": "gj-web-001",
+      "calibration": true,
+      "stratum": "random",
+      "sampled_content_hash": "9623fb94508bcac058803e4bb24a12cb9e57d1c3b089a837906d18a4c636cc01",
+      "current_content_hash": "9623fb94508bcac058803e4bb24a12cb9e57d1c3b089a837906d18a4c636cc01",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-10",
+      "example_id": "gj-clar-008",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "0c2bcacde3c2dc9a6fba752e3cc051af0a17e462f89c9d5a462ff6766b7c0997",
+      "current_content_hash": "0c2bcacde3c2dc9a6fba752e3cc051af0a17e462f89c9d5a462ff6766b7c0997",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-11",
+      "example_id": "gj-web-004",
+      "calibration": false,
+      "stratum": "random",
+      "sampled_content_hash": "e3db3ea14595d4f7ee09ef89b17bf22299483fdbe1ed635d0f3c5c93e97e8508",
+      "current_content_hash": "e3db3ea14595d4f7ee09ef89b17bf22299483fdbe1ed635d0f3c5c93e97e8508",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-12",
+      "example_id": "gj-daily-001",
+      "calibration": true,
+      "stratum": "random",
+      "sampled_content_hash": "c0d635a0698000dd6d4707f5576fe32bf3c7c0e65d7393d41fc433f508694ee3",
+      "current_content_hash": "c0d635a0698000dd6d4707f5576fe32bf3c7c0e65d7393d41fc433f508694ee3",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-13",
+      "example_id": "gj-task-004",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "36c5dd1b5419a78581ecc4ab7aa47b9b7ef0b1aa60dbb10beefaab45801e2e2e",
+      "current_content_hash": "7254399c3565ace09660c9a31ab3f8a4120bad1653eee1b3312dc5af7f8c7fc7",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-005"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-004",
+          "status": "fixed_pending_review",
+          "severity": "high",
+          "problem": "P9 language (gender-neutral persona)"
+        },
+        {
+          "id": "KI-015",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (user-entered data treated as objective)"
+        }
+      ],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-14",
+      "example_id": "gj-jour-001",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "77906c26aadd8e8ccdf42ac6b24e7869d505894c1738fcac39e999798066d56e",
+      "current_content_hash": "a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-017",
+        "REV-0.1.2-001"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-008",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "E realism / P5 pacing"
+        },
+        {
+          "id": "KI-015",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (user-entered data treated as objective)"
+        }
+      ],
+      "human_review_status": "pending",
+      "human_review_detail": "content_changed",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-15",
+      "example_id": "gj-vprot-004",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "b812376629ecf9629af8cb9969d560d6834ccdd0058ef10f8c8496cc2d164be7",
+      "current_content_hash": "555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-016"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-014",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (product capability assumptions)"
+        },
+        {
+          "id": "KI-015",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (user-entered data treated as objective)"
+        }
+      ],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-16",
+      "example_id": "gj-task-002",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "96f0bfce3713ad203a46cce8ea6aeffca329c91c46d64187df27176d6c314bac",
+      "current_content_hash": "23c95b159faf992faa0189a15bba36f3785052f14598034fc8bbedee19bc1583",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-021"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-014",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (product capability assumptions)"
+        },
+        {
+          "id": "KI-015",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (user-entered data treated as objective)"
+        }
+      ],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-17",
+      "example_id": "gj-clar-007",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "a375ae9249543f1e81cb6ab9dc20c75ab7644e4ddf89f3621bf655e77e4c6fa2",
+      "current_content_hash": "949f477f31fd2566fb2276325a0518cbd8b999dd10be942569a5f1c571c754ae",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-006"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-005",
+          "status": "fixed_pending_review",
+          "severity": "high",
+          "problem": "P9 language (never infer the user's gender)"
+        }
+      ],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-18",
+      "example_id": "gj-nav-006",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "5c93d67245033ae10a2ebbb7a618afc6c108cbf8490bf241074d65ac381bff2b",
+      "current_content_hash": "626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-001"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-001",
+          "status": "fixed_pending_review",
+          "severity": "high",
+          "problem": "X temporal / E realism"
+        }
+      ],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-19",
+      "example_id": "gj-time-003",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "b5cc77aecc850b92ee447709898db0d9d7f2760666600a9799d6a008a64b46ef",
+      "current_content_hash": "e5e92c524fc51d84272b2c81963af89cc9ef1e794f2f2cfba2325521ceba0960",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-007"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-007",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "E realism (ungrounded number)"
+        },
+        {
+          "id": "KI-032",
+          "status": "fixed_pending_review",
+          "severity": "low",
+          "problem": "P contrastive quality"
+        }
+      ],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-20",
+      "example_id": "gj-jour-003",
+      "calibration": true,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "360c792cb6a4e278b238241f749acd13c5b851d970f7faa8afdd299fc96dbb13",
+      "current_content_hash": "541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-019"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-015",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P2 verification (user-entered data treated as objective)"
+        },
+        {
+          "id": "KI-019",
+          "status": "open",
+          "severity": "low",
+          "problem": "L external-fact discipline / K explanation quality (overclaiming)"
+        }
+      ],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over; calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-21",
+      "example_id": "gj-time-004",
+      "calibration": false,
+      "stratum": "highest_risk",
+      "sampled_content_hash": "83f2a3a820125dfdcf3a39d4c16cee0a43c3d542f58fc96ba79cadd898e71984",
+      "current_content_hash": "d8536ef0c23618a7edbc8f7326a531f93d12d1f90dc0befc63d3a2e964946110",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-003"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-003",
+          "status": "fixed_pending_review",
+          "severity": "high",
+          "problem": "E realism (arithmetic)"
+        }
+      ],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-22",
+      "example_id": "gj-jour-004",
+      "calibration": false,
+      "stratum": "contrastive",
+      "sampled_content_hash": "875498360a039cba9c3b29cc3c837d8f051b1f9739d5cddc40f835122aa68468",
+      "current_content_hash": "dd7a3b8ff8a00a46a5ee0c6ddb0b78ec0b18c68edf3b1bd3ea2ab9afb5ca0e9b",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-028"
+      ],
+      "known_issues": [
+        {
+          "id": "KI-013",
+          "status": "fixed_pending_review",
+          "severity": "medium",
+          "problem": "P9 language (gendered identity labels) / realism"
+        }
+      ],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-23",
+      "example_id": "gj-feas-006",
+      "calibration": false,
+      "stratum": "contrastive",
+      "sampled_content_hash": "67e429ff1f363cbcd65528a4451ec282af2e77a71cbf2c828536ce4f9bb60e6a",
+      "current_content_hash": "67e429ff1f363cbcd65528a4451ec282af2e77a71cbf2c828536ce4f9bb60e6a",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-24",
+      "example_id": "gj-vres-004",
+      "calibration": false,
+      "stratum": "contrastive",
+      "sampled_content_hash": "2cbbbe61bbc211ae95da412c38f59ddf6493639d1a4651bcd9a7d166645b35db",
+      "current_content_hash": "356dc499cec8916231bd00023782601cc41f5bf6cf52161d64fb5143c114171f",
+      "changed_since_sampling": true,
+      "revision_ids": [
+        "REV-0.1.1-031"
+      ],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "content revised since sampling — rate the current content; an earlier decision would not carry over"
+    },
+    {
+      "review_item_id": "rv-0.1.0-25",
+      "example_id": "gj-vprot-005",
+      "calibration": false,
+      "stratum": "contrastive",
+      "sampled_content_hash": "67b754a0b472f5e1fab5bddc3f8c215ad16397fb65ff30b9fb600170e509ea43",
+      "current_content_hash": "67b754a0b472f5e1fab5bddc3f8c215ad16397fb65ff30b9fb600170e509ea43",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-26",
+      "example_id": "gj-clar-006",
+      "calibration": false,
+      "stratum": "contrastive",
+      "sampled_content_hash": "3a26332252776d4cc7ddb7c8fc44c618aa17d6f57de8067e5b462f5b1934b744",
+      "current_content_hash": "3a26332252776d4cc7ddb7c8fc44c618aa17d6f57de8067e5b462f5b1934b744",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-27",
+      "example_id": "gj-vretry-002",
+      "calibration": false,
+      "stratum": "contrastive",
+      "sampled_content_hash": "9690cc62754bcd26a76c7edab41955ddf400a5b9910e13859910d8f138cd1adc",
+      "current_content_hash": "9690cc62754bcd26a76c7edab41955ddf400a5b9910e13859910d8f138cd1adc",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-28",
+      "example_id": "gj-safe-002",
+      "calibration": false,
+      "stratum": "edge",
+      "sampled_content_hash": "5d0d0c50921356f13caebd62c097090ca055ee3f2709c6860611d1a9cbfe9084",
+      "current_content_hash": "5d0d0c50921356f13caebd62c097090ca055ee3f2709c6860611d1a9cbfe9084",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [
+        {
+          "id": "KI-022",
+          "status": "open",
+          "severity": "low",
+          "problem": "M safety (internal consistency)"
+        }
+      ],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided"
+    },
+    {
+      "review_item_id": "rv-0.1.0-29",
+      "example_id": "gj-clar-005",
+      "calibration": true,
+      "stratum": "edge",
+      "sampled_content_hash": "2dee468203f9b687c688d6dad1eb0a7e29e68deee85aea938093b9fb073c02cf",
+      "current_content_hash": "2dee468203f9b687c688d6dad1eb0a7e29e68deee85aea938093b9fb073c02cf",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "approved",
+      "human_review_detail": "decided",
+      "note": "calibration item: every reviewer rates it independently, before other items"
+    },
+    {
+      "review_item_id": "rv-0.1.0-30",
+      "example_id": "gj-safe-006",
+      "calibration": true,
+      "stratum": "edge",
+      "sampled_content_hash": "37ae70c416be9252f68e9c838bfdbdd67cac3301624224b249d42c0ab833c302",
+      "current_content_hash": "37ae70c416be9252f68e9c838bfdbdd67cac3301624224b249d42c0ab833c302",
+      "changed_since_sampling": false,
+      "revision_ids": [],
+      "known_issues": [],
+      "human_review_status": "needs_revision",
+      "human_review_detail": "decided",
+      "note": "calibration item: every reviewer rates it independently, before other items"
+    }
+  ]
+}

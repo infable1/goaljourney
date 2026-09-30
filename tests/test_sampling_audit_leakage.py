@@ -123,7 +123,7 @@ def test_audit_report_is_valid_deterministic_and_committed_file_is_current():
     assert load_json(repo_path(f"review/audit_findings_v{current}.json")) == r1, "run `gj audit --write`"
 
 
-@pytest.mark.parametrize("version", ["0.1.0", "0.1.1"])
+@pytest.mark.parametrize("version", ["0.1.0", "0.1.1", "0.1.2"])
 def test_known_issues_reference_existing_records(version):
     ids = set(BY_ID) | {c["id"] for c, _ in load_eval_cases(repo_path("evaluation/cases"))}
     for ki in audit.load_known_issues(version):
@@ -233,18 +233,19 @@ def test_leakage_report_separates_the_three_families():
 
 # ---- gates and export ------------------------------------------------------------------------
 
-@pytest.mark.parametrize("version", ["0.1.0", "0.1.1"])
+@pytest.mark.parametrize("version", ["0.1.0", "0.1.1", "0.1.2"])
 def test_release_is_not_training_ready_for_the_right_reasons(version):
     results = {r.id: r for r in gates.evaluate(version)}
     assert not gates.training_ready(results.values())
     assert results["leakage_hard_clean"].passed
-    if version == "0.1.0":
-        assert results["validation_strict"].passed
-    else:
-        # v0.1.1 lints input protocols too: the only strict failure is gj-vres-007, whose fix is an open
+    if version == "0.1.1":
+        # v0.1.1 lints input protocols too: the only strict failure is gj-vres-007, whose fix was an open
         # reviewer decision (KI-033) — the gate is left failing rather than loosened
         assert not results["validation_strict"].passed and "['gj-vres-007']" in results["validation_strict"].detail
         assert any(k["id"] == "KI-033" and k["status"] == "open" for k in audit.load_known_issues(version))
+    else:
+        # v0.1.2 applies the owner's KI-033 decision (the follow-up question is required), so strict lint is clean
+        assert results["validation_strict"].passed
     for gid in ("review_all_approved", "eval_readiness", "licensing_resolved", "coverage_minimums"):
         assert not results[gid].passed, gid
     # solo_owner governance (D-026): the inter-reviewer gates are N/A — neither passed nor failed. Their
@@ -291,16 +292,84 @@ def test_existing_release_is_idempotent(monkeypatch):
 
 def test_revision_ledger_accounts_for_every_change():
     from generation.pipelines import revisions
+    # v0.1.1 is released and no longer current: its ledger is judged against its own release, so the v0.1.2 edits
+    # (recorded in the v0.1.2 ledger) do not make it look stale, and its human reviews stay bound to their hashes
     errors, summary = revisions.check("0.1.1")
     assert errors == []
     assert summary["revised_examples"] == 36
+    assert summary["reviewer_status"] == {"confirmed": 33, "disputed": 3}
+    errors, summary = revisions.check("0.1.2")
+    assert errors == []
+    assert summary["base_version"] == "0.1.1" and summary["revised_examples"] == 3
 
 
-def test_sample_status_carries_the_frozen_sample_and_approves_nothing():
+def test_v012_ledger_implements_owner_decisions_without_approving_them():
+    from generation.pipelines import revisions
+    ledger = revisions.load_ledger("0.1.2")
+    by_id = {e["id"]: e for e in ledger["revisions"]}
+    assert {i: (e["example_id"], e["known_issues"]) for i, e in by_id.items()} == {
+        "REV-0.1.2-001": ("gj-jour-001", ["KI-008"]), "REV-0.1.2-002": ("gj-goalchg-001", ["KI-012"]),
+        "REV-0.1.2-003": ("gj-vres-007", ["KI-033"])}
+    # the owner chose the fixes; nobody has reviewed the corrected content
+    assert all(e["reviewer_status"] == "pending_human_review" and "review" not in e for e in ledger["revisions"])
+    kis = {k["id"]: k for k in audit.load_known_issues("0.1.2")}
+    for rev_id, e in by_id.items():
+        ki = kis[e["known_issues"][0]]
+        assert ki["status"] == "fixed_pending_review" and ki["revision_ids"] == [rev_id] and ki["human_review"] == "pending"
+    # v0.1.1 keeps the issues as they were then
+    old = {k["id"]: k for k in audit.load_known_issues("0.1.1")}
+    assert all(old[k]["status"] == "open" for k in ("KI-008", "KI-012", "KI-033"))
+    # the changed examples have new content hashes, so no earlier decision carries over
+    from generation.pipelines import review_store as RS
+    from generation.pipelines.pool import load_review_events
+    events = load_review_events()
+    for e in ledger["revisions"]:
+        assert RS.resolve(BY_ID[e["example_id"]], events)["status"] == "pending"
+
+
+def test_revision_history_follows_the_ledger_chain():
+    from generation.pipelines import revisions
+    hist = revisions.revision_history("0.1.2", since="0.1.0")
+    assert hist["gj-jour-001"] == ["REV-0.1.1-017", "REV-0.1.2-001"]
+    assert hist["gj-goalchg-001"] == ["REV-0.1.2-002"]
+    assert revisions.revision_history("0.1.2", since="0.1.1") == {e["example_id"]: [e["id"]]
+                                                                   for e in revisions.load_ledger("0.1.2")["revisions"]}
+
+
+def test_released_ledger_is_never_resynced():
+    from generation.pipelines import revisions
+    with pytest.raises(revisions.RevisionError, match="no longer current"):
+        revisions.sync("0.1.1")
+
+
+def test_historical_check_reconstructs_rows_a_release_left_out(monkeypatch):
+    from generation.pipelines import revisions
+    real = revisions.release_records
+
+    def without(manifest_path, label="base"):
+        records, problems = real(manifest_path, label)
+        if label == "v0.1.1":   # the version's own release omits one revised and one unrevised example
+            records.pop("gj-jour-001")
+            records.pop("gj-daily-002")
+        return records, problems
+
+    monkeypatch.setattr(revisions, "release_records", without)
+    records, reconstructed, problems = revisions.version_records(revisions.load_ledger("0.1.1"))
+    assert reconstructed == {"gj-jour-001", "gj-daily-002"} and problems == []
+    from gjcore.records import content_hash
+    entry = next(e for e in revisions.load_ledger("0.1.1")["revisions"] if e["example_id"] == "gj-jour-001")
+    assert content_hash(records["gj-jour-001"]) == entry["content_hash"]
+    assert revisions.check("0.1.1")[0] == []
+
+
+@pytest.mark.parametrize("version", ["0.1.1", "0.1.2"])
+def test_sample_status_carries_the_frozen_sample_and_approves_nothing(version):
     from generation.pipelines import sample_status
-    doc = sample_status.build("0.1.1")
+    from generation.pipelines.revisions import records_for_version
+    doc = sample_status.build(version)
     assert schemas.validate("review_sample_status", doc) == []
-    assert load_json(repo_path("review/review_sample_status_v0.1.1.json")) == doc, "run `gj review sample-status --write`"
+    assert load_json(repo_path(f"review/review_sample_status_v{version}.json")) == doc, "run `gj review sample-status --write`"
+    records = records_for_version(version)   # the pool for the current version, the release for v0.1.1
     frozen = load_json(repo_path("review/review_manifest_v0.1.0.json"))
     assert [i["review_item_id"] for i in doc["items"]] == [i["review_item_id"] for i in frozen["items"]]
     assert doc["calibration_items"] == sorted(frozen["calibration"]["items"]) and len(doc["calibration_items"]) == 8
@@ -311,7 +380,7 @@ def test_sample_status_carries_the_frozen_sample_and_approves_nothing():
     from generation.pipelines.pool import load_review_events
     events = load_review_events()
     for i in doc["items"]:
-        info = RS.resolve(BY_ID[i["example_id"]], events)
+        info = RS.resolve(records[i["example_id"]], events)
         assert (i["human_review_status"], i["human_review_detail"]) == (info["status"], info["detail"]), i["example_id"]
         if i["human_review_status"] == "approved":
             assert any(e["example_id"] == i["example_id"] and e["content_hash"] == i["current_content_hash"]
@@ -319,6 +388,17 @@ def test_sample_status_carries_the_frozen_sample_and_approves_nothing():
     for i in doc["items"]:
         assert i["changed_since_sampling"] == (i["sampled_content_hash"] != i["current_content_hash"])
         assert bool(i["revision_ids"]) == i["changed_since_sampling"], i["example_id"]
+
+
+def test_v012_release_records_revisions_and_is_draft():
+    m = load_json(split.release_paths("0.1.2")["manifest"])
+    assert m["dataset_version"] == "0.1.2" and m["release_status"] == "draft_unreviewed"
+    assert m["revisions"]["base_version"] == "0.1.1" and m["revisions"]["revised_examples"] == 3
+    revised = {e["id"]: e for e in m["examples"] if e.get("revision_ids")}
+    assert set(revised) == {"gj-jour-001", "gj-goalchg-001", "gj-vres-007"}
+    assert all(e["previous_content_hash"] != e["content_hash"] for e in revised.values())
+    # needs_revision content is never released, not even as a draft row
+    assert m["counts"]["excluded"] == {"authored/needs_revision": 9}
 
 
 def test_v011_release_records_revisions_and_is_draft():

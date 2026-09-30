@@ -61,8 +61,11 @@ The column says who performs each task; the agent never records review decisions
 
 As of 2026-09-30, on branch `claude/sleepy-dijkstra-nzrf3t` (not yet merged into the default
 branch). The calibration round is recorded, the governance change (M1.7a) is implemented, and
-solo-owner review of the rest of the sample is done (22 non-calibration items), so all 30 sample
-items are decided. Tasks 4–8 have not started, and the milestone is not complete.
+solo-owner review of the rest of the sample is done (22 non-calibration items).
+* Task 4 is done: all 36 v0.1.1 ledger revisions are reviewed.
+* Task 5's fixes are applied in dataset v0.1.2.
+* v0.1.2 changed one sample item, so 29 of 30 sample items are decided on their current content.
+* Tasks 6–8 have not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -124,7 +127,10 @@ items are decided. Tasks 4–8 have not started, and the milestone is not comple
     (the owner changed the applicability of those three after the AI second-look discussion and
     confirmed the E/K/L ratings). The reviewed version is the revised hash `b4492d1f…`, not the
     sampled `77906c26…`. It was `pending` and is now `needs_revision`; `KI-008` remains `open` and
-    `KI-015` `fixed_pending_review`;
+    `KI-015` `fixed_pending_review`. Dataset v0.1.2 (REV-0.1.2-001) revised the example for
+    KI-008, which covers the `realism` issue. The `explanation_quality` and
+    `external_fact_discipline` issues were not part of that fix. The item is `pending`
+    (`content_changed`) again on the new hash `a6b644aa…`;
   * rv-0.1.0-15 / `gj-vprot-004` (`6e92860`, `rev-a72d9fb206f1`): a `highest_risk` item that changed
     since sampling via `REV-0.1.1-016`; `approve`, overall `excellent`, `issues: []`; five criteria
     `not_applicable` (`question_minimality`, `dependency_correctness`, `adaptation_quality`,
@@ -244,8 +250,10 @@ items are decided. Tasks 4–8 have not started, and the milestone is not comple
   decision is still approve / acceptable. rv-0.1.0-03 keeps `independent_rating: true`.
 
   The log now holds 45 events (`gj review verify-log`: 0 errors).
-  * Pool (93): human-reviewed 31, training-eligible 21, needs_revision 10, not reviewed 62.
-  * Sample (30): decided 30, approved 20, needs_revision 10, pending 0.
+  * Pool (93): human-reviewed 30, training-eligible 21, needs_revision 9, content changed 1,
+    not reviewed 62.
+  * Sample (30): decided 29, approved 20, needs_revision 9, pending 1 (rv-0.1.0-14, content changed
+    in v0.1.2).
 * **Task 3 (historical; N/A in solo mode).** Agreement on the decision is 7/8 (0.875), κ 0.60.
   That would pass `calibration_agreement` in `multi_reviewer` mode; in solo mode the gate is N/A.
   Agreement on the overall verdict is 3/8 (κ 0.05; it was 2/8 while rv-0.1.0-06 stood alone, before rv-0.1.0-07); the gap is mostly `excellent` against
@@ -264,23 +272,49 @@ items are decided. Tasks 4–8 have not started, and the milestone is not comple
     review with `legal` sign-off.
   * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. The 17
     calibration-era events are stamped 0.2.0; the 28 solo-owner events are stamped 0.2.1.
-* **Tasks 4–8 (not started).** All 36 ledger entries are `pending_human_review`. KI-008, KI-012 and
-  KI-033 are open. The 100 + 27 evaluation overlaps are `open`. The v0.2.0 references are
-  unreviewed. POL-A…F and the licensing owners are unconfirmed.
+* **Task 4 (done for v0.1.1).** On the owner's direction, ledger decisions are recorded with
+  `gj revisions review` (D-027, schema 0.1.2, `d1d848d`). `po-reviewer` reviewed all 36 v0.1.1
+  entries (`d1d848d`…`8c5d690`): 33 `confirmed`, 3 `disputed` (REV-0.1.1-002, -003, -011;
+  `independent_rating: false`). The disputed corrections still need new content in a later version.
+  Separately, `gj-time-001` (REV-0.1.1-002) is still `approved` as an example from rv-0.1.0-06,
+  because a ledger decision does not change an example's status.
+* **Task 5 (decided; fixes applied, pending human review).** On 2026-09-30 the owner chose KI-008
+  option B, KI-012 option A and KI-033 option A. Dataset v0.1.2 (base v0.1.1, draft release)
+  implements them:
+  * REV-0.1.2-001 / `gj-jour-001`: 10 h/week kept. The weekly time the learning tasks leave is
+    planned as job-search time (background nodes n17–n19, first-interview node n16, estimates on
+    n14 and n15, pacing notes), and `a4` unlocks on n16.
+  * REV-0.1.2-002 / `gj-goalchg-001`: the message asks for the current 7 km time before judging
+    December 1. `minor_adjustment` is kept.
+  * REV-0.1.2-003 / `gj-vres-007`: the follow-up question is a required method, and the expected
+    output asks for its answer.
+
+  All three entries are `pending_human_review`, and the issues are `fixed_pending_review` with
+  `human_review: pending` in `review/known_issues_v0.1.2.yaml`. Pipeline 0.4.2 judges the released
+  v0.1.1 ledger and sample status against the v0.1.1 release, so they stay valid unchanged.
+* **Tasks 6–8 (not started).** The 100 + 27 evaluation overlaps are `open`. The v0.2.0 references
+  are unreviewed. POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
-  sample status file was regenerated with each recorded decision (latest: `2f2511f`; the
+  sample status file was regenerated with each recorded decision (latest: v0.1.2,
+`review/review_sample_status_v0.1.2.json`; the
   independence correction `2438dd4` left it unchanged), and these state files were synchronised with
   `gj review stats`.
 
-Acceptance criteria: the sample part of the first criterion is met: every sample item has a human
-decision on its current content hash, and none is `awaiting_expert` (the three expert-tier items
-are `needs_revision`). The other criteria (ledger `reviewer_status`, the open known issues and
-`validation_strict`, overlap dispositions, and the final `make check` and state-file updates at
-completion) are open. The multi-reviewer criterion, `calibration_agreement`, is N/A in solo mode.
+Acceptance criteria:
+* **Met:** KI-008, KI-012 and KI-033 are decided, and `validation_strict` passes on v0.1.2.
+* **Open again:** every sample item needs a decision on its current content, and rv-0.1.0-14
+  changed in v0.1.2 (29 of 30 decided; none `awaiting_expert`).
+* **Open:** every ledger entry has a human status. v0.1.1 is complete, but the 3 v0.1.2 entries
+  are pending, and the 3 disputed v0.1.1 corrections are not re-applied yet.
+* **Open:** overlap dispositions, and the final `make check` and state-file updates at completion.
+* **N/A in solo mode:** the multi-reviewer criterion, `calibration_agreement`.
 
-Gates (`gj gates`, v0.1.1, solo_owner): 2 of 9 applicable pass (`findings_acknowledged`,
-`leakage_hard_clean`), and 2 are N/A (`reviewer_diversity`, `calibration_agreement`).
-`review_all_approved` is at 21/93. Before D-026 the count was 3 of 11. Not training-ready.
+Gates (`gj gates`, v0.1.2, solo_owner): 4 of 9 applicable pass (`findings_acknowledged`,
+`leakage_hard_clean`, `validation_strict`, `known_issues_closed`), and 2 are N/A
+(`reviewer_diversity`, `calibration_agreement`). `known_issues_closed` passes because the gate
+counts only `open` issues; the three fixes still await human confirmation. `review_all_approved` is
+at 21/84 on the v0.1.2 release rows. v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11.
+Not training-ready.
 
 Groundwork: the orchestration setup of 2026-09-28 added the `/dataset-review` skill and the reviewer
 subagents. It changed no data.
@@ -306,9 +340,20 @@ subagents. It changed no data.
 2. **Owner:** rv-0.1.0-02 stays `needs_revision` while `po-reviewer`'s revise is their latest
    decision. `po-reviewer` may re-decide it under rubric 0.2.1 if they now judge it approvable
    (`gj review approve gj-safe-003 --item rv-0.1.0-02 --reviewer po-reviewer --from <file>`).
-   The 30-item sample has no pending item. Next, review the 36 ledger revisions (Task 4,
-   `gj revisions diff ID`) and decide the open known issues (Task 5). The owner rates first; the
-   AI copilot challenges afterwards (guide §14). If any rating changes after that discussion, the decision is recorded
-   with `--independent-rating no` (as for rv-0.1.0-01).
+   Next, review the v0.1.2 changes:
+   * the 3 ledger entries (`gj revisions diff <example>`, then
+     `gj revisions review REV-0.1.2-00N …`);
+   * the changed sample item rv-0.1.0-14 / `gj-jour-001` on its new hash `a6b644aa…`
+     (`gj review export --format sheet --manifest`);
+   * the examples `gj-goalchg-001` and `gj-vres-007` if they should be rated.
+
+   The owner rates first; the AI copilot challenges afterwards (guide §14). If any rating changes
+   after that discussion, the decision is recorded with `--independent-rating no` (as for
+   rv-0.1.0-01). In `gj-jour-001`, the `external_fact_discipline` issue from rv-0.1.0-14 is still in
+   the content and needs its own fix decision.
 3. **Agent** (on request): once decisions are recorded, apply the revise decisions through a new
    `dataset_version` and the ledger (`/dataset-review` §5), and keep these state files current.
+   Candidates:
+   * the 3 disputed v0.1.1 corrections (REV-0.1.1-002, -003, -011);
+   * the example-level `revise` decisions (9 `needs_revision` items);
+   * the remaining rv-0.1.0-14 issues.

@@ -1,0 +1,743 @@
+{
+  "content_hash": "a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb",
+  "example_id": "gj-jour-001",
+  "dataset_version": "0.1.2",
+  "task_type": "journey_generation",
+  "input": {
+    "operation": "journey_generation",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-qa",
+      "title": "Получить первую работу junior QA-инженером",
+      "domain": "career",
+      "deadline": "2027-02-28",
+      "available_time": {
+        "hours_per_week": 10,
+        "session_minutes": 90
+      },
+      "current_state": {
+        "summary": "Администратор в клинике, опыта в IT нет, уверенный пользователь ПК, английский A2."
+      },
+      "preferences": [
+        "Учиться по текстовым материалам и практике, а не по длинным видеокурсам"
+      ],
+      "constraints": [
+        "Бюджет на обучение — до 15 000 рублей"
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Хочу к концу февраля получить работу тестировщиком. Могу 10 часов в неделю, по полтора часа за раз. Дорогие курсы не потяну, и длинные видео мне не заходят — лучше читать и сразу пробовать."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "journey_generation",
+    "response_language": "ru",
+    "message_to_user": "Маршрут готов: 4 участка и 4 вехи до оффера к 28 февраля, в темпе 10 часов в неделю по полтора часа.\nУчёба, портфолио и резюме до третьей вехи занимают около 47 часов, а остальное время каждой недели уходит на поиск работы: до резюме — фоном (вопросы собеседований, QA-сообщества, новые вакансии), после — отклики и собеседования. Так все 10 часов расписаны, и видно, на что они идут.\nНачнём с разбора 15 реальных вакансий junior QA — так проверим, какие навыки сейчас действительно требуют, и при необходимости поправим маршрут. Параллельно — конспект по тест-дизайну, затем чек-лист, тест-кейсы и баг-репорты. Инструменты (DevTools, Postman, SQL) откроются после первой вехи.\nДорогие курсы не нужны: всё построено на текстах и практике, как вы хотели. Бюджет пригодится, только если после первой вехи решите взять пару сессий менторства.",
+    "goal": {
+      "id": "g-qa",
+      "title": "Получить первую работу junior QA-инженером",
+      "domain": "career",
+      "desired_outcome": "Оффер на позицию junior QA-инженера (ручное тестирование) в офисе или удалённо.",
+      "success_criteria": [
+        "Получен оффер на позицию junior QA"
+      ],
+      "deadline": "2027-02-28",
+      "available_time": {
+        "hours_per_week": 10,
+        "session_minutes": 90
+      },
+      "current_state": {
+        "summary": "Администратор в клинике, опыта в IT нет, уверенный пользователь ПК, английский A2."
+      },
+      "preferences": [
+        "Учиться по текстовым материалам и практике, а не по длинным видеокурсам"
+      ],
+      "constraints": [
+        "Бюджет на обучение — до 15 000 рублей"
+      ],
+      "assumptions": [
+        {
+          "statement": "Подходят и офисные, и удалённые вакансии.",
+          "basis": "default_until_confirmed",
+          "confirmed": false
+        }
+      ]
+    },
+    "journey": {
+      "id": "j-qa",
+      "goal_id": "g-qa",
+      "version": 1,
+      "strategy_summary": "Сначала проверяем требования рынка по реальным вакансиям, затем ручное тестирование и тест-дизайн, потом базовые инструменты, портфолио и активный поиск работы с разбором каждого собеседования. Поиск работы идёт фоном с первой недели и забирает время, которое остаётся от учёбы.",
+      "pacing": {
+        "weekly_hours_planned": 10,
+        "horizon_weeks": 22,
+        "notes": "220 ч за 22 недели: учёба, портфолио и резюме — 47 ч (n1–n13), поиск работы — остальное время каждой недели: фоном 102 ч до резюме (n17–n19), затем 69 ч на отклики и собеседования (n16, n14, n15). Если учебная задача затянется, время берётся из поиска этой недели."
+      },
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Основа тестирования",
+          "order": 1,
+          "status": "active"
+        },
+        {
+          "id": "r2",
+          "title": "Инструменты тестировщика",
+          "order": 2,
+          "status": "locked"
+        },
+        {
+          "id": "r3",
+          "title": "Портфолио и резюме",
+          "order": 3,
+          "status": "locked"
+        },
+        {
+          "id": "r4",
+          "title": "Поиск работы и собеседования",
+          "order": 4,
+          "status": "active",
+          "description": "Идёт фоном с первой недели на время, которое остаётся от учёбы (n17–n19); после резюме — отклики и собеседования (n16, n14, n15)."
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "Умею проектировать тесты и оформлять баги",
+          "region_id": "r1",
+          "success_criteria": [
+            "Чек-лист, 5 тест-кейсов и 3 баг-репорта прошли проверку",
+            "Мини-собеседование по основам пройдено"
+          ],
+          "target_date": "2026-10-25"
+        },
+        {
+          "id": "m2",
+          "title": "Владею базовыми инструментами",
+          "region_id": "r2",
+          "success_criteria": [
+            "Баг-репорт с данными из DevTools и SQL-запросом прошёл практическую проверку"
+          ],
+          "target_date": "2026-12-06"
+        },
+        {
+          "id": "m3",
+          "title": "Портфолио и резюме готовы",
+          "region_id": "r3",
+          "success_criteria": [
+            "Портфолио на GitHub с тест-кейсами, баг-репортами и коллекцией Postman",
+            "Резюме прошло разбор"
+          ],
+          "target_date": "2027-01-10"
+        },
+        {
+          "id": "m4",
+          "title": "Получен оффер",
+          "region_id": "r4",
+          "success_criteria": [
+            "Письменный оффер на позицию junior QA"
+          ],
+          "target_date": "2027-02-28"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Проанализировать 15 вакансий junior QA",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 90,
+          "priority": "high",
+          "created_by": "ai",
+          "task": {
+            "id": "n1",
+            "title": "Проанализировать 15 вакансий junior QA и выписать требования",
+            "description": "Найдите 15 актуальных вакансий junior QA (ручное тестирование) на двух любых сайтах с вакансиями. Для каждой запишите в таблицу компанию, обязательные навыки и «будет плюсом».",
+            "why_it_matters": "Маршрут опирается на реальные требования рынка, а не на догадки. Если в вакансиях часто встречается что-то, чего нет в плане, мы добавим это сейчас, а не за месяц до поиска работы.",
+            "expected_result": "Таблица из 15 строк и список 5 самых частых требований.",
+            "estimated_duration_minutes": 90,
+            "difficulty": 1,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "research",
+              "objective_verifiability": "medium",
+              "methods": [
+                {
+                  "method": "structured_result",
+                  "role": "required",
+                  "references_required": true,
+                  "instructions": "Загрузите таблицу (ссылка на вакансию, компания, обязательные навыки, «будет плюсом») и список пяти самых частых требований.",
+                  "fields": [
+                    "Ссылка на вакансию",
+                    "Компания",
+                    "Обязательные навыки",
+                    "Будет плюсом"
+                  ],
+                  "acceptance_criteria": [
+                    "Не меньше 15 вакансий",
+                    "У каждой вакансии есть ссылка",
+                    "Выделены 5 самых частых требований"
+                  ]
+                },
+                {
+                  "method": "url_review",
+                  "role": "supplementary",
+                  "instructions": "Навигатор открывает 3 ссылки из таблицы и сверяет требования с записанными."
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "supplementary",
+                  "instructions": "Короткие вопросы по итогам анализа.",
+                  "questions": [
+                    "Какое требование удивило вас больше всего?",
+                    "Что из топ-5 вы уже умеете хотя бы немного?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Таблица содержит не меньше 15 вакансий со ссылками",
+                "Топ-5 требований выписан",
+                "Выборочно проверенные вакансии совпадают с таблицей"
+              ],
+              "confidence_ceiling": "medium",
+              "self_report_only": false,
+              "rationale": "Таблицу заполняет пользователь, но каждая строка ссылается на вакансию, и навигатор выборочно сверяет ссылки — этого достаточно для средней уверенности; непроверенные строки остаются словами пользователя."
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Конспект по техникам тест-дизайна",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "full",
+          "depends_on": [],
+          "estimated_duration_minutes": 270,
+          "priority": "critical",
+          "created_by": "ai",
+          "task": {
+            "id": "n2",
+            "title": "Составить конспект по 4 техникам тест-дизайна с примером на каждую",
+            "description": "По текстовым материалам разберите классы эквивалентности, граничные значения, таблицу решений и попарное тестирование. Для каждой техники запишите определение своими словами и пример на форме регистрации.",
+            "why_it_matters": "Тест-дизайн — основа всех следующих задач и частая тема на собеседованиях junior QA.",
+            "expected_result": "Конспект с 4 техниками, у каждой — определение своими словами и собственный пример.",
+            "estimated_duration_minutes": 270,
+            "sessions": 3,
+            "difficulty": 2,
+            "dependencies": [],
+            "verification_protocol": {
+              "task_nature": "knowledge",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Загрузите конспект.",
+                  "acceptance_criteria": [
+                    "Все 4 техники",
+                    "У каждой свой пример, а не скопированный"
+                  ]
+                },
+                {
+                  "method": "knowledge_test",
+                  "role": "required",
+                  "instructions": "Решите 5 коротких задач от AI на применение техник (например, выбрать граничные значения для поля «возраст»).",
+                  "acceptance_criteria": [
+                    "Не меньше 4 из 5 задач решены верно"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Конспект покрывает 4 техники",
+                "4 из 5 задач решены верно"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Знание проверяется применением на новых задачах, а не только наличием конспекта."
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Чек-лист проверки формы регистрации",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "full",
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 90,
+          "priority": "high",
+          "created_by": "ai",
+          "task": {
+            "id": "n3",
+            "title": "Составить чек-лист из 15+ проверок формы регистрации на учебном сайте",
+            "description": "Выберите учебный сайт для тестировщиков с формой регистрации и составьте чек-лист минимум из 15 проверок, используя техники из конспекта.",
+            "why_it_matters": "Первый реальный рабочий артефакт тестировщика и основа для тест-кейсов.",
+            "expected_result": "Чек-лист из 15 и более проверок с пометкой, какая техника использована.",
+            "estimated_duration_minutes": 90,
+            "difficulty": 2,
+            "dependencies": [
+              "n2"
+            ],
+            "verification_protocol": {
+              "task_nature": "skill_acquisition",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Загрузите чек-лист и ссылку на форму, которую проверяли.",
+                  "acceptance_criteria": [
+                    "Не меньше 15 проверок",
+                    "Есть позитивные и негативные проверки",
+                    "Отмечены граничные значения"
+                  ]
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "required",
+                  "instructions": "Два вопроса о выборе проверок.",
+                  "questions": [
+                    "Почему вы выбрали именно эти граничные значения для одного из полей?",
+                    "Какую проверку вы бы сделали первой при нехватке времени и почему?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "Чек-лист соответствует критериям",
+                "Ответы показывают понимание выбора проверок"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Навык проверяется по артефакту и по умению объяснить решения."
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "type": "task",
+          "title": "5 тест-кейсов по шаблону",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "full",
+          "depends_on": [
+            "n3"
+          ],
+          "estimated_duration_minutes": 180,
+          "priority": "high",
+          "created_by": "ai",
+          "task": {
+            "id": "n4",
+            "title": "Написать 5 тест-кейсов для формы регистрации по стандартному шаблону",
+            "description": "На основе чек-листа напишите 5 тест-кейсов (предусловия, шаги, ожидаемый результат, приоритет) в таблице или тест-менеджмент системе с бесплатным тарифом.",
+            "why_it_matters": "Умение писать тест-кейсы проверяют почти на каждом собеседовании junior QA; они же войдут в портфолио.",
+            "expected_result": "5 тест-кейсов по шаблону, минимум 2 негативных.",
+            "estimated_duration_minutes": 180,
+            "sessions": 2,
+            "difficulty": 3,
+            "dependencies": [
+              "n3"
+            ],
+            "verification_protocol": {
+              "task_nature": "writing",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Загрузите файл или ссылку с 5 тест-кейсами.",
+                  "acceptance_criteria": [
+                    "Все поля шаблона заполнены",
+                    "Шаги воспроизводимы другим человеком",
+                    "Минимум 2 негативных кейса"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "5 тест-кейсов соответствуют критериям"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Качество тест-кейсов полностью видно в самом документе."
+            }
+          }
+        },
+        {
+          "id": "n5",
+          "type": "task",
+          "title": "3 баг-репорта на учебном сайте",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "full",
+          "depends_on": [
+            "n2"
+          ],
+          "estimated_duration_minutes": 180,
+          "priority": "high",
+          "created_by": "ai",
+          "task": {
+            "id": "n5",
+            "title": "Найти и оформить 3 баг-репорта на учебном сайте для тестировщиков",
+            "description": "Найдите 3 разных дефекта на учебном сайте и оформите каждый по шаблону — заголовок, шаги, фактический и ожидаемый результат, окружение, серьёзность — со скриншотом.",
+            "why_it_matters": "Баг-репорт — главный продукт работы тестировщика; по нему судят о внимательности и умении ясно писать.",
+            "expected_result": "3 баг-репорта по шаблону со скриншотами.",
+            "estimated_duration_minutes": 180,
+            "sessions": 2,
+            "difficulty": 3,
+            "dependencies": [
+              "n2"
+            ],
+            "verification_protocol": {
+              "task_nature": "skill_acquisition",
+              "objective_verifiability": "high",
+              "methods": [
+                {
+                  "method": "artifact_review",
+                  "role": "required",
+                  "instructions": "Загрузите 3 баг-репорта и ссылку на сайт.",
+                  "acceptance_criteria": [
+                    "Шаги воспроизводимы",
+                    "Фактический и ожидаемый результат различаются",
+                    "Серьёзность обоснована"
+                  ]
+                },
+                {
+                  "method": "screenshot",
+                  "role": "supplementary",
+                  "instructions": "Скриншоты прикладываются к каждому баг-репорту как часть артефакта."
+                },
+                {
+                  "method": "follow_up_questions",
+                  "role": "required",
+                  "instructions": "Вопрос о приоритизации.",
+                  "questions": [
+                    "Какой из трёх багов вы бы исправили первым и почему?",
+                    "Чем серьёзность отличается от приоритета?"
+                  ]
+                }
+              ],
+              "pass_criteria": [
+                "3 баг-репорта соответствуют критериям",
+                "Ответы на вопросы верны по сути"
+              ],
+              "confidence_ceiling": "high",
+              "self_report_only": false,
+              "rationale": "Скриншот сам по себе ничего не доказывает; проверяются воспроизводимость репорта и понимание серьёзности."
+            }
+          }
+        },
+        {
+          "id": "n6",
+          "type": "ai_checkpoint",
+          "title": "AI-чекпоинт: мини-собеседование по основам тестирования",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n1",
+            "n4",
+            "n5"
+          ],
+          "estimated_duration_minutes": 30,
+          "priority": "critical"
+        },
+        {
+          "id": "n7",
+          "type": "task",
+          "title": "DevTools: вкладки Network и Console на практике",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6"
+          ],
+          "estimated_duration_minutes": 360
+        },
+        {
+          "id": "n8",
+          "type": "task",
+          "title": "Postman: протестировать 5 запросов учебного API",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n7"
+          ],
+          "estimated_duration_minutes": 450
+        },
+        {
+          "id": "n9",
+          "type": "task",
+          "title": "SQL: 20 задач на SELECT, JOIN и GROUP BY",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6"
+          ],
+          "estimated_duration_minutes": 540
+        },
+        {
+          "id": "n10",
+          "type": "decision_point",
+          "title": "Держим ли темп после первой вехи?",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n6"
+          ],
+          "decision": {
+            "question": "Удаётся ли держать темп 10 часов в неделю?",
+            "options": [
+              "Да — продолжаем самостоятельно",
+              "Нет — 2–3 сессии менторства в рамках бюджета",
+              "Нет — сдвигаем срок на месяц"
+            ]
+          }
+        },
+        {
+          "id": "n11",
+          "type": "verification",
+          "title": "Практическая проверка: баг-репорт с данными из DevTools и SQL",
+          "region_id": "r2",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n8",
+            "n9"
+          ],
+          "estimated_duration_minutes": 90
+        },
+        {
+          "id": "n12",
+          "type": "task",
+          "title": "Собрать портфолио на GitHub из готовых артефактов",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n11"
+          ],
+          "estimated_duration_minutes": 270
+        },
+        {
+          "id": "n13",
+          "type": "task",
+          "title": "Резюме junior QA и профили на двух сайтах вакансий",
+          "region_id": "r3",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n12",
+            "n1"
+          ],
+          "estimated_duration_minutes": 270
+        },
+        {
+          "id": "n16",
+          "type": "challenge",
+          "title": "Первое собеседование",
+          "description": "10 откликов с сопроводительным письмом под вакансию (по 45 минут — 7,5 ч), подготовка к первому собеседованию (4,5 ч) и само собеседование (1,5 ч).",
+          "region_id": "r4",
+          "milestone_id": "m4",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n13"
+          ],
+          "estimated_duration_minutes": 810
+        },
+        {
+          "id": "n14",
+          "type": "challenge",
+          "title": "20 откликов и 3 собеседования",
+          "description": "Ещё 10 откликов (7,5 ч), подготовка и ещё два собеседования (12 ч), тестовые задания (15 ч) и ответы работодателям, повторные письма и новые вакансии (10,5 ч).",
+          "region_id": "r4",
+          "milestone_id": "m4",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n16"
+          ],
+          "estimated_duration_minutes": 2700
+        },
+        {
+          "id": "n15",
+          "type": "task",
+          "title": "Разбор каждого собеседования и план доработки",
+          "description": "По 90 минут на разбор каждого из трёх собеседований и 6 часов на доработку слабых мест, которые они покажут.",
+          "region_id": "r4",
+          "milestone_id": "m4",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n14"
+          ],
+          "estimated_duration_minutes": 630
+        },
+        {
+          "id": "n17",
+          "type": "task",
+          "title": "Поиск работы фоном, недели 1–4: сообщества, вакансии, вопросы собеседований",
+          "description": "Каждую неделю: новые вакансии junior QA в таблицу из n1, вопросы практикующим тестировщикам в QA-сообществах и ответы вслух на типовые вопросы собеседований по пройденным темам.",
+          "region_id": "r4",
+          "milestone_id": "m1",
+          "status": "available",
+          "detail_level": "outline",
+          "depends_on": [],
+          "estimated_duration_minutes": 1530
+        },
+        {
+          "id": "n18",
+          "type": "task",
+          "title": "Поиск работы фоном, недели 5–10: вопросы по инструментам и список компаний",
+          "description": "Каждую неделю: новые вакансии, вопросы собеседований по DevTools, Postman и SQL и список из 30 компаний, куда вы будете откликаться.",
+          "region_id": "r4",
+          "milestone_id": "m2",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n17"
+          ],
+          "estimated_duration_minutes": 2160
+        },
+        {
+          "id": "n19",
+          "type": "task",
+          "title": "Поиск работы фоном, недели 11–15: тренировочные собеседования и заготовки откликов",
+          "description": "Тренировочные собеседования по всем темам, шаблон сопроводительного письма и заготовки откликов для компаний из списка — чтобы после резюме (n13) сразу начать отклики.",
+          "region_id": "r4",
+          "milestone_id": "m3",
+          "status": "locked",
+          "detail_level": "outline",
+          "depends_on": [
+            "n18"
+          ],
+          "estimated_duration_minutes": 2430
+        }
+      ],
+      "assumptions": [
+        "Подходят и офисные, и удалённые вакансии (подтвердить).",
+        "Учебные сайты и API для практики доступны бесплатно."
+      ],
+      "levels": [
+        {
+          "index": 0,
+          "title": "Новичок в тестировании",
+          "unlock_criteria": "Старт маршрута"
+        },
+        {
+          "index": 1,
+          "title": "Тестировщик-практикант",
+          "unlock_milestone_id": "m1",
+          "unlock_criteria": "Веха m1 подтверждена"
+        },
+        {
+          "index": 2,
+          "title": "Тестировщик с инструментами",
+          "unlock_milestone_id": "m2",
+          "unlock_criteria": "Веха m2 подтверждена"
+        },
+        {
+          "index": 3,
+          "title": "Кандидат в junior QA",
+          "unlock_milestone_id": "m3",
+          "unlock_criteria": "Веха m3 подтверждена"
+        },
+        {
+          "index": 4,
+          "title": "Junior QA-инженер",
+          "unlock_milestone_id": "m4",
+          "unlock_criteria": "Получен оффер"
+        }
+      ],
+      "achievements": [
+        {
+          "id": "a1",
+          "title": "Первый подтверждённый артефакт",
+          "unlock": {
+            "type": "first_verified_task"
+          }
+        },
+        {
+          "id": "a2",
+          "title": "Первый найденный баг",
+          "description": "Баг-репорт прошёл проверку",
+          "unlock": {
+            "type": "capability_demonstrated",
+            "ref": "n5"
+          }
+        },
+        {
+          "id": "a3",
+          "title": "Основа заложена",
+          "unlock": {
+            "type": "milestone_verified",
+            "ref": "m1"
+          }
+        },
+        {
+          "id": "a4",
+          "title": "Первое собеседование",
+          "unlock": {
+            "type": "first_real_world_result",
+            "ref": "n16"
+          }
+        },
+        {
+          "id": "a5",
+          "title": "Оффер получен",
+          "unlock": {
+            "type": "goal_completed"
+          }
+        }
+      ]
+    },
+    "external_claims": [
+      {
+        "claim": "В вакансиях junior QA часто требуют SQL и работу с API.",
+        "status": "needs_verification",
+        "affects": "Состав второго участка — проверяется задачей n1 по реальным вакансиям"
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Создан маршрут из 4 участков — основа тестирования, инструменты, портфолио, поиск работы — с 4 вехами до 28 февраля.",
+      "why": "Такой порядок даёт первый проверяемый результат через 4 недели; разбор вакансий в начале привязывает план к реальным требованиям рынка.",
+      "impact": "10 часов в неделю: учёба, портфолио и резюме — около 47 часов до 10 января, остальное время каждой недели — поиск работы: около 102 часов фоном до резюме и 69 часов на отклики и собеседования за последние 7 недель.",
+      "alternatives_considered": [
+        {
+          "option": "Начать сразу с автотестов на Python",
+          "why_not": "Для первой работы важнее ручное тестирование; автоматизация удлинит путь на месяцы."
+        },
+        {
+          "option": "Платный курс с трудоустройством",
+          "why_not": "Не вписывается в бюджет и в предпочтение учиться по текстам."
+        }
+      ]
+    }
+  },
+  "contrastive": null
+}

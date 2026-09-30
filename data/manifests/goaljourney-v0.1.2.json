@@ -1,0 +1,1359 @@
+{
+  "dataset": "GoalJourney Dataset",
+  "dataset_version": "0.1.2",
+  "release_status": "draft_unreviewed",
+  "created_at": "2026-09-30T16:42:27+00:00",
+  "git_commit": "8c5d690d345de0388e24d347c1754b6feb2d32cb",
+  "versions": {
+    "dataset_version": "0.1.2",
+    "schema_version": "0.1.2",
+    "navigator_prompt_version": "0.1.1",
+    "generation_prompt_version": "0.1.1",
+    "pipeline_version": "0.4.2",
+    "evaluation_version": "0.2.0",
+    "base_model": {
+      "name": null,
+      "revision": null,
+      "licence": null
+    }
+  },
+  "review_policy": "allow_pending",
+  "review_mode": "solo_owner",
+  "split_config": {
+    "seed": 20260927,
+    "validation_fraction": 0.15,
+    "min_stratum_size_for_validation": 4,
+    "review_policy": "allow_pending"
+  },
+  "leakage_check": {
+    "layers": [
+      "char_near_dup",
+      "decision_pattern",
+      "exact_input",
+      "lexical_para",
+      "template"
+    ],
+    "thresholds": {
+      "char_shingle_size": 5,
+      "char_near_duplicate": 0.55,
+      "char_repetition_warning": 0.7,
+      "lexical_hard": 0.5,
+      "lexical_warning": 0.3,
+      "template_lexical": 0.15,
+      "template_numeric": 0.5,
+      "seed_lexical_warning": 0.3,
+      "decision_pattern_warning": 0.5
+    },
+    "hard_findings": 0,
+    "warnings": 13,
+    "max_scores": {
+      "char_pool_vs_eval": 0.139,
+      "char_within_pool": 0.12,
+      "lexical_pool_vs_eval": 0.338,
+      "lexical_seed_vs_eval": 0.199,
+      "decision_pattern_eval_vs_train": 0.5
+    }
+  },
+  "failing_gates": null,
+  "revisions": {
+    "ledger": "data/revisions/v0.1.2.yaml",
+    "base_version": "0.1.1",
+    "revised_examples": 3,
+    "revision_entries": 3
+  },
+  "counts": {
+    "train": 72,
+    "validation": 12,
+    "test_eval_cases": 63,
+    "test_eval_units": 106,
+    "train_contrastive_outputs": 49,
+    "pending_review": 63,
+    "excluded": {
+      "authored/needs_revision": 9
+    }
+  },
+  "training_eligibility": {
+    "eligible": 21,
+    "not_eligible": {
+      "content_changed": 1,
+      "needs_revision": 9,
+      "not_reviewed": 62
+    },
+    "not_eligible_in_release": 63,
+    "reasons": {
+      "not_reviewed": "no human decision on the current content",
+      "content_changed": "the content changed after its last decision; the current version needs review",
+      "awaiting_expert": "human review done, but a required expert domain has no qualified expert approval",
+      "needs_revision": "a human reviewer asked for a revision",
+      "rejected": "a human reviewer rejected it"
+    },
+    "examples": [
+      {
+        "id": "gj-clar-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-clar-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-clar-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-clar-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-daily-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-daily-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-feas-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-feas-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-feas-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-feas-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-feas-006",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-goalchg-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-goalchg-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-goalchg-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-jour-001",
+        "reason": "content_changed",
+        "status": "pending",
+        "detail": "content_changed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-jour-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-jour-004",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-jour-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-lang-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-lang-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-mem-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-mem-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-mem-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-007",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-008",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-009",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-010",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-nav-011",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-prog-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-prog-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-route-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-route-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-route-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-route-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-route-006",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-safe-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-safe-002",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-safe-003",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-safe-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-safe-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-safe-006",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-safe-007",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-safe-008",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-task-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-task-002",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-task-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-task-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-time-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-time-003",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-time-004",
+        "reason": "needs_revision",
+        "status": "needs_revision",
+        "detail": "decided",
+        "origin": "authored",
+        "in_release": false
+      },
+      {
+        "id": "gj-vprot-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vprot-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vprot-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vprot-006",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vprot-007",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vres-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vres-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vres-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vres-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vres-006",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vres-007",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vretry-001",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vretry-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-vretry-004",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-web-002",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-web-003",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      },
+      {
+        "id": "gj-web-005",
+        "reason": "not_reviewed",
+        "status": "pending",
+        "detail": "not_reviewed",
+        "origin": "authored",
+        "in_release": true
+      }
+    ]
+  },
+  "distribution": {
+    "train": {
+      "task_type": {
+        "daily_plan": 5,
+        "feasibility_assessment": 4,
+        "goal_change": 3,
+        "goal_clarification": 8,
+        "journey_generation": 3,
+        "memory_extraction": 2,
+        "navigator_response": 11,
+        "progress_update": 3,
+        "route_adaptation": 6,
+        "safety_classification": 4,
+        "task_generation": 3,
+        "verification_protocol_design": 6,
+        "verification_result": 10,
+        "web_research_decision": 4
+      },
+      "language": {
+        "en": 39,
+        "ru": 33
+      }
+    },
+    "validation": {
+      "task_type": {
+        "daily_plan": 1,
+        "feasibility_assessment": 1,
+        "goal_change": 1,
+        "goal_clarification": 1,
+        "journey_generation": 1,
+        "navigator_response": 1,
+        "route_adaptation": 1,
+        "safety_classification": 1,
+        "task_generation": 1,
+        "verification_protocol_design": 1,
+        "verification_result": 1,
+        "web_research_decision": 1
+      },
+      "language": {
+        "en": 10,
+        "ru": 2
+      }
+    },
+    "test": {
+      "task_type": {
+        "daily_plan": 9,
+        "feasibility_assessment": 6,
+        "goal_change": 4,
+        "goal_clarification": 10,
+        "journey_generation": 9,
+        "memory_extraction": 5,
+        "navigator_response": 8,
+        "progress_update": 5,
+        "route_adaptation": 14,
+        "safety_classification": 5,
+        "task_generation": 7,
+        "verification_protocol_design": 4,
+        "verification_result": 15,
+        "web_research_decision": 5
+      },
+      "language": {
+        "en": 34,
+        "ru": 29
+      },
+      "case_type": {
+        "atomic": 43,
+        "composite": 14,
+        "longitudinal": 6
+      }
+    }
+  },
+  "files": {
+    "train": {
+      "path": "data/train/goaljourney-v0.1.2.jsonl",
+      "sha256": "2e83aeb5b48260cd6c978dfeaba69280f5ae4ac70c1e850cdbca59d76de811bd",
+      "records": 72
+    },
+    "validation": {
+      "path": "data/validation/goaljourney-v0.1.2.jsonl",
+      "sha256": "26f67854d79b732aeaa622cdf9519dfb30cc30ffaceca5b4f14ddf009db2c816",
+      "records": 12
+    },
+    "test": {
+      "path": "data/test/goaljourney-v0.1.2.jsonl",
+      "sha256": "a0e39f4df1a145d991142fb74db867a22051b592e5fc0524a750cb42400b2aba",
+      "records": 63
+    }
+  },
+  "examples": [
+    {
+      "id": "gj-clar-001",
+      "split": "train",
+      "scenario_group": "bs-clar-ambiguous-venture-first-message",
+      "content_hash": "2ac9da78a4f935d02dda27fa6106ad278f6ef0bce68a206386ca601910052124",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-002",
+      "split": "train",
+      "scenario_group": "bs-clar-career-switch-target-unclear",
+      "content_hash": "db4112eee584635f6353f02c47af4b3fd263e474d514e58711404c39365b8836",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-003",
+      "split": "train",
+      "scenario_group": "bs-clar-skill-goal-level-unknown",
+      "content_hash": "7f9e83e8c0026fbaf47a05be3d93481fdd4fc63a959e92c2fd5959eb1294a9fb",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-004",
+      "split": "train",
+      "scenario_group": "bs-clar-tiny-goal-ready",
+      "content_hash": "62532acc5793eb63e3e9bd6153f7e5fe6a6f93c54e3279200895d67b8f92a648",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-clar-005",
+      "split": "train",
+      "scenario_group": "bs-clar-project-purpose-mixed-language",
+      "content_hash": "2dee468203f9b687c688d6dad1eb0a7e29e68deee85aea938093b9fb073c02cf",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-clar-006",
+      "split": "validation",
+      "scenario_group": "bs-clar-creative-finish-line-unclear",
+      "content_hash": "3a26332252776d4cc7ddb7c8fc44c618aa17d6f57de8067e5b462f5b1934b744",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-clar-007",
+      "split": "train",
+      "scenario_group": "bs-clar-followup-after-partial-answers",
+      "content_hash": "949f477f31fd2566fb2276325a0518cbd8b999dd10be942569a5f1c571c754ae",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-clar-008",
+      "split": "train",
+      "scenario_group": "bs-clar-single-critical-gap",
+      "content_hash": "0c2bcacde3c2dc9a6fba752e3cc051af0a17e462f89c9d5a462ff6766b7c0997",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-daily-001",
+      "split": "validation",
+      "scenario_group": "bs-daily-partial-task-scope",
+      "content_hash": "c0d635a0698000dd6d4707f5576fe32bf3c7c0e65d7393d41fc433f508694ee3",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-daily-002",
+      "split": "train",
+      "scenario_group": "bs-daily-due-soon-critical-path",
+      "content_hash": "2b0753a0773e454d4c5de511d53bf464c954ddcb3efd7fa05a6ed66bc432bc9b",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-daily-003",
+      "split": "train",
+      "scenario_group": "bs-daily-tiny-window-low-energy",
+      "content_hash": "86c1ffa45d37e37393dc1b93e064e233321a13b1b47ab86e06e5224206d54367",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-daily-004",
+      "split": "train",
+      "scenario_group": "bs-daily-gentle-restart",
+      "content_hash": "ed526daa10af56f2eb212604b6991e3652e0f1225d067c3c0a9207a55a1afaca",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-001",
+      "split": "train",
+      "scenario_group": "bs-feas-career-leap-too-fast",
+      "content_hash": "ac957b4f22035629bd578bd5111930286cf5eeb8cfeef45c26da014c5a02ba1a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-002",
+      "split": "train",
+      "scenario_group": "bs-feas-endurance-event-base-unknown",
+      "content_hash": "3fbd239b79b402de363cd0f79ef89a30f3b16f898b05420d0b42e3a6e8482636",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-003",
+      "split": "validation",
+      "scenario_group": "bs-feas-savings-gap-arithmetic",
+      "content_hash": "93a617909cd491d1eb513b00ba0ac4529d9a1d1e1b22578ac6b3b71a33bfb957",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-004",
+      "split": "train",
+      "scenario_group": "bs-feas-creative-release-feasible",
+      "content_hash": "f5411e09e654e766b4091da9875c410c430b4a82e5a7c1e031a4c98021d9512d",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-feas-005",
+      "split": "train",
+      "scenario_group": "bs-feas-regulated-product-research",
+      "content_hash": "27ed3f4af507d1402ed0acfb77536683d2178dbc000c60e9aed2f404d27edf7a",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-goalchg-001",
+      "split": "train",
+      "scenario_group": "bs-goalchg-minor-target-refinement",
+      "content_hash": "445f64dad355eeb15ef6a81999527d4b3eb4790d6b7adf4d13e5b1d67642ee57",
+      "review_status": "pending",
+      "revision_ids": [
+        "REV-0.1.2-002"
+      ],
+      "previous_content_hash": "625b109a4a2e46236c8ce8aa533135826a335e000f2e8013c3238b12536bac0c"
+    },
+    {
+      "id": "gj-goalchg-002",
+      "split": "train",
+      "scenario_group": "bs-goalchg-major-format-change",
+      "content_hash": "4fb9513d5b136d8afd57a7054d89d1bf2ed91774c471bf08bdc4cc8fa294759f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-goalchg-003",
+      "split": "validation",
+      "scenario_group": "bs-goalchg-new-goal-separate",
+      "content_hash": "f1f4846c1116b2c0e99411ccf47e67f2474007d90968f8bf7eceed7c04fb6548",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-goalchg-004",
+      "split": "train",
+      "scenario_group": "bs-goalchg-location-switch-research",
+      "content_hash": "da4220541c7217df695f2bc9db724ea16bf85524294f638e2bc6e147d14cb274",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-jour-001",
+      "split": "train",
+      "scenario_group": "bs-jour-career-entry-with-deadline",
+      "content_hash": "a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb",
+      "review_status": "pending",
+      "revision_ids": [
+        "REV-0.1.2-001"
+      ],
+      "previous_content_hash": "b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1"
+    },
+    {
+      "id": "gj-jour-002",
+      "split": "train",
+      "scenario_group": "bs-jour-small-business-rules-first",
+      "content_hash": "ea4354db36efc7ef9163988205916e0bad314494cd9accdf6545e46ad18e016c",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-jour-003",
+      "split": "train",
+      "scenario_group": "bs-jour-trip-fixed-budget",
+      "content_hash": "541a469c503f3ddb60f1fec945e4bd1e35801ab376c869848fd8f465efbd71e4",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-jour-005",
+      "split": "validation",
+      "scenario_group": "bs-jour-sensitive-health-goal",
+      "content_hash": "0b450cde1a381a65ec5ee43d55b6a2a6f114db0034aef7833218cf26e01aef6b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-lang-001",
+      "split": "train",
+      "scenario_group": "bs-daily-language-preference-memory",
+      "content_hash": "86a13ed2ff0f951dd2a4f32c635e05591c487060d965146f2db113f11cfe6faa",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-lang-002",
+      "split": "train",
+      "scenario_group": "bs-clar-heritage-language-level",
+      "content_hash": "858c023e397fbddd08cb8ab51508226daab63e259ce08086776ec93006bf2d07",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-001",
+      "split": "train",
+      "scenario_group": "bs-mem-extract-third-party-sensitive",
+      "content_hash": "40d1910a9904ec133e99363852085fb0011dc61109a246d1e3eb15ed8ef02b4e",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-002",
+      "split": "train",
+      "scenario_group": "bs-mem-update-existing-temporary",
+      "content_hash": "38fbc83124116bc3ebf33720c4f835a300949fd0a3638133d1d5f6c793a7d2b3",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-003",
+      "split": "train",
+      "scenario_group": "bs-daily-ignore-other-goal-memory",
+      "content_hash": "8d3c88f3972fb969f6f1a12e3b758a702ad786cae2ee6fb3fe5b09e73ddcaec5",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-mem-004",
+      "split": "train",
+      "scenario_group": "bs-nav-ignore-other-goal-memory",
+      "content_hash": "3073971dd8365cd6e20ac9f930b19bba4c82734cfd4884723dd237566f38cc1b",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-nav-001",
+      "split": "train",
+      "scenario_group": "bs-nav-explain-task-with-context",
+      "content_hash": "90acb23582a8ee40e773912861195fbcff62219a78456dbddb17c3cab5d3c85a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-002",
+      "split": "train",
+      "scenario_group": "bs-nav-declined-task-alternative",
+      "content_hash": "45445628da127ed504e4aae6804bfe20c48d3b844971b2bfc3e7edc5bfa0380b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-003",
+      "split": "validation",
+      "scenario_group": "bs-nav-constraint-alternative-method",
+      "content_hash": "d48cd96f3b2f84263021ec69bb5250d33636046023a29c040b72c7718dc577c1",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-004",
+      "split": "train",
+      "scenario_group": "bs-nav-explain-past-decision",
+      "content_hash": "3eef7932cd1e944afbd1ba9ef2f8d08e6a974f605fa5a3619b3f1a8d5e40d6f6",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-005",
+      "split": "train",
+      "scenario_group": "bs-nav-limited-time-split",
+      "content_hash": "c30bc9d3781692f0840ce1fa05554e14626809a334629d4b7173a735904f305d",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-006",
+      "split": "train",
+      "scenario_group": "bs-nav-reschedule-knock-on-milestone",
+      "content_hash": "626869a74de572a0c155160f33bf1394b6cf86c77ce67fd84d81f17a3c6f9eac",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-nav-007",
+      "split": "train",
+      "scenario_group": "bs-nav-remove-milestone-partial",
+      "content_hash": "6ec9140c3158d6fd475ebdbd132a29b5832c600724a62522883042595c688b4a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-008",
+      "split": "train",
+      "scenario_group": "bs-nav-off-topic-redirect",
+      "content_hash": "d0cddcdc6e7f52a2520f39bbe70ce182b4c8636c5f44553eea6a1520c9e1a21a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-009",
+      "split": "train",
+      "scenario_group": "bs-nav-emotional-support-boundary",
+      "content_hash": "66f34b10b69f2485356202e35822c6da9558efb54e38063c47fb502ead770f7f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-010",
+      "split": "train",
+      "scenario_group": "bs-nav-user-created-task",
+      "content_hash": "040e234046359417882b93a139429392f7d7c8935d4a1d054f4fd5b5e173a07f",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-nav-011",
+      "split": "train",
+      "scenario_group": "bs-nav-off-topic-redirect",
+      "content_hash": "d114beafa52971f2ae01a0e9b36426e360b770de17c67d9c85cf78f07cc56605",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-prog-001",
+      "split": "train",
+      "scenario_group": "bs-prog-milestone-verified-level-up",
+      "content_hash": "69c9cebc92032d062f1fabf5e4022e500235b0aeaa9a71ca130fde6a04899a4a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-prog-002",
+      "split": "train",
+      "scenario_group": "bs-prog-streak-no-level",
+      "content_hash": "1d273baa9a0959201782d5054000f9d6623678b335091b18746e8f54f6e57029",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-prog-003",
+      "split": "train",
+      "scenario_group": "bs-prog-goal-exceeded",
+      "content_hash": "e343978a6d2ed6098493ac2601ec4b57b7f25de315665d80de8e23c4516edffe",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-route-001",
+      "split": "train",
+      "scenario_group": "bs-route-hypothesis-invalidated",
+      "content_hash": "6334cc894bece0385af5feb7f901c89dc2f70e4752788d4bbf6e57646df7b76d",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-002",
+      "split": "train",
+      "scenario_group": "bs-route-external-fact-invalidates-progress",
+      "content_hash": "c9812c892ab2a24d20f427420569d783f2a446c4878c280eafc28c55e1005fde",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-003",
+      "split": "train",
+      "scenario_group": "bs-route-resource-lost",
+      "content_hash": "9c9a84f6694b16b3df37ac9f5e985558642025a3518901994ce57ad42a0d6d6f",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-route-004",
+      "split": "train",
+      "scenario_group": "bs-route-new-resource-time-window",
+      "content_hash": "6ca936010d02bd18d307ee96de96fe8631791f6d2433f40182e45ed987d38f96",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-route-005",
+      "split": "train",
+      "scenario_group": "bs-route-failed-check-remediation",
+      "content_hash": "66c0fbeea7ff86e414a501affcfd01d161645526d638db17faf2c3ddbb96ce13",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-001",
+      "split": "train",
+      "scenario_group": "bs-safe-allowed-no-hedging",
+      "content_hash": "4bc850e528f0f00262f54443773373522dc276f4e1b5d2886da5ea2c7cbdfbb5",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-004",
+      "split": "train",
+      "scenario_group": "bs-safe-medical-symptom",
+      "content_hash": "ed471c2380407f72beff8d2b83c2898ed94e137a0939152353ecb3de1c947d09",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-005",
+      "split": "train",
+      "scenario_group": "bs-safe-legal-dispute",
+      "content_hash": "267f63ec58433b83b45914c32b28359bb5036918a0e3c424eb5dc9c9f5e74a94",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-007",
+      "split": "validation",
+      "scenario_group": "bs-safe-high-risk-dangerous-activity",
+      "content_hash": "c4b9826cb5a6a8ad5df6bea11c1094b478c813d494d4ded449d41651b46931bc",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-safe-008",
+      "split": "train",
+      "scenario_group": "bs-safe-mental-health",
+      "content_hash": "abc0fa187684572fe6e5d6cfa2160824ff1f653a87b58516476c2749489b55e6",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-001",
+      "split": "validation",
+      "scenario_group": "bs-task-customer-discovery-breakdown",
+      "content_hash": "74421dc92f8396f91b7cd9b2051d647c45ddbd35f601cb4f77097113384b62c9",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-003",
+      "split": "train",
+      "scenario_group": "bs-task-short-sessions-own-data",
+      "content_hash": "a01895fc8f1be54acb86c985c877dcb9afd8c5a4e63e3151df8722cf2451e0a4",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-task-004",
+      "split": "train",
+      "scenario_group": "bs-task-parallel-prep-professionals",
+      "content_hash": "7254399c3565ace09660c9a31ab3f8a4120bad1653eee1b3312dc5af7f8c7fc7",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-task-005",
+      "split": "train",
+      "scenario_group": "bs-task-tiny-goal-few-tasks",
+      "content_hash": "235a864d3657bf5ac23a15a35f966bc1b622f82160480bb20f3f3a9f2316f4c3",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-time-001",
+      "split": "validation",
+      "scenario_group": "bs-time-reduced-scope-cut-or-deadline-option",
+      "content_hash": "4e129fbf7ced7a6524258f9ebc3b31606a5b7edc2d9bde44cbb629528ce52207",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-time-002",
+      "split": "train",
+      "scenario_group": "bs-time-increased-accelerate",
+      "content_hash": "19ca0dd658adf0fd4d1215e4baa0c16812c0e1816176ac8ae3ee53c97a232f08",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-001",
+      "split": "train",
+      "scenario_group": "bs-vprot-skill-without-video",
+      "content_hash": "01f2af999d6934aa1d1d787083d3e8e4fb972209233697f7541b3b99fba8c1b4",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-002",
+      "split": "validation",
+      "scenario_group": "bs-vprot-writing-artifact",
+      "content_hash": "24a82473acd3d345033bf462c1bba1b5af6afd06b9898272da35a52435bd94bd",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-003",
+      "split": "train",
+      "scenario_group": "bs-vprot-software-live-get-plus-repo",
+      "content_hash": "50802264ef9811af237e5ac3d32000b6abfcbe379c8239cf4fe3f927d34b1826",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-004",
+      "split": "train",
+      "scenario_group": "bs-vprot-research-table-spot-check",
+      "content_hash": "555bdf0e54f40201d1ced7d76536f798e2bdac040497b08f0c237f4458f908b1",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-vprot-005",
+      "split": "train",
+      "scenario_group": "bs-vprot-activity-no-tracker",
+      "content_hash": "67b754a0b472f5e1fab5bddc3f8c215ad16397fb65ff30b9fb600170e509ea43",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-vprot-006",
+      "split": "train",
+      "scenario_group": "bs-vprot-interviews-privacy",
+      "content_hash": "62d84d101e8d95b8acdb3e55014c1c4c18a0b94a2ca4ab177a563d4d6fd36779",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vprot-007",
+      "split": "train",
+      "scenario_group": "bs-vprot-habit-self-report",
+      "content_hash": "4f863a0005e32e88ff2d96be1110b5ab449c756b7b227186be576e81f08096e0",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-001",
+      "split": "train",
+      "scenario_group": "bs-vres-artifact-meets-criteria",
+      "content_hash": "ab9da314dd1b99b8ea30692ceac4450c3d2e06db6698a0673a8f19613d3593be",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-002",
+      "split": "train",
+      "scenario_group": "bs-vres-partial-photo",
+      "content_hash": "ea333ce51a91634250d9bc24ec54edb9dcf523742d70a4b584e469637d067e2a",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-003",
+      "split": "train",
+      "scenario_group": "bs-vres-audio-shows-failure",
+      "content_hash": "9c85f217b0cbdf6d4b3c4cac7d20e7f83f9e51d6080b171bdb158766318790d8",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-004",
+      "split": "train",
+      "scenario_group": "bs-vres-self-report-accepted",
+      "content_hash": "356dc499cec8916231bd00023782601cc41f5bf6cf52161d64fb5143c114171f",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-vres-005",
+      "split": "train",
+      "scenario_group": "bs-vres-url-verified",
+      "content_hash": "b315c5122d90b3f1d2b30fd2c84eb3fefc1431c22d4a4bf18ea5d7dc5b38759b",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-006",
+      "split": "train",
+      "scenario_group": "bs-vres-photo-plus-report",
+      "content_hash": "ce610c175812f53e77c78e3616abe3708b20f4a514ef98428532e3b736768091",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vres-007",
+      "split": "train",
+      "scenario_group": "bs-vres-missing-required-artifact",
+      "content_hash": "304cb64b0fadf22a40c179c8c46e935e34557eba6ed819e351765a59939bad91",
+      "review_status": "pending",
+      "revision_ids": [
+        "REV-0.1.2-003"
+      ],
+      "previous_content_hash": "f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1"
+    },
+    {
+      "id": "gj-vretry-001",
+      "split": "validation",
+      "scenario_group": "bs-vretry-fixed-after-request",
+      "content_hash": "5bb22b53e904ff584f777e3b6d91a859e7d532019d3f6190a721b465784164d1",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vretry-002",
+      "split": "train",
+      "scenario_group": "bs-vretry-still-failing-scope-option",
+      "content_hash": "9690cc62754bcd26a76c7edab41955ddf400a5b9910e13859910d8f138cd1adc",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-vretry-003",
+      "split": "train",
+      "scenario_group": "bs-vretry-certificate-plus-test",
+      "content_hash": "f6363cedfaac9e89644c0bfefe8d93f662d3d732a76cb5d9dba83537cd5bb220",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-vretry-004",
+      "split": "train",
+      "scenario_group": "bs-vretry-partial-progress",
+      "content_hash": "14bf6ca2fac993d73b369bf829ce4186ab39845d6389e4dd5eb5fd60b151a6a9",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-001",
+      "split": "train",
+      "scenario_group": "bs-web-laws-location-research",
+      "content_hash": "9623fb94508bcac058803e4bb24a12cb9e57d1c3b089a837906d18a4c636cc01",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-web-002",
+      "split": "validation",
+      "scenario_group": "bs-web-stable-skill-no-research",
+      "content_hash": "1795a124a791128d953fe0edaa7c54d876df381eb582fcbef0766cea609bb3bc",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-003",
+      "split": "train",
+      "scenario_group": "bs-web-local-schedules-research",
+      "content_hash": "c43e12cfcce3a2f294572d95204fba3f77a44f7594e82364a3c5b5a85167ba63",
+      "review_status": "pending"
+    },
+    {
+      "id": "gj-web-004",
+      "split": "train",
+      "scenario_group": "bs-web-hearsay-claim-verify",
+      "content_hash": "e3db3ea14595d4f7ee09ef89b17bf22299483fdbe1ed635d0f3c5c93e97e8508",
+      "review_status": "approved"
+    },
+    {
+      "id": "gj-web-005",
+      "split": "train",
+      "scenario_group": "bs-web-personal-content-no-research",
+      "content_hash": "26e0affa978181aa4207001ef4d79041f45986085e8d3b3beac962d6b5344c55",
+      "review_status": "pending"
+    }
+  ]
+}

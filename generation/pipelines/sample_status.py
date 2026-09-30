@@ -1,9 +1,10 @@
 """`gj review sample-status`: the review sample in force, carried to the current dataset version.
 
 The 30-item sample (review/review_manifest_v<sample_version>.json) is kept as drawn: its item ids, strata and
-the 8 calibration items do not change. For every item this report records, against the current pool:
+the 8 calibration items do not change. For every item this report records, against the version's content (the
+pool for the current version, the release for an earlier one — revisions.records_for_version):
   * whether the content changed since it was sampled (content hash), and the revision ids that explain it
-    (data/revisions/v<version>.yaml);
+    (data/revisions/v<version>.yaml and the ledgers of the versions between it and the sample version);
   * the known issues that name the example (review/known_issues_v<version>.yaml) with their status;
   * the human review status and detail from the append-only decision log (review_store.resolve).
 
@@ -21,9 +22,9 @@ from gjcore.records import content_hash
 
 from . import audit
 from . import review_store as RS
-from .pool import load_pool, load_review_events
+from .pool import load_review_events
 from .review import load_manifest, sample_version
-from .revisions import revision_info
+from .revisions import records_for_version, revision_history
 
 
 def status_path(version=None):
@@ -36,9 +37,9 @@ def build(version=None):
     manifest = load_manifest(version)
     if not manifest:
         raise FileNotFoundError(f"no review sample for v{version} (sample version {sv})")
-    pool = {r["id"]: r for r, _, _ in load_pool()}
+    pool = records_for_version(version)
     events = load_review_events()
-    rinfo = revision_info(version)
+    rinfo = revision_history(version, since=sv)
     known = audit.load_known_issues(version)
     calib = set(manifest["calibration"]["items"])
     items = []
@@ -58,7 +59,7 @@ def build(version=None):
         items.append({
             "review_item_id": it["review_item_id"], "example_id": eid, "calibration": it["review_item_id"] in calib,
             "stratum": it["stratum"], "sampled_content_hash": it["content_hash"], "current_content_hash": cur,
-            "changed_since_sampling": changed, "revision_ids": (rinfo.get(eid) or {}).get("revision_ids", []),
+            "changed_since_sampling": changed, "revision_ids": rinfo.get(eid, []),
             "known_issues": kis, "human_review_status": info["status"], "human_review_detail": info["detail"],
             **({"note": "; ".join(note)} if note else {}),
         })

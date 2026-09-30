@@ -1,11 +1,11 @@
 # Single source of truth for every version the pipeline stamps into outputs.
 # Bump the relevant field whenever the corresponding artefact changes.
 # Releases are immutable: `gj split` refuses to overwrite an existing dataset version.
-dataset_version: "0.1.1"        # data/{train,validation,test}/goaljourney-v<dataset_version>.jsonl
+dataset_version: "0.1.2"        # data/{train,validation,test}/goaljourney-v<dataset_version>.jsonl (0.1.2: owner-decided fixes for KI-008, KI-012, KI-033; base v0.1.1)
 schema_version: "0.1.2"         # schemas/*.json ($id contains v0.1.2; 0.1.2 adds the revision-ledger review block); older versions frozen in schemas/archive/
 navigator_prompt_version: "0.1.1"   # prompts/navigator/v<ver>/system.md (runtime model prompt; 0.1.1 adds POL-A..E)
 generation_prompt_version: "0.1.1"  # prompts/generation/v<ver>/ (teacher prompts; 0.1.1 adds the v0.1.1 policies and failure modes)
-pipeline_version: "0.4.1"       # generation/ + gjcore/ code (0.4.1: `gj revisions review` — human decisions on revision-ledger entries; 0.4.0: review governance modes — solo_owner default, gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders; 0.2.0: review log v0.2, audit, leakage layers, release gates)
+pipeline_version: "0.4.2"       # generation/ + gjcore/ code (0.4.2: an earlier version's ledger and sample status are judged against its own release, and revision ids follow the ledger chain; 0.4.1: `gj revisions review` — human decisions on revision-ledger entries; 0.4.0: review governance modes — solo_owner default, gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders; 0.2.0: review log v0.2, audit, leakage layers, release gates)
 evaluation_version: "0.2.0"     # evaluation/cases/v<ver>/ + check semantics (0.2.0: independent seeds, atomic/composite/longitudinal units; v0.1.0 kept frozen)
 base_model:
   # Deliberately unset: the base model is chosen later and recorded here, not hard-coded.

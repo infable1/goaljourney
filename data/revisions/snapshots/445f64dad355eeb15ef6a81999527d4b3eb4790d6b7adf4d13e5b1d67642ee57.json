@@ -1,0 +1,158 @@
+{
+  "content_hash": "445f64dad355eeb15ef6a81999527d4b3eb4790d6b7adf4d13e5b1d67642ee57",
+  "example_id": "gj-goalchg-001",
+  "dataset_version": "0.1.2",
+  "task_type": "goal_change",
+  "input": {
+    "operation": "goal_change",
+    "today": "2026-09-27",
+    "goal": {
+      "id": "g-10k",
+      "title": "Run 10 km without stopping",
+      "deadline": "2026-12-01"
+    },
+    "journey": {
+      "regions": [
+        {
+          "id": "r1",
+          "title": "Building distance",
+          "order": 1,
+          "status": "active"
+        }
+      ],
+      "milestones": [
+        {
+          "id": "m1",
+          "title": "10 km without stopping",
+          "region_id": "r1",
+          "success_criteria": [
+            "10 km continuous run logged"
+          ],
+          "target_date": "2026-12-01"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "task",
+          "title": "Run 5 km without stopping",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified"
+        },
+        {
+          "id": "n2",
+          "type": "task",
+          "title": "Run 7 km without stopping",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "verified",
+          "depends_on": [
+            "n1"
+          ]
+        },
+        {
+          "id": "n3",
+          "type": "task",
+          "title": "Run 10 km without stopping",
+          "region_id": "r1",
+          "milestone_id": "m1",
+          "status": "available",
+          "depends_on": [
+            "n2"
+          ]
+        }
+      ]
+    },
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Now that 7 km feels okay, I'd like the goal to be 10 km in under 60 minutes, not just finishing it."
+      }
+    ]
+  },
+  "expected_output": {
+    "type": "goal_change",
+    "response_language": "en",
+    "message_to_user": "Nice — that's a natural next step, so I'll treat it as an adjustment to the same goal. Your 5 km and 7 km runs stay exactly as they are. The route adds one easy pace session a week (short intervals) after you've run 10 km once, and the final check becomes a timed 10 km under 60 minutes. Before I say anything about December 1: what's your current 7 km time? With it I can tell you whether a sub-60 10 km by then looks within reach or whether we should talk about the date.",
+    "classification": "minor_adjustment",
+    "updated_goal": {
+      "id": "g-10k",
+      "title": "Run 10 km in under 60 minutes",
+      "deadline": "2026-12-01",
+      "success_criteria": [
+        "A logged 10 km run under 60:00"
+      ]
+    },
+    "preserved_progress": [
+      {
+        "node_id": "n1",
+        "how_reused": "Endurance base stays valid."
+      },
+      {
+        "node_id": "n2",
+        "how_reused": "Endurance base stays valid."
+      }
+    ],
+    "discarded_progress": [],
+    "route_impact": "One weekly interval session is added after the first continuous 10 km; the final verification becomes a timed run.",
+    "recommend_separate_goal": false,
+    "original_goal_handling": "updated_in_place",
+    "requires_user_confirmation": false,
+    "needs_web_research": false,
+    "facts_used": [
+      {
+        "value": "7 km feels okay; the user wants 10 km in under 60 minutes",
+        "source_type": "user_provided",
+        "source_ref": "conversation[0]"
+      },
+      {
+        "value": "Current 7 km time",
+        "source_type": "unknown",
+        "note": "Asked for before judging whether December 1 fits a sub-60 finish."
+      }
+    ],
+    "decision_summary": {
+      "what_changed": "Goal refined from finishing 10 km to finishing it in under 60 minutes.",
+      "why": "The distance base is on track and you asked for a time target.",
+      "impact": "One weekly pace session added; the December 1 deadline is unchanged but not yet confirmed for a sub-60 finish — that depends on your current 7 km time; all progress kept."
+    }
+  },
+  "contrastive": [
+    {
+      "id": "gj-goalchg-001-c1",
+      "failure_modes": [
+        "goal_change_misclassified"
+      ],
+      "critique": "Treats a small refinement (adding a time target) as a brand-new goal, splitting the user's progress across two goals for no reason.",
+      "output": {
+        "type": "goal_change",
+        "response_language": "en",
+        "message_to_user": "A time goal is a completely different goal, so I'll create a new one and pause this one.",
+        "classification": "new_goal",
+        "updated_goal": {
+          "title": "Run 10 km in under 60 minutes"
+        },
+        "preserved_progress": [
+          {
+            "node_id": "n1",
+            "how_reused": "Stays in the paused goal."
+          },
+          {
+            "node_id": "n2",
+            "how_reused": "Stays in the paused goal."
+          }
+        ],
+        "discarded_progress": [],
+        "recommend_separate_goal": true,
+        "original_goal_handling": "paused",
+        "requires_user_confirmation": true,
+        "decision_summary": {
+          "what_changed": "New goal created.",
+          "why": "Different target.",
+          "impact": "Old goal paused."
+        }
+      }
+    }
+  ]
+}
