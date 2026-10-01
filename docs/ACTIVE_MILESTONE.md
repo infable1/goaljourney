@@ -67,9 +67,9 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   KI-008, KI-012 and KI-033 are `fixed`.
 * v0.1.2 changed one sample item (rv-0.1.0-14), and it has since been re-decided, so all 30 sample
   items are decided on their current content.
-* Task 6 is in progress. Its v0.1.0 part is complete: all 27 v0.1.0 template overlaps have a human
-  disposition. The 100 v0.2.0 overlaps are still `open`. Tasks 7–8 have not started, and the
-  milestone is not complete.
+* Task 6 is in progress. Its v0.1.0 part is complete: all 27 v0.1.0 template overlaps and its one
+  seed overlap have a human disposition. The 100 v0.2.0 overlaps are still `open`. Tasks 7–8 have
+  not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -351,8 +351,16 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 
   **The v0.1.0 part is complete.** All 27 template overlaps are `accept_in_distribution`, decided
   by `po-reviewer`. Six of these decisions differ from a `rewrite_eval_case` proposal, which is kept
-  unchanged. The file's one seed overlap (`sc-pd-001` ↔ `ev-wr-02`, proposed `change_seed`) is not
-  among the 27 and is still `open`.
+  unchanged.
+
+  The file's one seed overlap is separate from the 27 template overlaps: `sc-pd-001` ↔ `ev-wr-02`.
+  On 2026-10-01 `po-reviewer` set it to `accept_in_distribution`, and the proposed `change_seed` is
+  kept unchanged. Schema 0.1.2 has no `note` field for seed overlaps, so the owner's note is
+  recorded here:
+  > Seed-level lexical overlap is retained as in-distribution; the evaluation case remains valid,
+  > and the overlap should be reported separately from template-overlap results.
+
+  v0.1.0 therefore has no `open` disposition.
 
   **Still open:** all 100 v0.2.0 overlaps.
   The `leakage_dispositions` gate reads the current evaluation version (v0.2.0), so it still fails.
@@ -420,6 +428,6 @@ subagents. It changed no data.
    * the example-level `revise` decisions (10 `needs_revision` items, rv-0.1.0-14's
      `external_fact_discipline` issue among them).
 4. **Owner (Task 6):** decide the 100 `open` overlap dispositions in
-   `evaluation/leakage/v0.2.0.yaml`. The v0.1.0 template overlaps are all decided; its seed overlap
-   `sc-pd-001` ↔ `ev-wr-02` is still `open`. The agent records
+   `evaluation/leakage/v0.2.0.yaml`. Every v0.1.0 overlap (27 template overlaps and 1 seed
+   overlap) is decided. The agent records
    them as given (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.

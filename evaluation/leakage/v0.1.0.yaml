@@ -133,5 +133,5 @@ template_overlaps:
      note: "Topic-only overlap: same certification subject, but different operation and decision structure; retain as in-distribution."}
 
 seed_overlaps:
-  - {seed: sc-pd-001, eval: ev-wr-02, proposed_disposition: change_seed, disposition: open,
+  - {seed: sc-pd-001, eval: ev-wr-02, proposed_disposition: change_seed, disposition: accept_in_distribution, decided_by: po-reviewer,
      relation: "Seed «Read 24 books this year» vs eval «Read 12 books by the end of next year» (lexical 0.37): every candidate generated from this seed would mirror the evaluation case."}
