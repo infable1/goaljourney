@@ -65,10 +65,10 @@ truth; chat history is not.
     `domain_expert` is registered. `gj review stats` notes the 2 active reviewers in solo mode.
     Whether `po-reviewer-two` keeps reviewing (or is set `active: false`; past events keep their
     snapshot) is the owner's decision.
-  * **Decisions:** 45 review events (`po-reviewer` 37, `po-reviewer-two` 8).
+  * **Decisions:** 46 review events (`po-reviewer` 38, `po-reviewer-two` 8).
     * The first 17 are stamped rubric 0.2.0: 16 on the 8 calibration items, plus 1
       (`rev-da39af4d1363`, approve of `gj-daily-002`) on an example outside the review sample.
-    * The last 28 are stamped rubric 0.2.1. They are the solo-owner reviews by `po-reviewer`:
+    * The last 29 are stamped rubric 0.2.1. They are the solo-owner reviews by `po-reviewer`:
       * rv-0.1.0-01 / `gj-feas-005`: `rev-044d69c4953d` (approve / acceptable, minor issues),
         followed by the corrective `rev-a1a061cc1487`;
       * rv-0.1.0-03 / `gj-prog-003`: `rev-599dbd07516e` (approve / acceptable, minor issue);
@@ -135,8 +135,13 @@ truth; chat history is not.
         `fixed_pending_review` in the sample status. Dataset v0.1.2 (REV-0.1.2-001) revised the
         example for KI-008, which covers the `realism` issue of this decision; the
         `explanation_quality` and `external_fact_discipline` issues were not part of that fix. The
-        decision stays in the log for `b4492d1f…`, but the current content `a6b644aa…` has no
-        decision, so the item is back to `pending` (`content_changed`);
+        decision stays in the log, unchanged, for `b4492d1f…`. On the v0.1.2 content `a6b644aa…`
+        `po-reviewer` recorded `rev-e9ad553a3e34` (`ffe2432`): `revise`, overall
+        `needs_revision`. Issue: `external_fact_discipline` major (unsourced generalisations about
+        junior-QA interviews, bug reports, and manual versus automated testing). C, H, I, J, P and Q
+        are `not_applicable`; the other 9 are `good`. `independent_rating: false` (the owner changed
+        L and the applicability of P after the AI second-look). The item went from `pending`
+        (`content_changed`) to `needs_revision` and is decided on its current content;
       * rv-0.1.0-15 / `gj-vprot-004` (a `highest_risk` sample item that changed since sampling via
         `REV-0.1.1-016`): `rev-a72d9fb206f1` (`6e92860`), `approve`, overall `excellent`,
         `issues: []`. `question_minimality`, `dependency_correctness`, `adaptation_quality`,
@@ -271,13 +276,14 @@ truth; chat history is not.
 
         With rv-0.1.0-28 every one of the 30 sample items had a human decision on its current
         content hash: 20 `approved` and 10 `needs_revision`, none `pending` or `awaiting_expert`.
-        Dataset v0.1.2 then changed one of them (rv-0.1.0-14, above), which needs a new review.
+        Dataset v0.1.2 then changed one of them (rv-0.1.0-14, above). After the new decision on its
+        current content, all 30 are decided again: 20 `approved`, 10 `needs_revision`.
   * **Independence correction.** `rev-044d69c4953d` was recorded with `independent_rating: true`,
     but the owner had changed `language_quality` from major to minor issues after the AI-copilot
     discussion. The corrective event appends the same final decision with
     `independent_rating: false`; the original line is unchanged. rv-0.1.0-03 keeps
     `independent_rating: true`, because no rating changed there. Across all events:
-    `independent_rating` is absent on 16, `true` on 5 (the original rv-0.1.0-24 event, superseded by its correction), `false` on 24 (the four corrective events, the fourth being `rev-07d13934c996` for rv-0.1.0-24, and rv-0.1.0-05, rv-0.1.0-06, rv-0.1.0-07, rv-0.1.0-08, rv-0.1.0-10, rv-0.1.0-11, rv-0.1.0-13, rv-0.1.0-14, rv-0.1.0-15, rv-0.1.0-16, rv-0.1.0-17, rv-0.1.0-18, rv-0.1.0-19, rv-0.1.0-21, rv-0.1.0-22, rv-0.1.0-23, rv-0.1.0-25, rv-0.1.0-26, rv-0.1.0-27 and rv-0.1.0-28).
+    `independent_rating` is absent on 16, `true` on 5 (the original rv-0.1.0-24 event, superseded by its correction), `false` on 25 (the four corrective events, the fourth being `rev-07d13934c996` for rv-0.1.0-24, and rv-0.1.0-05, rv-0.1.0-06, rv-0.1.0-07, rv-0.1.0-08, rv-0.1.0-10, rv-0.1.0-11, rv-0.1.0-13, rv-0.1.0-14, rv-0.1.0-15, rv-0.1.0-16, rv-0.1.0-17, rv-0.1.0-18, rv-0.1.0-19, rv-0.1.0-21, rv-0.1.0-22, rv-0.1.0-23, rv-0.1.0-25, rv-0.1.0-26, rv-0.1.0-27, rv-0.1.0-28 and the v0.1.2 rv-0.1.0-14 decision `rev-e9ad553a3e34`).
   * **Ledger reviews (D-027, `gj revisions review`).** `po-reviewer` reviewed all 36 entries of
     `data/revisions/v0.1.1.yaml` (`d1d848d`…`8c5d690`): 33 `confirmed` and 3 `disputed`
     (REV-0.1.1-002, -003 and -011, `independent_rating: false`; the other 33 `true`). Each review
@@ -289,10 +295,10 @@ truth; chat history is not.
     `human_review: pending`: choosing a fix is not a review of the corrected content. The v0.1.1
     register is unchanged.
   * **Counts (`gj review stats`):**
-    * pool (93): human-reviewed 30, training-eligible 21, needs_revision 9, content changed 1,
+    * pool (93): human-reviewed 31, training-eligible 21, needs_revision 10, content changed 0,
       not reviewed 62;
-    * review sample (30): decided 29, approved 20, needs_revision 9, pending 1 (rv-0.1.0-14,
-      content changed in v0.1.2) (`review/review_sample_status_v0.1.2.json`).
+    * review sample (30): decided 30, approved 20, needs_revision 10, pending 0
+      (`review/review_sample_status_v0.1.2.json`).
     * The other two examples changed in v0.1.2 (`gj-goalchg-001`, `gj-vres-007`) had no decision
       and are still not reviewed.
   * **Historical calibration (informational in solo mode):** all 8 items rated by both reviewers
@@ -339,7 +345,7 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
   (3 revised examples, pending review) form a chain of bases: v0.1.2 → v0.1.1 → v0.1.0.
 * **Review.**
   * A rubric (0.2.1; 0.2.0 kept).
-  * An append-only, hash-chained decision log (45 events).
+  * An append-only, hash-chained decision log (46 events).
   * A reviewer registry (2 human dataset reviewers; one owner is enough) and expert tiers.
   * Governance modes `solo_owner` (default) and `multi_reviewer`.
   * Training-eligibility states (human-reviewed / expert-reviewed / training-eligible / not
@@ -377,19 +383,20 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
 * the builder, ledger (v0.1.2) and sample drift checks (`review/review_sample_status_v0.1.2.json`);
 * reference 106/106, naive 0/106;
 * leakage: 0 hard findings;
-* `gj review verify-log`: 45 events, 0 errors, 1 warning. The warning is the expected fork left by
+* `gj review verify-log`: 46 events, 0 errors, 1 warning. The warning is the expected fork left by
   merging two branches that both appended to the log (guide §11).
 
 `gj validate --strict` has 0 warnings; the KI-033 fix removed the last one (gj-vres-007).
 
 ## Blockers
 
-1. **Human review is incomplete.** 45 review events so far.
-   * The 30-item sample had a decision on every item. rv-0.1.0-14 is `pending` again, because
-     v0.1.2 changed its content.
+1. **Human review is incomplete.** 46 review events so far.
+   * Every item of the 30-item sample is decided on its current content: 20 `approved`, 10
+     `needs_revision`. rv-0.1.0-14 was re-decided on its v0.1.2 content (`needs_revision`).
    * The 36 v0.1.1 ledger revisions are reviewed: 33 confirmed, 3 disputed. The disputed ones need
      new corrections.
-   * The 3 v0.1.2 revisions and their examples await review.
+   * The 3 v0.1.2 ledger revisions await review. Of their examples, `gj-jour-001` is decided
+     (`needs_revision`), and `gj-goalchg-001` and `gj-vres-007` are not reviewed.
    * 62 of the 93 pool examples have no human decision.
    * `review_all_approved`: 21/84 approved on the v0.1.2 release rows.
    * In solo mode the owner reviews alone. `reviewer_diversity` and `calibration_agreement` are N/A
@@ -409,8 +416,8 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
 2. **Policies POL-A…F** need product-owner confirmation (`docs/POLICY_DECISIONS_v0.1.1.md`).
 3. **Licensing:** 5 open items (`configs/licensing_status.yaml`) block any training-ready release.
 4. **Known issues:** KI-008, KI-012 and KI-033 are fixed in v0.1.2 (`fixed_pending_review`) and need
-   a human review of the corrected content. In `gj-jour-001`, the `external_fact_discipline` issue
-   from rv-0.1.0-14 (a hard gate) is not addressed yet.
+   a human review of the corrected content. `gj-jour-001` is `needs_revision` on its v0.1.2 content
+   because of the `external_fact_discipline` issue (a hard gate), which still needs a fix.
 5. **Evaluation overlaps:** 100 reviewed overlaps have no disposition, and eval size is 63/200 cases.
 
 ## Where to look

@@ -64,7 +64,8 @@ branch). The calibration round is recorded, the governance change (M1.7a) is imp
 solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 4 is done: all 36 v0.1.1 ledger revisions are reviewed.
 * Task 5's fixes are applied in dataset v0.1.2.
-* v0.1.2 changed one sample item, so 29 of 30 sample items are decided on their current content.
+* v0.1.2 changed one sample item (rv-0.1.0-14), and it has since been re-decided, so all 30 sample
+  items are decided on their current content.
 * Tasks 6–8 have not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
@@ -129,8 +130,12 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
     sampled `77906c26…`. It was `pending` and is now `needs_revision`; `KI-008` remains `open` and
     `KI-015` `fixed_pending_review`. Dataset v0.1.2 (REV-0.1.2-001) revised the example for
     KI-008, which covers the `realism` issue. The `explanation_quality` and
-    `external_fact_discipline` issues were not part of that fix. The item is `pending`
-    (`content_changed`) again on the new hash `a6b644aa…`;
+    `external_fact_discipline` issues were not part of that fix. The earlier decision stays
+    unchanged for `b4492d1f…`. On the new hash `a6b644aa…`, `rev-e9ad553a3e34` (`ffe2432`) is
+    `revise`, overall `needs_revision`, with issue `external_fact_discipline` major. C, H, I, J,
+    P and Q are `not_applicable`, the other 9 `good`, and `independent_rating: false` (L and the
+    applicability of P were changed after the AI second-look). The item went from `pending`
+    (`content_changed`) to `needs_revision`;
   * rv-0.1.0-15 / `gj-vprot-004` (`6e92860`, `rev-a72d9fb206f1`): a `highest_risk` item that changed
     since sampling via `REV-0.1.1-016`; `approve`, overall `excellent`, `issues: []`; five criteria
     `not_applicable` (`question_minimality`, `dependency_correctness`, `adaptation_quality`,
@@ -249,11 +254,10 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   decision with `independent_rating: false`. The original line is unchanged, and its latest
   decision is still approve / acceptable. rv-0.1.0-03 keeps `independent_rating: true`.
 
-  The log now holds 45 events (`gj review verify-log`: 0 errors).
-  * Pool (93): human-reviewed 30, training-eligible 21, needs_revision 9, content changed 1,
+  The log now holds 46 events (`gj review verify-log`: 0 errors).
+  * Pool (93): human-reviewed 31, training-eligible 21, needs_revision 10, content changed 0,
     not reviewed 62.
-  * Sample (30): decided 29, approved 20, needs_revision 9, pending 1 (rv-0.1.0-14, content changed
-    in v0.1.2).
+  * Sample (30): decided 30, approved 20, needs_revision 10, pending 0.
 * **Task 3 (historical; N/A in solo mode).** Agreement on the decision is 7/8 (0.875), κ 0.60.
   That would pass `calibration_agreement` in `multi_reviewer` mode; in solo mode the gate is N/A.
   Agreement on the overall verdict is 3/8 (κ 0.05; it was 2/8 while rv-0.1.0-06 stood alone, before rv-0.1.0-07); the gap is mostly `excellent` against
@@ -271,7 +275,7 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
     discipline, a hard gate). The fix goes through a new `dataset_version` and the ledger, then a new
     review with `legal` sign-off.
   * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. The 17
-    calibration-era events are stamped 0.2.0; the 28 solo-owner events are stamped 0.2.1.
+    calibration-era events are stamped 0.2.0; the 29 solo-owner events are stamped 0.2.1.
 * **Task 4 (done for v0.1.1).** On the owner's direction, ledger decisions are recorded with
   `gj revisions review` (D-027, schema 0.1.2, `d1d848d`). `po-reviewer` reviewed all 36 v0.1.1
   entries (`d1d848d`…`8c5d690`): 33 `confirmed`, 3 `disputed` (REV-0.1.1-002, -003, -011;
@@ -302,8 +306,8 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 
 Acceptance criteria:
 * **Met:** KI-008, KI-012 and KI-033 are decided, and `validation_strict` passes on v0.1.2.
-* **Open again:** every sample item needs a decision on its current content, and rv-0.1.0-14
-  changed in v0.1.2 (29 of 30 decided; none `awaiting_expert`).
+* **Sample part met again:** every sample item has a human decision on its current content (30
+  of 30; rv-0.1.0-14 was re-decided on v0.1.2), and none is `awaiting_expert`.
 * **Open:** every ledger entry has a human status. v0.1.1 is complete, but the 3 v0.1.2 entries
   are pending, and the 3 disputed v0.1.1 corrections are not re-applied yet.
 * **Open:** overlap dispositions, and the final `make check` and state-file updates at completion.
@@ -343,17 +347,15 @@ subagents. It changed no data.
    Next, review the v0.1.2 changes:
    * the 3 ledger entries (`gj revisions diff <example>`, then
      `gj revisions review REV-0.1.2-00N …`);
-   * the changed sample item rv-0.1.0-14 / `gj-jour-001` on its new hash `a6b644aa…`
-     (`gj review export --format sheet --manifest`);
    * the examples `gj-goalchg-001` and `gj-vres-007` if they should be rated.
 
    The owner rates first; the AI copilot challenges afterwards (guide §14). If any rating changes
    after that discussion, the decision is recorded with `--independent-rating no` (as for
-   rv-0.1.0-01). In `gj-jour-001`, the `external_fact_discipline` issue from rv-0.1.0-14 is still in
-   the content and needs its own fix decision.
+   rv-0.1.0-01). `gj-jour-001` is `needs_revision` on its v0.1.2 content (rv-0.1.0-14,
+   `external_fact_discipline` major), and that fix needs its own decision.
 3. **Agent** (on request): once decisions are recorded, apply the revise decisions through a new
    `dataset_version` and the ledger (`/dataset-review` §5), and keep these state files current.
    Candidates:
    * the 3 disputed v0.1.1 corrections (REV-0.1.1-002, -003, -011);
-   * the example-level `revise` decisions (9 `needs_revision` items);
-   * the remaining rv-0.1.0-14 issues.
+   * the example-level `revise` decisions (10 `needs_revision` items, rv-0.1.0-14's
+     `external_fact_discipline` issue among them).
