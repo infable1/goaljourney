@@ -1180,8 +1180,11 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: No badge without verification; here one of two required weeks is verified.
+  note: 'Accepted as in-distribution overlap: progression requires verification, while this case has only one of the two required
+    weeks verified.'
 - eval: e2-long-04/s2
   train:
   - gj-mem-004
@@ -1297,69 +1300,94 @@ template_overlaps:
   strength: topic_only
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Progress from verified milestones; no level change involved.
+  note: 'Accepted as in-distribution topic overlap only: both concern progress from verified milestones, but this case does
+    not introduce a level change.'
 - eval: e2-long-03/s1
   train:
   - gj-vprot-005
   strength: topic_only
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Walking protocol; here an app export exists (training: no tracker, self-report). Automated template candidate.'
+  note: 'Accepted as in-distribution topic overlap only: both concern a walking protocol, but this case has an app export
+    rather than the training case''s tracker/self-report setup.'
 - eval: e2-comp-05/s2
   train:
   - gj-task-002
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared numbers only.'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on shared numbers only.'
 - eval: e2-comp-08/s2
   train:
   - gj-task-002
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared signature and vocabulary only.'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on shared signature and vocabulary
+    only.'
 - eval: e2-comp-11/s1
   train:
   - gj-vres-005
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared numbers; the twin is gj-vres-001 (listed above).'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on shared numbers only; the
+    related verified-result twin is already listed separately.'
 - eval: e2-comp-14/s2
   train:
   - gj-jour-005
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared signature only (health referral route vs a writing route).'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on a shared signature only,
+    despite different route purposes.'
 - eval: e2-long-01/s6
   train:
   - gj-task-005
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared numbers only.'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on shared numbers only.'
 - eval: e2-task-02
   train:
   - gj-task-004
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared signature and vocabulary only.'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on shared signature and vocabulary
+    only.'
 - eval: e2-vres-06
   train:
   - gj-vres-005
   strength: none
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Automated template candidate: shared numbers only; the twins are listed above.'
+  note: 'Accepted as an in-distribution coincidental candidate: the automated overlap is based on shared numbers only; related
+    twins are listed elsewhere.'

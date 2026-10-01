@@ -36,7 +36,7 @@ truth; chat history is not.
 |---|---|
 | Repository | `infable1/goaljourney` — dataset, validation and evaluation pipeline for the GoalJourney Navigator model |
 | Working branch | Default branch `claude/fervent-keller-j517cd` (there is no `main`). The M1.7 review round after `ae21c7d` is on `claude/sleepy-dijkstra-nzrf3t`, which also merged the rv-0.1.0-29 record from `claude/compassionate-noether-1o9iyx`; it is not merged into the default branch. No open pull request (infable1/goaljourney#1 and infable1/goaljourney#2 were closed unmerged) |
-| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084`, the rv-0.1.0-01 independence correction `2438dd4` the rv-0.1.0-04 review `5b3f7c4` and the rv-0.1.0-05 review `71c92eb` and the rv-0.1.0-06 review `8deff75` and the rv-0.1.0-07 review `40a3d51` with its notes correction `7284b5a` the rv-0.1.0-08 review `2997666` and the rv-0.1.0-10 review `301009a` the rv-0.1.0-11 review `c7eef17` the rv-0.1.0-13 review `b297d91` and the rv-0.1.0-14 review `8aa4416` the rv-0.1.0-15 review `6e92860` the rv-0.1.0-16 review `d876db9` the rv-0.1.0-17 review `49fe41f` the rv-0.1.0-18 review `e27bb32` the rv-0.1.0-19 review `8ee6efd` the rv-0.1.0-21 review `57c78c0` with its text correction `8eafa75` the rv-0.1.0-22 review `10a493b` the rv-0.1.0-23 review `b7d1c5c` the rv-0.1.0-24 review `26e98e5` with its independence correction `212cf67` the rv-0.1.0-25 review `1e2e9b2` the rv-0.1.0-26 review `3af4cae` the rv-0.1.0-27 review `73c22db` and the rv-0.1.0-28 review `2f2511f`, which completes the sample → ledger review recording (D-027, schema 0.1.2) and the reviews of REV-0.1.1-001…036 `d1d848d`…`8c5d690` → dataset v0.1.2 with the owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2) `04a2c1f` → the rv-0.1.0-14 v0.1.2 review `ffe2432` → the confirmations of REV-0.1.2-001…003 `8c90b42`…`4500616` → KI-008, KI-012 and KI-033 `fixed` (latest commits: `git log --oneline -5`) |
+| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084`, the rv-0.1.0-01 independence correction `2438dd4` the rv-0.1.0-04 review `5b3f7c4` and the rv-0.1.0-05 review `71c92eb` and the rv-0.1.0-06 review `8deff75` and the rv-0.1.0-07 review `40a3d51` with its notes correction `7284b5a` the rv-0.1.0-08 review `2997666` and the rv-0.1.0-10 review `301009a` the rv-0.1.0-11 review `c7eef17` the rv-0.1.0-13 review `b297d91` and the rv-0.1.0-14 review `8aa4416` the rv-0.1.0-15 review `6e92860` the rv-0.1.0-16 review `d876db9` the rv-0.1.0-17 review `49fe41f` the rv-0.1.0-18 review `e27bb32` the rv-0.1.0-19 review `8ee6efd` the rv-0.1.0-21 review `57c78c0` with its text correction `8eafa75` the rv-0.1.0-22 review `10a493b` the rv-0.1.0-23 review `b7d1c5c` the rv-0.1.0-24 review `26e98e5` with its independence correction `212cf67` the rv-0.1.0-25 review `1e2e9b2` the rv-0.1.0-26 review `3af4cae` the rv-0.1.0-27 review `73c22db` and the rv-0.1.0-28 review `2f2511f`, which completes the sample → ledger review recording (D-027, schema 0.1.2) and the reviews of REV-0.1.1-001…036 `d1d848d`…`8c5d690` → dataset v0.1.2 with the owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2) `04a2c1f` → the rv-0.1.0-14 v0.1.2 review `ffe2432` → the confirmations of REV-0.1.2-001…003 `8c90b42`…`4500616` → KI-008, KI-012 and KI-033 `fixed` → the Task 6 overlap dispositions (v0.1.0 `5b38f40`…`f294948`, v0.2.0 batches 1–10 from `ef77f4e`) (latest commits: `git log --oneline -5`) |
 | Language / stack | Python ≥ 3.10; jsonschema, referencing, PyYAML, pytest; CLI `scripts/gj.py`; `make check` |
 | Mobile app / product code | not in this repository |
 
@@ -324,8 +324,11 @@ truth; chat history is not.
 **Not started. v0.1.2 is not training-ready.** No base model is chosen, and no training code is in
 the repository. Training exports are refused until every applicable release gate passes.
 
-`gj gates` (solo_owner, v0.1.2) passes 4 of 9 applicable gates: `findings_acknowledged`,
-`leakage_hard_clean`, `validation_strict` and `known_issues_closed`. The other 2 gates are N/A.
+`gj gates` (solo_owner, v0.1.2) passes 5 of 9 applicable gates: `findings_acknowledged`,
+`leakage_hard_clean`, `leakage_dispositions`, `validation_strict` and `known_issues_closed`. The
+other 2 gates are N/A.
+* `leakage_dispositions` passes because every reviewed v0.2.0 overlap has a human disposition
+  (Task 6).
 * `validation_strict` passes because the KI-033 fix removed the only strict failure (`gj-vres-007`).
 * `known_issues_closed` counts only `open` medium or high issues. KI-008 and KI-012 are now
   `fixed` and human-confirmed; 22 earlier issues stay `fixed_pending_review`.
@@ -419,11 +422,12 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
    That is separate from the example-level review: `gj-jour-001` is still `needs_revision` on its
    v0.1.2 content because of the `external_fact_discipline` issue (a hard gate), which is
    independent of KI-008 and still needs a fix. 8 other issues are `open`.
-5. **Evaluation overlaps:** 10 of the 100 reviewed v0.2.0 overlaps have no disposition (90 are
-   `accept_in_distribution`, `po-reviewer`, 2026-10-01; the `leakage_dispositions` gate reads
-   v0.2.0), and eval size is 63/200 cases. In v0.1.0, all 27
-   template overlaps and its one seed overlap (`sc-pd-001` ↔ `ev-wr-02`, reported separately) are
-   decided (`accept_in_distribution`, `po-reviewer`, 2026-10-01).
+5. **Evaluation overlaps (resolved) and eval size:**
+   * All 100 reviewed v0.2.0 overlaps have a disposition (`accept_in_distribution`, `po-reviewer`,
+     2026-10-01), and `leakage_dispositions` passes.
+   * Eval size is still 63/200 cases, so `eval_readiness` fails.
+   * In v0.1.0, all 27 template overlaps and its one seed overlap (`sc-pd-001` ↔ `ev-wr-02`,
+     reported separately) are decided (`accept_in_distribution`, `po-reviewer`, 2026-10-01).
 
 ## Where to look
 
