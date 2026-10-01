@@ -120,7 +120,17 @@ revisions:
     (unclear), a second additional_evidence request, reason, evidence limitation and decision summary. Status stays needs_more_evidence.'
   rationale: 'Product owner decision on KI-033, option A: make the follow-up question required and say so in the expected output. Understanding
     of what was read is checked by a required answer, not only by the list (POL-B).'
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-10-01T08:05:11Z'
+    content_hash: 304cb64b0fadf22a40c179c8c46e935e34557eba6ed819e351765a59939bad91
+    independent_rating: true
+    notes: 'Исправление корректно устраняет заявленную проблему KI-033. Follow-up question переведён из supplementary в required method, а обязательный
+      ответ на него явно отражён в expected output: в сообщении пользователю, в отдельном результате критерия и в запросе дополнительного evidence.
+      При этом основной inspectable artifact остаётся обязательным, confidence ceiling не изменён, а статус сохраняется как needs_more_evidence.
+      Изменение соответствует выбранному product owner варианту A и адресует именно исходный VP_NATURE_MISMATCH без расширения scope. Human decision
+      не изменён.'
   previous_content_hash: f5b9ae98664bd0318790ad60c1c9f126f29de379f0c08465a7f4efe4f5cd0db1
   content_hash: 304cb64b0fadf22a40c179c8c46e935e34557eba6ed819e351765a59939bad91
   changed_paths:
