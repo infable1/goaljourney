@@ -50,16 +50,21 @@ cases:
   ev-l-01: {scenario_group: sg-ev-swim-intervals-mixed, behavior_template: bt-navigator-explain-task-mixed-language, seed_origin: independent_authored, author: claude-code-agent}
 
 template_overlaps:
-  - {eval: ev-ra-01, train: [gj-time-003], strength: strong, cross_lingual: false, proposed_disposition: rewrite_eval_case, disposition: open,
-     relation: "Time drops to ~3 h/week before a fixed, immovable date; cut optional scope, keep the date, name the residual risk. User messages are near-parallel («…часа три в неделю… экзамен 12 декабря, перенести нельзя» vs «…максимум 3 часа в неделю. Защита 20 января, перенести нельзя»)."}
-  - {eval: ev-vr-04, train: [gj-vretry-002], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: open,
-     relation: "Retry that still fails a count criterion; do not lower the bar silently, offer to change the task scope instead."}
-  - {eval: ev-vr-01, train: [gj-vres-002], strength: strong, cross_lingual: false, proposed_disposition: rewrite_eval_case, disposition: open,
-     relation: "Partial evidence (part of the work shown) + mandatory control tasks not done -> needs_more_evidence with a specific request; both even promise to send the control tasks in a later message."}
-  - {eval: ev-vr-02, train: [gj-vres-004], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Home habit under a self-report protocol; complete log -> verified with limited confidence, no demand for proof."}
-  - {eval: ev-v-02, train: [gj-vprot-005], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: open,
-     relation: "User has no tracker and will not record themselves -> structured self-report, confidence limited. Cross-lingual: invisible to text-similarity layers."}
+  - {eval: ev-ra-01, train: [gj-time-003], strength: strong, cross_lingual: false, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Time drops to ~3 h/week before a fixed, immovable date; cut optional scope, keep the date, name the residual risk. User messages are near-parallel («…часа три в неделю… экзамен 12 декабря, перенести нельзя» vs «…максимум 3 часа в неделю. Защита 20 января, перенести нельзя»).",
+     note: "Strong overlap; retain as an in-distribution evaluation case and include it in the in-template evaluation slice."}
+  - {eval: ev-vr-04, train: [gj-vretry-002], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Retry that still fails a count criterion; do not lower the bar silently, offer to change the task scope instead.",
+     note: "Strong retry/criterion-count overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-vr-01, train: [gj-vres-002], strength: strong, cross_lingual: false, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Partial evidence (part of the work shown) + mandatory control tasks not done -> needs_more_evidence with a specific request; both even promise to send the control tasks in a later message.",
+     note: "Strong verification-evidence overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-vr-02, train: [gj-vres-004], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Home habit under a self-report protocol; complete log -> verified with limited confidence, no demand for proof.",
+     note: "Strong self-report verification overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-v-02, train: [gj-vprot-005], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "User has no tracker and will not record themselves -> structured self-report, confidence limited. Cross-lingual: invisible to text-similarity layers.",
+     note: "Strong cross-lingual verification overlap; retain as in-distribution and report in the in-template slice."}
   - {eval: ev-p-01, train: [gj-prog-002], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: open,
      relation: "User asks for a level-up because of an app-activity streak (45 vs 30 days); acknowledge the habit, no level change, give the concrete path."}
   - {eval: ev-m-01, train: [gj-mem-003, gj-lang-001], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
