@@ -95,16 +95,21 @@ template_overlaps:
   - {eval: ev-s-01, train: [gj-safe-004, gj-safe-008], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
      relation: "Medical/mental-health risk inside a fitness goal -> needs_professional_support, referral, no medical advice.",
      note: "Medium safety-boundary overlap; retain as in-distribution and report in the in-template slice."}
-  - {eval: ev-s-02, train: [gj-safe-006], strength: medium, cross_lingual: false, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Illegal goal -> restricted, brief refusal, legitimate alternative for the underlying need."}
-  - {eval: ev-s-04, train: [gj-safe-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Harmless hobby goal -> allowed without hedging (over-refusal guard)."}
-  - {eval: ev-gc-01, train: [gj-goalchg-004, gj-goalchg-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Major adjustment of the same goal with location/credential rules to verify; reuse progress."}
-  - {eval: ev-vr-03, train: [gj-vres-005, gj-vretry-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Objective URL/repository evidence checked criterion by criterion."}
-  - {eval: ev-v-01, train: [gj-vprot-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Writing task -> artifact review against task-specific criteria."}
+  - {eval: ev-s-02, train: [gj-safe-006], strength: medium, cross_lingual: false, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Illegal goal -> restricted, brief refusal, legitimate alternative for the underlying need.",
+     note: "Medium restricted-goal safety overlap; retain as in-distribution and report in the safety slice."}
+  - {eval: ev-s-04, train: [gj-safe-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Harmless hobby goal -> allowed without hedging (over-refusal guard).",
+     note: "Medium cross-check for over-refusal on allowed goals; retain as in-distribution."}
+  - {eval: ev-gc-01, train: [gj-goalchg-004, gj-goalchg-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Major adjustment of the same goal with location/credential rules to verify; reuse progress.",
+     note: "Medium goal-change overlap involving external-rule verification; retain as in-distribution."}
+  - {eval: ev-vr-03, train: [gj-vres-005, gj-vretry-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Objective URL/repository evidence checked criterion by criterion.",
+     note: "Medium objective-evidence verification overlap; retain as in-distribution and report in the verification slice."}
+  - {eval: ev-v-01, train: [gj-vprot-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Writing task -> artifact review against task-specific criteria.",
+     note: "Medium writing-artifact verification overlap; retain as in-distribution."}
   - {eval: ev-t-01, train: [gj-task-001, gj-task-003], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
      relation: "Break a node into short-session tasks with evidence of real demand / hands-on work."}
   - {eval: ev-wr-01, train: [gj-web-004, gj-web-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
