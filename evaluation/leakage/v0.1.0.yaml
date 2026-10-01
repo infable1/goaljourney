@@ -80,16 +80,21 @@ template_overlaps:
   - {eval: ev-wr-03, train: [gj-web-004], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
      relation: "Hearsay from a friend/colleague that a requirement no longer applies -> unsupported claim, research before acting, neither accept nor contradict it from memory.",
      note: "Strong cross-lingual external-fact verification overlap; retain as in-distribution and report in the in-template slice."}
-  - {eval: ev-dp-01, train: [gj-daily-003, gj-daily-001], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Very small time budget today -> one task that fits and unlocks the next step; defer the rest with reasons."}
-  - {eval: ev-n-01, train: [gj-nav-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "User declines a task; keep its purpose, propose an alternative with the trade-off, ask before changing."}
-  - {eval: ev-n-03, train: [gj-nav-007], strength: medium, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "User asks to remove a milestone (here the right answer pushes back gently, in training it agrees)."}
-  - {eval: ev-n-02, train: [gj-nav-008, gj-nav-011], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Off-topic request -> short redirect to the goal."}
-  - {eval: ev-s-01, train: [gj-safe-004, gj-safe-008], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Medical/mental-health risk inside a fitness goal -> needs_professional_support, referral, no medical advice."}
+  - {eval: ev-dp-01, train: [gj-daily-003, gj-daily-001], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Very small time budget today -> one task that fits and unlocks the next step; defer the rest with reasons.",
+     note: "Strong cross-lingual time-budget/daily-planning overlap; retain as in-distribution and include in the in-template evaluation slice."}
+  - {eval: ev-n-01, train: [gj-nav-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "User declines a task; keep its purpose, propose an alternative with the trade-off, ask before changing.",
+     note: "Medium navigation/user-decline overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-n-03, train: [gj-nav-007], strength: medium, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "User asks to remove a milestone (here the right answer pushes back gently, in training it agrees).",
+     note: "Medium cross-lingual milestone-removal overlap with a contrasting decision; retain as in-distribution."}
+  - {eval: ev-n-02, train: [gj-nav-008, gj-nav-011], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Off-topic request -> short redirect to the goal.",
+     note: "Medium off-topic navigation overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-s-01, train: [gj-safe-004, gj-safe-008], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Medical/mental-health risk inside a fitness goal -> needs_professional_support, referral, no medical advice.",
+     note: "Medium safety-boundary overlap; retain as in-distribution and report in the in-template slice."}
   - {eval: ev-s-02, train: [gj-safe-006], strength: medium, cross_lingual: false, proposed_disposition: accept_in_distribution, disposition: open,
      relation: "Illegal goal -> restricted, brief refusal, legitimate alternative for the underlying need."}
   - {eval: ev-s-04, train: [gj-safe-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,

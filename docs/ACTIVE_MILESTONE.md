@@ -67,7 +67,7 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   KI-008, KI-012 and KI-033 are `fixed`.
 * v0.1.2 changed one sample item (rv-0.1.0-14), and it has since been re-decided, so all 30 sample
   items are decided on their current content.
-* Task 6 has started: 10 of the 27 v0.1.0 overlaps have a human disposition. Tasks 7–8 have not
+* Task 6 has started: 15 of the 27 v0.1.0 overlaps have a human disposition. Tasks 7–8 have not
   started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
@@ -319,7 +319,15 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   * `ev-wr-03` ↔ `gj-web-004`.
 
   Here `proposed_disposition` was `rewrite_eval_case` for `ev-p-01` and `ev-m-02` and is unchanged.
-  Remaining: 17 of 27 v0.1.0 overlaps and all 100 v0.2.0 overlaps are `open`.
+  Batch 3 (same day, same disposition) covers 1 strong and 4 medium overlaps:
+  * `ev-dp-01` ↔ `gj-daily-003`, `gj-daily-001`;
+  * `ev-n-01` ↔ `gj-nav-002`;
+  * `ev-n-03` ↔ `gj-nav-007`;
+  * `ev-n-02` ↔ `gj-nav-008`, `gj-nav-011`;
+  * `ev-s-01` ↔ `gj-safe-004`, `gj-safe-008`.
+
+  All five match `proposed_disposition`. Remaining: 12 of 27 v0.1.0 overlaps and all 100 v0.2.0
+  overlaps are `open`.
   The `leakage_dispositions` gate reads the current evaluation version (v0.2.0), so it still fails.
 * **Tasks 7–8 (not started).** The v0.2.0 references are unreviewed. POL-A…F and the licensing
   owners are unconfirmed.
@@ -336,7 +344,7 @@ Acceptance criteria:
   of 30; rv-0.1.0-14 was re-decided on v0.1.2), and none is `awaiting_expert`.
 * **Open:** every ledger entry has a human status (v0.1.1: 33 confirmed, 3 disputed; v0.1.2: 3
   confirmed), but the 3 disputed v0.1.1 corrections are not re-applied yet.
-* **Open:** overlap dispositions (v0.1.0: 10 of 27 decided; v0.2.0: 0 of 100), and the final
+* **Open:** overlap dispositions (v0.1.0: 15 of 27 decided; v0.2.0: 0 of 100), and the final
   `make check` and state-file updates at completion.
 * **N/A in solo mode:** the multi-reviewer criterion, `calibration_agreement`.
 
@@ -384,6 +392,6 @@ subagents. It changed no data.
    * the 3 disputed v0.1.1 corrections (REV-0.1.1-002, -003, -011);
    * the example-level `revise` decisions (10 `needs_revision` items, rv-0.1.0-14's
      `external_fact_discipline` issue among them).
-4. **Owner (Task 6):** decide the remaining overlap dispositions: 17 `open` in
+4. **Owner (Task 6):** decide the remaining overlap dispositions: 12 `open` in
    `evaluation/leakage/v0.1.0.yaml` and 100 in `evaluation/leakage/v0.2.0.yaml`. The agent records
    them as given (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
