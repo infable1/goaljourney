@@ -35,7 +35,17 @@ revisions:
   rationale: 'Product owner decision on KI-008, option B: keep 10 h/week, account for the remaining weekly capacity as job-search time with inspectable
     node estimates, and attach a4 to the first interview. Pacing and node estimates must tell the same story (POL-C: hour arithmetic follows from
     the plan).'
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-10-01T07:49:30Z'
+    content_hash: a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb
+    independent_rating: true
+    notes: 'Корректировка устраняет обе заявленные проблемы KI-008. Недельная ёмкость 10 часов согласована с 22-недельным горизонтом: суммарно
+      запланировано 218 из 220 часов, включая 47 часов на обучение, портфолио и резюме, 102 часа на фоновый поиск работы и 69 часов на активный
+      поиск, отклики и собеседования. Для job-search узлов добавлены явные оценки времени, а накопительные объёмы остаются в пределах соответствующих
+      окон ёмкости. Достижение a4 «Первое собеседование» перенесено на n16 — первое собеседование. Исправление соответствует заявленному defect
+      и не требует изменения human decision.'
   previous_content_hash: b4492d1f4c92e99d53ab66aa5c1f6024d678a5222778169d7257c9c31ce831e1
   content_hash: a6b644aae2bb00fcc85662c9f43464eda766ac72fd81c7b5c895463cfcb36ebb
   changed_paths:

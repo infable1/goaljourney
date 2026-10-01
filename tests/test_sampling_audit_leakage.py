@@ -310,8 +310,15 @@ def test_v012_ledger_implements_owner_decisions_without_approving_them():
     assert {i: (e["example_id"], e["known_issues"]) for i, e in by_id.items()} == {
         "REV-0.1.2-001": ("gj-jour-001", ["KI-008"]), "REV-0.1.2-002": ("gj-goalchg-001", ["KI-012"]),
         "REV-0.1.2-003": ("gj-vres-007", ["KI-033"])}
-    # the owner chose the fixes; nobody has reviewed the corrected content
-    assert all(e["reviewer_status"] == "pending_human_review" and "review" not in e for e in ledger["revisions"])
+    # the owner chose the fixes, which approves nothing: an entry is pending without a review block until a
+    # registered human reviews the corrected content, and that review is bound to the entry's current hash
+    from generation.pipelines import review_store as RS_
+    registry = RS_.load_registry()
+    for e in ledger["revisions"]:
+        if e["reviewer_status"] == "pending_human_review":
+            assert "review" not in e
+        else:
+            assert e["review"]["content_hash"] == e["content_hash"] and registry[e["review"]["reviewer_id"]]["human"]
     kis = {k["id"]: k for k in audit.load_known_issues("0.1.2")}
     for rev_id, e in by_id.items():
         ki = kis[e["known_issues"][0]]
