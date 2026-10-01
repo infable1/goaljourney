@@ -658,24 +658,30 @@ template_overlaps:
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: New resource integrated with confirmation; here it replaces a whole stage.
+  note: Medium route-replacement overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-route-04
   train:
   - gj-nav-006
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Reschedule; here a task date named by weekday, applied automatically.
+  note: Medium rescheduling overlap with a different date-expression mechanism; retain as in-distribution.
 - eval: e2-route-05
   train:
   - gj-route-002
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'External change; here unverified, so nothing changes (training: verified change).'
+  note: Medium cross-lingual external-change overlap with an important verification-condition difference; retain as in-distribution.
 - eval: e2-daily-01
   train:
   - gj-daily-003
@@ -683,32 +689,40 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Combines low energy and a near due date: a small slice of the due task.'
+  note: Medium cross-lingual daily-prioritization overlap combining energy and urgency; retain as in-distribution.
 - eval: e2-daily-02
   train:
   - gj-daily-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Scope a task to today's time; the stored routine is stale.
+  note: Medium stale-routine/time-budget overlap; retain as in-distribution.
 - eval: e2-nav-02
   train:
   - gj-nav-002
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: User declines part of a task; here the evidence, answered with a lighter check or self-report.
+  note: Medium cross-lingual user-decline/evidence-scope overlap; retain as in-distribution.
 - eval: e2-nav-03
   train:
   - gj-nav-006
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Reschedule proposed with impact; here at goal level, so confirmation is required.
+  note: Medium cross-lingual goal-level rescheduling overlap with confirmation; retain as in-distribution.
 - eval: e2-nav-04
   train:
   - gj-nav-008
@@ -716,24 +730,30 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Unrelated request declined briefly; here mixed with an in-scope one that is answered.
+  note: Medium cross-lingual mixed-scope navigation overlap; retain as in-distribution.
 - eval: e2-gc-01
   train:
   - gj-goalchg-001
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Same outcome, adjusted; here a pause that moves the date.
+  note: Medium cross-lingual goal-change overlap after a pause; retain as in-distribution.
 - eval: e2-gc-02
   train:
   - gj-goalchg-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Same outcome, adjusted; here the date moves earlier and scope shrinks.
+  note: Medium goal-change overlap with an earlier date and reduced scope; retain as in-distribution.
 - eval: e2-web-01
   train:
   - gj-web-001
