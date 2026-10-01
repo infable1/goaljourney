@@ -21,6 +21,9 @@ Spec: `DATASET_SPEC.md`. Workflows: `/dataset-review`, `/dataset-generation` and
 - **Released files are never edited:** `data/{train,validation,test}/goaljourney-v*.jsonl`,
   `data/manifests/*` and `schemas/archive/`. Nor are frozen per-version artefacts:
   `review/*_v0.1.0.*`, `evaluation/cases/v0.1.0/` and `evaluation/leakage/v0.1.0.yaml`.
+  The one exception (owner decision, 2026-10-01): in `evaluation/leakage/v0.1.0.yaml`, the human-review
+  fields `disposition`, `decided_by` and `note` on overlap entries are recorded by the disposition
+  workflow. Everything else in that file stays frozen (`.claude/rules/evaluation.md`).
 - **Changing an example's trainable content** (`task_type`, `input`, `expected_output`,
   `contrastive`) means:
   1. edit the YAML in `data/raw/examples/`;

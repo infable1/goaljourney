@@ -31,7 +31,11 @@ Design: `docs/EVALUATION_V0.2_DESIGN.md`. Workflow: `/evaluation`.
 - **Leakage metadata** in `evaluation/leakage/v<ver>.yaml`:
   - record every new automated candidate or hand-found overlap under `template_overlaps`, with
     strength, relation and `proposed_disposition`;
-  - `disposition` stays `open` until a human decides;
+  - `disposition` stays `open` until a human decides. Record the decision in `disposition`,
+    `decided_by` and `note`, and never change `proposed_disposition`;
   - the file never claims "no leakage".
+  - `evaluation/leakage/v0.1.0.yaml` is frozen except for those three human-review fields on its
+    overlap entries (owner decision, 2026-10-01). The rest stays as recorded: the `cases:` block,
+    and each overlap's ids, `strength`, `cross_lingual`, `relation` and `proposed_disposition`.
 - **Reports** under `evaluation/reports/` are git-ignored run outputs. Read `report.md`, not
   `predictions.jsonl`.
