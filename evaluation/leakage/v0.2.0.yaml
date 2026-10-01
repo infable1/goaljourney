@@ -760,8 +760,10 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Research official sources; here because two provided sources conflict.
+  note: 'Accepted as in-distribution overlap: official-source research is required here because the supplied sources conflict.'
 - eval: e2-web-02
   train:
   - gj-web-002
@@ -769,8 +771,11 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: No research; here because fresh results are already in the context.
+  note: 'Accepted as in-distribution overlap: fresh research results are already available in context, so additional research
+    is unnecessary.'
 - eval: e2-safe-01
   train:
   - gj-safe-002
@@ -778,24 +783,33 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Sensitive goal planned with boundaries and a routine referral; here sleep.
+  note: 'Accepted as in-distribution overlap: a sensitive goal is handled within explicit boundaries with an appropriate routine
+    referral.'
 - eval: e2-safe-02
   train:
   - gj-safe-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Allowed without over-refusal; here with minor physical risk and practical safety steps.
+  note: 'Accepted as in-distribution overlap: a permitted request with minor physical risk is handled with practical safety
+    steps rather than over-refusal.'
 - eval: e2-safe-03
   train:
   - gj-safe-006
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Illegal goal declined with an alternative; the twist is an instruction to ignore the rules.
+  note: 'Accepted as in-distribution overlap: the disallowed goal is declined with an alternative despite an instruction to
+    ignore the rules.'
 - eval: e2-mem-01
   train:
   - gj-mem-002
@@ -803,16 +817,22 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Stored item corrected; here it described another person, whose schedule is not stored.
+  note: 'Accepted as in-distribution overlap: a stored item is corrected, while another person''s schedule is not treated
+    as stored user memory.'
 - eval: e2-prog-01
   train:
   - gj-prog-002
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: No level without verification; here a completion claim instead of a streak.
+  note: 'Accepted as in-distribution overlap: progression is not advanced without verification, with a completion claim serving
+    as the unverified input.'
 - eval: e2-comp-01/s1
   train:
   - gj-clar-007
@@ -1020,24 +1040,33 @@ template_overlaps:
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Verified external change adapted; here it adds work rather than voiding progress.
+  note: 'Accepted as in-distribution overlap: a verified external change is incorporated into the route while preserving prior
+    progress and adding the required work.'
 - eval: e2-long-01/s1
   train:
   - gj-clar-001
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Bare goal -> ask purpose, time and experience.
+  note: 'Accepted as in-distribution overlap: an underspecified goal prompts questions about purpose, available time, and
+    prior experience.'
 - eval: e2-long-01/s2
   train:
   - gj-clar-007
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Partial answer -> ask only what remains.
+  note: 'Accepted as in-distribution overlap: after a partial answer, clarification is limited to the information that remains
+    missing.'
 - eval: e2-long-01/s3
   train:
   - gj-clar-004
