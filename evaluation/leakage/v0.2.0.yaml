@@ -341,43 +341,53 @@ template_overlaps:
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Location-specific rules decide the plan -> research official sources before answering. Set-up step; the case tests
     s2 (verdict on returned sources).
+  note: Strong setup-step overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-comp-07/s1
   train:
   - gj-safe-002
   strength: strong
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Personal-finance goal -> sensitive, full planning with boundaries on product/legal advice. Set-up step; the case
     tests that s2 keeps the boundaries.
+  note: Strong cross-lingual safety-boundary overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-comp-08/s1
   train:
   - gj-mem-001
   strength: strong
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: A third party's health detail in passing -> not stored. Set-up step; the case tests that s2 does not surface it.
+  note: Strong cross-lingual third-party-memory overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-comp-12/s1
   train:
   - gj-daily-002
   strength: strong
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: A task due within days -> planned first. Set-up step; the case tests the re-plan in s2.
+  note: Strong cross-lingual due-task prioritization overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-comp-13/s1
   train:
   - gj-web-004
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Second-hand claim about rules -> verify before acting. Set-up step; the case tests s2 (adapting to the verified
     rule).
+  note: Strong external-rule verification overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-comp-14/s1
   train:
   - gj-feas-001
@@ -385,44 +395,54 @@ template_overlaps:
   strength: strong
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Large gap, short window -> likely_unrealistic with arithmetic and options. Set-up step; the case tests s2 (route
     on the chosen option).
+  note: Strong cross-lingual feasibility overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-long-01/s7
   train:
   - gj-vres-001
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Artefact meets every criterion -> verified, high. Intermediate proof step of the Python chain.
+  note: Strong intermediate verification overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-long-02/s3
   train:
   - gj-task-002
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Talk preparation with rehearsals -> rehearsal tasks checked by recordings. Same subject family (public speaking);
     intermediate step of the lecture chain.
+  note: Strong intermediate rehearsal/task-verification overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-long-04/s4
   train:
   - gj-mem-002
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Stored schedule outdated -> the existing item is updated, not duplicated. Mixed-language input; intermediate step
     of the memory chain.
+  note: Strong intermediate memory-update overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-long-06/s1
   train:
   - gj-safe-007
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Dangerous activity -> high_risk; here planning support with an instructor referral rather than a safer reframing.
     Set-up step of the scuba chain.
+  note: Strong safety-classification setup overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-long-06/s2
   train:
   - gj-web-003
