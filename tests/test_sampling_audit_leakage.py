@@ -319,12 +319,18 @@ def test_v012_ledger_implements_owner_decisions_without_approving_them():
     # v0.1.1 keeps the issues as they were then
     old = {k["id"]: k for k in audit.load_known_issues("0.1.1")}
     assert all(old[k]["status"] == "open" for k in ("KI-008", "KI-012", "KI-033"))
-    # the changed examples have new content hashes, so no earlier decision carries over
+    # the changed examples have new content hashes, so no earlier decision carries over: a status other than
+    # pending can only come from a human decision recorded on the new content hash
     from generation.pipelines import review_store as RS
     from generation.pipelines.pool import load_review_events
+    from gjcore.records import content_hash
     events = load_review_events()
     for e in ledger["revisions"]:
-        assert RS.resolve(BY_ID[e["example_id"]], events)["status"] == "pending"
+        rec = BY_ID[e["example_id"]]
+        if RS.resolve(rec, events)["status"] != "pending":
+            assert any(ev["example_id"] == rec["id"] and ev["content_hash"] == content_hash(rec) and ev["reviewer"]["human"]
+                       for ev in events), rec["id"]
+        assert RS.resolve(rec, [ev for ev in events if ev["content_hash"] != content_hash(rec)])["status"] == "pending"
 
 
 def test_revision_history_follows_the_ledger_chain():
