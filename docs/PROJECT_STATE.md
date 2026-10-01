@@ -420,8 +420,8 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
    v0.1.2 content because of the `external_fact_discipline` issue (a hard gate), which is
    independent of KI-008 and still needs a fix. 8 other issues are `open`.
 5. **Evaluation overlaps:** the 100 reviewed v0.2.0 overlaps have no disposition (the
-   `leakage_dispositions` gate reads v0.2.0), and eval size is 63/200 cases. In v0.1.0, 5 of 27
-   overlaps are decided (`accept_in_distribution`, `po-reviewer`, 2026-10-01) and 22 are `open`.
+   `leakage_dispositions` gate reads v0.2.0), and eval size is 63/200 cases. In v0.1.0, 10 of 27
+   overlaps are decided (`accept_in_distribution`, `po-reviewer`, 2026-10-01) and 17 are `open`.
 
 ## Where to look
 

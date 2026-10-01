@@ -65,16 +65,21 @@ template_overlaps:
   - {eval: ev-v-02, train: [gj-vprot-005], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
      relation: "User has no tracker and will not record themselves -> structured self-report, confidence limited. Cross-lingual: invisible to text-similarity layers.",
      note: "Strong cross-lingual verification overlap; retain as in-distribution and report in the in-template slice."}
-  - {eval: ev-p-01, train: [gj-prog-002], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: open,
-     relation: "User asks for a level-up because of an app-activity streak (45 vs 30 days); acknowledge the habit, no level change, give the concrete path."}
-  - {eval: ev-m-01, train: [gj-mem-003, gj-lang-001], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Daily plan with an evening preference in user memory and sensitive retrieved memory from an unrelated goal that must not surface."}
-  - {eval: ev-m-02, train: [gj-mem-001], strength: strong, cross_lingual: false, proposed_disposition: rewrite_eval_case, disposition: open,
-     relation: "Memory extraction where a third party's health condition affects availability: store the planning consequence only."}
-  - {eval: ev-f-01, train: [gj-feas-006, gj-feas-001], strength: strong, cross_lingual: false, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Start from zero towards the top level of a credential in a few months at a few hours a week; hours arithmetic, likely_unrealistic, options."}
-  - {eval: ev-wr-03, train: [gj-web-004], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Hearsay from a friend/colleague that a requirement no longer applies -> unsupported claim, research before acting, neither accept nor contradict it from memory."}
+  - {eval: ev-p-01, train: [gj-prog-002], strength: strong, cross_lingual: true, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "User asks for a level-up because of an app-activity streak (45 vs 30 days); acknowledge the habit, no level change, give the concrete path.",
+     note: "Strong progress-verification overlap; retain as in-distribution and include in the in-template evaluation slice."}
+  - {eval: ev-m-01, train: [gj-mem-003, gj-lang-001], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Daily plan with an evening preference in user memory and sensitive retrieved memory from an unrelated goal that must not surface.",
+     note: "Strong cross-lingual memory/planning overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-m-02, train: [gj-mem-001], strength: strong, cross_lingual: false, proposed_disposition: rewrite_eval_case, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Memory extraction where a third party's health condition affects availability: store the planning consequence only.",
+     note: "Strong third-party-memory handling overlap; retain as in-distribution and report in the in-template slice."}
+  - {eval: ev-f-01, train: [gj-feas-006, gj-feas-001], strength: strong, cross_lingual: false, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Start from zero towards the top level of a credential in a few months at a few hours a week; hours arithmetic, likely_unrealistic, options.",
+     note: "Strong feasibility-arithmetic overlap; retain as in-distribution and include in the in-template evaluation slice."}
+  - {eval: ev-wr-03, train: [gj-web-004], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Hearsay from a friend/colleague that a requirement no longer applies -> unsupported claim, research before acting, neither accept nor contradict it from memory.",
+     note: "Strong cross-lingual external-fact verification overlap; retain as in-distribution and report in the in-template slice."}
   - {eval: ev-dp-01, train: [gj-daily-003, gj-daily-001], strength: strong, cross_lingual: true, proposed_disposition: accept_in_distribution, disposition: open,
      relation: "Very small time budget today -> one task that fits and unlocks the next step; defer the rest with reasons."}
   - {eval: ev-n-01, train: [gj-nav-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
