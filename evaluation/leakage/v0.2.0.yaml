@@ -449,24 +449,30 @@ template_overlaps:
   strength: strong
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Local course schedules decide feasibility -> research local availability. Set-up step of the scuba chain.
+  note: Strong local-research setup overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-clar-01
   train:
   - gj-clar-008
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: One question only — here about two contradictory time statements, not a missing fact.
+  note: Medium cross-lingual clarification overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-clar-02
   train:
   - gj-clar-004
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Plan without questions — here because the user refuses questions, on explicit defaults.
+  note: Medium clarification overlap under an explicit no-questions constraint; retain as in-distribution.
 - eval: e2-clar-03
   train:
   - gj-clar-007
@@ -474,17 +480,21 @@ template_overlaps:
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Ask only the remaining gap; the current message overrides stored memory.
+  note: Medium memory-aware clarification overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-clar-04
   train:
   - gj-clar-007
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Defer location-specific rules to research; here the stage is unknown and there is no answer history (automated
     decision-pattern candidate).
+  note: Medium clarification/external-rule boundary overlap; retain as in-distribution.
 - eval: e2-feas-01
   train:
   - gj-feas-001
@@ -492,16 +502,20 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: likely_unrealistic — here the user rules out a lower target, so options are time and date only.
+  note: Medium cross-lingual feasibility overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-feas-02
   train:
   - gj-feas-004
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: feasible — here against the user's own expectation of failure.
+  note: Medium feasibility overlap with a deliberately contrary user expectation; retain as in-distribution.
 - eval: e2-feas-03
   train:
   - gj-feas-005
@@ -509,8 +523,10 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: uncertain until verified — the uncertainty comes from hearsay about retake rules.
+  note: Medium cross-lingual hearsay/verification overlap; retain as in-distribution and report in the in-template slice.
 - eval: e2-jour-01
   train:
   - gj-jour-003
@@ -518,16 +534,20 @@ template_overlaps:
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Verify external requirements first, then the route.
+  note: Medium route-planning overlap where external requirements are verified first; retain as in-distribution.
 - eval: e2-task-01
   train:
   - gj-task-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: 'Session-sized tasks; here checked by audio instead of files (automated template candidate: shared numbers).'
+  note: Medium task-sizing overlap with a different evidence medium; retain as in-distribution.
 - eval: e2-task-02
   train:
   - gj-task-003
