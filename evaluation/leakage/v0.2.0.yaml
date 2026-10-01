@@ -1134,80 +1134,108 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Another goal's memory is present and must not be used; here in clarification.
+  note: 'Accepted as in-distribution overlap: related memory/context handling pattern, without requiring reuse of another
+    goal''s stored facts.'
 - eval: e2-long-04/s5
   train:
   - gj-lang-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Stored user facts drive the day plan.
+  note: 'Accepted as in-distribution overlap: stored user facts influence a day plan, reflecting a recurring planning pattern
+    rather than exact case reuse.'
 - eval: e2-long-05/s2
   train:
   - gj-time-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Less time before a fixed date -> propose a cut with confirmation; here a temporary drop and a simplification.
+  note: 'Accepted as in-distribution overlap: reduced time before a fixed date leads to simplification/cutting of the plan.'
 - eval: e2-long-05/s4
   train:
   - gj-time-004
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Temporary extra hours; here banked as slack instead of front-loading.
+  note: 'Accepted as in-distribution overlap: temporary extra capacity is treated as slack rather than immediate front-loading.'
 - eval: e2-long-05/s5
   train:
   - gj-prog-001
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Level up on a verified milestone; unverified work is named (automated decision-pattern candidate).
+  note: 'Accepted as in-distribution overlap: progress is tied to a verified milestone while explicitly preserving uncertainty
+    around unverified work.'
 - eval: e2-long-06/s3
   train:
   - gj-feas-004
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: feasible, citing research results.
+  note: 'Accepted as in-distribution overlap: feasibility is assessed with supporting evidence rather than treated as an exact
+    case match.'
 - eval: e2-long-06/s4
   train:
   - gj-goalchg-004
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Location of part of the goal changes; external agreement flagged.
+  note: 'Accepted as in-distribution overlap: part of the goal changes location while an external agreement is surfaced as
+    a constraint.'
 - eval: e2-long-06/s5
   train:
   - gj-route-006
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Route stage replaced, outcome and completed steps kept.
+  note: 'Accepted as in-distribution overlap: a route stage is replaced while the intended outcome and completed steps are
+    retained.'
 - eval: e2-nav-05
   train:
   - gj-vprot-001
   strength: topic_only
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Same subject (video is unavailable), different operation and decision.
+  note: 'Accepted as in-distribution topic overlap only: both concern an unavailable video, but the operation and decision
+    are different.'
 - eval: e2-gc-02
   train:
   - gj-daily-003
   strength: topic_only
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Both are conversational-language goals for a trip/family (lexical 0.34); different operation and decision.
+  note: 'Accepted as in-distribution topic overlap only: both use conversational language around a trip/family context, but
+    the operation and decision differ.'
 - eval: e2-prog-02
   train:
   - gj-prog-001

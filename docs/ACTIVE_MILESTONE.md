@@ -68,7 +68,7 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * v0.1.2 changed one sample item (rv-0.1.0-14), and it has since been re-decided, so all 30 sample
   items are decided on their current content.
 * Task 6 is in progress. Its v0.1.0 part is complete: all 27 v0.1.0 template overlaps and its one
-  seed overlap have a human disposition. In v0.2.0, 60 of 100 overlaps are decided and 40 are still
+  seed overlap have a human disposition. In v0.2.0, 70 of 100 overlaps are decided and 30 are still
   `open`. Tasks 7–8 have not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
@@ -448,9 +448,23 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   * `e2-comp-11/s2` ↔ `gj-prog-001`;
   * `e2-comp-12/s2` ↔ `gj-daily-001`.
 
-  **Still open:** 40 of 100 v0.2.0 overlaps (29 medium, 4 topic-only, 7 coincidental candidates).
+  **v0.2.0 Batch 7 (same day, same disposition, `po-reviewer`).** 8 medium longitudinal-step
+  overlaps and 2 topic-only overlaps, all matching `proposed_disposition`. The notes are the
+  owner's supplied wording:
+  * `e2-long-04/s2` ↔ `gj-mem-004`, `gj-mem-003`;
+  * `e2-long-04/s5` ↔ `gj-lang-001`;
+  * `e2-long-05/s2` ↔ `gj-time-003`;
+  * `e2-long-05/s4` ↔ `gj-time-004`;
+  * `e2-long-05/s5` ↔ `gj-prog-001`;
+  * `e2-long-06/s3` ↔ `gj-feas-004`;
+  * `e2-long-06/s4` ↔ `gj-goalchg-004`;
+  * `e2-long-06/s5` ↔ `gj-route-006`;
+  * `e2-nav-05` ↔ `gj-vprot-001` (topic-only);
+  * `e2-gc-02` ↔ `gj-daily-003` (topic-only).
+
+  **Still open:** 30 of 100 v0.2.0 overlaps (21 medium, 2 topic-only, 7 coincidental candidates).
   The `leakage_dispositions` gate reads the current evaluation version (v0.2.0), so it still fails,
-  now with 40.
+  now with 30.
 * **Tasks 7–8 (not started).** The v0.2.0 references are unreviewed. POL-A…F and the licensing
   owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
@@ -466,7 +480,7 @@ Acceptance criteria:
   of 30; rv-0.1.0-14 was re-decided on v0.1.2), and none is `awaiting_expert`.
 * **Open:** every ledger entry has a human status (v0.1.1: 33 confirmed, 3 disputed; v0.1.2: 3
   confirmed), but the 3 disputed v0.1.1 corrections are not re-applied yet.
-* **Open:** overlap dispositions (v0.1.0 template overlaps: 27 of 27 decided; v0.2.0: 60 of 100),
+* **Open:** overlap dispositions (v0.1.0 template overlaps: 27 of 27 decided; v0.2.0: 70 of 100),
   and the final `make check` and state-file updates at completion.
 * **N/A in solo mode:** the multi-reviewer criterion, `calibration_agreement`.
 
@@ -514,7 +528,7 @@ subagents. It changed no data.
    * the 3 disputed v0.1.1 corrections (REV-0.1.1-002, -003, -011);
    * the example-level `revise` decisions (10 `needs_revision` items, rv-0.1.0-14's
      `external_fact_discipline` issue among them).
-4. **Owner (Task 6):** decide the 40 `open` overlap dispositions in
+4. **Owner (Task 6):** decide the 30 `open` overlap dispositions in
    `evaluation/leakage/v0.2.0.yaml`. Every v0.1.0 overlap (27 template overlaps and 1 seed
    overlap) is decided. The agent records
    them as given (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
