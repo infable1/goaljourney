@@ -919,32 +919,40 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: feasible, with facts cited from provided research.
+  note: Medium cross-lingual research-to-feasibility overlap; retain as in-distribution.
 - eval: e2-comp-07/s2
   train:
   - gj-jour-005
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Route for a sensitive goal within stated boundaries.
+  note: Medium sensitive-goal route overlap within explicit boundaries; retain as in-distribution.
 - eval: e2-comp-08/s2
   train:
   - gj-task-003
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Tasks sized to a stored time slot.
+  note: Medium cross-lingual task-sizing overlap tied to a stored time slot; retain as in-distribution.
 - eval: e2-comp-09/s1
   train:
   - gj-vres-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Count criterion not met -> rejected with a way forward.
+  note: Medium verification-count overlap with an explicit way forward; retain as in-distribution.
 - eval: e2-comp-09/s2
   train:
   - gj-vretry-002
@@ -952,48 +960,60 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Offer a scope/criterion change instead of lowering the bar silently; here the user disputes the result.
+  note: Medium cross-lingual verification/scope-adjustment overlap; retain as in-distribution.
 - eval: e2-comp-10/s1
   train:
   - gj-goalchg-002
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Major adjustment reusing progress, with confirmation.
+  note: Medium goal-change overlap with preserved progress and confirmation; retain as in-distribution.
 - eval: e2-comp-10/s2
   train:
   - gj-route-006
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Route follows a confirmed change, same outcome kept.
+  note: Medium route-adaptation overlap after a confirmed goal change; retain as in-distribution.
 - eval: e2-comp-11/s1
   train:
   - gj-vres-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: All criteria met -> verified.
+  note: Medium verification overlap where all criteria are met; retain as in-distribution.
 - eval: e2-comp-11/s2
   train:
   - gj-prog-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Level up on a verified milestone; the twist is the user's claim of a second level.
+  note: Medium verification/progress overlap with a user level-up claim; retain as in-distribution.
 - eval: e2-comp-12/s2
   train:
   - gj-daily-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Scope a task down to the time left, keeping its priority.
+  note: Medium daily-plan scope reduction while preserving priority; retain as in-distribution.
 - eval: e2-comp-13/s2
   train:
   - gj-route-002
