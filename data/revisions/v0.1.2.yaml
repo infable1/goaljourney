@@ -87,7 +87,16 @@ revisions:
     yet confirmed for a sub-60 finish. Classification (minor_adjustment), updated goal, preserved progress and the contrastive output are unchanged.'
   rationale: 'Product owner decision on KI-012, option A: ask for the current 7 km time before judging feasibility. A feasibility claim needs
     its facts (POL-E); the missing fact is the one question whose answer changes the plan.'
-  reviewer_status: pending_human_review
+  reviewer_status: confirmed
+  review:
+    reviewer_id: po-reviewer
+    timestamp: '2026-10-01T07:56:41Z'
+    content_hash: 445f64dad355eeb15ef6a81999527d4b3eb4790d6b7adf4d13e5b1d67642ee57
+    independent_rating: true
+    notes: Исправление корректно устраняет заявленную проблему KI-012. Безусловное утверждение о достижимости sub-60 к 1 декабря заменено на условную
+      оценку, зависящую от текущего времени на 7 км. Запрос этого факта поставлен до вывода о реалистичности дедлайна, при этом уже достигнутый
+      прогресс на 5 км и 7 км сохраняется, а сам дедлайн не объявляется подтверждённым без достаточных данных. Корректировка соответствует выбранному
+      для KI-012 варианту A и не требует изменения human decision.
   previous_content_hash: 625b109a4a2e46236c8ce8aa533135826a335e000f2e8013c3238b12536bac0c
   content_hash: 445f64dad355eeb15ef6a81999527d4b3eb4790d6b7adf4d13e5b1d67642ee57
   changed_paths:
