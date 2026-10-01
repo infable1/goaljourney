@@ -1,13 +1,15 @@
 # Known issues register — dataset v0.1.2
 #
 # Carries every v0.1.1 issue forward (review/known_issues_v0.1.1.yaml stays unchanged). Statuses as in v0.1.1:
+#   fixed                 corrected in a dataset version and the correction confirmed by a human (human_review: confirmed)
 #   fixed_pending_review  corrected in a dataset version (see revision_ids in data/revisions/v<ver>.yaml); a human must confirm
 #   resolved_by_policy    a policy decision (docs/POLICY_DECISIONS_v0.1.1.md) makes the content acceptable
 #   open                  unchanged; needs a reviewer, an expert or a product decision (see triage)
 #   wont_fix              deliberately left (e.g. frozen evaluation v0.1.0)
-# v0.1.2 changes only KI-008, KI-012 and KI-033: the product owner chose their fixes on 2026-09-30 (resolution),
-# the fixes are in data/revisions/v0.1.2.yaml, and the corrected content awaits human review (human_review: pending).
-# Choosing a fix is not a review of the corrected content. Every other entry is carried over unchanged.
+# v0.1.2 changes only KI-008, KI-012 and KI-033: the product owner chose their fixes on 2026-09-30 (resolution), the
+# corrections were implemented in dataset v0.1.2 (data/revisions/v0.1.2.yaml), and the human owner confirmed them
+# through the ledger reviews of REV-0.1.2-001..003 (2026-10-01), so they are fixed with human_review: confirmed.
+# Every other entry is carried over unchanged.
 version: 0.1.2
 issues:
 - id: KI-001
@@ -154,17 +156,17 @@ issues:
     n14 («20 откликов и 3 собеседования»), i.e. after the third interview.
   proposed_revision: Rebalance milestone dates or explain where the remaining weekly time goes; attach a4 to a node that represents the first
     interview.
-  status: fixed_pending_review
+  status: fixed
   found_by: agent inspection (confirmed by capacity_mismatch)
   triage: 'Not changed in v0.1.1: rebalancing the milestone capacity and moving achievement a4 to a first-interview node is a product-content
     decision for a reviewer. J_MILESTONE_OVERBOOKED does not fire (the problem is under-booking, not over-booking).'
   resolution: 'Product owner decision 2026-09-30: option B — keep 10 h/week, plan the weekly time the learning tasks leave as
     job-search time with inspectable estimates, and attach a4 to the first interview. Implemented in dataset v0.1.2 (REV-0.1.2-001:
-    background job-search nodes n17–n19, first-interview node n16, estimates on n14 and n15, pacing notes); the corrected content
-    awaits human review.'
+    background job-search nodes n17–n19, first-interview node n16, estimates on n14 and n15, pacing notes); the correction was
+    confirmed by the human owner in the REV-0.1.2-001 ledger review (2026-10-01).'
   revision_ids:
   - REV-0.1.2-001
-  human_review: pending
+  human_review: confirmed
 - id: KI-009
   records:
   - gj-route-004
@@ -232,17 +234,17 @@ issues:
   description: «The December 1 date still works» for a sub-60-minute 10 km, although the user's current pace is unknown (7 km 'feels okay').
   proposed_revision: 'Ask for the current 7 km time before asserting the date (or hedge: «if your 7 km pace is around X…»); keep the minor_adjustment
     classification.'
-  status: fixed_pending_review
+  status: fixed
   found_by: agent inspection (confirmed by unsupported_feasibility_claim)
   triage: Needs a reviewer decision between asking for the current 7 km time and hedging; the example is otherwise valid.
   resolution: 'Product owner decision 2026-09-30: option A — ask for the current 7 km time before judging whether December 1 fits a
-    sub-60 finish. Implemented in dataset v0.1.2 (REV-0.1.2-002); classification minor_adjustment kept; the corrected content awaits
-    human review.'
+    sub-60 finish. Implemented in dataset v0.1.2 (REV-0.1.2-002); classification minor_adjustment kept; the correction was
+    confirmed by the human owner in the REV-0.1.2-002 ledger review (2026-10-01).'
   revision_ids:
   - REV-0.1.2-002
   policy_refs:
   - POL-E
-  human_review: pending
+  human_review: confirmed
 - id: KI-013
   records:
   - gj-jour-004
@@ -609,14 +611,15 @@ issues:
     required method fits the task nature (VP_NATURE_MISMATCH, warning). Found when input protocols started to be linted in v0.1.1.
   proposed_revision: Make the follow-up question required (and mention it in the expected output), or accept the list as sufficient evidence of
     understanding.
-  status: fixed_pending_review
+  status: fixed
   found_by: v0.1.1 input lint (warning)
   resolution: 'Product owner decision 2026-09-30: option A — make the follow-up question a required method and ask for its answer
     in the expected output. Implemented in dataset v0.1.2 (REV-0.1.2-003); the required list of ideas and the medium ceiling are kept;
-    the corrected content awaits human review.'
+    the correction was
+    confirmed by the human owner in the REV-0.1.2-003 ledger review (2026-10-01).'
   revision_ids:
   - REV-0.1.2-003
-  human_review: pending
+  human_review: confirmed
 - id: KI-034
   records:
   - ev-vr-01

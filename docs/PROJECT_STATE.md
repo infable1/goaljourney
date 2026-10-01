@@ -4,7 +4,7 @@
 solo-owner-first review governance (D-026, pipeline 0.4.0) and the first solo-owner reviews
 (rv-0.1.0-01, rv-0.1.0-03, rv-0.1.0-04, rv-0.1.0-05, rv-0.1.0-06, rv-0.1.0-07, rv-0.1.0-08, rv-0.1.0-10, rv-0.1.0-11, rv-0.1.0-13, rv-0.1.0-14, rv-0.1.0-15, rv-0.1.0-16, rv-0.1.0-17, rv-0.1.0-18, rv-0.1.0-19, rv-0.1.0-21, rv-0.1.0-22, rv-0.1.0-23, rv-0.1.0-24, rv-0.1.0-25, rv-0.1.0-26, rv-0.1.0-27, rv-0.1.0-28), which complete the decisions
 on the 30-item review sample, the human reviews of all 36 v0.1.1 ledger revisions, and dataset v0.1.2, which applies
-the product owner's decisions on KI-008, KI-012 and KI-033 (the corrected content awaits human review). Update this file before declaring any
+the product owner's decisions on KI-008, KI-012 and KI-033 (the corrections are human-confirmed and the issues `fixed`). Update this file before declaring any
 milestone complete (`/milestone-complete`).*
 
 **Governance change (D-026).** The project has moved from **multi-reviewer-first governance** to
@@ -36,7 +36,7 @@ truth; chat history is not.
 |---|---|
 | Repository | `infable1/goaljourney` — dataset, validation and evaluation pipeline for the GoalJourney Navigator model |
 | Working branch | Default branch `claude/fervent-keller-j517cd` (there is no `main`). The M1.7 review round after `ae21c7d` is on `claude/sleepy-dijkstra-nzrf3t`, which also merged the rv-0.1.0-29 record from `claude/compassionate-noether-1o9iyx`; it is not merged into the default branch. No open pull request (infable1/goaljourney#1 and infable1/goaljourney#2 were closed unmerged) |
-| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084`, the rv-0.1.0-01 independence correction `2438dd4` the rv-0.1.0-04 review `5b3f7c4` and the rv-0.1.0-05 review `71c92eb` and the rv-0.1.0-06 review `8deff75` and the rv-0.1.0-07 review `40a3d51` with its notes correction `7284b5a` the rv-0.1.0-08 review `2997666` and the rv-0.1.0-10 review `301009a` the rv-0.1.0-11 review `c7eef17` the rv-0.1.0-13 review `b297d91` and the rv-0.1.0-14 review `8aa4416` the rv-0.1.0-15 review `6e92860` the rv-0.1.0-16 review `d876db9` the rv-0.1.0-17 review `49fe41f` the rv-0.1.0-18 review `e27bb32` the rv-0.1.0-19 review `8ee6efd` the rv-0.1.0-21 review `57c78c0` with its text correction `8eafa75` the rv-0.1.0-22 review `10a493b` the rv-0.1.0-23 review `b7d1c5c` the rv-0.1.0-24 review `26e98e5` with its independence correction `212cf67` the rv-0.1.0-25 review `1e2e9b2` the rv-0.1.0-26 review `3af4cae` the rv-0.1.0-27 review `73c22db` and the rv-0.1.0-28 review `2f2511f`, which completes the sample → ledger review recording (D-027, schema 0.1.2) and the reviews of REV-0.1.1-001…036 `d1d848d`…`8c5d690` → dataset v0.1.2 with the owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2) (latest commits: `git log --oneline -5`) |
+| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084`, the rv-0.1.0-01 independence correction `2438dd4` the rv-0.1.0-04 review `5b3f7c4` and the rv-0.1.0-05 review `71c92eb` and the rv-0.1.0-06 review `8deff75` and the rv-0.1.0-07 review `40a3d51` with its notes correction `7284b5a` the rv-0.1.0-08 review `2997666` and the rv-0.1.0-10 review `301009a` the rv-0.1.0-11 review `c7eef17` the rv-0.1.0-13 review `b297d91` and the rv-0.1.0-14 review `8aa4416` the rv-0.1.0-15 review `6e92860` the rv-0.1.0-16 review `d876db9` the rv-0.1.0-17 review `49fe41f` the rv-0.1.0-18 review `e27bb32` the rv-0.1.0-19 review `8ee6efd` the rv-0.1.0-21 review `57c78c0` with its text correction `8eafa75` the rv-0.1.0-22 review `10a493b` the rv-0.1.0-23 review `b7d1c5c` the rv-0.1.0-24 review `26e98e5` with its independence correction `212cf67` the rv-0.1.0-25 review `1e2e9b2` the rv-0.1.0-26 review `3af4cae` the rv-0.1.0-27 review `73c22db` and the rv-0.1.0-28 review `2f2511f`, which completes the sample → ledger review recording (D-027, schema 0.1.2) and the reviews of REV-0.1.1-001…036 `d1d848d`…`8c5d690` → dataset v0.1.2 with the owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2) `04a2c1f` → the rv-0.1.0-14 v0.1.2 review `ffe2432` → the confirmations of REV-0.1.2-001…003 `8c90b42`…`4500616` → KI-008, KI-012 and KI-033 `fixed` (latest commits: `git log --oneline -5`) |
 | Language / stack | Python ≥ 3.10; jsonschema, referencing, PyYAML, pytest; CLI `scripts/gj.py`; `make check` |
 | Mobile app / product code | not in this repository |
 
@@ -287,12 +287,13 @@ truth; chat history is not.
   * **Ledger reviews (D-027, `gj revisions review`).** `po-reviewer` reviewed all 36 entries of
     `data/revisions/v0.1.1.yaml` (`d1d848d`…`8c5d690`): 33 `confirmed` and 3 `disputed`
     (REV-0.1.1-002, -003 and -011, `independent_rating: false`; the other 33 `true`). Each review
-    is bound to its entry's content hash. The disputed corrections still need new content. The
-    v0.1.2 ledger has 3 entries, all `pending_human_review`.
+    is bound to its entry's content hash. The disputed corrections still need new content. All
+    3 v0.1.2 entries are `confirmed` (`independent_rating: true`, `8c90b42`…`4500616`).
   * **Known issues (`review/known_issues_v0.1.2.yaml`).** On 2026-09-30 the product owner chose the
     fixes for the 3 remaining open issues: KI-008 option B, KI-012 option A, KI-033 option A.
-    Dataset v0.1.2 implements them (REV-0.1.2-001…003), and they are `fixed_pending_review` with
-    `human_review: pending`: choosing a fix is not a review of the corrected content. The v0.1.1
+    Dataset v0.1.2 implements them (REV-0.1.2-001…003). The human owner confirmed the corrections
+    in those ledger reviews, so the issues are `fixed` with `human_review: confirmed`. The v0.1.2
+    register now has 3 `fixed`, 22 `fixed_pending_review`, 8 `open` and 1 `wont_fix`; the v0.1.1
     register is unchanged.
   * **Counts (`gj review stats`):**
     * pool (93): human-reviewed 31, training-eligible 21, needs_revision 10, content changed 0,
@@ -326,9 +327,8 @@ the repository. Training exports are refused until every applicable release gate
 `gj gates` (solo_owner, v0.1.2) passes 4 of 9 applicable gates: `findings_acknowledged`,
 `leakage_hard_clean`, `validation_strict` and `known_issues_closed`. The other 2 gates are N/A.
 * `validation_strict` passes because the KI-033 fix removed the only strict failure (`gj-vres-007`).
-* `known_issues_closed` counts only `open` medium or high issues, and KI-008 and KI-012 are now
-  `fixed_pending_review`, like 22 earlier fixed issues. Human confirmation of those fixes is still
-  outstanding.
+* `known_issues_closed` counts only `open` medium or high issues. KI-008 and KI-012 are now
+  `fixed` and human-confirmed; 22 earlier issues stay `fixed_pending_review`.
 
 v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass was
 `calibration_agreement`, which is now N/A rather than passed.
@@ -342,7 +342,7 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
   * A contrastive self-test.
 * **Data.** 93 agent-authored examples (RU 41 / EN 52) and 64 rejected outputs. The revision ledgers
   `data/revisions/v0.1.1.yaml` (36 revised examples, all human-reviewed) and `v0.1.2.yaml`
-  (3 revised examples, pending review) form a chain of bases: v0.1.2 → v0.1.1 → v0.1.0.
+  (3 revised examples, all confirmed) form a chain of bases: v0.1.2 → v0.1.1 → v0.1.0.
 * **Review.**
   * A rubric (0.2.1; 0.2.0 kept).
   * An append-only, hash-chained decision log (46 events).
@@ -395,8 +395,8 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
      `needs_revision`. rv-0.1.0-14 was re-decided on its v0.1.2 content (`needs_revision`).
    * The 36 v0.1.1 ledger revisions are reviewed: 33 confirmed, 3 disputed. The disputed ones need
      new corrections.
-   * The 3 v0.1.2 ledger revisions await review. Of their examples, `gj-jour-001` is decided
-     (`needs_revision`), and `gj-goalchg-001` and `gj-vres-007` are not reviewed.
+   * The 3 v0.1.2 ledger revisions are confirmed. Of their examples, `gj-jour-001` is decided
+     (`needs_revision`), and `gj-goalchg-001` and `gj-vres-007` have no example-level review.
    * 62 of the 93 pool examples have no human decision.
    * `review_all_approved`: 21/84 approved on the v0.1.2 release rows.
    * In solo mode the owner reviews alone. `reviewer_diversity` and `calibration_agreement` are N/A
@@ -415,9 +415,10 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
      is not loosened.
 2. **Policies POL-A…F** need product-owner confirmation (`docs/POLICY_DECISIONS_v0.1.1.md`).
 3. **Licensing:** 5 open items (`configs/licensing_status.yaml`) block any training-ready release.
-4. **Known issues:** KI-008, KI-012 and KI-033 are fixed in v0.1.2 (`fixed_pending_review`) and need
-   a human review of the corrected content. `gj-jour-001` is `needs_revision` on its v0.1.2 content
-   because of the `external_fact_discipline` issue (a hard gate), which still needs a fix.
+4. **Known issues:** KI-008, KI-012 and KI-033 are `fixed` (corrections in v0.1.2, human-confirmed).
+   That is separate from the example-level review: `gj-jour-001` is still `needs_revision` on its
+   v0.1.2 content because of the `external_fact_discipline` issue (a hard gate), which is
+   independent of KI-008 and still needs a fix. 8 other issues are `open`.
 5. **Evaluation overlaps:** 100 reviewed overlaps have no disposition, and eval size is 63/200 cases.
 
 ## Where to look

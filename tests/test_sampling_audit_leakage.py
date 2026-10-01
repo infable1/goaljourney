@@ -319,10 +319,16 @@ def test_v012_ledger_implements_owner_decisions_without_approving_them():
             assert "review" not in e
         else:
             assert e["review"]["content_hash"] == e["content_hash"] and registry[e["review"]["reviewer_id"]]["human"]
+    # an issue is `fixed` (human_review confirmed) exactly when every ledger revision it links is human-confirmed;
+    # until then it is `fixed_pending_review` (human_review pending)
     kis = {k["id"]: k for k in audit.load_known_issues("0.1.2")}
     for rev_id, e in by_id.items():
         ki = kis[e["known_issues"][0]]
-        assert ki["status"] == "fixed_pending_review" and ki["revision_ids"] == [rev_id] and ki["human_review"] == "pending"
+        assert ki["revision_ids"] == [rev_id]
+        if e["reviewer_status"] == "confirmed":
+            assert (ki["status"], ki["human_review"]) == ("fixed", "confirmed"), ki["id"]
+        else:
+            assert (ki["status"], ki["human_review"]) == ("fixed_pending_review", "pending"), ki["id"]
     # v0.1.1 keeps the issues as they were then
     old = {k["id"]: k for k in audit.load_known_issues("0.1.1")}
     assert all(old[k]["status"] == "open" for k in ("KI-008", "KI-012", "KI-033"))

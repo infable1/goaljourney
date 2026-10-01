@@ -1784,14 +1784,14 @@
       "location": "expected_output.journey.pacing, milestones, achievements[a4]",
       "description": "Pacing says 10 h/week × 22 weeks (220 h) and the message says «в темпе 10 часов в неделю», but estimated tasks total ≈47 h (job-search nodes unestimated); milestone m1 (4 weeks ≈ 40 h of capacity) contains ≈14 h of tasks. Achievement a4 «Первое собеседование» unlocks on completing n14 («20 откликов и 3 собеседования»), i.e. after the third interview.",
       "proposed_revision": "Rebalance milestone dates or explain where the remaining weekly time goes; attach a4 to a node that represents the first interview.",
-      "status": "fixed_pending_review",
+      "status": "fixed",
       "found_by": "agent inspection (confirmed by capacity_mismatch)",
       "triage": "Not changed in v0.1.1: rebalancing the milestone capacity and moving achievement a4 to a first-interview node is a product-content decision for a reviewer. J_MILESTONE_OVERBOOKED does not fire (the problem is under-booking, not over-booking).",
-      "resolution": "Product owner decision 2026-09-30: option B — keep 10 h/week, plan the weekly time the learning tasks leave as job-search time with inspectable estimates, and attach a4 to the first interview. Implemented in dataset v0.1.2 (REV-0.1.2-001: background job-search nodes n17–n19, first-interview node n16, estimates on n14 and n15, pacing notes); the corrected content awaits human review.",
+      "resolution": "Product owner decision 2026-09-30: option B — keep 10 h/week, plan the weekly time the learning tasks leave as job-search time with inspectable estimates, and attach a4 to the first interview. Implemented in dataset v0.1.2 (REV-0.1.2-001: background job-search nodes n17–n19, first-interview node n16, estimates on n14 and n15, pacing notes); the correction was confirmed by the human owner in the REV-0.1.2-001 ledger review (2026-10-01).",
       "revision_ids": [
         "REV-0.1.2-001"
       ],
-      "human_review": "pending"
+      "human_review": "confirmed"
     },
     {
       "id": "KI-009",
@@ -1868,17 +1868,17 @@
       "location": "expected_output.message_to_user",
       "description": "«The December 1 date still works» for a sub-60-minute 10 km, although the user's current pace is unknown (7 km 'feels okay').",
       "proposed_revision": "Ask for the current 7 km time before asserting the date (or hedge: «if your 7 km pace is around X…»); keep the minor_adjustment classification.",
-      "status": "fixed_pending_review",
+      "status": "fixed",
       "found_by": "agent inspection (confirmed by unsupported_feasibility_claim)",
       "triage": "Needs a reviewer decision between asking for the current 7 km time and hedging; the example is otherwise valid.",
-      "resolution": "Product owner decision 2026-09-30: option A — ask for the current 7 km time before judging whether December 1 fits a sub-60 finish. Implemented in dataset v0.1.2 (REV-0.1.2-002); classification minor_adjustment kept; the corrected content awaits human review.",
+      "resolution": "Product owner decision 2026-09-30: option A — ask for the current 7 km time before judging whether December 1 fits a sub-60 finish. Implemented in dataset v0.1.2 (REV-0.1.2-002); classification minor_adjustment kept; the correction was confirmed by the human owner in the REV-0.1.2-002 ledger review (2026-10-01).",
       "revision_ids": [
         "REV-0.1.2-002"
       ],
       "policy_refs": [
         "POL-E"
       ],
-      "human_review": "pending"
+      "human_review": "confirmed"
     },
     {
       "id": "KI-013",
@@ -2305,13 +2305,13 @@
       "location": "input.task.verification_protocol",
       "description": "The input protocol verifies a knowledge task (reading three chapters) only through the written list of ideas; lint warns that no required method fits the task nature (VP_NATURE_MISMATCH, warning). Found when input protocols started to be linted in v0.1.1.",
       "proposed_revision": "Make the follow-up question required (and mention it in the expected output), or accept the list as sufficient evidence of understanding.",
-      "status": "fixed_pending_review",
+      "status": "fixed",
       "found_by": "v0.1.1 input lint (warning)",
-      "resolution": "Product owner decision 2026-09-30: option A — make the follow-up question a required method and ask for its answer in the expected output. Implemented in dataset v0.1.2 (REV-0.1.2-003); the required list of ideas and the medium ceiling are kept; the corrected content awaits human review.",
+      "resolution": "Product owner decision 2026-09-30: option A — make the follow-up question a required method and ask for its answer in the expected output. Implemented in dataset v0.1.2 (REV-0.1.2-003); the required list of ideas and the medium ceiling are kept; the correction was confirmed by the human owner in the REV-0.1.2-003 ledger review (2026-10-01).",
       "revision_ids": [
         "REV-0.1.2-003"
       ],
-      "human_review": "pending"
+      "human_review": "confirmed"
     },
     {
       "id": "KI-034",

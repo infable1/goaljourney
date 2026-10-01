@@ -21,7 +21,8 @@
     "calibration_items_changed": 2,
     "items_with_known_issues": 13,
     "known_issue_links_by_status": {
-      "fixed_pending_review": 16,
+      "fixed": 1,
+      "fixed_pending_review": 15,
       "open": 3
     },
     "human_review_status": {
@@ -255,7 +256,7 @@
       "known_issues": [
         {
           "id": "KI-008",
-          "status": "fixed_pending_review",
+          "status": "fixed",
           "severity": "medium",
           "problem": "E realism / P5 pacing"
         },
