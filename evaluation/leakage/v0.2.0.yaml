@@ -554,56 +554,70 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Tasks sized to very short sessions.
+  note: Medium cross-lingual short-session task-sizing overlap; retain as in-distribution.
 - eval: e2-vprot-01
   train:
   - gj-vprot-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Skill task without video -> here audio of the performance itself (automated template candidate).
+  note: Medium verification-method overlap using a different evidence medium; retain as in-distribution.
 - eval: e2-vprot-02
   train:
   - gj-vprot-004
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Partly user-entered data -> medium ceiling; here an export plus a cash table.
+  note: Medium verification-protocol overlap with partial user-entered evidence; retain as in-distribution.
 - eval: e2-vprot-03
   train:
   - gj-vprot-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Software result checked through a public page the system can fetch.
+  note: Medium objective software-verification overlap; retain as in-distribution.
 - eval: e2-vres-01
   train:
   - gj-vres-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Artefact misses criteria -> rejected with a way forward; the twist is an embedded instruction.
+  note: Medium verification-decision overlap with an embedded instruction; retain as in-distribution.
 - eval: e2-vres-03
   train:
   - gj-vres-002
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Image covers only part of what is needed -> specific request; here under pressure to accept.
+  note: Medium cross-lingual partial-evidence overlap; retain as in-distribution.
 - eval: e2-vres-04
   train:
   - gj-vres-007
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Only the user's word where an export is required -> request it; here the report is detailed and confident.
+  note: Medium evidence-discipline overlap where self-report does not replace required proof; retain as in-distribution.
 - eval: e2-vres-05
   train:
   - gj-vretry-002
@@ -611,8 +625,10 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Retry that still lacks the requested evidence; here a substitute is sent instead.
+  note: Medium cross-lingual retry/evidence overlap with a substitute artifact; retain as in-distribution.
 - eval: e2-vres-06
   train:
   - gj-vretry-003
@@ -620,8 +636,10 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Answers to an issued test graded -> verified, with the wrong answer corrected.
+  note: Medium cross-lingual issued-test verification overlap; retain as in-distribution.
 - eval: e2-route-01
   train:
   - gj-time-003
@@ -629,9 +647,11 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Less time before a fixed date; here nothing can be cut, so the user chooses between more hours, a later date or
     accepting the gap.
+  note: Medium cross-lingual route-adaptation overlap with a fixed deadline and no removable scope; retain as in-distribution.
 - eval: e2-route-02
   train:
   - gj-route-004
