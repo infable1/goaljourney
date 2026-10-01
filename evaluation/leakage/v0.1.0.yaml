@@ -125,10 +125,12 @@ template_overlaps:
   - {eval: ev-j-01, train: [gj-jour-002], strength: none, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
      relation: "Automated candidate: both journeys plan with 8 h/week; different goals (app release vs ceramics shop) and decisions.",
      note: "Automated candidate is coincidental: shared weekly-hours value only, with different goals and decisions; retain as in-distribution."}
-  - {eval: ev-p-01, train: [gj-prog-003], strength: none, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Automated candidate: shared numbers only; gj-prog-003 is goal completion — the real template twin is gj-prog-002 (listed above)."}
-  - {eval: ev-ra-02, train: [gj-feas-006], strength: topic_only, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Same subject (associate-level cloud certification) in a different operation (route adaptation vs feasibility)."}
+  - {eval: ev-p-01, train: [gj-prog-003], strength: none, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Automated candidate: shared numbers only; gj-prog-003 is goal completion — the real template twin is gj-prog-002 (listed above).",
+     note: "Automated candidate is coincidental: shared numerical cues only, while the actual behavioural twin is a different training example; retain as in-distribution."}
+  - {eval: ev-ra-02, train: [gj-feas-006], strength: topic_only, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Same subject (associate-level cloud certification) in a different operation (route adaptation vs feasibility).",
+     note: "Topic-only overlap: same certification subject, but different operation and decision structure; retain as in-distribution."}
 
 seed_overlaps:
   - {seed: sc-pd-001, eval: ev-wr-02, proposed_disposition: change_seed, disposition: open,

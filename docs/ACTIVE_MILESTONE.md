@@ -67,8 +67,9 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   KI-008, KI-012 and KI-033 are `fixed`.
 * v0.1.2 changed one sample item (rv-0.1.0-14), and it has since been re-decided, so all 30 sample
   items are decided on their current content.
-* Task 6 has started: 25 of the 27 v0.1.0 overlaps have a human disposition. Tasks 7–8 have not
-  started, and the milestone is not complete.
+* Task 6 is in progress. Its v0.1.0 part is complete: all 27 v0.1.0 template overlaps have a human
+  disposition. The 100 v0.2.0 overlaps are still `open`. Tasks 7–8 have not started, and the
+  milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -301,7 +302,7 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   status against the v0.1.1 release, so they stay valid unchanged. Separately, the example-level
   review of `gj-jour-001` (rv-0.1.0-14) is `needs_revision` on its v0.1.2 content because of its
   `external_fact_discipline` issue, which is independent of KI-008.
-* **Task 6 (in progress).** On 2026-10-01 `po-reviewer` decided Batch 1 in
+* **Task 6 (in progress; v0.1.0 part complete).** On 2026-10-01 `po-reviewer` decided Batch 1 in
   `evaluation/leakage/v0.1.0.yaml`: 5 strong overlaps are `accept_in_distribution`, retained and
   reported in the in-template evaluation slice:
   * `ev-ra-01` ↔ `gj-time-003`;
@@ -342,8 +343,18 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   * `ev-q-01` ↔ `gj-clar-002`;
   * `ev-j-01` ↔ `gj-jour-002` (candidate).
 
-  All five match `proposed_disposition`. Remaining: 2 of 27 v0.1.0 overlaps (`ev-p-01` ↔
-  `gj-prog-003`, `ev-ra-02` ↔ `gj-feas-006`) and all 100 v0.2.0 overlaps are `open`.
+  All five match `proposed_disposition`. Batch 6 (same day, same disposition) covers the last two:
+  * `ev-p-01` ↔ `gj-prog-003` (coincidental automated candidate);
+  * `ev-ra-02` ↔ `gj-feas-006` (topic-only).
+
+  Both match `proposed_disposition`.
+
+  **The v0.1.0 part is complete.** All 27 template overlaps are `accept_in_distribution`, decided
+  by `po-reviewer`. Six of these decisions differ from a `rewrite_eval_case` proposal, which is kept
+  unchanged. The file's one seed overlap (`sc-pd-001` ↔ `ev-wr-02`, proposed `change_seed`) is not
+  among the 27 and is still `open`.
+
+  **Still open:** all 100 v0.2.0 overlaps.
   The `leakage_dispositions` gate reads the current evaluation version (v0.2.0), so it still fails.
 * **Tasks 7–8 (not started).** The v0.2.0 references are unreviewed. POL-A…F and the licensing
   owners are unconfirmed.
@@ -360,8 +371,8 @@ Acceptance criteria:
   of 30; rv-0.1.0-14 was re-decided on v0.1.2), and none is `awaiting_expert`.
 * **Open:** every ledger entry has a human status (v0.1.1: 33 confirmed, 3 disputed; v0.1.2: 3
   confirmed), but the 3 disputed v0.1.1 corrections are not re-applied yet.
-* **Open:** overlap dispositions (v0.1.0: 25 of 27 decided; v0.2.0: 0 of 100), and the final
-  `make check` and state-file updates at completion.
+* **Open:** overlap dispositions (v0.1.0 template overlaps: 27 of 27 decided; v0.2.0: 0 of 100),
+  and the final `make check` and state-file updates at completion.
 * **N/A in solo mode:** the multi-reviewer criterion, `calibration_agreement`.
 
 Gates (`gj gates`, v0.1.2, solo_owner): 4 of 9 applicable pass (`findings_acknowledged`,
@@ -408,6 +419,7 @@ subagents. It changed no data.
    * the 3 disputed v0.1.1 corrections (REV-0.1.1-002, -003, -011);
    * the example-level `revise` decisions (10 `needs_revision` items, rv-0.1.0-14's
      `external_fact_discipline` issue among them).
-4. **Owner (Task 6):** decide the remaining overlap dispositions: 2 `open` in
-   `evaluation/leakage/v0.1.0.yaml` and 100 in `evaluation/leakage/v0.2.0.yaml`. The agent records
+4. **Owner (Task 6):** decide the 100 `open` overlap dispositions in
+   `evaluation/leakage/v0.2.0.yaml`. The v0.1.0 template overlaps are all decided; its seed overlap
+   `sc-pd-001` ↔ `ev-wr-02` is still `open`. The agent records
    them as given (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
