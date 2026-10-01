@@ -68,8 +68,9 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * v0.1.2 changed one sample item (rv-0.1.0-14), and it has since been re-decided, so all 30 sample
   items are decided on their current content.
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
-  overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes. Tasks
-  7–8 have not started, and the milestone is not complete.
+  overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
+* Task 7 has started: the reference-review mechanism (D-028) is in place, and `e2-long-01` (9 of 106
+  reference outputs) is reviewed. Task 8 has not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -508,8 +509,25 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   `po-reviewer`: 11 strong, 78 medium, 4 topic-only and 7 coincidental. `proposed_disposition` is
   unchanged throughout. `gj leakage` reports 0 overlaps without a human disposition, and the
   `leakage_dispositions` gate now passes.
-* **Tasks 7–8 (not started).** The v0.2.0 references are unreviewed. POL-A…F and the licensing
-  owners are unconfirmed.
+* **Task 7 (in progress).** On 2026-10-01 the owner made two decisions (D-028):
+  * in `solo_owner` mode one registered owner completes the review of a reference output;
+  * the review is stored inside the evaluation case.
+
+  Schema 0.1.3 adds the case-level `reference_review` block. It holds append-only sessions with one
+  hash-bound decision per reference output: `action`, `overall`, `issues` and `notes`, with no
+  criterion ratings. `reference_status` is derived from these decisions. Pipeline 0.4.3 adds:
+  * `gj eval review-reference`, which writes the decisions through the builder;
+  * builder carry-over of the block;
+  * validator checks.
+
+  The evaluation and dataset versions are unchanged. Releases v0.1.1 and v0.1.2 keep their build-time
+  review state, and the v0.1.2 release still rebuilds from its own inputs.
+
+  The first review, recorded as given: `e2-long-01`, all 9 steps `approve` / `excellent`, no issues,
+  no notes, `po-reviewer`, `independent_rating: true` (the AI second look changed nothing). The case
+  is `human_reviewed`. The other 62 cases (97 reference outputs) are `draft_unreviewed`, and
+  `e2-long-02`…`e2-long-06` are next.
+* **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
 `review/review_sample_status_v0.1.2.json`; the
@@ -577,3 +595,10 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
+5. **Owner (Task 7):** review the remaining reference outputs, longitudinal cases first
+   (`e2-long-02`…`e2-long-06`).
+   * The owner rates first; the AI copilot may challenge afterwards.
+   * The agent records the decisions as given with `gj eval review-reference` (`/evaluation` skill),
+     with `--independent-rating no` if any decision changed after the copilot's critique.
+   * Expert-tier cases (`e2-safe-01`, `e2-safe-03`, `e2-comp-07`, `e2-long-06`) need a registered
+     `domain_expert` for their domains.

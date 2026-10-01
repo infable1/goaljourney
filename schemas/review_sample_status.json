@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/review_sample_status.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/review_sample_status.json",
   "title": "Review sample status for a dataset version",
   "description": "Carries the frozen review sample (review_manifest_v0.1.0.json) forward to a later dataset version: what changed per item, which known issues apply, and the human review status. Automated validation never sets a human review status.",
   "type": "object",

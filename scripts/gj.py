@@ -16,6 +16,7 @@
     python scripts/gj.py eval run --predictor reference|naive|model
     python scripts/gj.py eval score --predictions file.jsonl
     python scripts/gj.py eval review-sheet --predictions file.jsonl
+    python scripts/gj.py eval review-reference CASE --reviewer ID --from decisions.yaml --independent-rating yes|no
 
 Every command exits non-zero on failure so it can gate CI.
 """
@@ -171,6 +172,18 @@ def cmd_eval(args):
         return runner.score_file(args.predictions, cases_dir=args.cases, out_dir=args.out)
     if args.eval_cmd == "review-sheet":
         return runner.review_sheet(args.predictions, cases_dir=args.cases, out=args.out)
+    if args.eval_cmd == "review-reference":
+        from evaluation import reference_review as RR
+        case = RR.record(args.case, args.reviewer, RR.load_decision_file(args.from_file),
+                         args.independent_rating == "yes", replace=args.replace)
+        session = case["reference_review"]["sessions"][-1]
+        print(f"Recorded {args.reviewer}'s review of {len(session['units'])} reference output(s) of {args.case} "
+              f"({session['timestamp']}, independent_rating {str(session['independent_rating']).lower()}); "
+              f"reference_status: {case['reference_status']}")
+        for u in session["units"]:
+            print(f"  {u.get('step_id') or args.case}: {u['action']} / {u['overall']}  {u['content_hash'][:12]}…  "
+                  f"issues {len(u['issues'])}")
+        return 0
     return 2
 
 
@@ -337,6 +350,16 @@ def main(argv=None):
     erv.add_argument("--predictions", required=True)
     erv.add_argument("--cases")
     erv.add_argument("--out", required=True)
+    err = es.add_parser("review-reference",
+                        help="record a registered human reviewer's decisions on a case's reference outputs (D-028)")
+    err.add_argument("case", help="evaluation case id, e.g. e2-long-01")
+    err.add_argument("--reviewer", required=True, help="registered human reviewer id (review/reviewers.yaml)")
+    err.add_argument("--from", dest="from_file", required=True,
+                     help="YAML with `units`: step_id (multi-step cases), action, overall, issues, notes")
+    err.add_argument("--independent-rating", required=True, choices=["yes", "no"],
+                     help="no if any decision changed after reading automated findings or an AI-copilot critique")
+    err.add_argument("--replace", action="store_true",
+                     help="record a newer decision for outputs already decided on their current content")
     e.set_defaults(func=cmd_eval)
 
     args = p.parse_args(argv)
@@ -345,6 +368,8 @@ def main(argv=None):
     from generation.generators.providers import ProviderError
     from generation.pipelines.review_store import ReviewError
     from generation.pipelines.revisions import RevisionError
+    from evaluation.builders.build import BuildError
+    from evaluation.reference_review import ReferenceReviewError
     try:
         return args.func(args)
     except BrokenPipeError:
@@ -352,7 +377,8 @@ def main(argv=None):
         import os
         os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
         return 0
-    except (RecordFileError, MissingCredentialsError, ProviderError, ReviewError, RevisionError) as e:
+    except (RecordFileError, MissingCredentialsError, ProviderError, ReviewError, RevisionError, BuildError,
+            ReferenceReviewError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2
 

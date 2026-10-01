@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/review_sample_status.json",
+  "title": "Review sample status for a dataset version",
+  "description": "Carries the frozen review sample (review_manifest_v0.1.0.json) forward to a later dataset version: what changed per item, which known issues apply, and the human review status. Automated validation never sets a human review status.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status_version", "dataset_version", "sample_manifest", "sample_id", "calibration_items", "summary", "items"],
+  "properties": {
+    "status_version": { "const": "1.0" },
+    "dataset_version": { "type": "string" },
+    "sample_manifest": { "type": "string" },
+    "sample_id": { "type": "string" },
+    "calibration_items": { "type": "array", "items": { "type": "string" } },
+    "summary": { "type": "object" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["review_item_id", "example_id", "calibration", "stratum", "sampled_content_hash", "current_content_hash", "changed_since_sampling", "revision_ids", "known_issues", "human_review_status", "human_review_detail"],
+        "properties": {
+          "review_item_id": { "type": "string" },
+          "example_id": { "type": "string" },
+          "calibration": { "type": "boolean" },
+          "stratum": { "type": "string" },
+          "sampled_content_hash": { "type": "string" },
+          "current_content_hash": { "type": "string" },
+          "changed_since_sampling": { "type": "boolean" },
+          "revision_ids": { "type": "array", "items": { "type": "string" } },
+          "known_issues": { "type": "array", "items": { "type": "object" } },
+          "human_review_status": { "enum": ["pending", "approved", "needs_revision", "rejected"] },
+          "human_review_detail": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

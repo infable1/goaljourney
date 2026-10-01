@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/audit_report.json",
+  "title": "Dataset audit report",
+  "description": "Output of `gj audit`: heuristic findings for the targeted audits (Problems 1–9 and extra rules) plus the known-issues register. Findings are advisory review aids, never approvals or rejections.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["report_version", "dataset_version", "rules", "summary", "findings", "known_issues"],
+  "properties": {
+    "report_version": { "const": "1.0" },
+    "dataset_version": { "type": "string" },
+    "rules": { "type": "object" },
+    "summary": { "type": "object" },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "known_issues": { "type": "array", "items": { "$ref": "#/$defs/known_issue" } }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "rule", "problem", "severity", "scope", "record_id", "location", "message", "evidence"],
+      "properties": {
+        "finding_id": { "type": "string", "pattern": "^AF-[a-z0-9_]+-[A-Za-z0-9_.-]+-\\d+$" },
+        "rule": { "type": "string" },
+        "problem": { "type": "string" },
+        "severity": { "enum": ["high", "medium", "low", "info"] },
+        "scope": { "enum": ["expected_output", "contrastive", "input", "eval_reference"] },
+        "record_id": { "type": "string" },
+        "location": { "type": "string" },
+        "message": { "type": "string" },
+        "evidence": { "type": "string" }
+      }
+    },
+    "known_issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "records", "problem", "severity", "description", "proposed_revision", "status", "found_by"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^KI-\\d{3}$" },
+        "records": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "problem": { "type": "string" },
+        "severity": { "enum": ["high", "medium", "low"] },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "proposed_revision": { "type": "string" },
+        "status": {
+          "description": "open; fixed_pending_review (corrected in a later dataset version, human confirmation pending); resolved_by_policy (a policy decision makes the content acceptable); fixed (a human confirmed the fix); wont_fix; disputed.",
+          "enum": ["open", "fixed_pending_review", "resolved_by_policy", "fixed", "wont_fix", "disputed"]
+        },
+        "found_by": { "type": "string" },
+        "resolution": { "type": "string" },
+        "triage": { "type": "string" },
+        "revision_ids": { "type": "array", "items": { "type": "string" } },
+        "policy_refs": { "type": "array", "items": { "type": "string" } },
+        "human_review": { "enum": ["pending", "confirmed", "disputed"] }
+      }
+    }
+  }
+}

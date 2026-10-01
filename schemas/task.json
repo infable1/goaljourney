@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/task.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/task.json",
   "title": "Task",
   "description": "An operational task: a concrete action with an observable expected result. The verification protocol is optional on the entity (a task can be sent to the model to have a protocol designed) but required wherever the model outputs new tasks (task_generation, full journey nodes).",
   "type": "object",

@@ -84,7 +84,10 @@ def test_v020_case_type_shapes():
     assert all("steps" not in c for c in by_type["atomic"])
     assert all(2 <= len(c["steps"]) <= 3 for c in by_type["composite"])
     assert all(5 <= len(c["steps"]) <= 12 for c in by_type["longitudinal"])
-    assert all(c["reference_status"] == "draft_unreviewed" for c in CASES2)
+    # reference_status is derived from the recorded human reference reviews (D-028): a case without one is a draft
+    from evaluation import reference_review as RR
+    assert all(c["reference_status"] == RR.derive_status(c) for c in CASES2)
+    assert all(c["reference_status"] == "draft_unreviewed" for c in CASES2 if "reference_review" not in c)
 
 
 REQUIRED_STRATA = {"ru", "en", "mixed_language", "safety", "verification", "route_adaptation", "memory", "time_change",

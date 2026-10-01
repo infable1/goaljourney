@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/goal_clarification.json",
+  "title": "Operation output: goal_clarification (Type A)",
+  "description": "Only the next useful questions. Each question names what it targets (controlled vocabulary) and how the answer changes the plan. If nothing material is missing, ready_to_plan=true and no questions are asked.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "response_language", "message_to_user", "ready_to_plan", "questions"],
+  "properties": {
+    "type": { "const": "goal_clarification" },
+    "response_language": { "$ref": "common.json#/$defs/language" },
+    "message_to_user": { "$ref": "common.json#/$defs/message" },
+    "ready_to_plan": { "type": "boolean" },
+    "questions": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question", "targets", "impact"],
+        "properties": {
+          "question": { "$ref": "common.json#/$defs/short_text" },
+          "targets": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": { "$ref": "common.json#/$defs/clarification_target" }
+          },
+          "impact": {
+            "description": "Concise statement of what the answer changes in the plan (not hidden reasoning).",
+            "type": "string", "minLength": 10, "maxLength": 300
+          },
+          "answer_options": {
+            "type": "array",
+            "maxItems": 6,
+            "items": { "$ref": "common.json#/$defs/short_text" }
+          }
+        }
+      }
+    },
+    "known_context_used": {
+      "description": "Short list of facts already known and therefore not asked again.",
+      "type": "array",
+      "maxItems": 8,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "default_assumptions": {
+      "description": "What the AI will assume if the user skips the questions.",
+      "type": "array",
+      "maxItems": 5,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" }
+  }
+}

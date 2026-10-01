@@ -391,3 +391,22 @@ Set `governance.mode: multi_reviewer` when there really are several independent 
   (Cohen's kappa, criterion-level agreement, severity disagreement).
 
 Switching modes never rewrites the review log; it changes which gates apply.
+
+## 18. Evaluation reference outputs (D-028)
+
+Each evaluation case has reference outputs: one per atomic case, one per step of a composite or
+longitudinal case. A reference output is one acceptable answer that self-tests the automated checks.
+It is not the only correct answer. Reviewing one means judging whether it is acceptable. The
+automated checks still decide what they measure.
+
+* **Same principle as §14.** In `solo_owner` mode you alone complete the review; there is no second
+  reviewer. Rate first; the AI copilot may challenge afterwards. If you change a decision after that,
+  record it with `--independent-rating no`. Expert-tier cases (§16) still need a qualified domain
+  expert.
+* **Per reference output, no criterion ratings.** Give `action` (`approve`, `revise`, `reject`),
+  `overall` (`excellent`/`acceptable`, `needs_revision`, `incorrect`) and, if any, issues and notes.
+  The decision is bound to the reference's content hash.
+* **Recording:** `gj eval review-reference <case> --reviewer <id> --from <file> --independent-rating
+  yes|no`. The command writes the decisions into the case file (`reference_review`).
+* **Status:** the case becomes `human_reviewed` only when every reference output has your decision on
+  its current content. A partial review leaves it `draft_unreviewed`.

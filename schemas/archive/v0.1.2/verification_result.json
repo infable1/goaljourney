@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/verification_result.json",
+  "title": "Operation output: verification_result (Types F, G)",
+  "description": "Decision on submitted evidence against the task's protocol. Insufficient evidence => needs_more_evidence (not rejection). 'verified' requires every pass criterion to be met. Self-report-only evidence caps confidence at 'limited'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "response_language", "message_to_user", "task_id", "attempt", "status", "confidence", "evidence_basis", "criteria_results", "reason", "additional_evidence", "decision_summary"],
+  "properties": {
+    "type": { "const": "verification_result" },
+    "response_language": { "$ref": "common.json#/$defs/language" },
+    "message_to_user": { "$ref": "common.json#/$defs/message" },
+    "task_id": { "$ref": "common.json#/$defs/id" },
+    "attempt": { "type": "integer", "minimum": 1, "maximum": 10 },
+    "status": { "type": "string", "enum": ["verified", "needs_more_evidence", "rejected"] },
+    "confidence": { "type": "string", "enum": ["high", "medium", "low", "limited"] },
+    "evidence_basis": {
+      "description": "objective: artifacts/data/tests; mixed: objective + self-report; self_report: only the user's word.",
+      "type": "string", "enum": ["objective", "mixed", "self_report"]
+    },
+    "criteria_results": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion", "result"],
+        "properties": {
+          "criterion": { "$ref": "common.json#/$defs/short_text" },
+          "result": { "type": "string", "enum": ["met", "not_met", "unclear"] },
+          "note": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "evidence_assessment": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "supports"],
+        "properties": {
+          "evidence_id": { "$ref": "common.json#/$defs/id" },
+          "supports": { "$ref": "common.json#/$defs/short_text" },
+          "limitations": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "reason": { "$ref": "common.json#/$defs/text" },
+    "additional_evidence": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["request", "why"],
+        "properties": {
+          "request": { "$ref": "common.json#/$defs/short_text" },
+          "why": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "contradictions": {
+      "description": "Disagreements the navigator noticed between what the user claims and what the evidence shows (POL-B). A result with contradictions cannot be verified.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_ids", "user_claim", "evidence_shows"],
+        "properties": {
+          "evidence_ids": { "$ref": "common.json#/$defs/id_list" },
+          "user_claim": { "$ref": "common.json#/$defs/short_text" },
+          "evidence_shows": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "next_step": { "$ref": "common.json#/$defs/short_text" },
+    "decision_summary": { "$ref": "decision_summary.json" }
+  }
+}

@@ -78,8 +78,32 @@ python3 scripts/gj.py eval review-sheet --predictions evaluation/reports/<run>/p
 - **Committing.** Reports are git-ignored; summarise the results in the milestone docs instead.
 - **Prompt parity.** The navigator system prompt used for eval (`configs/evaluation.yaml`) must be
   the one used to build the SFT export. If they differ, say so in the report.
-- **References.** They are `draft_unreviewed`. A model disagreeing with a reference is a finding for
-  a human, not automatically a model error.
+- **References.** A reference is one acceptable answer, not the only correct one. Most are still
+  `draft_unreviewed`. A model disagreeing with a reference is a finding for a human, not automatically
+  a model error.
+
+## Recording a human review of reference outputs (D-028)
+
+The owner rates first; the agent only records what the owner decided. Write their decisions to a
+git-ignored file, e.g. `scratch/review/<case>_<reviewer>.yaml`:
+
+```yaml
+units:
+  - {step_id: s1, action: approve, overall: excellent, issues: [], notes: ''}   # omit step_id for an atomic case
+```
+
+```bash
+python3 scripts/gj.py eval review-reference <case> --reviewer <id> --from <file> --independent-rating yes|no
+```
+
+The command does the following:
+- it refuses an unregistered or non-human reviewer, a language gap, an expert-tier case without a
+  matching `domain_expert`, and `multi_reviewer` mode;
+- it binds each decision to its reference output's content hash;
+- it writes the case file through the builder, so `gj eval build-cases --check` stays clean.
+
+Use `--independent-rating no` if any decision changed after an AI-copilot critique. Never invent
+criterion ratings, issues or notes.
 
 ## Scoring existing predictions
 

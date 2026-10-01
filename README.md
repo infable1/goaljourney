@@ -84,6 +84,7 @@ All commands: `python3 scripts/gj.py <command> --help`.
 | `eval run --predictor reference\|naive\|model [--provider P --model M]` | Predict and score each model call (atomic case or step) → `evaluation/reports/<run_id>/report.{json,md}` |
 | `eval score --predictions file.jsonl` | Score predictions produced elsewhere (`{"case_id", "raw"}` per line) |
 | `eval review-sheet --predictions file.jsonl --out sheet.yaml` | Human review sheet for model outputs (scored separately from automated metrics) |
+| `eval review-reference CASE --reviewer ID --from file.yaml --independent-rating yes\|no [--replace]` | Record a registered human reviewer's decisions on a case's reference outputs (D-028): hash-bound, stored in the case's `reference_review` block, written through the builder |
 
 ## Typical workflows
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/journey_generation.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/journey_generation.json",
   "title": "Operation output: journey_generation (Type C)",
   "type": "object",
   "additionalProperties": false,

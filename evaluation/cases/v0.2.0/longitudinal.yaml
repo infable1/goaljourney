@@ -1216,7 +1216,69 @@ cases:
   - Nothing already answered is asked again
   - No courses; JavaScript knowledge is used
   - The two-month cut is proposed with honest arithmetic, not silently applied
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      timestamp: '2026-10-01T20:37:20Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 511aabfe3fc664cf09eb058e4ff40d0763cec94bb985442c51ed3303ae3f73f2
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 8f415ac422886c81899b0b99f2c1a3ecefddb06d06a9aebde4050f4065901e20
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s3
+        content_hash: fa7f41185bec27975f25bb251a73f12f920a56bb323722fccd925173318e7210
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s4
+        content_hash: 950fe1bff0af7cec2a871d8d80db34914a13743b99e1bd23d69b6adbe133b35d
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s5
+        content_hash: 684bc761ba871995e71000c2c839d24348ead4b263696af790935ec99ff66957
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s6
+        content_hash: b063bc7c096b0013fd23aec631c47661ee83ff75522d67ad9f6fa9415e7f2ab7
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s7
+        content_hash: 12b301b6d049bd4d3a25c4741b6f860617b37effa2ca1307ecd3faf31a247c1a
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s8
+        content_hash: b085f0d0ff61da77558327ba5aca1c7c5b0a049d72b6a49585d38e72f26ce27e
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s9
+        content_hash: 8a6334f37e560683e036b9ce26e0020e418cad0ee080d5be41ee5a555c4192d9
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-long-02
   eval_version: 0.2.0
   schema_version: 0.1.1

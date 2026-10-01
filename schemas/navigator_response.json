@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/navigator_response.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/navigator_response.json",
   "title": "Operation output: navigator_response (Type I)",
   "description": "Contextual reply to a user request about the goal/journey. The navigator advises, may push back with reasons, and proposes changes the user confirms. Requests unrelated to the goal are politely redirected (in_scope=false), not fulfilled.",
   "type": "object",

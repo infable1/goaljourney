@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/review_manifest.json",
+  "title": "Human review sample manifest",
+  "description": "Deterministic sample of examples selected for rigorous human review (gj review sample). Regenerating with the same pool, audit findings and config yields byte-identical content.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "sample_id", "dataset_version", "generated_by", "seed", "pool", "sample_size",
+               "strata", "selection_order", "coverage", "coverage_repairs", "calibration", "inputs", "items"],
+  "properties": {
+    "manifest_version": { "const": "1.0" },
+    "sample_id": { "type": "string" },
+    "dataset_version": { "type": "string" },
+    "generated_by": { "type": "string" },
+    "seed": { "type": "integer" },
+    "pool": {
+      "type": "object",
+      "required": ["size", "fingerprint"],
+      "properties": { "size": { "type": "integer" }, "fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" } }
+    },
+    "sample_size": { "type": "integer", "minimum": 1 },
+    "strata": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "share", "count", "rationale"],
+        "properties": { "name": { "type": "string" }, "share": { "type": "number" }, "count": { "type": "integer" },
+                        "rationale": { "type": "string" } }
+      }
+    },
+    "selection_order": { "type": "array", "items": { "type": "string" } },
+    "coverage": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+    "uncovered": { "type": "array", "items": { "type": "string" } },
+    "coverage_repairs": { "type": "array", "items": { "type": "object" } },
+    "calibration": {
+      "type": "object",
+      "required": ["size", "items", "rationale"],
+      "properties": { "size": { "type": "integer" }, "items": { "type": "array", "items": { "type": "string" } },
+                      "rationale": { "type": "string" } }
+    },
+    "inputs": { "type": "object" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["review_item_id", "example_id", "content_hash", "source_file", "task_type", "language",
+                     "input_language", "safety_category", "tier", "required_languages", "required_expert_domains",
+                     "stratum", "selection_reason", "risk_score", "coverage", "calibration"],
+        "properties": {
+          "review_item_id": { "type": "string", "pattern": "^rv-\\d+\\.\\d+\\.\\d+-\\d{2}$" },
+          "example_id": { "type": "string" },
+          "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "source_file": { "type": "string" },
+          "task_type": { "type": "string" },
+          "behavior": { "type": "array", "items": { "type": "string" } },
+          "language": { "type": "string" },
+          "input_language": { "type": "string" },
+          "safety_category": { "type": "string" },
+          "tier": { "enum": ["human_review_required", "expert_review_required"] },
+          "required_languages": { "type": "array", "items": { "type": "string" } },
+          "required_expert_domains": { "type": "array", "items": { "type": "string" } },
+          "stratum": { "type": "string" },
+          "selection_reason": { "type": "string" },
+          "risk_score": { "type": "integer" },
+          "coverage": { "type": "array", "items": { "type": "string" } },
+          "calibration": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

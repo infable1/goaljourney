@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.2/behavioural_scenarios.json",
+  "title": "Behavioural scenario registry",
+  "description": "Scenario groups describe the underlying behavioural scenario — the situation, the decisive condition and the decision the navigator should take — not the topic. Training examples and evaluation cases reference these ids; training and evaluation never share an id or a decision pattern (operation|trigger|condition|decision).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_version", "dataset_version", "scenarios"],
+  "properties": {
+    "registry_version": { "const": "1.0" },
+    "dataset_version": { "type": "string" },
+    "note": { "type": "string" },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "side", "operation", "trigger", "condition", "decision", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^bs-[a-z0-9-]+$" },
+          "side": { "enum": ["train", "eval"] },
+          "operation": { "type": "string" },
+          "trigger": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+          "condition": { "type": "string", "pattern": "^[a-z0-9_+]+$" },
+          "decision": { "type": "string", "pattern": "^[a-z0-9_+]+$" },
+          "description": { "type": "string", "minLength": 10 }
+        }
+      }
+    }
+  }
+}

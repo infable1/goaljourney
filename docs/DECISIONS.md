@@ -209,6 +209,42 @@ cases are scored per teacher-forced step, and a case passes only if all its step
 generated YAML is never edited by hand.
 *Source:* EVALUATION_V0.2_DESIGN §6. *Status:* confirmed by product owner 2026-09-28.*
 
+**D-028 — Evaluation reference outputs are reviewed under solo-owner governance, and the review is stored
+in the case.** This decision is specific to the human review of evaluation reference outputs
+(Milestone 1.7, task 7). It applies D-026 to them and changes nothing else in D-026: the review of
+training examples, the review log and the release gates are unaffected.
+* **Who decides.** In `solo_owner` mode one registered human owner completes the review of a reference
+  output; no second reviewer is required. The owner judges first. The AI copilot may challenge
+  afterwards, but it never records a decision and never counts as a reviewer or an expert. A decision
+  changed after automated findings or AI critique is recorded with `independent_rating: false`.
+* **Expert tier unchanged.** A case in the D-026 expert tier needs a registered `domain_expert` for its
+  domains; the owner's review alone does not complete it.
+* **Multi-reviewer mode.** Reference review is defined for `solo_owner` only. In `multi_reviewer` mode
+  the command refuses to record, and one recorded review never stands for reviewer agreement.
+* **What a review means.** Automated checks still decide what they measure. The review is the human
+  quality judgement of whether a reference is an acceptable answer. A reviewed reference is not the
+  only correct answer: a model that disagrees with it is a finding for a human.
+* **Storage.** The review lives inside the case, in a `reference_review` block (schema 0.1.3), not in a
+  separate ledger. The block holds `metadata_schema_version` and append-only sessions:
+  * each session has `reviewer_id`, `timestamp`, `governance_mode` and `independent_rating`;
+  * it has one decision per reference output (the case's own, or one per step): `content_hash`,
+    `action` (`approve`/`revise`/`reject`), `overall` (`excellent`/`acceptable`/`needs_revision`/
+    `incorrect`), `issues` and `notes`;
+  * there are no criterion-level ratings.
+
+  Decisions are recorded only with `gj eval review-reference`. `gj eval build-cases` carries the block
+  over when it regenerates the cases, and refuses to render if a recorded review would be dropped.
+* **Status.** `reference_status` is derived. It is `human_reviewed` only when every reference output
+  of the case has a decision on its current content hash. A partial review, or a review of content
+  that has since changed, leaves it `draft_unreviewed`.
+* **Versions.** Review metadata is not evaluation content, so it changes neither `evaluation_version`
+  nor `dataset_version`. A release keeps the review state it was built with, and rebuilding it uses the
+  reviews as they stood then (as for the review status of training rows). The case's `schema_version`
+  stays its model input/output contract; the block names the schema version that defines it.
+
+*Source:* `schemas/eval_case.json` (schema 0.1.3), `evaluation/reference_review.py`,
+`evaluation/builders/build.py` (pipeline 0.4.3). *Status:* directed by product owner 2026-10-01.*
+
 ## Engineering process
 
 **D-020 — The repository is the durable project state.** State lives in `docs/PROJECT_STATE.md`,

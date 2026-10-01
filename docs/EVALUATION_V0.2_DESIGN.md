@@ -23,8 +23,13 @@ current set, for two reasons found in the Milestone 1.5 audit:
    every case and step was also reviewed by hand against all 92 training scenarios (section 7).
 3. **Scenario-level isolation.** Training and evaluation never share a scenario group. Each case
    has exactly one group, used by no other case.
-4. **References are drafts.** Every `reference_output` has `reference_status: draft_unreviewed`.
-   It exists to self-test the checks. It is not a gold answer until two reviewers approve it.
+4. **References are acceptable answers, reviewed by a human (D-028).** A `reference_output` is one
+   acceptable answer, used to self-test the checks; it is never the only correct answer. A case
+   starts as `reference_status: draft_unreviewed`. The owner's decisions are recorded in the case's
+   `reference_review` block with `gj eval review-reference`: one per reference output, bound to its
+   content hash. In `solo_owner` mode one registered human owner completes the review, and no second
+   reviewer is required. The case becomes `human_reviewed` only when every reference output has a
+   decision on its current content.
 5. **Checks measure, people judge.** Automated checks cover what can be decided mechanically:
    schema, lint codes, numbers, dates, ids, states. Quality judgements are listed in
    `human_review_focus`.
@@ -192,7 +197,10 @@ Shared structure is written once there: check bundles, decision summaries and te
 `gj eval build-cases` renders the YAML, the seed file, the eval side of the scenario registry and
 the `cases:` block of `evaluation/leakage/v0.2.0.yaml`. The overlap review in that file is maintained
 by hand and preserved. `gj eval build-cases --check` (part of `make check` and the tests) fails if
-the committed YAML drifts from the builder, so the YAML is never edited by hand.
+the committed YAML drifts from the builder, so the YAML is never edited by hand. Recorded reference
+reviews (`reference_review`) are human decisions, not authored content. The builder reads them from
+the committed case files, carries them over and derives `reference_status` from them. It refuses to
+render if a review's case is no longer built.
 
 ## 7. Leakage: what was checked and what it shows
 
@@ -240,7 +248,9 @@ the training data. The review is a proposal, not an independence certificate.
   single failure moves a rate by 20 points.
 * **Same author.** Cases, references and training data come from one author. The next batch should
   be written by people who have not seen the training set.
-* **References unreviewed.** All 106 references are `draft_unreviewed`.
+* **References mostly unreviewed.** Human review of the 106 reference outputs started on 2026-10-01
+  (D-028); `gj validate` reports how many have a decision on their current content. Cases not fully
+  reviewed stay `draft_unreviewed`.
 * **No semantic similarity model.** There is no embedding or translation-based similarity, so
   cross-lingual paraphrases are found only by the human review.
 * **Teacher forcing** measures each step in isolation. It does not measure how errors compound in
@@ -255,4 +265,5 @@ python scripts/gj.py validate                       # validates v0.1.0 (frozen) 
 python scripts/gj.py eval run --predictor reference # must pass 106/106
 python scripts/gj.py eval run --predictor naive     # must fail (0/106 today)
 python scripts/gj.py leakage                        # three families, reviewed overlaps
+python scripts/gj.py eval review-reference CASE --reviewer ID --from decisions.yaml --independent-rating yes|no
 ```

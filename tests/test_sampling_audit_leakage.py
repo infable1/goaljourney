@@ -278,10 +278,14 @@ def test_existing_release_is_idempotent(monkeypatch):
     before = {k: p.read_bytes() for k, p in paths.items()}
     # Release rows snapshot each row's review status at build time, and human decisions recorded after the
     # release legitimately change what a rebuild selects. Rebuilding from the release's own inputs (the review
-    # log as it stood when the release was built) must reproduce it exactly.
+    # log, and the evaluation reference reviews (D-028), as they stood when the release was built) must
+    # reproduce it exactly.
+    from evaluation import reference_review as RR
     built = datetime.fromisoformat(load_json(paths["manifest"])["created_at"])
     at_release = [e for e in load_review_events() if datetime.fromisoformat(e["timestamp"].replace("Z", "+00:00")) <= built]
     monkeypatch.setattr(split, "load_review_events", lambda: at_release)
+    live_cases = split.load_eval_cases
+    monkeypatch.setattr(split, "load_eval_cases", lambda d: [(RR.as_of(c, built), p) for c, p in live_cases(d)])
     assert split.build_release() == 0
     monkeypatch.undo()
     split.build_release()   # live review state: identical data is a no-op, different data is refused

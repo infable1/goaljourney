@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/review_manifest.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/review_manifest.json",
   "title": "Human review sample manifest",
   "description": "Deterministic sample of examples selected for rigorous human review (gj review sample). Regenerating with the same pool, audit findings and config yields byte-identical content.",
   "type": "object",

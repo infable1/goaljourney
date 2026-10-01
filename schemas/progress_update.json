@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/progress_update.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/progress_update.json",
   "title": "Operation output: progress_update (levels & achievements)",
   "description": "Goal progress, goal-specific level and achievements are derived from verified progress only. App activity (streaks, logins) never changes level or unlocks achievements.",
   "type": "object",

@@ -25,7 +25,11 @@ Design: `docs/EVALUATION_V0.2_DESIGN.md`. Workflow: `/evaluation`.
 - **Multi-step cases are teacher-forced.** Each step's input contains the *reference* results of
   earlier steps: earlier replies as assistant turns, and confirmed changes applied to `goal`,
   `journey` and `decision_log`. Give each step its own `step_pattern`.
-- **References are drafts** (`reference_status: draft_unreviewed`), not gold answers.
+- **References are acceptable answers, not the only correct one.** Human review (D-028) is stored
+  in the case's `reference_review` block and recorded only with `gj eval review-reference`, never by
+  hand. In `solo_owner` mode one registered owner completes it. `reference_status` is derived: it is
+  `human_reviewed` only when every reference output has a decision on its current content hash. The
+  builder carries the block over, so never strip it.
 - **Every unit** needs `schema_valid`, `semantic_clean` and a `language` check, plus checks that the
   naive baseline fails.
 - **Leakage metadata** in `evaluation/leakage/v<ver>.yaml`:

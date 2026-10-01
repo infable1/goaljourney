@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/review_event.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/review_event.json",
   "title": "Human review event (review log v0.2)",
   "description": "One line of the append-only, hash-chained review log data/reviewed/review_events.jsonl. A decision applies only to the exact content it names (content_hash); the reviewed content is preserved under data/reviewed/snapshots/<content_hash>.json.",
   "type": "object",

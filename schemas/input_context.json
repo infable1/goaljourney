@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/input_context.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/input_context.json",
   "title": "Model input context",
   "description": "The single request object the app sends to the navigator model. `operation` selects the output contract. Everything except `operation` and `today` is optional: send only what the operation needs.",
   "type": "object",

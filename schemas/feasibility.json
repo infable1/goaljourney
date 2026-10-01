@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/feasibility.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/feasibility.json",
   "title": "Operation output: feasibility_assessment (Type B)",
   "description": "Qualitative, argued feasibility judgement. Not a prediction engine. The user makes the final decision; adjustments are options, not orders.",
   "type": "object",

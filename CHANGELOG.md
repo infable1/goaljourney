@@ -3,6 +3,59 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-10-01 — Evaluation reference review, stored in the cases (schema 0.1.3, pipeline 0.4.3; no dataset or evaluation version change)
+
+The product owner decided how evaluation reference outputs are reviewed (Milestone 1.7, task 7; D-028):
+under `solo_owner` governance one registered owner completes the review, and the review is stored inside
+the evaluation case.
+
+- **Schema 0.1.3.** `schemas/eval_case.json` gains an optional case-level `reference_review` block:
+  - `metadata_schema_version`, plus append-only `sessions`;
+  - each session has `reviewer_id`, `timestamp`, `governance_mode` (`solo_owner`) and `independent_rating`;
+  - each session has one decision per reference output: `step_id` for multi-step cases, the output's
+    `content_hash`, `action` approve|revise|reject, `overall` excellent|acceptable|needs_revision|incorrect,
+    `issues` and `notes`;
+  - the action, overall and issues must be consistent;
+  - there are no criterion ratings.
+
+  The `reference_status` description no longer requires two reviewers. The 0.1.2 schemas are archived
+  byte-identical in `schemas/archive/v0.1.2/`, records stay at `schema_version` 0.1.1, and no lint rule
+  changed. A reviewed case's envelope is validated against the block's `metadata_schema_version`; the
+  case's own `schema_version` stays its model input/output contract.
+- **Pipeline 0.4.3.**
+  - `gj eval review-reference CASE --reviewer --from FILE --independent-rating yes|no [--replace]` records
+    one session. It refuses the following:
+    - unregistered, non-human or inactive reviewers;
+    - a language gap;
+    - an expert-tier case without a matching `domain_expert`;
+    - `multi_reviewer` mode;
+    - unknown or duplicate steps, or a given content hash;
+    - generated files that drift from the builder.
+  - It binds each decision to the reference output's current hash and writes the case file through the
+    builder.
+  - `gj eval build-cases` carries recorded reviews over, derives `reference_status`, and refuses to render
+    if a review's case is no longer built.
+  - `gj validate` checks reviewers, units, session order and the derived status, and reports how many
+    reference outputs are decided.
+- **Status semantics.** `human_reviewed` means every reference output has a decision on its current
+  content. A partial or stale review stays `draft_unreviewed`. A reviewed reference is still one acceptable
+  answer, not the only correct one.
+- **Releases unchanged.** Review metadata is not evaluation content, so neither `evaluation_version` nor
+  `dataset_version` changes. Releases keep their build-time review state.
+  `test_existing_release_is_idempotent` now rebuilds a release from the reference reviews as they stood
+  at build time, as it already did for the review log; v0.1.2 still reproduces byte for byte.
+- **Recorded:** the owner's review of `e2-long-01`, recorded as given:
+  - all 9 steps `approve` / `excellent`;
+  - no issues or notes;
+  - `po-reviewer`, `independent_rating: true` (the AI second look changed nothing).
+
+  The case is `human_reviewed`, with 9 of 106 reference outputs decided. No reference output, check,
+  input or other case changed.
+- Docs: DECISIONS (D-028), EVALUATION_V0.2_DESIGN §1, §6, §8 and §9, HUMAN_REVIEW_GUIDE §18, the
+  evaluation rule and skill, README, PROJECT_STATE and ACTIVE_MILESTONE. Tests:
+  `tests/test_reference_review.py` (21). `test_v020_case_type_shapes` now asserts the derived status
+  instead of "every case is a draft".
+
 ## 2026-09-30 — Dataset v0.1.2: owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2; no schema or evaluation version change)
 
 The product owner decided the three open known issues (Milestone 1.7, task 5): KI-008 option B, KI-012 option A

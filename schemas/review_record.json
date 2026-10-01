@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.2/review_record.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/review_record.json",
   "title": "Human review record",
   "description": "One line of the append-only review log. Approval is valid only while the example's content_hash still matches.",
   "type": "object",
