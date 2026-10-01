@@ -1074,80 +1074,106 @@ template_overlaps:
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Ready to plan; here once facts accumulated over three turns.
+  note: 'Accepted as in-distribution overlap: planning begins after the necessary facts have been accumulated across multiple
+    turns.'
 - eval: e2-long-01/s5
   train:
   - gj-time-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Remaining work exceeds capacity -> cut scope, offer options; here the goal date itself is cut by the user.
+  note: 'Accepted as in-distribution overlap: when remaining work exceeds capacity, scope is reduced and options are considered;
+    here the user cuts the goal date.'
 - eval: e2-long-01/s6
   train:
   - gj-task-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Session-sized hands-on tasks for an experienced programmer.
+  note: 'Accepted as in-distribution overlap: hands-on work is divided into session-sized tasks for an experienced programmer.'
 - eval: e2-long-01/s8
   train:
   - gj-time-002
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: More weekly hours; here used to restore trimmed depth rather than to move milestones.
+  note: 'Accepted as in-distribution overlap: increased weekly capacity is used to restore trimmed depth rather than move
+    milestones.'
 - eval: e2-long-01/s9
   train:
   - gj-daily-001
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Day plan finishing one block and starting the next.
+  note: 'Accepted as in-distribution overlap: the daily plan completes one work block and begins the next.'
 - eval: e2-long-02/s1
   train:
   - gj-clar-006
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Ask time and starting material.
+  note: 'Accepted as in-distribution overlap: clarification asks for the available time and the starting material before planning.'
 - eval: e2-long-02/s5
   train:
   - gj-time-001
   strength: medium
   cross_lingual: true
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Small shortfall shown, options offered, goal date confirmed.
+  note: 'Accepted as in-distribution overlap: a small capacity shortfall leads to explicit options and confirmation of the
+    goal date.'
 - eval: e2-long-02/s6
   train:
   - gj-daily-002
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Due rehearsal planned on the confirmed earlier date.
+  note: 'Accepted as in-distribution overlap: a due rehearsal is prioritized and planned on the confirmed earlier date.'
 - eval: e2-long-03/s2
   train:
   - gj-vres-003
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: Criterion not met in the evidence -> rejected; the twist is out-of-window rows.
+  note: 'Accepted as in-distribution overlap: evidence that misses a criterion leads to rejection, with the case-specific
+    twist of out-of-window rows.'
 - eval: e2-long-03/s4
   train:
   - gj-nav-002
   strength: medium
   cross_lingual: false
   proposed_disposition: accept_in_distribution
-  disposition: open
+  disposition: accept_in_distribution
+  decided_by: po-reviewer
   relation: User declines the checks -> labelled self-report offered with confirmation.
+  note: 'Accepted as in-distribution overlap: when the user declines the checks, a self-report classification is offered with
+    confirmation.'
 - eval: e2-long-03/s5
   train:
   - gj-prog-002
