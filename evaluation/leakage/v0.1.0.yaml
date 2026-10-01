@@ -110,16 +110,21 @@ template_overlaps:
   - {eval: ev-v-01, train: [gj-vprot-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
      relation: "Writing task -> artifact review against task-specific criteria.",
      note: "Medium writing-artifact verification overlap; retain as in-distribution."}
-  - {eval: ev-t-01, train: [gj-task-001, gj-task-003], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Break a node into short-session tasks with evidence of real demand / hands-on work."}
-  - {eval: ev-wr-01, train: [gj-web-004, gj-web-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Local permits/regulations decide the route -> research with specific facts to verify."}
-  - {eval: ev-l-01, train: [gj-lang-002, gj-nav-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Predominantly English message with a Russian word -> answer in English; explain a task the user questions."}
-  - {eval: ev-q-01, train: [gj-clar-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Career-move clarification where experience and weekly time are already known and must not be re-asked (found by the automated template layer)."}
-  - {eval: ev-j-01, train: [gj-jour-002], strength: none, proposed_disposition: accept_in_distribution, disposition: open,
-     relation: "Automated candidate: both journeys plan with 8 h/week; different goals (app release vs ceramics shop) and decisions."}
+  - {eval: ev-t-01, train: [gj-task-001, gj-task-003], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Break a node into short-session tasks with evidence of real demand / hands-on work.",
+     note: "Medium task-decomposition overlap; retain as in-distribution and report in the task-planning slice."}
+  - {eval: ev-wr-01, train: [gj-web-004, gj-web-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Local permits/regulations decide the route -> research with specific facts to verify.",
+     note: "Medium cross-source external-rule research overlap; retain as in-distribution and report in the research slice."}
+  - {eval: ev-l-01, train: [gj-lang-002, gj-nav-001], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Predominantly English message with a Russian word -> answer in English; explain a task the user questions.",
+     note: "Medium cross-lingual language-handling overlap; retain as in-distribution."}
+  - {eval: ev-q-01, train: [gj-clar-002], strength: medium, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Career-move clarification where experience and weekly time are already known and must not be re-asked (found by the automated template layer).",
+     note: "Medium clarification overlap where known context should not be re-asked; retain as in-distribution."}
+  - {eval: ev-j-01, train: [gj-jour-002], strength: none, proposed_disposition: accept_in_distribution, disposition: accept_in_distribution, decided_by: po-reviewer,
+     relation: "Automated candidate: both journeys plan with 8 h/week; different goals (app release vs ceramics shop) and decisions.",
+     note: "Automated candidate is coincidental: shared weekly-hours value only, with different goals and decisions; retain as in-distribution."}
   - {eval: ev-p-01, train: [gj-prog-003], strength: none, proposed_disposition: accept_in_distribution, disposition: open,
      relation: "Automated candidate: shared numbers only; gj-prog-003 is goal completion — the real template twin is gj-prog-002 (listed above)."}
   - {eval: ev-ra-02, train: [gj-feas-006], strength: topic_only, proposed_disposition: accept_in_distribution, disposition: open,
