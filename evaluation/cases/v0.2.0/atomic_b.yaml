@@ -122,7 +122,28 @@ cases:
       what_changed: Task not accepted yet.
       why: Two criteria are clearly not met in the text.
       impact: One revision of the page completes the task.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:52:42Z'
+      governance_mode: solo_owner
+      independent_rating: false
+      units:
+      - content_hash: 3bece6fff56b7428569dc1cc0cdaa44123757129a05b829bf6c984cdd6298743
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: minor
+          description: 'Reference содержит неподтверждённое утверждение о предпочтениях покупателей: «the stoneware detail
+            is exactly what buyers like».'
+          proposed_fix: Удалить это утверждение либо заменить его нейтральным описанием самого текста без ссылки на предполагаемые
+            предпочтения покупателей.
+        notes: 'Manual second-look: unsupported_generalisation / P7'
 - id: e2-vres-02
   eval_version: 0.2.0
   schema_version: 0.1.1
