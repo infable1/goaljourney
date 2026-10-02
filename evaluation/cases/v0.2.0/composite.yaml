@@ -1564,7 +1564,30 @@ cases:
   human_review_focus:
   - Правила не называются по памяти
   - Во втором шаге факты опираются на найденные источники
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T08:59:08Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 2b6d63e6228caa7dc02475eb22118fc4337f262bbddb8ff195ee2c3ed825fde3
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: a4d5e2c7b9f6866dac53191496c47b98d4cf0de54a483f23d031e243e1b15050
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
   notes: The goal's current_state was entered by the user; «прошла» there is the user's own wording, not the model's.
 - id: e2-comp-07
   eval_version: 0.2.0
