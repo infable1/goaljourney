@@ -3393,7 +3393,30 @@ cases:
   human_review_focus:
   - На слухах ничего не меняется
   - После подтверждения — арифметика и ссылка на источник
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T11:32:03Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 9174933ff180c05f10b858d2620b687e58fc78cbafdbed14b22ab5cb5abc8a30
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 64bf43dbd873d295e8f2c28c42dcbf99fa3c15792c762c2dd816ee1a520b2b24
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-comp-14
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -3650,4 +3673,32 @@ cases:
   human_review_focus:
   - Honest without discouraging
   - The route follows the user's choice and date
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T11:32:09Z'
+      governance_mode: solo_owner
+      independent_rating: false
+      units:
+      - step_id: s1
+        content_hash: 33274531aa9f305866e0c40486b58759e45153c0d152db2a7459dfcb42e19821
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: minor
+          description: Reference содержит неподтверждённое обобщение о том, что черновик на 80000 слов обычно требует в несколько
+            раз больше доступных примерно 25 часов написания.
+          proposed_fix: Удалить это обобщение либо явно обозначить его как предположение/оценку, не используемую как установленный
+            факт.
+        notes: 'Criterion: unsupported_generalisation / P7'
+      - step_id: s2
+        content_hash: a2af7769bf4914fa0ee3a1742135b6ad25f058063c5218d92f70874bfa87dc8f
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
