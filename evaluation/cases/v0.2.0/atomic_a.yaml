@@ -670,7 +670,23 @@ cases:
     - claim: The written theory exam can be retaken unlimited times on the same day
       status: needs_verification
       affects: Whether the three-week deadline is safe
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:23:13Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: d3f61f2ba9c947b49bc2000b2ca8a1ec75fe8153dcefe047e1d3799742ced18e
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-jour-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -856,7 +872,23 @@ cases:
       what_changed: 'A licence route: verify the exam first, then theory, listening practice and practice exams.'
       why: Exam details are set by the licensing body and must come from its pages; the workload fits 3 hours a week.
       impact: About 22 hours of work over roughly 21 weeks, finishing a week before March 20.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:23:19Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 5254cd4a6b39798759250553e46073167de9ed8358c4a930c7e9d4ed6cf10310
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-jour-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1027,7 +1059,23 @@ cases:
       what_changed: 'Маршрут на 17 часов: отбор, сканирование, подписи к 100 фото и фотокнига из 60.'
       why: До юбилея около 19 часов при 2 часах в неделю; подписи ко всем 600 фото не помещаются.
       impact: Фотокнига готова к 13 декабря, с неделей запаса на печать; остальные подписи — после юбилея.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:23:25Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 08542eb044b0eb9bae41daa06a17fe5f4e2e28d4e40601068feb1f3e53cacf60
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-task-01
   eval_version: 0.2.0
   schema_version: 0.1.1
