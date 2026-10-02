@@ -69,9 +69,9 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   items are decided on their current content.
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
-* Task 7 has started: the reference-review mechanism (D-028) is in place, and `e2-long-01`,
-  `e2-long-02` and `e2-long-03` (20 of 106 reference outputs) are reviewed. Task 8 has not started,
-  and the milestone is not complete.
+* Task 7 has started: the reference-review mechanism (D-028) is in place, and `e2-long-01`…`e2-long-04`
+  (25 of 106 reference outputs) are reviewed. Task 8 has not started, and the milestone is not
+  complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -543,8 +543,12 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 
   The third review, on 2026-10-02, recorded as given: `e2-long-03`, all 5 steps `approve` /
   `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
-  `human_reviewed`. The other 60 cases (86 reference outputs) are `draft_unreviewed`, and
-  `e2-long-04` and `e2-long-05` are next.
+  `human_reviewed`.
+
+  The fourth review, on 2026-10-02, recorded as given: `e2-long-04`, all 5 steps `approve` /
+  `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
+  `human_reviewed`. The other 59 cases (81 reference outputs) are `draft_unreviewed`, and
+  `e2-long-05` is next.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
@@ -614,7 +618,7 @@ subagents. It changed no data.
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
 5. **Owner (Task 7):** review the remaining reference outputs, longitudinal cases first
-   (`e2-long-04`…`e2-long-06`). Decide when to apply the `e2-long-02/s5` revise decision; it needs a new
+   (`e2-long-05`, then `e2-long-06`). Decide when to apply the `e2-long-02/s5` revise decision; it needs a new
    `evaluation_version`, and then a fresh review of the changed reference.
    * The owner rates first; the AI copilot may challenge afterwards.
    * The agent records the decisions as given with `gj eval review-reference` (`/evaluation` skill),

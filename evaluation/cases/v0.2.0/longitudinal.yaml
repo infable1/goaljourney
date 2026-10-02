@@ -3224,7 +3224,45 @@ cases:
   - Не переспрашивает расписание, известное из памяти
   - Ничего из цели про немецкий не просачивается
   - После смены графика план идёт по выходным
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      timestamp: '2026-10-02T05:27:02Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 6f18b9284128801447367c6e7dce5282cd1313ee96af33fec883783299dd2567
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 88fc4e29cad00905876df86f890ba792566c38f760d293074aea88ffeb2d9d49
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s3
+        content_hash: 6bea40bc721a9529ca4f3b511cd0930e37c0d0d1ad5af51d05018db5e071153f
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s4
+        content_hash: 1c8276ff6b9098d9134bd3ef4b4b09a6d9fb8137ff804bb8e9330dd3f7e353c5
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s5
+        content_hash: ae655835a255e94f027cdb26cabfba5e517dc94fcb60f3e5033ad7ff5b087472
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-long-05
   eval_version: 0.2.0
   schema_version: 0.1.1
