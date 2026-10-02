@@ -1346,7 +1346,23 @@ cases:
     not_stored:
     - content: About an hour a day for study
       reason: too_transient
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T11:49:54Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 8a0d31f5cc835f2a9f7fc4c0ee8f692dead91993367c3e92c9aa3541631850ba
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-prog-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1478,7 +1494,27 @@ cases:
     not_awarded:
     - candidate: Joiner in training
       reason: Two of the four joints are not verified yet
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T11:50:01Z'
+      governance_mode: solo_owner
+      independent_rating: false
+      units:
+      - content_hash: 6b9ce4f9b51fdab2257bed428af1ae61fbff5fd9fc06651081bafc7225e19ae6
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: minor
+          description: 'В reference_output указано goal_progress.percent: 15, тогда как собственная basis говорит о 2 из 4
+            подтверждённых практических задач, то есть 50%.'
+          proposed_fix: Исправить goal_progress.percent на 50 либо привести basis к расчёту, который действительно даёт 15%.
+        notes: 'Manual second-look: numeric consistency'
 - id: e2-prog-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1612,4 +1648,20 @@ cases:
       - m1
       - m2
     achievements_unlocked: []
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T11:50:08Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 62db2d960bb3760e7368b3a84645b148fb2b1d903762de7fc8744eb24a2ce101
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''

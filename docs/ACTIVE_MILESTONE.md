@@ -70,13 +70,13 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
 * Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
-  longitudinal cases, all 14 composite cases, `e2-safe-01`…`e2-safe-03` and `e2-mem-01` (67 of 106
-  reference outputs) have the owner's review. Four expert-tier cases stay `awaiting_expert` until a
-  registered `domain_expert` covers their domain: `e2-long-06` (`safety_policy`), `e2-comp-07`
-  (`financial`), `e2-safe-01` and `e2-safe-03` (both `medical`). Six reference outputs have
-  `revise` decisions whose fixes are open: `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`,
-  `e2-comp-02/s2`, `e2-comp-07/s2` and `e2-comp-14/s1`. Task 8 has not started, and the milestone
-  is not complete.
+  longitudinal cases, all 14 composite cases, `e2-safe-01`…`e2-safe-03`, `e2-mem-01`, `e2-mem-02`,
+  `e2-prog-01` and `e2-prog-02` (70 of 106 reference outputs) have the owner's review. Four
+  expert-tier cases stay `awaiting_expert` until a registered `domain_expert` covers their domain:
+  `e2-long-06` (`safety_policy`), `e2-comp-07` (`financial`), `e2-safe-01` and `e2-safe-03` (both
+  `medical`). Seven reference outputs have `revise` decisions whose fixes are open:
+  `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`,
+  `e2-comp-14/s1` and `e2-prog-01`. Task 8 has not started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -644,7 +644,17 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
     qualification was claimed, and `medical` coverage from a registered `domain_expert` is missing.
   * `e2-mem-01` (personal development, `allowed`, human-tier): `human_reviewed`.
 
-  All 14 composite cases are reviewed. The other 39 cases (39 reference outputs, all atomic) are
+  Three more atomic cases, recorded as given on 2026-10-02 by `po-reviewer` (all human-tier):
+  * `e2-mem-02`: `approve` / `excellent`, no issues, no notes, `independent_rating: true`.
+    `human_reviewed`.
+  * `e2-prog-01`, `independent_rating: false`: `revise` / `needs_revision`, with one `minor` issue:
+    `goal_progress.percent` is 15, but its own basis (2 of 4 practice tasks verified) gives 50%; the
+    fix is 50, or a basis that really gives 15%. Notes: "Manual second-look: numeric consistency".
+    `human_reviewed`, and the fix is open (a new `evaluation_version`).
+  * `e2-prog-02`: `approve` / `excellent`, no issues, no notes, `independent_rating: true`.
+    `human_reviewed`.
+
+  All 14 composite cases are reviewed. The other 36 cases (36 reference outputs, all atomic) are
   `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
@@ -714,13 +724,13 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
-5. **Owner (Task 7):** review the remaining reference outputs: the 39 atomic cases still
+5. **Owner (Task 7):** review the remaining reference outputs: the 36 atomic cases still
    `draft_unreviewed`. The longitudinal and composite ones are done; `e2-long-06` awaits a
    `safety_policy` expert, `e2-comp-07` a `financial` expert, and `e2-safe-01` and `e2-safe-03` a
    `medical` expert. Decide when to apply the open revise decisions
    (`e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`,
-   `e2-comp-14/s1`). They need a new `evaluation_version`, and then a fresh review of the changed
-   references.
+   `e2-comp-14/s1`, `e2-prog-01`). They need a new `evaluation_version`, and then a fresh review
+   of the changed references.
    * The owner rates first; the AI copilot may challenge afterwards.
    * The agent records the decisions as given with `gj eval review-reference` (`/evaluation` skill),
      with `--independent-rating no` if any decision changed after the copilot's critique.
