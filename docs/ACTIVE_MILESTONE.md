@@ -69,11 +69,12 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   items are decided on their current content.
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
-* Task 7 has started: the reference-review mechanism (D-028, D-029) is in place, and all six
-  longitudinal cases (35 of 106 reference outputs) have the owner's review. `e2-long-06` is expert-tier
-  and stays `awaiting_expert` until a registered `domain_expert` covers `safety_policy`. Three
-  reference outputs have `revise` decisions whose fixes are open: `e2-long-02/s5`, `e2-long-05/s2` and
-  `e2-long-05/s4`. Task 8 has not started, and the milestone is not complete.
+* Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
+  longitudinal cases and `e2-comp-01` (37 of 106 reference outputs) have the owner's review.
+  `e2-long-06` is expert-tier and stays `awaiting_expert` until a registered `domain_expert` covers
+  `safety_policy`. Three reference outputs have `revise` decisions whose fixes are open:
+  `e2-long-02/s5`, `e2-long-05/s2` and `e2-long-05/s4`. Task 8 has not started, and the milestone is
+  not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -572,7 +573,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   qualification was claimed or created, and it becomes `human_reviewed` only when a registered
   `domain_expert` for `safety_policy` decides every reference output.
 
-  The other 57 cases (71 reference outputs, all composite and atomic) are `draft_unreviewed`.
+  The first composite case, recorded as given on 2026-10-02: `e2-comp-01`, s1 and s2 `approve` /
+  `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
+  `human_reviewed`.
+
+  The other 56 cases (69 reference outputs: 13 composite and 43 atomic) are `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
