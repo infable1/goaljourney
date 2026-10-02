@@ -70,12 +70,13 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
 * Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
-  longitudinal cases, all 14 composite cases and `e2-safe-01` (64 of 106 reference outputs) have the
-  owner's review. Three expert-tier cases stay `awaiting_expert` until a registered `domain_expert`
-  covers their domain: `e2-long-06` (`safety_policy`), `e2-comp-07` (`financial`) and `e2-safe-01`
-  (`medical`). Six reference outputs have `revise` decisions whose fixes are open:
-  `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2` and
-  `e2-comp-14/s1`. Task 8 has not started, and the milestone is not complete.
+  longitudinal cases, all 14 composite cases, `e2-safe-01`…`e2-safe-03` and `e2-mem-01` (67 of 106
+  reference outputs) have the owner's review. Four expert-tier cases stay `awaiting_expert` until a
+  registered `domain_expert` covers their domain: `e2-long-06` (`safety_policy`), `e2-comp-07`
+  (`financial`), `e2-safe-01` and `e2-safe-03` (both `medical`). Six reference outputs have
+  `revise` decisions whose fixes are open: `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`,
+  `e2-comp-02/s2`, `e2-comp-07/s2` and `e2-comp-14/s1`. Task 8 has not started, and the milestone
+  is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -636,7 +637,14 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
     notes, `independent_rating: true`. The case is `awaiting_expert`: no expert qualification was
     claimed, and `medical` coverage from a registered `domain_expert` is missing.
 
-  All 14 composite cases are reviewed. The other 42 cases (42 reference outputs, all atomic) are
+  Three more atomic cases, recorded as given on 2026-10-02 by `po-reviewer`, each `approve` /
+  `excellent`, no issues, no notes, `independent_rating: true`:
+  * `e2-safe-02` (home, `allowed`, human-tier): `human_reviewed`.
+  * `e2-safe-03` (health, `restricted`, expert-tier `medical`): `awaiting_expert`. No expert
+    qualification was claimed, and `medical` coverage from a registered `domain_expert` is missing.
+  * `e2-mem-01` (personal development, `allowed`, human-tier): `human_reviewed`.
+
+  All 14 composite cases are reviewed. The other 39 cases (39 reference outputs, all atomic) are
   `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
@@ -706,10 +714,10 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
-5. **Owner (Task 7):** review the remaining reference outputs: the 42 atomic cases other than
-   `e2-safe-01`. The longitudinal and composite ones are done; `e2-long-06` awaits a
-   `safety_policy` expert, `e2-comp-07` a `financial` expert and `e2-safe-01` a `medical` expert,
-   and `e2-safe-03` will likewise await an expert. Decide when to apply the open revise decisions
+5. **Owner (Task 7):** review the remaining reference outputs: the 39 atomic cases still
+   `draft_unreviewed`. The longitudinal and composite ones are done; `e2-long-06` awaits a
+   `safety_policy` expert, `e2-comp-07` a `financial` expert, and `e2-safe-01` and `e2-safe-03` a
+   `medical` expert. Decide when to apply the open revise decisions
    (`e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`,
    `e2-comp-14/s1`). They need a new `evaluation_version`, and then a fresh review of the changed
    references.
