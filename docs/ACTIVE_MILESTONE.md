@@ -70,7 +70,7 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
 * Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
-  longitudinal cases and `e2-comp-01`…`e2-comp-03` (41 of 106 reference outputs) have the owner's
+  longitudinal cases and `e2-comp-01`…`e2-comp-04` (43 of 106 reference outputs) have the owner's
   review. `e2-long-06` is expert-tier and stays `awaiting_expert` until a registered `domain_expert`
   covers `safety_policy`. Four reference outputs have `revise` decisions whose fixes are open:
   `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4` and `e2-comp-02/s2`. Task 8 has not started, and
@@ -593,7 +593,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
   `human_reviewed`.
 
-  The other 54 cases (65 reference outputs: 11 composite and 43 atomic) are `draft_unreviewed`.
+  The fourth composite case, recorded as given on 2026-10-02: `e2-comp-04`, s1 and s2 `approve` /
+  `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
+  `human_reviewed`.
+
+  The other 53 cases (63 reference outputs: 10 composite and 43 atomic) are `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
