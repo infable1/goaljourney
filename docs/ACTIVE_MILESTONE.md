@@ -70,7 +70,7 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
 * Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
-  longitudinal cases and `e2-comp-01`…`e2-comp-09` (53 of 106 reference outputs) have the owner's
+  longitudinal cases and `e2-comp-01`…`e2-comp-12` (59 of 106 reference outputs) have the owner's
   review. Two expert-tier cases stay `awaiting_expert` until a registered `domain_expert` covers
   their domain: `e2-long-06` (`safety_policy`) and `e2-comp-07` (`financial`). Five reference
   outputs have `revise` decisions whose fixes are open: `e2-long-02/s5`, `e2-long-05/s2`,
@@ -618,7 +618,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   * `e2-comp-08` and `e2-comp-09`: s1 and s2 `approve` / `excellent`, no issues, no notes,
     `independent_rating: true`. Both cases are `human_reviewed`.
 
-  The other 48 cases (53 reference outputs: 5 composite and 43 atomic) are `draft_unreviewed`.
+  Three more, recorded as given on 2026-10-02: `e2-comp-10`, `e2-comp-11` and `e2-comp-12`, each
+  with s1 and s2 `approve` / `excellent`, no issues, no notes, `po-reviewer`,
+  `independent_rating: true`. All three are human-tier and `human_reviewed`.
+
+  The other 45 cases (47 reference outputs: 2 composite and 43 atomic) are `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
@@ -687,8 +691,8 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
-5. **Owner (Task 7):** review the remaining reference outputs: `e2-comp-10`…`e2-comp-14` and the
-   atomic cases. The longitudinal ones and `e2-comp-01`…`e2-comp-09` are done; `e2-long-06` awaits
+5. **Owner (Task 7):** review the remaining reference outputs: `e2-comp-13`, `e2-comp-14` and the
+   atomic cases. The longitudinal ones and `e2-comp-01`…`e2-comp-12` are done; `e2-long-06` awaits
    a `safety_policy` expert and `e2-comp-07` a `financial` expert, and `e2-safe-01` and `e2-safe-03`
    will likewise await experts. Decide when to apply the open revise decisions (`e2-long-02/s5`,
    `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`). They need a new

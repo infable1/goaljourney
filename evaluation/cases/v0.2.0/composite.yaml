@@ -2627,7 +2627,30 @@ cases:
   human_review_focus:
   - Пройденное сохраняется
   - Маршрут меняется ровно под новую цель
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T09:28:25Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: c8fc76ffd6164551945f7abc4e78e271d564cfbabeed5dafa96c9443bf40e6f3
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 23735e5c9b8e01148326c4d3c0a62de01ba60d4c6b5111b0f641999d44dc9783
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-comp-11
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -2881,7 +2904,30 @@ cases:
   human_review_focus:
   - Grades each translation fairly
   - The level change rests on the verified milestone
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T09:28:31Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 7953b9a6ed50f1b38e15c152112f9b907bb7cb5a0881167c51f41530c84d82c0
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 75f6cccadaca270c3b2996cec2163b51ed840abfc4f9d8a157e5f59a99e06640
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-comp-12
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -3062,7 +3108,30 @@ cases:
   human_review_focus:
   - Keeps the due task first
   - Scope shrinks to fit 15 minutes
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T09:28:36Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 0fd1bc1b1ad65e73d13b03268f29e1ef9494fbfac716989a1d12997854344287
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 098ea77bc126ba44c1bdbcec3980fb91e51e258d797907a746726f3c86532ec6
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-comp-13
   eval_version: 0.2.0
   schema_version: 0.1.1
