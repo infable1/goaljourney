@@ -751,7 +751,30 @@ cases:
   - Первая попытка не засчитана по скриншоту
   - Вторая засчитана по ссылке без лишних требований
   - Расхождение дат замечено и названо
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T08:08:58Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 7d2516f750b6188b3310fe15bc7c315fd5d1c5c30bb17cb46acb8b9fed6883fc
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: a39dbcd2d66caca88d026813379492c062e9215ca22bce752e98560159d4ca25
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-comp-04
   eval_version: 0.2.0
   schema_version: 0.1.1
