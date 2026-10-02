@@ -70,11 +70,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
 * Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
-  longitudinal cases and `e2-comp-01` (37 of 106 reference outputs) have the owner's review.
-  `e2-long-06` is expert-tier and stays `awaiting_expert` until a registered `domain_expert` covers
-  `safety_policy`. Three reference outputs have `revise` decisions whose fixes are open:
-  `e2-long-02/s5`, `e2-long-05/s2` and `e2-long-05/s4`. Task 8 has not started, and the milestone is
-  not complete.
+  longitudinal cases, `e2-comp-01` and `e2-comp-02` (39 of 106 reference outputs) have the owner's
+  review. `e2-long-06` is expert-tier and stays `awaiting_expert` until a registered `domain_expert`
+  covers `safety_policy`. Four reference outputs have `revise` decisions whose fixes are open:
+  `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4` and `e2-comp-02/s2`. Task 8 has not started, and
+  the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -577,7 +577,19 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
   `human_reviewed`.
 
-  The other 56 cases (69 reference outputs: 13 composite and 43 atomic) are `draft_unreviewed`.
+  The second composite case, recorded as given on 2026-10-02: `e2-comp-02`, `po-reviewer`,
+  `independent_rating: false` (s2 changed after the AI second look).
+  * s1: `approve` / `excellent`, no issues.
+  * s2: `revise` / `needs_revision`, with one `major` issue. The reference's next step says one more
+    drill at 95% or above completes the task, but the protocol requires 95% in every drill and the
+    export already holds a 94.1% drill; the fix is a repeat or replacement drill that brings the
+    full set into compliance. The notes record the criterion (verification_quality / consistency
+    with the acceptance criterion).
+
+  The case is `human_reviewed`, and the s2 fix is open (a new `evaluation_version`, as for the
+  other revise decisions).
+
+  The other 55 cases (67 reference outputs: 12 composite and 43 atomic) are `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
@@ -649,7 +661,7 @@ subagents. It changed no data.
 5. **Owner (Task 7):** review the remaining reference outputs: the composite and atomic cases. The
    longitudinal ones are done, with `e2-long-06` awaiting a `safety_policy` expert, and `e2-safe-01`,
    `e2-safe-03` and `e2-comp-07` will likewise await experts. Decide when to apply the open revise
-   decisions (`e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`). They need a new
+   decisions (`e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`). They need a new
    `evaluation_version`, and then a fresh review of the changed references.
    * The owner rates first; the AI copilot may challenge afterwards.
    * The agent records the decisions as given with `gj eval review-reference` (`/evaluation` skill),
