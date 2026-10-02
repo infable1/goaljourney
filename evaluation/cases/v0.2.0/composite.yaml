@@ -1369,7 +1369,30 @@ cases:
   human_review_focus:
   - Ответы на русском, несмотря на смешанный ввод
   - Каждая задача помещается в 15 минут
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T08:44:56Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: a48b09b969209ec893ff9dee87d66506d4e9cda8b5b4b2a30b0f84c91d18ae36
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: 3d60b9b036965ed932f9ec98798686b551c6bb3c9e6497a759045c626fc39a17
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-comp-06
   eval_version: 0.2.0
   schema_version: 0.1.1
