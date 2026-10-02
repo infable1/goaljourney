@@ -15,6 +15,9 @@ from generation.pipelines import review_store
 
 V020 = repo_path("evaluation/cases/v0.2.0")
 CASES = {c["id"]: c for c, _ in load_eval_cases(V020)}
+# the cases as the builder authors them, with no recorded review: tests of the mechanism must not depend on
+# which cases the owner has reviewed so far
+PRISTINE = {cid: RR.attach(copy.deepcopy(c), None) for cid, c in CASES.items()}
 REGISTRY = review_store.load_registry()
 TS = "2026-10-01T12:00:00Z"
 
@@ -150,9 +153,12 @@ def test_semantic_errors_catch_what_the_schema_cannot():
 
 @pytest.fixture
 def cases_copy(tmp_path, monkeypatch):
+    """A temporary copy of the case files with every recorded review removed (rendered by the builder)."""
     d = tmp_path / "v0.2.0"
     shutil.copytree(V020, d)
     monkeypatch.setattr(build, "CASES_DIR", d)
+    assert build.run(reviews={}) == 0
+    assert {c["id"]: c for c, _ in load_eval_cases(d)} == PRISTINE
     return d
 
 
@@ -177,9 +183,9 @@ def test_recording_a_partial_then_complete_review_through_the_builder(cases_copy
     assert [u["step_id"] for s in sessions for u in s["units"]] == [first, second]
     # nothing but the review block and the derived status changed; every other case is untouched
     assert {k: v for k, v in out.items() if k not in ("reference_review", "reference_status")} == \
-           {k: v for k, v in CASES["e2-comp-01"].items() if k not in ("reference_review", "reference_status")}
+           {k: v for k, v in PRISTINE["e2-comp-01"].items() if k not in ("reference_review", "reference_status")}
     assert {c["id"]: c for c, _ in load_eval_cases(cases_copy) if c["id"] != "e2-comp-01"} == \
-           {k: v for k, v in CASES.items() if k != "e2-comp-01"}
+           {k: v for k, v in PRISTINE.items() if k != "e2-comp-01"}
     s = validate_cases(str(cases_copy))
     assert s["invalid"] == [], s["invalid"]
     assert s["reference_reviews"]["human_reviewed_cases"] >= 1
@@ -201,7 +207,7 @@ def test_record_refuses(cases_copy, args, match):
     case = CASES.get(args[0]) or CASES["e2-clar-02"]
     with pytest.raises(RR.ReferenceReviewError, match=match):
         RR.record(*args, _decisions(case), True)
-    assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == CASES, "a refused review writes nothing"
+    assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == PRISTINE, "a refused review writes nothing"
 
 
 def test_record_refuses_bad_decision_files(cases_copy):
@@ -219,7 +225,7 @@ def test_record_refuses_bad_decision_files(cases_copy):
             RR.record("e2-long-02", "po-reviewer", units, True)
     with pytest.raises(RR.ReferenceReviewError, match="independent_rating"):
         RR.record("e2-long-02", "po-reviewer", _decisions(case), None)
-    assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == CASES
+    assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == PRISTINE
 
 
 def test_record_refuses_non_humans_language_gaps_and_multi_reviewer_mode(cases_copy, monkeypatch):
@@ -235,7 +241,7 @@ def test_record_refuses_non_humans_language_gaps_and_multi_reviewer_mode(cases_c
     monkeypatch.setattr(review_store, "review_mode", lambda cfg=None: "multi_reviewer")
     with pytest.raises(RR.ReferenceReviewError, match="solo_owner only"):
         RR.record("e2-clar-02", "po-reviewer", _decisions(case), True)
-    assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == CASES
+    assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == PRISTINE
 
 
 # ---- committed state ----------------------------------------------------------------------------

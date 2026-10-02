@@ -2044,7 +2044,59 @@ cases:
   - Волнение учтено прогонами, без психотерапии
   - Нехватка времени показана честно, выбор за пользователем
   - Нигде нет гендерных форм в обращении к пользователю
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      timestamp: '2026-10-02T05:09:21Z'
+      governance_mode: solo_owner
+      independent_rating: false
+      units:
+      - step_id: s1
+        content_hash: 89482cb439141a38215fd6d46613e296963902a4bda21b9874090baabdd84bd1
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: fd5ff127340cbda622e3e3fb1ae1958f715d1d90ecae1b4dbf5f0d61424b0065
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s3
+        content_hash: 42584b22d32b78460bdca8c71855a750ad43e5d228ebb92aa05abd87ce3f85e4
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s4
+        content_hash: d940f5ef95d3554b3092aea51ed25541a98f11c6d6a91e56dafe1b21ea6a4f42
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s5
+        content_hash: 8e855efc3057b8d65e5eab7b758cb1569f5d6ae14770a7febd20345d1f7e6215
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: major
+          description: 'the reference output says about 6 hours of remaining preparation, but the listed remaining tasks total
+            5 hours (120 + 120 + 60 minutes). The structured workload also says `remaining_minutes_before: 360` and `weeks_needed:
+            1.3`, which are not mutually consistent with 3 hours/week; 360 minutes would require 2 weeks, while 300 minutes
+            would require about 1.7 weeks.'
+          proposed_fix: make the stated remaining workload and derived weeks internally consistent across the prose and structured
+            workload fields.
+        notes: 'Criterion: planning_quality / arithmetic consistency of the reference output. The route-adaptation logic itself
+          is usable; the review objection is the arithmetic inconsistency.'
+      - step_id: s6
+        content_hash: 3ac9e508fc04a05a6aaa9ef742e42bbb1d73176c104f0d7d3d5129e3ff73c158
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-long-03
   eval_version: 0.2.0
   schema_version: 0.1.1
