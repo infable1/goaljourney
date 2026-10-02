@@ -2679,7 +2679,45 @@ cases:
   - Notices the re-dated activity ids and says so without accusing
   - Self-report is offered, labelled and confirmed, not imposed or refused
   - Badges and levels follow verified weeks only
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      timestamp: '2026-10-02T05:21:19Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - step_id: s1
+        content_hash: 8e2400aa7304ba6882efae886d414a8c07b398418768afc8c0068267f004191a
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: fb46c23a57239de4048a719cb33dc56e4278940aee2dbadcb16ad8afa9684b64
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s3
+        content_hash: 5c421d9b2b9b4f8adf33287896e089e8abaf27832901894ec7309180aa566612
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s4
+        content_hash: d72d9c7f714a138faa776f9a2b0ddf5b2ec2ca14e7143f3a13b579700abe7056
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s5
+        content_hash: d82e48cd53180fdb08e7214a427e5bb0d90f8135b8d9fbe275ce9043026925e8
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-long-04
   eval_version: 0.2.0
   schema_version: 0.1.1
