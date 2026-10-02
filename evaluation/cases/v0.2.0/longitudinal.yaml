@@ -4260,7 +4260,57 @@ cases:
   - Арифметика нехватки честная и следует из плана
   - Выбор упрощения — за пользователем
   - Нет гендерных форм в обращении, хотя пользователь пишет «вызвался», «взяла»
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      timestamp: '2026-10-02T05:40:05Z'
+      governance_mode: solo_owner
+      independent_rating: false
+      units:
+      - step_id: s1
+        content_hash: fc8c868ca291aa56ea570c17f57b7d63ac3d327275f59c1e60ada4ed068ad60e
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s2
+        content_hash: b27c32d043978ad78506bd5e7679cc51974bc5c90a013dcaf65e755bab8e0bbf
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: major
+          description: 'The structured workload is arithmetically inconsistent. `remaining_minutes_after` is 1380 minutes
+            (23 hours) and `weekly_hours` is 5, which implies about 4.6 weeks of work, not the stated `weeks_needed: 6.4`.
+            The prose and modified task durations support 23 hours remaining, so the problem is the derived weeks value.'
+          proposed_fix: Recompute `weeks_needed` from the recorded remaining minutes and weekly pace, and keep the prose/structured
+            workload values consistent.
+        notes: 'Criterion: planning_quality / numeric consistency of the reference output.'
+      - step_id: s3
+        content_hash: 037de62608d070640b6b3b419babfca7d03a1f9fdec27ce1fa42a9bc0dd0f8c2
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
+      - step_id: s4
+        content_hash: 7e89b5895c08d9129898d74a1e797dc12545b31176fa7c92c5869b0a5d8a34fb
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: major
+          description: 'The structured workload is arithmetically inconsistent. `remaining_minutes_after` is 780 minutes (13
+            hours) and `weekly_hours` is 5, which implies about 2.6 weeks of work, not the stated `weeks_needed: 1.2`. The
+            prose correctly describes about 13 hours remaining; the problem is the derived weeks value.'
+          proposed_fix: Recompute `weeks_needed` from the recorded remaining minutes and weekly pace, and keep the prose/structured
+            workload values consistent.
+        notes: 'Criterion: planning_quality / numeric consistency of the reference output.'
+      - step_id: s5
+        content_hash: c248799e0cb6b0be41999744bfd9b7d882e2de4f8e88a4c482036a38e3736405
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-long-06
   eval_version: 0.2.0
   schema_version: 0.1.1

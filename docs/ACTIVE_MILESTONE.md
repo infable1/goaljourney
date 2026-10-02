@@ -69,9 +69,10 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   items are decided on their current content.
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
-* Task 7 has started: the reference-review mechanism (D-028) is in place, and `e2-long-01`…`e2-long-04`
-  (25 of 106 reference outputs) are reviewed. Task 8 has not started, and the milestone is not
-  complete.
+* Task 7 has started: the reference-review mechanism (D-028) is in place, and `e2-long-01`…`e2-long-05`
+  (30 of 106 reference outputs) are reviewed. Three reference outputs have `revise` decisions whose
+  fixes are open: `e2-long-02/s5`, `e2-long-05/s2` and `e2-long-05/s4`. Task 8 has not started, and
+  the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -547,8 +548,19 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 
   The fourth review, on 2026-10-02, recorded as given: `e2-long-04`, all 5 steps `approve` /
   `excellent`, no issues, no notes, `po-reviewer`, `independent_rating: true`. The case is
-  `human_reviewed`. The other 59 cases (81 reference outputs) are `draft_unreviewed`, and
-  `e2-long-05` is next.
+  `human_reviewed`.
+
+  The fifth review, on 2026-10-02, recorded as given: `e2-long-05`, `po-reviewer`,
+  `independent_rating: false` (s2 and s4 changed after the AI second look).
+  * s1, s3 and s5: `approve` / `excellent`, no issues.
+  * s2 and s4: `revise` / `needs_revision`, each with one `major` issue. The derived `weeks_needed` is
+    inconsistent with `remaining_minutes_after` at `weekly_hours: 5`: 1380 min implies about 4.6
+    weeks, not 6.4 (s2), and 780 min about 2.6 weeks, not 1.2 (s4). The notes record the criterion
+    (planning_quality / numeric consistency).
+
+  The case is `human_reviewed`, and the s2 and s4 fixes are open (a new `evaluation_version`, as for
+  `e2-long-02/s5`). The other 58 cases (76 reference outputs) are `draft_unreviewed`. `e2-long-06` is
+  next, but it is expert-tier and needs a registered `domain_expert` (`safety_policy`).
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
@@ -617,9 +629,10 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
-5. **Owner (Task 7):** review the remaining reference outputs, longitudinal cases first
-   (`e2-long-05`, then `e2-long-06`). Decide when to apply the `e2-long-02/s5` revise decision; it needs a new
-   `evaluation_version`, and then a fresh review of the changed reference.
+5. **Owner (Task 7):** review the remaining reference outputs. `e2-long-06` (expert-tier) is the
+   last longitudinal case; then the composite and atomic cases. Decide when to apply the open revise
+   decisions (`e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`). They need a new
+   `evaluation_version`, and then a fresh review of the changed references.
    * The owner rates first; the AI copilot may challenge afterwards.
    * The agent records the decisions as given with `gj eval review-reference` (`/evaluation` skill),
      with `--independent-rating no` if any decision changed after the copilot's critique.
