@@ -49,7 +49,8 @@ def validate_cases(cases_dir=None):
     ev_version = _dir_version(cases_dir)
     invalid, dims, with_ref, n_units, n_checks = [], Counter(), 0, 0, 0
     types = Counter()
-    reviews = {"reference_units": 0, "decided_units": 0, "human_reviewed_cases": 0, "partly_reviewed_cases": [],
+    reviews = {"reference_units": 0, "decided_units": 0, "human_reviewed_cases": 0, "awaiting_expert_cases": [],
+               "partly_reviewed_cases": [],
                "stale_units": []}
     registry = None
     ids = Counter(c.get("id") for c, _ in loaded)
@@ -102,7 +103,9 @@ def validate_cases(cases_dir=None):
         rs = RR.summary(case)
         reviews["reference_units"] += rs["units"]
         reviews["decided_units"] += rs["decided"]
-        if rs["units"] and rs["decided"] == rs["units"]:
+        if rs["status"] == RR.AWAITING_EXPERT:
+            reviews["awaiting_expert_cases"].append(f"{case['id']} (needs {', '.join(rs['missing_expert_domains'])})")
+        elif rs["units"] and rs["decided"] == rs["units"]:
             reviews["human_reviewed_cases"] += 1
         elif rs["decided"]:
             reviews["partly_reviewed_cases"].append(f"{case['id']} {rs['decided']}/{rs['units']}")
@@ -140,6 +143,7 @@ def print_case_summary(s):
     if rv["reference_units"]:
         print(f"Reference reviews (D-028): {rv['decided_units']}/{rv['reference_units']} reference outputs have a human "
               f"decision on their current content; cases human_reviewed: {rv['human_reviewed_cases']}"
+              + (f"; awaiting expert (D-029): {', '.join(rv['awaiting_expert_cases'])}" if rv["awaiting_expert_cases"] else "")
               + (f"; partly reviewed (still draft_unreviewed): {', '.join(rv['partly_reviewed_cases'])}"
                  if rv["partly_reviewed_cases"] else "")
               + (f"; stale (reference changed since review): {', '.join(rv['stale_units'])}" if rv["stale_units"] else ""))

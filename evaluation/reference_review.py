@@ -3,8 +3,11 @@
 A case's `reference_review` block holds append-only review sessions. Each session is one sitting of one
 registered human reviewer and lists decisions on reference outputs (the case's own, or one per step), each
 bound to the content hash of the reference output it judged. `reference_status` is derived from the block:
-`human_reviewed` only when every reference output has a decision on its current content hash, otherwise
-`draft_unreviewed` (unreviewed, partly reviewed, or reviewed before the reference changed).
+* `draft_unreviewed` while a reference output has no decision on its current content hash (unreviewed,
+  partly reviewed, or reviewed before the reference changed);
+* `awaiting_expert` when every reference output is decided but the case is expert-tier (D-026) and the
+  required expert domains are not yet covered by registered domain_experts on the current content (D-029);
+* `human_reviewed` otherwise.
 
 `gj eval build-cases` carries the block over when it re-renders the cases, so regeneration never erases a
 human decision; `gj eval review-reference` records a new session. The AI copilot never records a decision.
@@ -15,7 +18,7 @@ from gjcore.io import canonical_json, load_yaml, sha256_text
 from gjcore.paths import repo_path
 
 INTRODUCED_IN = "0.1.3"   # schema version whose eval_case.json defines `reference_review`
-DRAFT, REVIEWED = "draft_unreviewed", "human_reviewed"
+DRAFT, AWAITING_EXPERT, REVIEWED = "draft_unreviewed", "awaiting_expert", "human_reviewed"
 UNIT_KEYS = {"step_id", "action", "overall", "issues", "notes"}
 
 
@@ -51,14 +54,47 @@ def decided_units(case) -> dict:
     return out
 
 
+def required_expert_domains(case) -> list:
+    """Expert domains the case's reference review needs (D-026 tiers; [] = human tier)."""
+    from generation.pipelines.review_store import required_expert_domains as required
+    return required(case)
+
+
+def expert_coverage(case) -> dict:
+    """{step_id: expert domains covered by registered domain_experts' decisions on its CURRENT content}. Uses the
+    roles and domains each session recorded; a session without them covers nothing."""
+    current = {k: reference_hash(v) for k, v in reference_units(case).items()}
+    cover = {k: set() for k in current}
+    for s in _sessions(case):
+        if "domain_expert" not in (s.get("reviewer_roles") or []):
+            continue
+        for u in s["units"]:
+            key = u.get("step_id")
+            if key in current and u["content_hash"] == current[key]:
+                cover[key] |= set(s.get("reviewer_expert_domains") or [])
+    return cover
+
+
+def missing_expert_domains(case) -> list:
+    """Required expert domains not yet covered on every reference output."""
+    domains = set(required_expert_domains(case))
+    if not domains:
+        return []
+    cover = expert_coverage(case)
+    return sorted(set().union(*(domains - c for c in cover.values())) if cover else domains)
+
+
 def derive_status(case) -> str:
     refs = reference_units(case)
     decided = decided_units(case)
-    return REVIEWED if refs and all(k in decided for k in refs) else DRAFT
+    if not refs or not all(k in decided for k in refs):
+        return DRAFT
+    return AWAITING_EXPERT if missing_expert_domains(case) else REVIEWED
 
 
 def summary(case) -> dict:
-    """Reference outputs, decided ones, and stale ones (latest decision made on content that has since changed)."""
+    """Reference outputs, decided ones, stale ones (latest decision made on content that has since changed), the
+    derived status and the expert domains still missing."""
     refs = reference_units(case)
     decided = decided_units(case)
     latest = {}
@@ -66,7 +102,8 @@ def summary(case) -> dict:
         for u in s["units"]:
             latest[u.get("step_id")] = u["content_hash"]
     stale = [k for k, h in latest.items() if k in refs and k not in decided]
-    return {"units": len(refs), "decided": sum(1 for k in refs if k in decided), "stale": stale}
+    return {"units": len(refs), "decided": sum(1 for k in refs if k in decided), "stale": stale,
+            "status": derive_status(case), "missing_expert_domains": missing_expert_domains(case)}
 
 
 def attach(case, review):
@@ -175,8 +212,8 @@ def record(case_id, reviewer_id, raw_units, independent_rating, *, replace=False
     """Record one review session by a registered human reviewer on a case's reference outputs. The case file is
     rewritten by the builder, so the generated YAML stays the builder's output. Returns the updated case."""
     from gjcore import schemas
-    from generation.pipelines.review_store import (load_registry, now_utc, required_expert_domains,
-                                                   required_languages, review_config, review_mode)
+    from generation.pipelines.review_store import (load_registry, now_utc, required_languages, review_config,
+                                                   review_mode)
     from evaluation.builders import build
 
     if not isinstance(independent_rating, bool):
@@ -200,18 +237,20 @@ def record(case_id, reviewer_id, raw_units, independent_rating, *, replace=False
     if review_config()["approval"]["require_language_match"] and not set(langs) <= set(reviewer["languages"]):
         raise ReferenceReviewError(f"{case_id} needs a reviewer who reads {langs}; {reviewer_id} lists "
                                    f"{reviewer['languages']}")
-    domains = required_expert_domains(case)
-    if domains and not ("domain_expert" in reviewer["roles"] and set(domains) <= set(reviewer["expert_domains"])):
-        raise ReferenceReviewError(f"{case_id} is expert-tier (D-026): its reference review needs a qualified "
-                                   f"domain_expert for {domains}; {reviewer_id} is not registered as one")
     units = _unit_decisions(case, raw_units)
-    already = decided_units(case)
-    redecided = [u.get("step_id") or "the reference" for u in units if u.get("step_id") in already]
+    # an expert-tier case may be reviewed by the owner (D-029); it stays awaiting_expert until a registered
+    # domain_expert covers its domains, so a second reviewer's decision is not a redecision
+    current = {k: reference_hash(v) for k, v in reference_units(case).items()}
+    mine = {u.get("step_id") for s in _sessions(case) if s["reviewer_id"] == reviewer_id for u in s["units"]
+            if current.get(u.get("step_id")) == u["content_hash"]}
+    redecided = [u.get("step_id") or "the reference" for u in units if u.get("step_id") in mine]
     if redecided and not replace:
-        raise ReferenceReviewError(f"{case_id}: {redecided} already have a decision on their current content; pass "
-                                   "--replace to record a newer one (the earlier session stays in the history)")
-    session = {"reviewer_id": reviewer_id, "timestamp": timestamp or now_utc(), "governance_mode": mode,
-               "independent_rating": independent_rating, "units": units}
+        raise ReferenceReviewError(f"{case_id}: {redecided} already have {reviewer_id}'s decision on their current "
+                                   "content; pass --replace to record a newer one (the earlier session stays in the "
+                                   "history)")
+    session = {"reviewer_id": reviewer_id, "reviewer_roles": sorted(reviewer["roles"]),
+               "reviewer_expert_domains": sorted(reviewer["expert_domains"]), "timestamp": timestamp or now_utc(),
+               "governance_mode": mode, "independent_rating": independent_rating, "units": units}
     review = case.get("reference_review") or {}
     sessions = list(review.get("sessions") or [])
     if sessions and _parse_ts(session["timestamp"]) < _parse_ts(sessions[-1]["timestamp"]):

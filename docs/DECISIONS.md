@@ -244,6 +244,27 @@ training examples, the review log and the release gates are unaffected.
 
 *Source:* `schemas/eval_case.json` (schema 0.1.3), `evaluation/reference_review.py`,
 `evaluation/builders/build.py` (pipeline 0.4.3). *Status:* directed by product owner 2026-10-01.*
+*Refined by D-029:* the owner's review of an expert-tier reference is recorded, and the case stays
+`awaiting_expert` until a registered `domain_expert` covers its domains.
+
+**D-029 — An owner's review of an expert-tier evaluation reference is recorded and awaits the
+expert.** This refines the expert-tier rule of D-028; nothing else in D-028 or D-026 changes.
+* **Recording allowed.** In `solo_owner` mode the owner may record decisions on the reference outputs
+  of an expert-tier case (D-026 tiers), and `gj eval review-reference` no longer refuses.
+* **No expert qualification is claimed or created.** Each session records the reviewer's registry
+  `reviewer_roles` and `reviewer_expert_domains` at recording time. Only a session whose reviewer had
+  the `domain_expert` role covers the expert domains it lists. A session recorded without these fields
+  covers no expert domain.
+* **Status.** When every reference output has a human decision but the required expert domains are not
+  covered on the current content, `reference_status` is `awaiting_expert`. It becomes `human_reviewed`
+  only when registered `domain_expert` decisions on the current content cover every required domain
+  for every reference output. An expert's decision after the owner's is a second reviewer's
+  decision, not a redecision. Evaluation cases are never training data, so this is a review state, not
+  training eligibility.
+
+*Source:* `schemas/eval_case.json` (schema 0.1.3: the `awaiting_expert` status and the session
+fields, an additive change to the unreleased version), `evaluation/reference_review.py` (pipeline
+0.4.3). *Status:* directed by product owner 2026-10-02.*
 
 ## Engineering process
 

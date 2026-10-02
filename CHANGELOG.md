@@ -3,6 +3,37 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-10-02 — Expert-tier reference reviews await the expert (D-029; schema 0.1.3 and pipeline 0.4.3 amended, no version change)
+
+The product owner decided that the owner's review of an expert-tier evaluation reference is recorded and waits
+for a qualified expert (D-029, refining D-028).
+
+- **Schema 0.1.3, additive change; 0.1.3 is in no release.**
+  - `reference_status` gains `awaiting_expert`.
+  - Review sessions gain optional `reviewer_roles` and `reviewer_expert_domains`, the reviewer's registry
+    entry at recording time.
+  - Earlier sessions are untouched and count as no expert coverage.
+- **`gj eval review-reference`.**
+  - It no longer refuses an expert-tier case. It records the owner's session with their roles and domains.
+  - The status is `awaiting_expert` until registered `domain_expert` decisions on the current content
+    cover the required domains for every reference output; then it is `human_reviewed`.
+  - The "already decided" guard now applies only to the same reviewer, so an expert can decide after the
+    owner without `--replace`.
+  - `gj validate` lists the cases awaiting an expert and the domains they need.
+- **Recorded:** the owner's review of `e2-long-06`, recorded as given:
+  - all 5 steps `approve` / `excellent`;
+  - no issues or notes;
+  - `po-reviewer`, `independent_rating: true`.
+
+  The case is expert-tier (`safety_policy`) and is `awaiting_expert`. No expert qualification was claimed or
+  created, and the reviewer registry is unchanged. Eval cases are never training rows, so this is a review
+  state, not training eligibility.
+- Docs: DECISIONS D-029 (and a refinement note on D-028), EVALUATION_V0.2_DESIGN §1, HUMAN_REVIEW_GUIDE §18,
+  the evaluation rule and skill, PROJECT_STATE and ACTIVE_MILESTONE.
+- Tests: three new tests in `tests/test_reference_review.py` cover owner-then-expert recording, a
+  wrong-domain expert, sessions without roles and the human tier. The old "expert-tier is refused"
+  expectation is replaced, and the summary assertions now include the two new keys.
+
 ## 2026-10-01 — Evaluation reference review, stored in the cases (schema 0.1.3, pipeline 0.4.3; no dataset or evaluation version change)
 
 The product owner decided how evaluation reference outputs are reviewed (Milestone 1.7, task 7; D-028):

@@ -180,6 +180,8 @@ def cmd_eval(args):
         print(f"Recorded {args.reviewer}'s review of {len(session['units'])} reference output(s) of {args.case} "
               f"({session['timestamp']}, independent_rating {str(session['independent_rating']).lower()}); "
               f"reference_status: {case['reference_status']}")
+        if case["reference_status"] == RR.AWAITING_EXPERT:
+            print(f"  expert-tier (D-029): awaiting a registered domain_expert for {RR.missing_expert_domains(case)}")
         for u in session["units"]:
             print(f"  {u.get('step_id') or args.case}: {u['action']} / {u['overall']}  {u['content_hash'][:12]}…  "
                   f"issues {len(u['issues'])}")

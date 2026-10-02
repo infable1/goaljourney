@@ -401,12 +401,14 @@ automated checks still decide what they measure.
 
 * **Same principle as §14.** In `solo_owner` mode you alone complete the review; there is no second
   reviewer. Rate first; the AI copilot may challenge afterwards. If you change a decision after that,
-  record it with `--independent-rating no`. Expert-tier cases (§16) still need a qualified domain
-  expert.
+  record it with `--independent-rating no`. On expert-tier cases (§16) your review is recorded, but
+  the case stays `awaiting_expert` until a registered, qualified domain expert covers the required
+  domains (D-029).
 * **Per reference output, no criterion ratings.** Give `action` (`approve`, `revise`, `reject`),
   `overall` (`excellent`/`acceptable`, `needs_revision`, `incorrect`) and, if any, issues and notes.
   The decision is bound to the reference's content hash.
 * **Recording:** `gj eval review-reference <case> --reviewer <id> --from <file> --independent-rating
   yes|no`. The command writes the decisions into the case file (`reference_review`).
 * **Status:** the case becomes `human_reviewed` only when every reference output has your decision on
-  its current content. A partial review leaves it `draft_unreviewed`.
+  its current content, and, for an expert-tier case, the expert domains are covered. A partial review
+  leaves it `draft_unreviewed`; an expert-tier case without expert coverage is `awaiting_expert`.

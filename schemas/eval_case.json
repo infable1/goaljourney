@@ -63,8 +63,8 @@
     },
     "reference_output": { "type": "object" },
     "reference_status": {
-      "description": "Derived from `reference_review` (D-028); never set by hand. draft_unreviewed: written by the case author to self-test the checks, and at least one reference output has no human decision on its current content hash (unreviewed, partly reviewed, or reviewed before the reference changed). human_reviewed: every reference output of the case has a recorded decision by a registered human reviewer on its current content hash (in solo_owner mode one owner completes the review; no reviewer agreement is implied). Neither status makes a reference the only correct answer.",
-      "type": "string", "enum": ["draft_unreviewed", "human_reviewed"]
+      "description": "Derived from `reference_review` (D-028, D-029); never set by hand. draft_unreviewed: written by the case author to self-test the checks, and at least one reference output has no human decision on its current content hash (unreviewed, partly reviewed, or reviewed before the reference changed). awaiting_expert: every reference output has a human decision, but the case is expert-tier (D-026) and the required expert domains are not covered by registered domain_experts' decisions on the current content. human_reviewed: every reference output has a recorded decision by a registered human reviewer on its current content hash and, for an expert-tier case, the required expert domains are covered (in solo_owner mode one owner completes the review of a human-tier case; no reviewer agreement is implied). No status makes a reference the only correct answer.",
+      "type": "string", "enum": ["draft_unreviewed", "awaiting_expert", "human_reviewed"]
     },
     "reference_review": {
       "description": "Human reviews of the case's reference outputs (D-028), recorded with `gj eval review-reference` and preserved by `gj eval build-cases`. Append-only: each session adds hash-bound decisions; for every reference output the latest decision on its current content hash counts.",
@@ -123,6 +123,14 @@
       "required": ["reviewer_id", "timestamp", "governance_mode", "independent_rating", "units"],
       "properties": {
         "reviewer_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,40}$" },
+        "reviewer_roles": {
+          "description": "The reviewer's registry roles at recording time (D-029), so a later registry edit cannot change what the session covered. A session without it counts as no expert coverage.",
+          "type": "array", "uniqueItems": true, "items": { "enum": ["dataset_reviewer", "domain_expert", "adjudicator"] }
+        },
+        "reviewer_expert_domains": {
+          "description": "The reviewer's registry expert domains at recording time (D-029). They count as expert coverage only with the domain_expert role.",
+          "type": "array", "uniqueItems": true, "items": { "type": "string" }
+        },
         "timestamp": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
         "governance_mode": {
           "description": "Review governance in force when recorded (configs/review.yaml). Only solo_owner is defined for reference review (D-028); one review never stands for reviewer agreement.",
