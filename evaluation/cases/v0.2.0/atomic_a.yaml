@@ -1509,7 +1509,23 @@ cases:
       confidence_ceiling: high
       self_report_only: false
       rationale: The recording is the performance itself, so length and content are checked directly.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:32:39Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: f562a21bc1790de8b08e340f7feed7354096985979fa4aca5a300ea6ad34f118
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-vprot-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1596,7 +1612,23 @@ cases:
       confidence_ceiling: medium
       self_report_only: false
       rationale: Выгрузка проверяется напрямую, наличные и расходы — слова пользователя, поэтому потолок medium.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:32:45Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: ca9cb4b1f0282e58c4ba9f157b2134aa9394ce1adf258598b90bc8214c9c7f97
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-vprot-03
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1680,4 +1712,20 @@ cases:
       confidence_ceiling: high
       self_report_only: false
       rationale: A fetched public page and the source together are direct evidence.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:32:51Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 7fa5cff2f50f44d03f91a699af59d67fe61c8d1de479555d0ac8822f5158cc4f
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
