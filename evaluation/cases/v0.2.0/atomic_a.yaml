@@ -358,7 +358,23 @@ cases:
     facts_used:
     - value: Правила обучения и экзаменов в стране пользователя
       source_type: unknown
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:14:50Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 68ad6c1a06538f52a11111e964324206e129d0dbc5e0124a909365e0207e66a0
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-feas-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -457,7 +473,28 @@ cases:
     - value: About Grade 3 now, 3 hours a week, four months
       source_type: user_provided
       source_ref: conversation[0]
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:14:56Z'
+      governance_mode: solo_owner
+      independent_rating: false
+      units:
+      - content_hash: 88344a9dfb95b4945643728f15f9952281b998190ff63dcf61e5d5bb13efbd4c
+        action: revise
+        overall: needs_revision
+        issues:
+        - severity: minor
+          description: Reference содержит неподтверждённое обобщение о том, что произведения, гаммы и чтение с листа на этом
+            уровне обычно требуют годы регулярной практики.
+          proposed_fix: Удалить это обобщение либо переформулировать оценку так, чтобы она опиралась только на известные данные
+            кейса и не представлялась как общий факт.
+        notes: 'Manual second-look: unsupported_generalisation / P7'
 - id: e2-feas-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -529,7 +566,23 @@ cases:
     - value: Walks 40 minutes every day
       source_type: user_provided
       source_ref: conversation[0]
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-02T12:15:02Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 9949556571e5cc65dc3fc374bd7be334bc8b50e1c4858351414df4c3e72bbcbf
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-feas-03
   eval_version: 0.2.0
   schema_version: 0.1.1
