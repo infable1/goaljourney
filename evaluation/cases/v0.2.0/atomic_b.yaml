@@ -261,7 +261,23 @@ cases:
       what_changed: Задача пока не засчитана.
       why: Экспорт показывает меньшую дистанцию, чем в отчёте.
       impact: Засчитаем, как только будет экспорт на 10 км.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:32:41Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 91c4b06d7f73f04844152f401142faf223c6871ca817e3ab133bb019145d8a6b
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-vres-03
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -368,7 +384,23 @@ cases:
       what_changed: Task stays open.
       why: The screenshot hides the details the check needs.
       impact: One of the listed documents completes it.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:32:46Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: dbc097bfc68ad50349f286e5c7f28ab8aceb5b584e07effb432b9bf5c460c808
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-vres-04
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -472,7 +504,23 @@ cases:
       what_changed: Задача пока не засчитана.
       why: Нет обязательной выгрузки из CRM.
       impact: Засчитается после выгрузки или после перевода задачи на самоотчёт.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:32:50Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 016615ac922d70dedfba1b776aad969f1bba474d18593de2ff78beed134a5eca
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-vres-05
   eval_version: 0.2.0
   schema_version: 0.1.1
