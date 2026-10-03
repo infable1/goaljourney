@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/eval_leakage_metadata.json",
+  "title": "Evaluation leakage metadata",
+  "description": "Evaluation-side provenance used by `gj leakage`: scenario group, behavioural template and seed origin of every case, and the reviewed overlaps between evaluation cases and training examples. Kept outside the case files so that adding it does not change released test data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eval_version", "cases", "template_overlaps"],
+  "properties": {
+    "eval_version": { "type": "string" },
+    "notes": { "type": "string" },
+    "cases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenario_group", "behavior_template", "seed_origin", "author"],
+        "properties": {
+          "scenario_group": { "type": "string", "pattern": "^(sg-ev|bs)-[a-z0-9-]+$" },
+          "behavior_template": { "type": "string", "pattern": "^bt-[a-z0-9-]+$" },
+          "seed_origin": { "type": "string" },
+          "author": { "type": "string" }
+        }
+      }
+    },
+    "template_overlaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["eval", "train", "strength", "relation", "disposition"],
+        "properties": {
+          "eval": { "type": "string" },
+          "train": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "strength": { "description": "none = reviewed; the shared signature/numbers are coincidental.", "enum": ["strong", "medium", "topic_only", "none"] },
+          "relation": { "type": "string" },
+          "cross_lingual": { "type": "boolean" },
+          "proposed_disposition": { "enum": ["rewrite_eval_case", "rewrite_training_example", "accept_in_distribution"] },
+          "disposition": { "description": "open = no human decision yet; rewrite_* = decided, rewrite still pending; accept_in_distribution = keep, report the case in the in-template metric slice; resolved = the rewrite was done and the overlap no longer holds.", "enum": ["open", "rewrite_eval_case", "rewrite_training_example", "accept_in_distribution", "resolved"] },
+          "decided_by": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "seed_overlaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["seed", "eval", "relation", "disposition"],
+        "properties": {
+          "seed": { "type": "string" },
+          "eval": { "type": "string" },
+          "relation": { "type": "string" },
+          "proposed_disposition": { "type": "string" },
+          "disposition": { "type": "string" },
+          "decided_by": { "type": "string" }
+        }
+      }
+    }
+  }
+}

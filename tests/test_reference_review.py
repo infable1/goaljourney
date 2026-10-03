@@ -1,4 +1,4 @@
-"""Human reviews of evaluation reference outputs, stored in the cases (D-028, schema 0.1.3)."""
+"""Human reviews of evaluation reference outputs, stored in the cases (D-028, schema 0.1.3; D-030 owner-only)."""
 import copy
 import shutil
 from datetime import datetime, timezone
@@ -91,7 +91,7 @@ def test_status_is_human_reviewed_only_when_every_reference_output_is_decided():
     partial = _reviewed(base, _session([_unit(base, k) for k in steps[:-1]]))
     assert partial["reference_status"] == "draft_unreviewed"
     assert RR.summary(partial) == {"units": len(steps), "decided": len(steps) - 1, "stale": [],
-                                   "status": "draft_unreviewed", "missing_expert_domains": []}
+                                   "status": "draft_unreviewed"}
     full = _reviewed(base, _session([_unit(base, k) for k in steps[:-1]]),
                      _session([_unit(base, steps[-1])], ts="2026-10-02T09:00:00Z"))
     assert full["reference_status"] == "human_reviewed"
@@ -110,8 +110,7 @@ def test_a_review_of_changed_content_does_not_count():
     changed = copy.deepcopy(reviewed)
     changed["reference_output"]["message_to_user"] = changed["reference_output"].get("message_to_user", "") + " "
     assert RR.derive_status(changed) == "draft_unreviewed"
-    assert RR.summary(changed) == {"units": 1, "decided": 0, "stale": [None], "status": "draft_unreviewed",
-                                   "missing_expert_domains": []}
+    assert RR.summary(changed) == {"units": 1, "decided": 0, "stale": [None], "status": "draft_unreviewed"}
 
 
 def test_the_latest_decision_on_the_current_content_counts():
@@ -245,58 +244,73 @@ def test_record_refuses_non_humans_language_gaps_and_multi_reviewer_mode(cases_c
     assert {c["id"]: c for c, _ in load_eval_cases(cases_copy)} == PRISTINE
 
 
-def _with_experts(monkeypatch):
-    real = dict(REGISTRY)
-    expert = {**real["po-reviewer"], "roles": ["domain_expert"], "languages": ["en", "ru"]}
-    monkeypatch.setattr(review_store, "load_registry", lambda path=None: {
-        **real, "med-expert": {**expert, "id": "med-expert", "expert_domains": ["medical"]},
-        "law-expert": {**expert, "id": "law-expert", "expert_domains": ["legal"]}})
+# ---- D-030: owner-only review, no expert gate ------------------------------------------------------
+
+FORMER_EXPERT_TIER = {"e2-safe-01": ["medical"], "e2-safe-03": ["medical"], "e2-comp-07": ["financial"],
+                      "e2-long-06": ["safety_policy"]}
 
 
-def test_owner_review_of_an_expert_tier_case_awaits_the_expert(cases_copy, monkeypatch):
-    """D-029: the owner may record on an expert-tier case; only a matching domain_expert completes it."""
+def test_owner_review_of_a_former_expert_tier_case_is_human_reviewed(cases_copy):
+    """D-030: the owner's decisions on every reference output complete an expert-tier case; no expert session."""
     case = _case(cases_copy, "e2-safe-01")
-    assert RR.required_expert_domains(case) == ["medical"]
+    assert review_store.required_expert_domains(case) == ["medical"]          # the risk tier is still computed
     out = RR.record("e2-safe-01", "po-reviewer", _decisions(case), True, timestamp="2026-10-02T10:00:00Z")
-    owner = out["reference_review"]["sessions"][0]
-    assert (owner["reviewer_roles"], owner["reviewer_expert_domains"]) == (["dataset_reviewer"], [])
-    assert out["reference_status"] == "awaiting_expert"
-    assert RR.missing_expert_domains(out) == ["medical"]
+    owner = out["reference_review"]["sessions"]
+    assert [s["reviewer_id"] for s in owner] == ["po-reviewer"]
+    assert (owner[0]["reviewer_roles"], owner[0]["reviewer_expert_domains"]) == (["dataset_reviewer"], [])
+    assert out["reference_status"] == "human_reviewed"
     assert build.run(check=True) == 0
     s = validate_cases(str(cases_copy))
     assert s["invalid"] == [], s["invalid"]
-    assert s["reference_reviews"]["awaiting_expert_cases"] == ["e2-safe-01 (needs medical)"]
-    _with_experts(monkeypatch)
-    # an expert in another domain covers nothing; a second reviewer's decision needs no --replace
-    out = RR.record("e2-safe-01", "law-expert", _decisions(case), True, timestamp="2026-10-02T11:00:00Z")
-    assert out["reference_status"] == "awaiting_expert"
-    out = RR.record("e2-safe-01", "med-expert", _decisions(case), True, timestamp="2026-10-02T12:00:00Z")
-    assert out["reference_status"] == "human_reviewed" and RR.missing_expert_domains(out) == []
-    assert [s["reviewer_id"] for s in out["reference_review"]["sessions"]] == ["po-reviewer", "law-expert",
-                                                                              "med-expert"]
-    with pytest.raises(RR.ReferenceReviewError, match="already have med-expert's decision"):
-        RR.record("e2-safe-01", "med-expert", _decisions(case), True, timestamp="2026-10-02T13:00:00Z")
+    assert s["reference_reviews"]["human_reviewed_cases"] == 1
+    assert "awaiting_expert_cases" not in s["reference_reviews"]
 
 
-def test_a_session_without_recorded_roles_gives_no_expert_coverage():
-    base = _unreviewed("e2-safe-01")
-    session = _session([_unit(base)])          # no reviewer_roles / reviewer_expert_domains
-    assert _reviewed(base, session)["reference_status"] == "awaiting_expert"
-    expert = {**session, "reviewer_id": "med-expert", "reviewer_roles": ["domain_expert"],
-              "reviewer_expert_domains": ["medical"], "timestamp": "2026-10-03T00:00:00Z"}
-    assert _reviewed(base, session, expert)["reference_status"] == "human_reviewed"
-    not_expert = {**expert, "reviewer_roles": ["dataset_reviewer"]}
-    assert _reviewed(base, session, not_expert)["reference_status"] == "awaiting_expert", \
-        "expert domains count only with the domain_expert role"
-    assert schemas.validate("eval_case", _reviewed(base, session, expert), RR.INTRODUCED_IN) == []
-    bad = {**expert, "reviewer_roles": ["oracle"]}
-    assert schemas.validate("eval_case", _reviewed(base, session, bad), RR.INTRODUCED_IN)
+def test_risk_domains_never_block_the_reference_status():
+    """Every former expert-tier case is human_reviewed once each reference output has a human decision, whatever the
+    session recorded about the reviewer's roles (or nothing at all)."""
+    tiered = [cid for cid, c in PRISTINE.items() if review_store.required_expert_domains(c)]
+    assert set(FORMER_EXPERT_TIER) <= set(tiered)
+    for cid in tiered:
+        base = PRISTINE[cid]
+        units = [_unit(base, k) for k in RR.reference_units(base)]
+        bare = _session(units)                                           # no reviewer_roles / expert domains
+        owner = {**bare, "reviewer_roles": ["dataset_reviewer"], "reviewer_expert_domains": []}
+        for session in (bare, owner):
+            case = _reviewed(base, session)
+            assert case["reference_status"] == RR.derive_status(case) == "human_reviewed", cid
+            assert RR.summary(case)["status"] == "human_reviewed"
+            assert schemas.validate("eval_case", case, schemas.current_version()) == []
+    assert not hasattr(RR, "AWAITING_EXPERT") and not hasattr(RR, "missing_expert_domains")
 
 
-def test_a_human_tier_case_needs_no_expert():
+def test_a_human_tier_case_is_reviewed_the_same_way():
     base = _unreviewed("e2-clar-02")
-    assert RR.required_expert_domains(base) == []
+    assert review_store.required_expert_domains(base) == []
     assert _reviewed(base, _session([_unit(base)]))["reference_status"] == "human_reviewed"
+
+
+def test_awaiting_expert_is_no_current_status_but_historical_envelopes_stay_readable():
+    base = _unreviewed("e2-safe-01")
+    reviewed = _reviewed(base, _session([_unit(base)]))
+    stale = {**reviewed, "reference_status": "awaiting_expert"}
+    # the current schema has no such value; the archived 0.1.3 schema (the envelope version of every recorded
+    # review) still reads it, so an envelope written under D-029 stays valid history
+    assert schemas.current_version() != RR.INTRODUCED_IN
+    assert schemas.validate("eval_case", stale, schemas.current_version())
+    assert schemas.validate("eval_case", stale, RR.INTRODUCED_IN) == []
+    # a stored awaiting_expert is never accepted as the case's state: the status is derived
+    assert any("is 'awaiting_expert' but" in e for e in RR.semantic_errors(stale, REGISTRY))
+
+
+def test_a_revise_decision_still_completes_the_owner_review_and_stays_visible():
+    base = _unreviewed("e2-comp-07")
+    units = [_unit(base, k) for k in RR.reference_units(base)]
+    units[-1] = {**units[-1], "action": "revise", "overall": "needs_revision",
+                 "issues": [{"severity": "major", "description": "the weekly average contradicts the durations"}]}
+    case = _reviewed(base, _session(units))
+    assert case["reference_status"] == "human_reviewed"
+    assert RR.decided_units(case)[units[-1]["step_id"]]["action"] == "revise"
 
 
 # ---- committed state ----------------------------------------------------------------------------
@@ -305,8 +319,48 @@ def test_committed_reference_reviews_are_bound_registered_and_derived():
     for case in CASES.values():
         assert RR.semantic_errors(case, REGISTRY) == [], case["id"]
         assert case["reference_status"] == RR.derive_status(case), case["id"]
+        assert case["reference_status"] != "awaiting_expert", case["id"]
         for s in (case.get("reference_review") or {}).get("sessions") or []:
             assert REGISTRY[s["reviewer_id"]]["human"]
             assert s["governance_mode"] == "solo_owner"
-        if RR.required_expert_domains(case) and case["reference_status"] == "human_reviewed":
-            assert RR.missing_expert_domains(case) == [], f"{case['id']} claims expert coverage it lacks"
+
+
+def test_the_former_awaiting_expert_cases_are_human_reviewed_on_their_owner_decisions_alone():
+    """D-030 migration: no new session, no expert session; the recorded owner decisions stay bound to their hashes."""
+    for cid in FORMER_EXPERT_TIER:
+        case = CASES[cid]
+        assert case["reference_status"] == "human_reviewed"
+        sessions = case["reference_review"]["sessions"]
+        assert [s["reviewer_id"] for s in sessions] == ["po-reviewer"]
+        assert all("domain_expert" not in (s.get("reviewer_roles") or []) for s in sessions)
+        assert case["reference_review"]["metadata_schema_version"] == RR.INTRODUCED_IN
+        assert set(RR.decided_units(case)) == set(RR.reference_units(case))
+        for u in sessions[0]["units"]:
+            assert u["content_hash"] == RR.reference_hash(RR.reference_units(case)[u.get("step_id")])
+
+
+def test_all_owner_decisions_are_complete_and_revise_decisions_are_kept():
+    s = validate_cases()
+    rv = s["reference_reviews"]
+    assert (rv["reference_units"], rv["decided_units"]) == (106, 106)
+    assert (rv["human_reviewed_cases"], rv["draft_unreviewed_cases"]) == (63, 0)
+    revise = sorted(f"{c['id']}/{k}" if k else c["id"] for c in CASES.values()
+                    for k, u in RR.decided_units(c).items() if u["action"] == "revise")
+    assert revise == ["e2-comp-02/s2", "e2-comp-07/s2", "e2-comp-14/s1", "e2-feas-01", "e2-long-02/s5",
+                      "e2-long-05/s2", "e2-long-05/s4", "e2-prog-01", "e2-vres-01"]
+
+
+def test_evaluation_cases_never_become_training_rows():
+    """D-017: reviewing a reference output (in any tier) never moves an evaluation case into training data."""
+    from generation.pipelines.pool import load_pool
+    from generation.pipelines.split import release_paths
+    from gjcore.config import versions
+    from gjcore.io import read_jsonl
+    eval_ids = set(CASES)
+    pool_ids = {r["id"] for r, _, _ in load_pool()}
+    assert not eval_ids & pool_ids
+    paths = release_paths(versions()["dataset_version"])
+    for split in ("train", "validation"):
+        if paths[split].exists():
+            assert not eval_ids & {row["id"] for row in read_jsonl(paths[split])}
+    assert not {k for c in CASES.values() for k in c} & {"expected_output", "contrastive", "review_status"}

@@ -11,8 +11,7 @@
     status          detail            meaning
     pending         not_reviewed      no qualifying decision on the current content
     pending         content_changed   decided on an earlier version; the current content has not been reviewed
-    pending         awaiting_expert   approved by dataset reviewers, but required expert domains are not signed off
-    approved        decided           qualified human approval(s), expert sign-off complete, no open objection
+    approved        decided           a qualified human approval of the current content, no open objection
     needs_revision  decided           a reviewer asked for a revision of the current content
     rejected        decided           a reviewer rejected the current content
   Only `approved` is training-eligible. With several reviewers, the latest decision of each counts and
@@ -20,11 +19,14 @@
   With one reviewer this reduces to: their latest decision on the content hash is final.
   Log v0.2 (statuses `stale`, `approved_pending_expert`) was never written to; v0.3 events record the
   canonical status plus `new_status_detail`.
+* Owner-only approval (D-030): an approval by a registered, active human reviewer who reads the example's
+  languages approves it, whatever its risk tier. No domain-expert sign-off is required. The pre-D-030 detail
+  `awaiting_expert` is no longer produced, and no recorded event ever carried it.
 * Governance mode (configs/review.yaml `governance.mode`, D-026): `solo_owner` or `multi_reviewer`. The mode
   decides which release gates apply; it never changes status resolution, so historical events keep their meaning.
 * Training eligibility (`training_eligibility`) separates "human-reviewed" (a decision exists on the current
-  content), "expert-reviewed" (required domains covered by qualified human experts) and "training-eligible"
-  (status approved); every ineligible example gets a reason, which release manifests list.
+  content) from "training-eligible" (status approved); every ineligible example gets a reason, which release
+  manifests list.
 """
 import re
 from dataclasses import dataclass
@@ -39,9 +41,11 @@ from gjcore.records import HASHED_FIELDS, content_hash
 
 LOG_VERSION = "0.3.0"
 STATUSES = ("pending", "approved", "needs_revision", "rejected")
-DETAILS = ("not_reviewed", "content_changed", "awaiting_expert", "decided")
+DETAILS = ("not_reviewed", "content_changed", "decided")
 TRAINING_ELIGIBLE = {"approved"}
 ACTIONS = ("approve", "revise", "reject")
+# `domain_expert` stays a valid registry role so registries and the reviewer snapshots in recorded events remain
+# readable; since D-030 it grants nothing extra and no decision needs it.
 ROLES = ("dataset_reviewer", "domain_expert", "adjudicator")
 RATINGS = ("good", "minor_issues", "major_issues", "unacceptable", "not_applicable")
 OVERALL = ("excellent", "acceptable", "needs_revision", "incorrect")
@@ -110,11 +114,13 @@ def required_languages(record) -> list:
 
 
 def required_expert_domains(record, cfg=None) -> list:
-    """Expert domains whose sign-off the example needs ([] = human tier).
+    """The risk domains of an expert-tier example ([] = human tier).
 
     The tier is triggered by risk (a non-'allowed' safety category or an explicit risk tag); the record's
-    domain and the safety output only decide WHICH experts. An 'allowed' budgeting or visa-research
-    example therefore needs a careful dataset reviewer, not a financial or legal expert."""
+    domain and the safety output only decide WHICH domains. Since D-030 the tier is a risk label (review
+    sampling, review focus, the review sheets and the `review_tier` / `required_expert_domains` fields every
+    event records); no decision needs a domain expert's sign-off. The name is kept because those event fields,
+    the frozen v0.1.0 review manifest and the schemas use it."""
     t = (cfg or review_config())["tiers"]["expert_review_required"]
     tags = set(record.get("tags") or [])
     if record.get("safety_category") not in t["safety_categories"] and not tags & set(t["tags"]):
@@ -327,8 +333,7 @@ def resolve(record, events, cfg=None) -> dict:
     doms = required_expert_domains(record, cfg)
     info = {"status": "pending", "detail": "not_reviewed", "content_hash": h,
             "tier": "expert_review_required" if doms else "human_review_required",
-            "required_languages": langs, "required_expert_domains": doms, "decisions": {}, "events": 0,
-            "missing_expert_domains": [], "covered_expert_domains": []}
+            "required_languages": langs, "required_expert_domains": doms, "decisions": {}, "events": 0}
     evs = [e for e in events if e.get("example_id") == record.get("id")]
     info["events"] = len(evs)
     if not evs:
@@ -341,10 +346,6 @@ def resolve(record, events, cfg=None) -> dict:
     for e in cur:
         latest[e["reviewer_id"]] = e
     info["decisions"] = {r: e["action"] for r, e in latest.items()}
-    # reported only (does not decide the status): domains signed off by qualified human experts' latest approvals
-    info["covered_expert_domains"] = sorted(set(doms) & {
-        d for e in latest.values() if e["action"] == "approve" and e["reviewer"]["human"]
-        and "domain_expert" in e["reviewer"]["roles"] and _qualifies_language(e, langs) for d in e["reviewer"]["expert_domains"]})
     adj = [e for e in cur if "adjudicator" in e["reviewer"]["roles"]]
     decisive = [adj[-1]] if adj else list(latest.values())
     actions = {e["action"] for e in decisive}
@@ -353,17 +354,11 @@ def resolve(record, events, cfg=None) -> dict:
     elif "revise" in actions:
         info["status"], info["detail"] = "needs_revision", "decided"
     else:
+        # D-030: a qualified human approval of the current content is enough, whatever the risk tier
         approvals = [e for e in decisive if e["action"] == "approve" and e["reviewer"]["human"]
                      and (not cfg["approval"]["require_language_match"] or _qualifies_language(e, langs))]
-        if not approvals:
-            return info
-        covered = set()
-        for e in approvals:
-            if "domain_expert" in e["reviewer"]["roles"]:
-                covered |= set(e["reviewer"]["expert_domains"])
-        missing = sorted(set(doms) - covered) if cfg["approval"]["expert_tier_requires_expert"] else []
-        info["missing_expert_domains"] = missing
-        info["status"], info["detail"] = ("pending", "awaiting_expert") if missing else ("approved", "decided")
+        if approvals:
+            info["status"], info["detail"] = "approved", "decided"
     return info
 
 
@@ -376,7 +371,6 @@ def statuses(records, events=None, cfg=None) -> dict:
 INELIGIBILITY_REASONS = {
     "not_reviewed": "no human decision on the current content",
     "content_changed": "the content changed after its last decision; the current version needs review",
-    "awaiting_expert": "human review done, but a required expert domain has no qualified expert approval",
     "needs_revision": "a human reviewer asked for a revision",
     "rejected": "a human reviewer rejected it",
 }
@@ -386,9 +380,11 @@ def training_eligibility(info) -> dict:
     """Separate the review states for one resolved example (see `resolve`).
 
     human_reviewed    a human decision exists on the current content hash
-    expert_reviewed   no expert domain is required, or qualified human experts cover every required domain
-    training_eligible the exact current content is `approved` (human approval + expert coverage, no objection)
+    training_eligible the exact current content is `approved` (qualified human approval, no objection; D-030)
     reason            why it is not training-eligible (a key of INELIGIBILITY_REASONS), else None
+
+    Training eligibility is only the review half of a training release: the release gates
+    (configs/release_gates.yaml) still decide whether a release is training_ready.
     """
     eligible = info["status"] in TRAINING_ELIGIBLE
     if eligible:
@@ -397,12 +393,7 @@ def training_eligibility(info) -> dict:
         reason = info["status"]
     else:
         reason = info["detail"]
-    return {"human_reviewed": bool(info["decisions"]),
-            "expert_required": bool(info["required_expert_domains"]),
-            "expert_reviewed": set(info["required_expert_domains"]) <= set(info.get("covered_expert_domains") or []),
-            "training_eligible": eligible, "reason": reason,
-            "missing_expert_domains": (sorted(set(info["required_expert_domains"]) - set(info.get("covered_expert_domains") or []))
-                                       if info["required_expert_domains"] else [])}
+    return {"human_reviewed": bool(info["decisions"]), "training_eligible": eligible, "reason": reason}
 
 
 # ---------------------------------------------------------------------------------------------

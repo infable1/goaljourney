@@ -19,6 +19,13 @@ governance with optional expert escalation**.
 * The expert tier, the rubric, hash binding and the append-only log are unchanged.
 * Pipeline 0.4.0, release gates 1.1.
 
+**Governance change inside this milestone (2026-10-03, D-030).** On the owner's direction, the
+expert gate is removed: the owner's approval of the exact current content suffices in every risk
+tier, for training examples and evaluation reference reviews alike. `awaiting_expert` is no longer a
+status, no `domain_expert` is required or registered, and the former expert tier remains a risk
+label. It is a governance change, not a claim of professional qualification. Schema 0.1.4, pipeline
+0.4.4.
+
 The tasks and acceptance criteria below are adjusted for solo mode; the multi-reviewer versions
 apply only if the mode is switched back.
 
@@ -33,7 +40,7 @@ The column says who performs each task; the agent never records review decisions
 
 | # | Task | Who |
 |---|---|---|
-| 1 | Keep one registered owner in `review/reviewers.yaml` (ru + en); register `domain_expert`s only for real, qualified people (owner or others) for expert-tier items | owner |
+| 1 | Keep one registered owner in `review/reviewers.yaml` (ru + en). Since D-030 no `domain_expert` is needed; never register one to make an approval count | owner |
 | 2 | Rate the 8 calibration items (rv-0.1.0-02, -06, -07, -09, -12, -20, -29, -30); items -06 and -20 changed in v0.1.1. In solo mode they are ordinary sample items | owner |
 | 3 | Multi-reviewer mode only: check pairwise agreement (κ ≥ 0.40, agreement ≥ 0.75). In solo mode, use the AI copilot to challenge ratings (guide §14) and clarify the rubric where the owner is unsure (guide §15) | owner + agent |
 | 4 | Review the 36 ledger revisions (`gj revisions diff ID`) and record `reviewer_status` | reviewers |
@@ -45,8 +52,8 @@ The column says who performs each task; the agent never records review decisions
 
 ### Acceptance criteria
 
-* Every sample item has a human decision on its current content hash. Expert-tier items without a
-  qualified expert are listed as `awaiting_expert` (not training-eligible), never dropped. In
+* Every sample item has a human decision on its current content hash; items that are not
+  training-eligible are listed with their reason, never dropped (D-030: no `awaiting_expert`). In
   `multi_reviewer` mode only: `calibration_agreement` passes (every reviewer pair on ≥ 8 shared
   calibration items agrees ≥ 75% with κ ≥ 0.40).
 * Every ledger entry has a human `reviewer_status`, and every decided revision is applied and
@@ -69,11 +76,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   items are decided on their current content.
 * Task 6 is done. Every evaluation overlap has a human disposition: in v0.1.0, all 27 template
   overlaps and its one seed overlap; in v0.2.0, 100 of 100. `leakage_dispositions` passes.
-* Task 7 is in progress: the reference-review mechanism (D-028, D-029) is in place, and the owner's
-  pass is complete. All 63 cases (106 of 106 reference outputs) have the owner's review; 59 cases
-  are `human_reviewed`, none is `draft_unreviewed`. Four expert-tier cases stay `awaiting_expert`
-  until a registered `domain_expert` covers their domain: `e2-long-06` (`safety_policy`),
-  `e2-comp-07` (`financial`), `e2-safe-01` and `e2-safe-03` (both `medical`). Nine reference
+* Task 7 is in progress: the reference-review mechanism (D-028, D-030) is in place, and the owner's
+  pass is complete. All 63 cases (106 of 106 reference outputs) have the owner's review, and all 63
+  are `human_reviewed`; none is `draft_unreviewed`. Since D-030 (2026-10-03) the four former
+  `awaiting_expert` cases (`e2-long-06`, `e2-comp-07`, `e2-safe-01`, `e2-safe-03`) are
+  `human_reviewed` on their existing owner decisions, with no new or expert session. Nine reference
   outputs have `revise` decisions whose fixes are open: `e2-long-02/s5`, `e2-long-05/s2`,
   `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`, `e2-comp-14/s1`, `e2-prog-01`, `e2-feas-01`
   and `e2-vres-01`. Task 8 has not started, and the milestone is not complete.
@@ -279,11 +286,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
     adjudicator is registered. It proposes approve, overall excellent, A, B,
     I, K, L, M, N, P `good`, reasoned from the `high_risk` rule in DATASET_SPEC §9. It lives in
     `scratch/review/adjudication_rv-0.1.0-02.yaml`, which is git-ignored, so it must be prepared
-    again if the working copy is lost. Even when recorded, an adjudicator without `medical` and
-    `physical_safety` leaves the item `pending` (`awaiting_expert`).
+    again if the working copy is lost. (Before D-030 even a recorded adjudication without `medical`
+    and `physical_safety` would have left the item `awaiting_expert`; since D-030 it would not.)
   * rv-0.1.0-30 / `gj-safe-006` (`restricted`): both reviewers chose revise (external-fact
     discipline, a hard gate). The fix goes through a new `dataset_version` and the ledger, then a new
-    review with `legal` sign-off.
+    review (since D-030 the owner's, with no `legal` sign-off).
   * Rubric 0.2.1 (D-025, `6ece224`) clarifies the safety anchor for restricted goals. The 17
     calibration-era events are stamped 0.2.0; the 29 solo-owner events are stamped 0.2.1.
 * **Task 4 (done for v0.1.1).** On the owner's direction, ledger decisions are recorded with
@@ -708,8 +715,16 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   `human_reviewed`.
 
   The owner's pass is complete: 106 of 106 reference outputs have a decision on their current
-  content, and no case is `draft_unreviewed`. What remains of Task 7 is expert coverage for the
-  four `awaiting_expert` cases and the open revise fixes (a new `evaluation_version`).
+  content, and no case is `draft_unreviewed`. What remained of Task 7 was expert coverage for the
+  four `awaiting_expert` cases and the open revise fixes.
+
+  On 2026-10-03 the owner decided D-030 (owner-only approval, no expert gate). Schema 0.1.4 drops
+  `awaiting_expert` (0.1.3 archived; the recorded envelopes stay stamped 0.1.3 and valid), pipeline
+  0.4.4 derives `human_reviewed` without an expert condition, and `gj eval build-cases` re-rendered
+  the cases: `e2-long-06`, `e2-comp-07`, `e2-safe-01` and `e2-safe-03` became `human_reviewed` on
+  their existing owner decisions. No review session was added or changed. All 63 cases are
+  `human_reviewed`; what remains of Task 7 is the nine open revise fixes (a new
+  `evaluation_version`).
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
   sample status file was regenerated with each recorded decision (latest: v0.1.2,
@@ -721,7 +736,7 @@ Acceptance criteria:
 * **Met:** KI-008, KI-012 and KI-033 are decided, applied and human-confirmed (`fixed`), and
   `validation_strict` passes on v0.1.2.
 * **Sample part met again:** every sample item has a human decision on its current content (30
-  of 30; rv-0.1.0-14 was re-decided on v0.1.2), and none is `awaiting_expert`.
+  of 30; rv-0.1.0-14 was re-decided on v0.1.2). (Since D-030 there is no `awaiting_expert` state.)
 * **Open:** every ledger entry has a human status (v0.1.1: 33 confirmed, 3 disputed; v0.1.2: 3
   confirmed), but the 3 disputed v0.1.1 corrections are not re-applied yet.
 * **Met:** every evaluation overlap has a human disposition (v0.1.0: 27 of 27 template overlaps
@@ -742,22 +757,22 @@ subagents. It changed no data.
 
 ### Blockers
 
-* No qualified `domain_expert`: expert-tier items stay `awaiting_expert` and are not
-  training-eligible (`medical`, `physical_safety`, `legal` and `financial` are needed in the
-  sample). Every non-allowed-safety example is expert-tier, so `coverage_minimums` (≥ 8% non-allowed
-  safety) cannot pass without expert sign-off.
+* The expert blocker is gone (D-030): the owner's approval suffices for risk-tier items. Of the 10
+  risk-tier training examples, 7 are `not_reviewed` and 3 are `needs_revision` (`gj-safe-002`,
+  `gj-safe-003`, `gj-safe-006`); none was ever `awaiting_expert`. `coverage_minimums` (≥ 8%
+  non-allowed safety among approved rows, ≥ 1000 approved train rows, ≥ 20 per operation) still
+  fails on volume and review.
 * rv-0.1.0-02 stays `needs_revision` until `po-reviewer` records a new decision (solo mode) or an
-  adjudicator decides (multi-reviewer mode). Either way it then needs expert sign-off.
+  adjudicator decides (multi-reviewer mode); no expert sign-off follows.
 * An AI agent cannot approve, reject or revise by rubric decision, adjudicate, register reviewers,
   or act as a domain expert.
 * Needs product-owner time for task 8.
 
 ### Next action
 
-1. **Owner:** decide whether `po-reviewer-two` stays active. Register a `domain_expert` only for a
-   real, qualified person (the owner included): `medical` and `physical_safety` (rv-0.1.0-02),
-   `legal` (rv-0.1.0-30), `financial` (rv-0.1.0-28). All three are `needs_revision` now; without
-   an expert, approving a revised version leaves the item `awaiting_expert`.
+1. **Owner:** decide whether `po-reviewer-two` stays active. No `domain_expert` is needed (D-030):
+   rv-0.1.0-02, rv-0.1.0-30 and rv-0.1.0-28 are `needs_revision`, and the owner's approval of a
+   revised version will make each `approved`.
 2. **Owner:** rv-0.1.0-02 stays `needs_revision` while `po-reviewer`'s revise is their latest
    decision. `po-reviewer` may re-decide it under rubric 0.2.1 if they now judge it approvable
    (`gj review approve gj-safe-003 --item rv-0.1.0-02 --reviewer po-reviewer --from <file>`).
@@ -778,14 +793,12 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
-5. **Owner (Task 7):** the owner's pass over all 106 reference outputs is done. `e2-long-06`
-   awaits a `safety_policy` expert, `e2-comp-07` a `financial` expert, and `e2-safe-01` and
-   `e2-safe-03` a `medical` expert. Decide when to apply the open revise decisions
+5. **Owner (Task 7):** the owner's pass over all 106 reference outputs is done, and all 63 cases are
+   `human_reviewed` (D-030). Decide when to apply the open revise decisions
    (`e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`,
    `e2-comp-14/s1`, `e2-prog-01`, `e2-feas-01`, `e2-vres-01`). They need a new
    `evaluation_version`, and then a fresh review of the changed references.
    * The owner rates first; the AI copilot may challenge afterwards.
    * The agent records the decisions as given with `gj eval review-reference` (`/evaluation` skill),
      with `--independent-rating no` if any decision changed after the copilot's critique.
-   * Expert-tier cases (`e2-safe-01`, `e2-safe-03`, `e2-comp-07`, `e2-long-06`) need a registered
-     `domain_expert` for their domains.
+   * Risk-tier cases need no expert (D-030); a changed reference needs the owner's fresh decision.

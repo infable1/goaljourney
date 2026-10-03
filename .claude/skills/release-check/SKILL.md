@@ -68,7 +68,7 @@ reports readiness; it never starts training.
 
 | # | Check | Evidence |
 |---|---|---|
-| 1 | `gj gates` passes every gate applicable in the review mode (solo_owner: 9, multi_reviewer: 11) for the release and purpose; no expert-tier row lacks qualified expert sign-off | command output, manifest `training_eligibility` |
+| 1 | `gj gates` passes every gate applicable in the review mode (solo_owner: 9, multi_reviewer: 11) for the release and purpose; every train/validation row is `approved` by a qualified human (D-030: no expert sign-off required) | command output, manifest `training_eligibility` |
 | 2 | Licensing LIC-001…005 resolved by a person, with evidence | `configs/licensing_status.yaml` |
 | 3 | Base model chosen and recorded, and its licence permits the use (LIC-003) | `configs/versions.yaml` `base_model` |
 | 4 | Prompt parity: the SFT export and the eval runner use the same navigator prompt version | `configs/export.yaml`, `configs/evaluation.yaml` |

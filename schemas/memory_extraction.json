@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/memory_extraction.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/memory_extraction.json",
   "title": "Operation output: memory_extraction",
   "description": "Extracts memory items from a conversation into the right layer (user vs goal). Third-party details and sensitive data not needed for the goal are not stored.",
   "type": "object",

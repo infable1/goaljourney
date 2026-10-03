@@ -2,11 +2,12 @@
 # described in docs/HUMAN_REVIEW_GUIDE.md. Nothing here contains personal data: reviewers are registered by id
 # in review/reviewers.yaml.
 
-# Review governance (D-026). The mode decides which release gates apply; it never changes how a recorded
+# Review governance (D-026, D-030). The mode decides which release gates apply; it never changes how a recorded
 # decision resolves (review_store.resolve), so historical events keep their meaning in either mode.
-#   solo_owner      one accountable human owner reviews; an AI copilot may assist but never decides; a qualified
-#                   domain expert signs off expert-tier items when one is available. Gates scoped `multi_reviewer`
-#                   (reviewer_diversity, calibration_agreement) are reported N/A — never as passed.
+#   solo_owner      one accountable human owner reviews; an AI copilot may assist but never decides. The owner's
+#                   approval of an example's exact current content approves it in every risk tier (D-030); no
+#                   domain-expert sign-off is required. Gates scoped `multi_reviewer` (reviewer_diversity,
+#                   calibration_agreement) are reported N/A — never as passed.
 #   multi_reviewer  several independent human reviewers; pairwise calibration, reviewer diversity and adjudication
 #                   apply (the M1.5 design).
 governance:
@@ -32,25 +33,31 @@ paths:
 # that a later registry edit cannot change the meaning of a past decision.
 roles:
   dataset_reviewer: Approves, revises or rejects examples written in a language they list. In solo_owner mode the owner.
-  domain_expert: Signs off expert-tier examples in their expert_domains (in addition to or instead of a dataset reviewer). Only a professionally qualified human; never an AI.
+  domain_expert: >-
+    Optional and not required by any decision since D-030. Kept so that registries and the reviewer snapshots
+    in recorded events stay readable; it grants nothing a dataset_reviewer lacks. Only a professionally qualified
+    human may ever hold it; never an AI, and never assigned to make an approval count.
   adjudicator: Multi-reviewer mode only. Resolves disagreements; the adjudicator's latest decision on a content hash is final.
 
 approval:
   # An approval counts only if the reviewer is a registered, active human with the example's languages.
+  # That approval of the exact current content hash is sufficient in every risk tier (D-030): there is no expert
+  # gate, and no example waits for an expert. (Until D-030, `expert_tier_requires_expert: true` kept expert-tier
+  # examples `pending` / `awaiting_expert`; no recorded event ever reached that state.)
   require_language_match: true
-  # Expert-tier examples stay `pending` (detail `awaiting_expert`) until approvals from qualified domain experts
-  # cover every required expert domain. They are not training-eligible until then, in every governance mode.
-  expert_tier_requires_expert: true
   # Approving an example that has open automated findings or known issues of these severities requires
   # --acknowledge-findings (after rating independently; see the guide). The acknowledged ids are logged.
   acknowledge_severities: [high]
 
-# Example-level review tiers. Property-level classification (what can be checked automatically, what
-# needs a human, what needs an expert) lives in the rubric (`automation` per criterion) and in
-# docs/HUMAN_REVIEW_GUIDE.md §3. No example can be approved automatically.
+# Example-level risk tiers. Property-level classification (what can be checked automatically and what needs a
+# human) lives in the rubric (`automation` per criterion) and in docs/HUMAN_REVIEW_GUIDE.md §3. No example can be
+# approved automatically. Since D-030 the tier is a risk label: it drives review sampling (risk weight, the
+# expert_tier coverage category), review focus and the risk domains shown on review sheets, and every event records
+# it (`review_tier`, `required_expert_domains`). It no longer requires an expert's sign-off. The key names are kept
+# because recorded events, the frozen v0.1.0 review manifest and the schemas use them.
 tiers:
   # Triggered by risk: a non-'allowed' safety category or one of the risk tags below. record_domains
-  # and safety_output_domains only decide which expert domains must sign off.
+  # and safety_output_domains only name the risk domains.
   expert_review_required:
     safety_categories: [sensitive, high_risk, needs_professional_support, restricted]
     record_domains: {health: medical, legal_admin: legal, finance: financial}
@@ -61,6 +68,8 @@ tiers:
     fallback_expert_domain: safety_policy
   default: human_review_required
 
+# The vocabulary of risk domains (and of the optional `expert_domains` a registry entry may list). Since D-030 no
+# domain needs an expert's sign-off.
 expert_domains: [medical, mental_health, legal, financial, physical_safety, privacy, safety_policy]
 
 sampling:

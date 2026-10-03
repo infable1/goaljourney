@@ -28,9 +28,9 @@ Design: `docs/EVALUATION_V0.2_DESIGN.md`. Workflow: `/evaluation`.
 - **References are acceptable answers, not the only correct one.** Human review (D-028) is stored
   in the case's `reference_review` block and recorded only with `gj eval review-reference`, never by
   hand. In `solo_owner` mode one registered owner completes it. `reference_status` is derived: it is
-  `human_reviewed` only when every reference output has a decision on its current content hash. An
-  expert-tier case without registered `domain_expert` coverage is `awaiting_expert` (D-029). The
-  builder carries the block over, so never strip it.
+  `human_reviewed` only when every reference output has a decision on its current content hash. A
+  risk-tier case needs no expert coverage: the owner's review completes it (D-030; there is no
+  `awaiting_expert`). The builder carries the block over, so never strip it.
 - **Every unit** needs `schema_valid`, `semantic_clean` and a `language` check, plus checks that the
   naive baseline fails.
 - **Leakage metadata** in `evaluation/leakage/v<ver>.yaml`:

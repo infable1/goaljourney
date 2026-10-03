@@ -335,7 +335,7 @@ content is preserved in `data/reviewed/snapshots/<hash>.json`.
 
 | Status | Detail |
 |---|---|
-| `pending` | `not_reviewed`, `content_changed` (content changed since the last decision) or `awaiting_expert` |
+| `pending` | `not_reviewed` or `content_changed` (content changed since the last decision) |
 | `approved` | `decided` |
 | `needs_revision` | `decided` |
 | `rejected` | `decided` |
@@ -359,22 +359,23 @@ mode.
 **Qualifications and tiers** (`configs/review.yaml`): reviewers are registered in
 `review/reviewers.yaml` and must be human; one owner entry is enough. Approval requires a reviewer
 who reads the example's languages (RU; mixed input needs RU+EN). Examples with a non-`allowed`
-safety category or a risk tag are `expert_review_required` and need sign-off from `domain_expert`s
-covering their expert domains. The owner may hold `domain_expert` only for domains they are
-qualified in. Otherwise the item stays `pending` / `awaiting_expert` and is not training-eligible.
-No example is ever approved automatically, and an AI review copilot never records a decision, never
-counts as a reviewer or an expert, and never changes a rating
-([guide §14](docs/HUMAN_REVIEW_GUIDE.md)). A rating that the reviewer changed after seeing findings
-or AI critique is recorded with `--independent-rating no`.
+safety category or a risk tag are in the risk tier (`expert_review_required`, the former expert
+tier): it weights review sampling and is recorded in every event, but since D-030 it needs no
+domain-expert sign-off. The owner's approval of the exact content approves an example in every tier,
+and there is no `awaiting_expert` state (D-030 is a governance decision, not a claim of professional
+qualification). Events recorded before D-030 keep their meaning; none ever reached
+`awaiting_expert`. No example is ever approved automatically, and an AI review copilot never records
+a decision, never counts as a reviewer or an expert, and never changes a rating ([guide
+§14](docs/HUMAN_REVIEW_GUIDE.md)). A rating that the reviewer changed after seeing findings or AI
+critique is recorded with `--independent-rating no`.
 
 **Review and training states** (`review_store.training_eligibility`) are kept apart:
 
 | State | Meaning |
 |---|---|
 | human-reviewed | at least one human decision on the current content hash |
-| expert-reviewed | every required expert domain covered by a human `domain_expert` approval |
-| training-eligible | status `approved` (which includes the expert tier) |
-| not eligible | `not_reviewed`, `content_changed`, `awaiting_expert`, `needs_revision` or `rejected`, always with that reason |
+| training-eligible | status `approved`: a qualified human approval of the current content, in any tier (D-030) |
+| not eligible | `not_reviewed`, `content_changed`, `needs_revision` or `rejected`, always with that reason |
 | training-ready release | a release whose every *applicable* gate passes (§15) |
 
 **Sample.** `gj review sample` builds a deterministic 30-item manifest
@@ -429,12 +430,13 @@ gj review history ID                gj review stats             gj review verify
   *authored* examples allowed, release marked `draft_unreviewed`). Generated candidates enter a
   release only when approved, under either policy. Content that is `needs_revision` or `rejected` is
   always excluded; under `allow_pending`, `pending` authored content of any detail (`not_reviewed`,
-  `content_changed`, `awaiting_expert`) is released only as a draft.
+  `content_changed`) is released only as a draft.
 * **Training eligibility in the manifest.** Every release manifest (pipeline ≥ 0.4.0) records
   `review_mode` and `training_eligibility`: the eligible count, counts per reason, and every
-  pool example that is not training-eligible, with its reason, status, origin, whether it is in the
-  release as a draft row, and the missing expert domains for `awaiting_expert`. Nothing is dropped
-  silently. Earlier manifests (v0.1.0, v0.1.1) are frozen as built and lack these keys.
+  pool example that is not training-eligible, with its reason, status, origin and whether it is in
+  the release as a draft row. Nothing is dropped silently. Earlier manifests (v0.1.0, v0.1.1) are
+  frozen as built and lack these keys; manifests built before D-030 (v0.1.2) also list the reason
+  `awaiting_expert` in their reason table and keep it.
 * **Release status:** `draft_unreviewed` (pending rows) → `reviewed_not_training_ready` (all rows
   approved but an applicable release gate fails) → `training_ready` (every *applicable* gate in
   [`configs/release_gates.yaml`](configs/release_gates.yaml) passes). Gates, by scope:

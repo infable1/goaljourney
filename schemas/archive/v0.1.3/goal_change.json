@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/goal_change.json",
+  "title": "Operation output: goal_change (Type L)",
+  "description": "Classifies a change of intention (minor adjustment / major adjustment / new goal) and preserves useful progress instead of discarding history.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "response_language", "message_to_user", "classification", "updated_goal", "preserved_progress", "discarded_progress", "recommend_separate_goal", "requires_user_confirmation", "decision_summary"],
+  "properties": {
+    "type": { "const": "goal_change" },
+    "response_language": { "$ref": "common.json#/$defs/language" },
+    "message_to_user": { "$ref": "common.json#/$defs/message" },
+    "classification": { "type": "string", "enum": ["minor_adjustment", "major_adjustment", "new_goal"] },
+    "updated_goal": { "$ref": "goal.json" },
+    "preserved_progress": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["node_id", "how_reused"],
+        "properties": {
+          "node_id": { "$ref": "common.json#/$defs/id" },
+          "how_reused": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "discarded_progress": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["node_id", "reason"],
+        "properties": {
+          "node_id": { "$ref": "common.json#/$defs/id" },
+          "reason": { "$ref": "common.json#/$defs/short_text" }
+        }
+      }
+    },
+    "route_impact": { "$ref": "common.json#/$defs/text" },
+    "recommend_separate_goal": { "type": "boolean" },
+    "original_goal_handling": {
+      "type": "string",
+      "enum": ["updated_in_place", "paused", "archived_with_history", "kept_active"]
+    },
+    "requires_user_confirmation": { "type": "boolean" },
+    "needs_web_research": { "type": "boolean" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" },
+    "decision_summary": { "$ref": "decision_summary.json" }
+  }
+}

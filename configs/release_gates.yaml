@@ -11,9 +11,9 @@
 # training files. No gate blocks review work itself (reviewing, recording decisions, revising examples).
 #
 # `scope` (added in 1.1 with review governance modes, D-026; configs/review.yaml `governance.mode`):
-#   always          applies in every mode. Covers validation, human approval of every training row (which includes
-#                   qualified expert sign-off for expert-tier rows), findings, known issues, leakage, coverage,
-#                   evaluation and licensing. Solo-owner mode applies all of these unchanged.
+#   always          applies in every mode. Covers validation, human approval of every training row (one qualified
+#                   human approval of the exact content, in every risk tier — D-030), findings, known issues, leakage,
+#                   coverage, evaluation and licensing. Solo-owner mode applies all of these unchanged.
 #   multi_reviewer  inter-reviewer checks (reviewer_diversity, calibration_agreement): they apply only in
 #                   multi_reviewer mode. In solo_owner mode `gj gates` reports them N/A — never as passed — and
 #                   `training_ready` ignores them. There is no self-agreement substitute.
@@ -31,10 +31,10 @@ gates:
     blocking: true
     scope: always
     min_approved_share: 1.0
-    description: Every train/validation row has a qualified human approval of its exact content (status `approved`,
-      which already includes expert sign-off for expert-tier examples and language-qualified reviewers). Rows awaiting
-      an expert, needing revision, rejected or not reviewed are not training-eligible; release manifests list them
-      with a reason (`training_eligibility`).
+    description: Every train/validation row has a qualified human approval of its exact content (status `approved`
+      — a registered, active human reviewer who reads the row's languages; since D-030 no domain-expert sign-off, in
+      any risk tier). Rows needing revision, rejected, not reviewed or changed since their decision are not
+      training-eligible; release manifests list them with a reason (`training_eligibility`).
     rationale: Synthetic, agent-authored data is not ground truth. 100% because a single wrong example (e.g. a wrong
       date or a gendered address) is learned as readily as a right one, and there is no downstream filter.
 

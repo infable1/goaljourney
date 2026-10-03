@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/evidence.json",
+  "title": "Evidence submission item",
+  "description": "One piece of evidence the user submitted for a task. The v0.1 model is text-only: images, audio and video reach it as a textual `description` (user caption or an upstream captioner/transcriber, see `description_source`). URLs reach it with a system-fetched `content` summary when available.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "type"],
+  "properties": {
+    "id": { "$ref": "common.json#/$defs/id" },
+    "type": {
+      "type": "string",
+      "enum": [
+        "text_report", "structured_self_report", "answers", "structured_result",
+        "photo", "video", "audio", "screenshot", "file", "url", "data_export",
+        "third_party_confirmation"
+      ]
+    },
+    "description": { "$ref": "common.json#/$defs/text" },
+    "description_source": {
+      "type": "string",
+      "enum": ["user_caption", "vision_model", "transcription", "system_fetch", "file_parser"]
+    },
+    "content": { "type": "string", "minLength": 1, "maxLength": 6000 },
+    "fields": {
+      "description": "Filled-in fields for structured self-reports/results.",
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "number", "integer", "boolean", "null"]
+      },
+      "maxProperties": 20
+    },
+    "url": { "$ref": "common.json#/$defs/url" },
+    "responds_to": {
+      "description": "For answers: which protocol method they answer. Answers to a knowledge/practical test are an inspectable artifact; answers to follow-up questions are the user's account (POL-B).",
+      "type": "string",
+      "enum": ["knowledge_test", "practical_test", "follow_up_questions", "other"]
+    },
+    "submitted_at": { "$ref": "common.json#/$defs/datetime" }
+  }
+}

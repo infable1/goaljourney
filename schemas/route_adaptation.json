@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/route_adaptation.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/route_adaptation.json",
   "title": "Operation output: route_adaptation (Types H, K)",
   "description": "Change set against the current journey. Completed/verified progress is preserved unless explicitly justified. Major changes require user confirmation. Every change is explained in decision_summary.",
   "type": "object",

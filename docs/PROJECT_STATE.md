@@ -1,6 +1,8 @@
 # Project state
 
-*Last updated: 2026-09-30 · during Milestone 1.7 (Human Review Round 1), after the move to
+*Last updated: 2026-10-03 · during Milestone 1.7 (Human Review Round 1), after the owner's review
+of all 106 evaluation reference outputs and the move to owner-only approval for every tier (D-030,
+schema 0.1.4, pipeline 0.4.4). Earlier: after the move to
 solo-owner-first review governance (D-026, pipeline 0.4.0) and the first solo-owner reviews
 (rv-0.1.0-01, rv-0.1.0-03, rv-0.1.0-04, rv-0.1.0-05, rv-0.1.0-06, rv-0.1.0-07, rv-0.1.0-08, rv-0.1.0-10, rv-0.1.0-11, rv-0.1.0-13, rv-0.1.0-14, rv-0.1.0-15, rv-0.1.0-16, rv-0.1.0-17, rv-0.1.0-18, rv-0.1.0-19, rv-0.1.0-21, rv-0.1.0-22, rv-0.1.0-23, rv-0.1.0-24, rv-0.1.0-25, rv-0.1.0-26, rv-0.1.0-27, rv-0.1.0-28), which complete the decisions
 on the 30-item review sample, the human reviews of all 36 v0.1.1 ledger revisions, and dataset v0.1.2, which applies
@@ -21,11 +23,18 @@ Solo mode keeps every check one careful human can honestly perform:
 * content-hash binding and the append-only log;
 * invalidation on revision;
 * ratings independent of automated findings;
-* the expert tier.
+* the risk tier (formerly the expert tier), now a label that asks for extra care.
 
 Solo mode is also explicit about what one person cannot provide: the two pairwise gates are shown as
-**N/A**, never as passed, and expert-tier items without a qualified expert stay `awaiting_expert`
-and are not training-eligible. `multi_reviewer` mode keeps the earlier semantics.
+**N/A**, never as passed. `multi_reviewer` mode keeps the earlier pairwise semantics.
+
+**Owner-only approval (D-030, 2026-10-03).** The product owner removed the expert gate. One
+accountable human owner's approval of the exact current content hash is sufficient human approval
+for every current training example and every evaluation reference decision, including the former
+expert-tier and non-allowed-safety items. No external domain expert is required, and
+`awaiting_expert` is no longer a current status (schema 0.1.4). Historical records and events keep
+their values and stay valid. Evaluation stays separate from training (D-017). D-030 is a
+governance change, not proof of the owner's professional qualification.
 
 This file is the durable, factual snapshot of the repository. The repository is the source of
 truth; chat history is not.
@@ -36,7 +45,7 @@ truth; chat history is not.
 |---|---|
 | Repository | `infable1/goaljourney` — dataset, validation and evaluation pipeline for the GoalJourney Navigator model |
 | Working branch | Default branch `claude/fervent-keller-j517cd` (there is no `main`). The M1.7 review round after `ae21c7d` is on `claude/sleepy-dijkstra-nzrf3t`, which also merged the rv-0.1.0-29 record from `claude/compassionate-noether-1o9iyx`; it is not merged into the default branch. No open pull request (infable1/goaljourney#1 and infable1/goaljourney#2 were closed unmerged) |
-| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084`, the rv-0.1.0-01 independence correction `2438dd4` the rv-0.1.0-04 review `5b3f7c4` and the rv-0.1.0-05 review `71c92eb` and the rv-0.1.0-06 review `8deff75` and the rv-0.1.0-07 review `40a3d51` with its notes correction `7284b5a` the rv-0.1.0-08 review `2997666` and the rv-0.1.0-10 review `301009a` the rv-0.1.0-11 review `c7eef17` the rv-0.1.0-13 review `b297d91` and the rv-0.1.0-14 review `8aa4416` the rv-0.1.0-15 review `6e92860` the rv-0.1.0-16 review `d876db9` the rv-0.1.0-17 review `49fe41f` the rv-0.1.0-18 review `e27bb32` the rv-0.1.0-19 review `8ee6efd` the rv-0.1.0-21 review `57c78c0` with its text correction `8eafa75` the rv-0.1.0-22 review `10a493b` the rv-0.1.0-23 review `b7d1c5c` the rv-0.1.0-24 review `26e98e5` with its independence correction `212cf67` the rv-0.1.0-25 review `1e2e9b2` the rv-0.1.0-26 review `3af4cae` the rv-0.1.0-27 review `73c22db` and the rv-0.1.0-28 review `2f2511f`, which completes the sample → ledger review recording (D-027, schema 0.1.2) and the reviews of REV-0.1.1-001…036 `d1d848d`…`8c5d690` → dataset v0.1.2 with the owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2) `04a2c1f` → the rv-0.1.0-14 v0.1.2 review `ffe2432` → the confirmations of REV-0.1.2-001…003 `8c90b42`…`4500616` → KI-008, KI-012 and KI-033 `fixed` → the Task 6 overlap dispositions (v0.1.0 `5b38f40`…`f294948`, v0.2.0 batches 1–10 from `ef77f4e`) → evaluation reference review (D-028, schema 0.1.3, pipeline 0.4.3) and the `e2-long-01` review (latest commits: `git log --oneline -5`) |
+| History | `995f513` M1 → `476d322` M1.5 → `c3b7cfb`…`13d837e` M1.6 → orchestration setup → M1.7 review round `fdf6d4c`…`e0dbc53` → solo-owner governance (D-026, pipeline 0.4.0) `6d6bcb5` → first solo-owner reviews `9457084`, the rv-0.1.0-01 independence correction `2438dd4` the rv-0.1.0-04 review `5b3f7c4` and the rv-0.1.0-05 review `71c92eb` and the rv-0.1.0-06 review `8deff75` and the rv-0.1.0-07 review `40a3d51` with its notes correction `7284b5a` the rv-0.1.0-08 review `2997666` and the rv-0.1.0-10 review `301009a` the rv-0.1.0-11 review `c7eef17` the rv-0.1.0-13 review `b297d91` and the rv-0.1.0-14 review `8aa4416` the rv-0.1.0-15 review `6e92860` the rv-0.1.0-16 review `d876db9` the rv-0.1.0-17 review `49fe41f` the rv-0.1.0-18 review `e27bb32` the rv-0.1.0-19 review `8ee6efd` the rv-0.1.0-21 review `57c78c0` with its text correction `8eafa75` the rv-0.1.0-22 review `10a493b` the rv-0.1.0-23 review `b7d1c5c` the rv-0.1.0-24 review `26e98e5` with its independence correction `212cf67` the rv-0.1.0-25 review `1e2e9b2` the rv-0.1.0-26 review `3af4cae` the rv-0.1.0-27 review `73c22db` and the rv-0.1.0-28 review `2f2511f`, which completes the sample → ledger review recording (D-027, schema 0.1.2) and the reviews of REV-0.1.1-001…036 `d1d848d`…`8c5d690` → dataset v0.1.2 with the owner-decided fixes for KI-008, KI-012 and KI-033 (pipeline 0.4.2) `04a2c1f` → the rv-0.1.0-14 v0.1.2 review `ffe2432` → the confirmations of REV-0.1.2-001…003 `8c90b42`…`4500616` → KI-008, KI-012 and KI-033 `fixed` → the Task 6 overlap dispositions (v0.1.0 `5b38f40`…`f294948`, v0.2.0 batches 1–10 from `ef77f4e`) → evaluation reference review (D-028, schema 0.1.3, pipeline 0.4.3), the `e2-long-01` review and the owner's reviews of all 106 reference outputs (to `d91aa5a`) → owner-only approval, no expert gate (D-030, schema 0.1.4, pipeline 0.4.4) (latest commits: `git log --oneline -5`) |
 | Language / stack | Python ≥ 3.10; jsonschema, referencing, PyYAML, pytest; CLI `scripts/gj.py`; `make check` |
 | Mobile app / product code | not in this repository |
 
@@ -45,9 +54,9 @@ truth; chat history is not.
 | Artefact | Version | Notes |
 |---|---|---|
 | dataset | 0.1.2 | release `draft_unreviewed`: train 72, validation 12, test 63 eval cases; the 9 `needs_revision` examples are excluded. Base v0.1.1 (train 81, validation 12) and v0.1.0 are immutable and kept |
-| schema | 0.1.3 | 0.1.3 adds the evaluation-case `reference_review` block (D-028) and the `awaiting_expert` reference status (D-029); 0.1.2 adds the revision-ledger `review` block; v0.1.0, v0.1.1 and v0.1.2 archived in `schemas/archive/`. Records stay at `schema_version` 0.1.1 and validate against the archived set |
-| pipeline | 0.4.3 | `gj eval review-reference`: human reviews of evaluation reference outputs, stored in the cases, bound to each reference's content hash and carried over by `gj eval build-cases`; an owner's review of an expert-tier case stays `awaiting_expert` until a registered `domain_expert` covers it (D-029); 0.4.2: an earlier version's ledger and sample status are judged against its own release, and revision ids follow the ledger chain; 0.4.1: `gj revisions review` (human decisions on ledger entries, bound to the content hash); 0.4.0: review governance modes (`solo_owner` default), gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders |
-| evaluation | 0.2.0 | 63 cases / 106 model calls (43 atomic, 14 composite, 6 longitudinal). v0.1.0 (30 cases) frozen. Reference review (Task 7, D-028, D-029): the owner's pass is complete, 106 of 106 reference outputs have the owner's decision. 59 cases are `human_reviewed`; `e2-long-06` (`safety_policy`), `e2-comp-07` (`financial`), `e2-safe-01` and `e2-safe-03` (both `medical`) are `awaiting_expert`; none is `draft_unreviewed`. `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`, `e2-comp-14/s1`, `e2-prog-01`, `e2-feas-01` and `e2-vres-01` are `revise` / `needs_revision`, fixes pending (a new `evaluation_version`) |
+| schema | 0.1.4 | 0.1.4 removes `awaiting_expert` from the reference statuses and the review-event status details (D-030); 0.1.3 added the evaluation-case `reference_review` block (D-028) and the `awaiting_expert` reference status (D-029); 0.1.2 adds the revision-ledger `review` block; v0.1.0…v0.1.3 archived in `schemas/archive/`. Records stay at `schema_version` 0.1.1 and validate against the archived set; evaluation envelopes stamped 0.1.3 validate against the archived 0.1.3 |
+| pipeline | 0.4.4 | owner-only approval (D-030): a qualified human approval of the current content hash approves an example of any risk tier, and an owner-decided reference case is `human_reviewed`; no code path produces `awaiting_expert`; 0.4.3: `gj eval review-reference`: human reviews of evaluation reference outputs, stored in the cases, bound to each reference's content hash and carried over by `gj eval build-cases` (with the D-029 expert gate, removed in 0.4.4); 0.4.2: an earlier version's ledger and sample status are judged against its own release, and revision ids follow the ledger chain; 0.4.1: `gj revisions review` (human decisions on ledger entries, bound to the content hash); 0.4.0: review governance modes (`solo_owner` default), gate scopes, training-eligibility accounting in release manifests; 0.3.0: v0.1.1 validators, revision ledger, review log v0.3, eval builders |
+| evaluation | 0.2.0 | 63 cases / 106 model calls (43 atomic, 14 composite, 6 longitudinal). v0.1.0 (30 cases) frozen. Reference review (Task 7, D-028, D-030): the owner's pass is complete, 106 of 106 reference outputs have the owner's decision, and all 63 cases are `human_reviewed` (none `draft_unreviewed`). The 4 cases that were `awaiting_expert` under D-029 (`e2-long-06`, `e2-comp-07`, `e2-safe-01`, `e2-safe-03`) became `human_reviewed` on their existing owner decisions, with no new review event (D-030). `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`, `e2-comp-14/s1`, `e2-prog-01`, `e2-feas-01` and `e2-vres-01` are `revise` / `needs_revision`, fixes pending (a new `evaluation_version`) |
 | navigator prompt / generation prompts | 0.1.1 / 0.1.1 | `prompts/navigator/v0.1.1/`, `prompts/generation/v0.1.1/` |
 | base model | unset | chosen later, recorded in `configs/versions.yaml` |
 
@@ -62,7 +71,8 @@ truth; chat history is not.
     workflow.
   * **Reviewers:** 2 registered humans, `po-reviewer` and `po-reviewer-two`, both still `active`.
     Both are `dataset_reviewer`, read ru and en, and hold no expert domains. No `adjudicator` and no
-    `domain_expert` is registered. `gj review stats` notes the 2 active reviewers in solo mode.
+    `domain_expert` is registered, and since D-030 none is needed. `gj review stats` notes the 2
+    active reviewers in solo mode.
     Whether `po-reviewer-two` keeps reviewing (or is set `active: false`; past events keep their
     snapshot) is the owner's decision.
   * **Decisions:** 46 review events (`po-reviewer` 38, `po-reviewer-two` 8).
@@ -270,12 +280,14 @@ truth; chat history is not.
         decision from approve/excellent to revise/needs_revision after the AI second-look
         discussion). The reviewed version is the sampled content hash `5d0d0c50…`; it had no
         earlier review and is now `needs_revision` (a revise takes effect without expert sign-off;
-        approving a revised version will still need `financial` sign-off). The owner's notes treat
+        at the time, approving a revised version would also have needed `financial` sign-off; since
+        D-030 the owner's approval of the revised content is enough). The owner's notes treat
         `KI-022` as a separate schema-level issue in how the optional professional referral is
         represented, not a change to the safety rating; it remains `open`.
 
         With rv-0.1.0-28 every one of the 30 sample items had a human decision on its current
-        content hash: 20 `approved` and 10 `needs_revision`, none `pending` or `awaiting_expert`.
+        content hash: 20 `approved` and 10 `needs_revision`, none `pending` or (then still a status)
+        `awaiting_expert`.
         Dataset v0.1.2 then changed one of them (rv-0.1.0-14, above). After the new decision on its
         current content, all 30 are decided again: 20 `approved`, 10 `needs_revision`.
   * **Independence correction.** `rev-044d69c4953d` was recorded with `independent_rating: true`,
@@ -311,11 +323,11 @@ truth; chat history is not.
     revise, `po-reviewer-two` approve), so it stays `needs_revision`; the most conservative
     decision wins. In solo mode no adjudicator is needed. A later decision by `po-reviewer` replaces
     their own earlier one. An adjudication record (approve, excellent) is prepared in git-ignored
-    `scratch/` only and is **not recorded**. The item also needs `medical` and `physical_safety`
-    sign-off before it can be `approved`.
+    `scratch/` only and is **not recorded**. Its risk domains are `medical` and `physical_safety`;
+    since D-030 no expert sign-off is needed, only a qualified human approval of its content.
   * **rv-0.1.0-30 (gj-safe-006, `restricted`):** both reviewers chose revise (external-fact
-    discipline). It needs a content revision (new dataset version and ledger entry) and `legal`
-    sign-off.
+    discipline). It needs a content revision (new dataset version and ledger entry) and then the
+    owner's decision on the new content (risk domain `legal`; no expert sign-off since D-030).
   * **Rubric:** 0.2.1 is in force (D-025, restricted-goal safety anchor). 0.2.0 is kept for the
     events stamped with it.
 
@@ -349,10 +361,11 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
 * **Review.**
   * A rubric (0.2.1; 0.2.0 kept).
   * An append-only, hash-chained decision log (46 events).
-  * A reviewer registry (2 human dataset reviewers; one owner is enough) and expert tiers.
+  * A reviewer registry (2 human dataset reviewers; one owner is enough) and risk tiers (formerly
+    expert tiers; since D-030 a label for extra care, not an approval requirement).
   * Governance modes `solo_owner` (default) and `multi_reviewer`.
-  * Training-eligibility states (human-reviewed / expert-reviewed / training-eligible / not
-    eligible with a reason).
+  * Training-eligibility states (human-reviewed / training-eligible / not eligible with a reason:
+    `not_reviewed`, `content_changed`, `needs_revision`, `rejected`).
   * An `--independent-rating` flag, and a documented AI review copilot and "unsure" path
     (HUMAN_REVIEW_GUIDE §14–15).
   * A 30-item sample (8 calibration items) and a per-version sample status file.
@@ -379,9 +392,9 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
 
 ## Health (at last update)
 
-`make -k check` passes (after dataset v0.1.2 and its draft release, every target):
+`make -k check` passes (after D-030, schema 0.1.4 and pipeline 0.4.4, every target):
 
-* 460 tests passed and 2 skipped (9 in `tests/test_orchestration.py`, 21 in
+* 494 tests passed and 2 skipped (9 in `tests/test_orchestration.py`, 27 in
   `tests/test_solo_review.py`);
 * the builder, ledger (v0.1.2) and sample drift checks (`review/review_sample_status_v0.1.2.json`);
 * reference 106/106, naive 0/106;
@@ -408,14 +421,16 @@ v0.1.1 still passes 2 of 9. Before D-026 the count was 3 of 11; the third pass w
    * `reviewer_diversity` counts one approval per reviewer per approved row (fixed after the
      corrective re-approval of `gj-feas-005` made the informational share read 111%). Its
      informational share is now 100%.
-   * **No qualified `domain_expert`:** expert-tier items stay `awaiting_expert` and are not
-     training-eligible. rv-0.1.0-02 needs `medical` and `physical_safety`, rv-0.1.0-30 needs
-     `legal`, rv-0.1.0-28 needs `financial`. All three are currently `needs_revision`; after
-     revision, an approval without the expert leaves them `awaiting_expert`.
-   * Consequence: `coverage_minimums` requires a non-allowed-safety share ≥ 8% of approved rows.
-     Every non-allowed example is expert-tier (the fallback domain is `safety_policy`), so **no
-     release can be training-ready without qualified expert sign-off**. This is intended; the gate
-     is not loosened.
+   * **No expert blocker since D-030.** Risk-tier items (rv-0.1.0-02: `medical`,
+     `physical_safety`; rv-0.1.0-30: `legal`; rv-0.1.0-28: `financial`) need only the owner's
+     approval of their current content. All three are currently `needs_revision`, so they still
+     need a content revision and a new owner decision. When D-030 was adopted no example was
+     `awaiting_expert`, so no row changed status: 21 `approved`, 10 `needs_revision`, 62
+     `not_reviewed`, 0 `rejected`, 0 `content_changed`. Of the 10 risk-tier examples, 7 are not
+     reviewed and 3 are `needs_revision`.
+   * `coverage_minimums` still requires a non-allowed-safety share ≥ 8% of approved rows. Every
+     non-allowed example is risk-tier (the fallback domain is `safety_policy`); these now need the
+     owner's approval rather than an expert's. The gate is not loosened.
 2. **Policies POL-A…F** need product-owner confirmation (`docs/POLICY_DECISIONS_v0.1.1.md`).
 3. **Licensing:** 5 open items (`configs/licensing_status.yaml`) block any training-ready release.
 4. **Known issues:** KI-008, KI-012 and KI-033 are `fixed` (corrections in v0.1.2, human-confirmed).

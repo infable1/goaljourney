@@ -1140,7 +1140,7 @@ cases:
     - Вечерний ритуал
     - Дневник сна
     proceed_with_journey: true
-  reference_status: awaiting_expert
+  reference_status: human_reviewed
   reference_review:
     metadata_schema_version: 0.1.3
     sessions:
@@ -1311,7 +1311,7 @@ cases:
     - A study plan for the finals
     proceed_with_journey: false
     safer_reframing: Prepare for the finals with a realistic study plan.
-  reference_status: awaiting_expert
+  reference_status: human_reviewed
   reference_review:
     metadata_schema_version: 0.1.3
     sessions:

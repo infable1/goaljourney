@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/goal.json",
+  "title": "Goal",
+  "description": "Structured representation of a user goal. Only `title` is required: unknown fields are omitted, never invented. `assumptions` records what the AI assumed and on what basis.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title"],
+  "properties": {
+    "id": { "$ref": "common.json#/$defs/id" },
+    "title": { "$ref": "common.json#/$defs/short_text" },
+    "description": { "$ref": "common.json#/$defs/text" },
+    "domain": { "$ref": "common.json#/$defs/domain" },
+    "desired_outcome": { "$ref": "common.json#/$defs/text" },
+    "success_criteria": {
+      "type": "array",
+      "items": { "$ref": "common.json#/$defs/text" },
+      "maxItems": 8
+    },
+    "deadline": {
+      "oneOf": [
+        { "$ref": "common.json#/$defs/date" },
+        { "type": "null" }
+      ]
+    },
+    "deadline_flexibility": {
+      "type": "string",
+      "enum": ["fixed", "flexible", "unknown"]
+    },
+    "available_time": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hours_per_week": { "type": "number", "minimum": 0, "maximum": 100 },
+            "session_minutes": { "$ref": "common.json#/$defs/minutes" },
+            "notes": { "$ref": "common.json#/$defs/short_text" }
+          }
+        }
+      ]
+    },
+    "resources": { "$ref": "common.json#/$defs/text_list" },
+    "constraints": { "$ref": "common.json#/$defs/text_list" },
+    "current_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "$ref": "common.json#/$defs/text" },
+        "facts": { "$ref": "common.json#/$defs/text_list" }
+      }
+    },
+    "preferences": { "$ref": "common.json#/$defs/text_list" },
+    "assumptions": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "basis"],
+        "properties": {
+          "statement": { "$ref": "common.json#/$defs/text" },
+          "basis": {
+            "type": "string",
+            "enum": ["user_stated", "inferred_from_context", "default_until_confirmed"]
+          },
+          "confirmed": { "type": "boolean" }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "paused", "completed", "archived"]
+    }
+  }
+}

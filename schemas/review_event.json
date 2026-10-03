@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/review_event.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/review_event.json",
   "title": "Human review event (review log v0.2)",
   "description": "One line of the append-only, hash-chained review log data/reviewed/review_events.jsonl. A decision applies only to the exact content it names (content_hash); the reviewed content is preserved under data/reviewed/snapshots/<content_hash>.json.",
   "type": "object",
@@ -15,7 +15,7 @@
     "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "reviewer_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,40}$" },
     "reviewer": {
-      "description": "Snapshot of the reviewer's registry entry at decision time.",
+      "description": "Snapshot of the reviewer's registry entry at decision time. Roles and expert_domains are audit data; since D-030 a domain_expert role is never required.",
       "type": "object",
       "additionalProperties": false,
       "required": ["roles", "languages", "expert_domains", "human"],
@@ -57,12 +57,18 @@
       }
     },
     "new_status_detail": {
-      "description": "Why a pending example is pending: not_reviewed, content_changed (decided on an earlier version) or awaiting_expert.",
-      "enum": ["not_reviewed", "content_changed", "awaiting_expert", "decided"]
+      "description": "Why a pending example is pending: not_reviewed or content_changed (decided on an earlier version); decided otherwise. The pre-D-030 detail awaiting_expert is no longer produced (no recorded event carries it; schemas/archive/v0.1.3 still lists it).",
+      "enum": ["not_reviewed", "content_changed", "decided"]
     },
-    "review_tier": { "enum": ["human_review_required", "expert_review_required"] },
+    "review_tier": {
+      "description": "The example's risk tier when the decision was recorded. Since D-030 expert_review_required is a risk label only: no domain-expert sign-off is required.",
+      "enum": ["human_review_required", "expert_review_required"]
+    },
     "required_languages": { "type": "array", "items": { "type": "string" } },
-    "required_expert_domains": { "type": "array", "items": { "type": "string" } },
+    "required_expert_domains": {
+      "description": "Risk domains of an expert-tier example (field name kept for compatibility). Since D-030 they need no expert sign-off.",
+      "type": "array", "items": { "type": "string" }
+    },
     "review_item_id": { "type": ["string", "null"] },
     "independent_rating": {
       "description": "Reviewer's declaration that the rubric was filled in before looking at automated findings.",

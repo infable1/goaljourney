@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/verification_protocol.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/verification_protocol.json",
   "title": "Verification protocol",
   "description": "Task-specific description of how completion will be checked. Photos/video are allowed only as part of a combination; a protocol whose only required evidence is a photo is rejected by semantic validation (VP_PHOTO_ONLY). Pure self-report protocols must cap confidence at 'limited'.",
   "type": "object",

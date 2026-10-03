@@ -110,19 +110,21 @@ def cmd_list(status=None, tier=None, task_type=None, language=None, manifest_onl
             continue
         rows.append({"id": rid, "item": (it or {}).get("review_item_id", ""), "calibration": bool((it or {}).get("calibration")),
                      "task_type": rec["task_type"], "language": rec["language"], "input_language": rec["input_language"],
-                     "tier": info["tier"], "requires": info["required_languages"] + info["required_expert_domains"],
+                     "tier": info["tier"], "requires": info["required_languages"],
+                     "risk_domains": info["required_expert_domains"],
                      "status": info["status"], "decisions": info["decisions"],
                      "changed_since_sampling": bool(it and it["content_hash"] != info["content_hash"]), "file": rel(path)})
     if as_json:
         print(json.dumps(rows, ensure_ascii=False, indent=2))
         return 0
-    print(f"{'example':18} {'item':14} {'task_type':29} {'lang':6} {'tier':7} {'status':24} requires")
+    print(f"{'example':18} {'item':14} {'task_type':29} {'lang':6} {'tier':7} {'status':24} reviewer reads / risk domains")
     for r in rows:
         flag = "*" if r["calibration"] else " "
         chg = "  [changed since sampling]" if r["changed_since_sampling"] else ""
         lang = r["language"] + ("+mx" if r["input_language"] == "mixed" else "")
-        print(f"{r['id']:18} {r['item']:13}{flag} {r['task_type']:29} {lang:6} {'expert' if r['tier'].startswith('expert') else 'human':7} "
-              f"{r['status']:24} {','.join(r['requires'])}{chg}")
+        risk = f" / {','.join(r['risk_domains'])}" if r["risk_domains"] else ""
+        print(f"{r['id']:18} {r['item']:13}{flag} {r['task_type']:29} {lang:6} {'risk' if r['tier'].startswith('expert') else 'human':7} "
+              f"{r['status']:24} {','.join(r['requires'])}{risk}{chg}")
     print(f"\n{len(rows)} example(s); " + ", ".join(f"{k}={v}" for k, v in sorted(Counter(r['status'] for r in rows).items())))
     if manifest_only:
         print("* = calibration item (every reviewer reviews these first)")
@@ -150,7 +152,8 @@ def cmd_show(example_id, show_automated=False, version=None):
     print(f"language: {rec['language']} (input: {rec['input_language']})   domain: {rec['domain']}   difficulty: {rec['difficulty']}"
           f"   goal_size: {rec['goal_size']}   safety: {rec['safety_category']}")
     print(f"tier: {info['tier']}   needs reviewer languages: {info['required_languages']}"
-          + (f"   expert sign-off: {info['required_expert_domains']}" if info['required_expert_domains'] else ""))
+          + (f"   risk domains: {info['required_expert_domains']} (review with care; no expert sign-off needed, D-030)"
+             if info['required_expert_domains'] else ""))
     print(f"status: {info['status']}   content_hash: {info['content_hash'][:16]}…   decisions: {info['decisions'] or '—'}")
     if it:
         print(f"review item: {it['review_item_id']} (stratum {it['stratum']}{', calibration' if it['calibration'] else ''})"
@@ -276,8 +279,6 @@ def decide(action, example_id, reviewer, decision_file=None, rates=(), overall=N
                             open_findings=blocking)
     print(f"Recorded {ev['event_id']}: {example_id} {ev['old_status']} -> {ev['new_status']} "
           f"({action} by {reviewer}, overall {ev['overall']})")
-    if ev.get("new_status_detail") == "awaiting_expert":
-        print(f"  still pending — expert sign-off needed for: {RS.resolve(rec, store.events())['missing_expert_domains']}")
     return ev
 
 
@@ -417,10 +418,8 @@ def compute_stats(version=None):
         "dataset_version": version,
         "review_mode": mode,
         "governance": {
-            "active_human_reviewers": [{"id": r["id"], "roles": r["roles"], "expert_domains": r["expert_domains"]}
-                                       for r in active],
+            "active_human_reviewers": [{"id": r["id"], "roles": r["roles"]} for r in active],
             "active_dataset_reviewers": sum(1 for r in active if "dataset_reviewer" in r["roles"]),
-            "qualified_expert_domains": sorted({d for r in active if "domain_expert" in r["roles"] for d in r["expert_domains"]}),
             # inter-reviewer checks only mean something with several independent reviewers (configs/release_gates.yaml)
             "independent_pair_calibration": "N/A" if solo else "gate calibration_agreement (see `gj gates`)",
             "reviewer_diversity": "N/A" if solo else "gate reviewer_diversity (see `gj gates`)",
@@ -472,7 +471,7 @@ def cmd_stats(as_json=False, version=None):
     print(f"Review mode: {s['review_mode']} (configs/review.yaml governance.mode)")
     print(f"Human reviewers (registered, active): {len(g['active_human_reviewers'])} — "
           + (", ".join(f"{r['id']} {r['roles']}" for r in g["active_human_reviewers"]) or "none")
-          + f"; qualified expert domains: {', '.join(g['qualified_expert_domains']) or 'none'}")
+          + "; one qualified human approval suffices for every tier (D-030)")
     if solo and g["active_dataset_reviewers"] > 1:
         print(f"  note: {g['active_dataset_reviewers']} active dataset reviewers in solo_owner mode. Their recorded decisions "
               "all count; set `active: false` for anyone no longer reviewing (past events keep their snapshot), or switch "
@@ -481,7 +480,7 @@ def cmd_stats(as_json=False, version=None):
         rs = s[key]
         if rs:
             print(f"{label} ({rs['total']}): human-reviewed {rs['human_reviewed']}/{rs['total']} · training-eligible "
-                  f"{rs['training_eligible']}/{rs['total']} · awaiting expert {rs['awaiting_expert']} · needs revision "
+                  f"{rs['training_eligible']}/{rs['total']} · needs revision "
                   f"{rs['needs_revision']} · rejected {rs['rejected']} · not reviewed {rs['not_reviewed']} · content changed "
                   f"{rs['content_changed']}")
     why = " (solo_owner mode — applies only with several independent reviewers)" if solo else ""
@@ -542,7 +541,8 @@ def cmd_export(fmt, out, status=None, ids=None, manifest_only=False, with_automa
         for rec, _, info, it in selected:
             entries.append({"example_id": rec["id"], "content_hash": info["content_hash"],
                             "review_item_id": (it or {}).get("review_item_id"), "task_type": rec["task_type"],
-                            "language": rec["language"], "requires": info["required_languages"] + info["required_expert_domains"],
+                            "language": rec["language"], "requires": info["required_languages"],
+                            "risk_domains": info["required_expert_domains"],
                             "action": None, "overall": None,
                             "ratings": {c: None for c in RS.applicable_criteria(rubric, rec)},
                             "issues": [], "notes": "", "independent_rating": True})
@@ -568,7 +568,7 @@ def cmd_export(fmt, out, status=None, ids=None, manifest_only=False, with_automa
                           f"- task: `{rec['task_type']}` · language: {rec['language']} (input {rec['input_language']}) · "
                           f"domain: {rec['domain']} · safety: {rec['safety_category']}",
                           f"- tier: {info['tier']} · reviewer must read: {', '.join(info['required_languages'])}"
-                          + (f" · expert sign-off: {', '.join(info['required_expert_domains'])}" if info['required_expert_domains'] else ""),
+                          + (f" · risk domains: {', '.join(info['required_expert_domains'])}" if info['required_expert_domains'] else ""),
                           f"- status: {info['status']} · content `{info['content_hash'][:12]}`",
                           "", "Criteria to rate:", ""] + [f"- {l.strip()}" for l in _criteria_lines(rubric, rec)] + [
                           "", "### Input", "", "```yaml", _dump(rec["input"]).rstrip(), "```",

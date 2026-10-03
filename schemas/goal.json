@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/goal.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/goal.json",
   "title": "Goal",
   "description": "Structured representation of a user goal. Only `title` is required: unknown fields are omitted, never invented. `assumptions` records what the AI assumed and on what basis.",
   "type": "object",

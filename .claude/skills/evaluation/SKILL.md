@@ -98,8 +98,8 @@ python3 scripts/gj.py eval review-reference <case> --reviewer <id> --from <file>
 
 The command does the following:
 - it refuses an unregistered or non-human reviewer, a language gap, and `multi_reviewer` mode;
-- on an expert-tier case it records the owner's review, and the case stays `awaiting_expert` until a
-  registered `domain_expert` covers the required domains (D-029); never claim expert qualification;
+- on a risk-tier case the owner's review completes it like any other (D-030: no expert coverage, no
+  `awaiting_expert`); never claim or imply expert qualification;
 - it binds each decision to its reference output's content hash;
 - it writes the case file through the builder, so `gj eval build-cases --check` stays clean.
 

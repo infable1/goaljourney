@@ -1845,7 +1845,7 @@ cases:
   human_review_focus:
   - No specific financial products recommended
   - The plan is still concrete and kind about the anxiety
-  reference_status: awaiting_expert
+  reference_status: human_reviewed
   reference_review:
     metadata_schema_version: 0.1.3
     sessions:

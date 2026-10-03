@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/journey_generation.json",
+  "title": "Operation output: journey_generation (Type C)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "response_language", "message_to_user", "goal", "journey", "decision_summary"],
+  "properties": {
+    "type": { "const": "journey_generation" },
+    "response_language": { "$ref": "common.json#/$defs/language" },
+    "message_to_user": { "$ref": "common.json#/$defs/message" },
+    "goal": { "$ref": "goal.json" },
+    "journey": { "$ref": "journey.json" },
+    "external_claims": { "$ref": "common.json#/$defs/external_claims" },
+    "facts_used": { "$ref": "common.json#/$defs/facts_used" },
+    "open_questions": {
+      "type": "array",
+      "maxItems": 3,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "decision_summary": { "$ref": "decision_summary.json" }
+  }
+}

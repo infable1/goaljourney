@@ -7,8 +7,8 @@ eval        {"id", "case_id", "step_id", "case_type", "messages": [system, user]
 
 Training formats (sft, preference) are gated:
   * --review-policy require_approved (default): only rows whose exact content is `approved` NOW
-    (review decisions are resolved live against the content hash stored in the release) — so rows awaiting an
-    expert, needing revision, rejected or not reviewed never reach a training file, in any review mode;
+    (review decisions are resolved live against the content hash stored in the release) — so rows needing
+    revision, rejected, not reviewed or changed since their decision never reach a training file, in any review mode;
   * the release gates (configs/release_gates.yaml) must pass — otherwise the export is refused, unless
     --allow-draft is given, which writes to exports/v<ver>-draft/ with training_eligible: false on every
     record and a DRAFT_NOT_FOR_TRAINING marker (pipeline smoke tests only);

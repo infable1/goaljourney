@@ -3,6 +3,55 @@
 All notable changes to the dataset, schemas, prompts, pipeline and evaluation. Versions are
 defined in `configs/versions.yaml`; releases are immutable.
 
+## 2026-10-03 — Owner-only approval, no expert gate (D-030; schema 0.1.4, pipeline 0.4.4)
+
+The product owner decided that one accountable human owner's approval of the exact current content
+hash is sufficient human approval for every current training example and every evaluation reference
+decision, including the former expert-tier and non-allowed-safety items (D-030, superseding the
+expert requirement of D-026, D-028 and D-029). No external domain expert is required. D-030 is a
+governance change, not a claim about the owner's professional qualification.
+
+- **Training review (`review_store`).**
+  - `approval.expert_tier_requires_expert` is removed from `configs/review.yaml`. A qualified human
+    approval of the current content approves an example of any risk tier.
+  - `awaiting_expert` is removed from the status details and from `INELIGIBILITY_REASONS` (now
+    `not_reviewed`, `content_changed`, `needs_revision`, `rejected`). `training_eligibility()`
+    returns `human_reviewed`, `training_eligible` and `reason`.
+  - Unchanged: content-hash binding, registered humans only, language match, the most conservative
+    decision winning, revise/reject, findings acknowledgement, known issues and every release gate
+    setting.
+  - `required_expert_domains` and the `expert_review_required` tier stay as a risk label for
+    sampling, coverage and the review manifest; they no longer gate an approval. `domain_expert`
+    stays a valid registry role but grants nothing.
+- **Evaluation reference review (`evaluation/reference_review.py`).** The status is
+  `draft_unreviewed` until every reference output has a decision on its current content, then
+  `human_reviewed`. Risk domains never affect it. `gj validate` reports `human_reviewed` and
+  `draft_unreviewed` cases.
+- **Schema 0.1.4** (0.1.3 archived byte-identically in `schemas/archive/v0.1.3/`).
+  - `eval_case.json`: `reference_status` is `draft_unreviewed` or `human_reviewed`. Session
+    `reviewer_roles` / `reviewer_expert_domains` are an audit snapshot only.
+  - `review_event.json`: `new_status_detail` is `not_reviewed`, `content_changed` or `decided`.
+  - Model I/O records keep `schema_version` 0.1.1. Evaluation envelopes stamped 0.1.3 still
+    validate against the archived 0.1.3, and the review log (v0.3, 46 events) is unchanged and
+    verifies.
+- **Migration.** `gj eval build-cases` rebuilt the v0.2.0 YAML. Only 4 `reference_status` lines
+  changed: `e2-long-06`, `e2-comp-07`, `e2-safe-01` and `e2-safe-03` moved from `awaiting_expert`
+  to `human_reviewed` on their existing owner decisions. No review event was added, and no
+  decision, content hash, input, reference output or check changed. All 63 cases are
+  `human_reviewed` (106/106 reference outputs decided); the 9 `revise` decisions are kept.
+- **Training state:** no example was `awaiting_expert`, so no row changed status: 21 `approved`
+  (training-eligible), 10 `needs_revision`, 62 `not_reviewed`, 0 `rejected`, 0 `content_changed`.
+  The release v0.1.2 manifest is unchanged. Still blocking `gj gates`: `review_all_approved`
+  (21/84), `coverage_minimums`, `eval_readiness` (63/200) and `licensing_resolved`.
+- **Tests:** owner approval of former expert-tier training examples and evaluation cases; no
+  current code path produces `awaiting_expert`; historical events still validate; revise/reject,
+  hash binding, findings acknowledgement and the other gate settings unchanged; evaluation cases
+  never become training rows (D-017).
+- **Docs:** D-030 in `docs/DECISIONS.md` (superseded notes on D-026, D-028 and D-029), the human
+  review guide, `DATASET_SPEC.md`, the evaluation design, the product-owner checklist, the review,
+  evaluation and release-check skills, the evaluation rule, the safety-reviewer agent, `CLAUDE.md`
+  and the state files.
+
 ## 2026-10-02 — Expert-tier reference reviews await the expert (D-029; schema 0.1.3 and pipeline 0.4.3 amended, no version change)
 
 The product owner decided that the owner's review of an expert-tier evaluation reference is recorded and waits

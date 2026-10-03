@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/safety.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/safety.json",
   "title": "Operation output: safety_classification",
   "description": "Safety layer. The navigator never acts as a doctor, lawyer, therapist or financial adviser; for sensitive goals it reframes its role as planning/organisation/research support and refers to professionals when needed.",
   "type": "object",

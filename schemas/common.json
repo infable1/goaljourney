@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/common.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/common.json",
   "title": "GoalJourney shared definitions",
   "description": "Reusable primitives referenced by every other schema. Keys and enums are English and language-independent; user-facing strings are written in the user's language.",
   "$defs": {

@@ -176,9 +176,11 @@ visible as N/A gates and `awaiting_expert` items rather than disappearing.
 
 *History:* resolution is unchanged, so historical multi-reviewer events (po-reviewer and
 po-reviewer-two, calibration round 0.1.0) keep their meaning. v0.1.1 artefacts are untouched, and
-`multi_reviewer` mode reproduces the earlier gate semantics.
-*Source:* `configs/review.yaml`, `configs/release_gates.yaml` (1.1), DATASET_SPEC §14–15,
-HUMAN_REVIEW_GUIDE §14–17; pipeline 0.4.0. *Status:* directed by product owner 2026-09-29.*
+`multi_reviewer` mode reproduces the earlier gate semantics. *Source:* `configs/review.yaml`,
+`configs/release_gates.yaml` (1.1), DATASET_SPEC §14–15, HUMAN_REVIEW_GUIDE §14–17; pipeline 0.4.0.
+*Status:* directed by product owner 2026-09-29.* *Superseded in part by D-030:* the expert
+escalation (`awaiting_expert`) and the expert tier as an approval condition no longer apply; the
+owner's approval suffices in every risk tier. Everything else in D-026 stands.
 
 **D-027 — Decisions on revision-ledger entries carry their reviewer, notes and independence.** A
 ledger entry's `reviewer_status` (`confirmed` or `disputed`) is recorded with `gj revisions review`,
@@ -245,7 +247,9 @@ training examples, the review log and the release gates are unaffected.
 *Source:* `schemas/eval_case.json` (schema 0.1.3), `evaluation/reference_review.py`,
 `evaluation/builders/build.py` (pipeline 0.4.3). *Status:* directed by product owner 2026-10-01.*
 *Refined by D-029:* the owner's review of an expert-tier reference is recorded, and the case stays
-`awaiting_expert` until a registered `domain_expert` covers its domains.
+`awaiting_expert` until a registered `domain_expert` covers its domains. *Superseded in part by
+D-030:* the "Expert tier unchanged" rule no longer applies; the owner's review completes the review
+of an expert-tier case too.
 
 **D-029 — An owner's review of an expert-tier evaluation reference is recorded and awaits the
 expert.** This refines the expert-tier rule of D-028; nothing else in D-028 or D-026 changes.
@@ -265,6 +269,60 @@ expert.** This refines the expert-tier rule of D-028; nothing else in D-028 or D
 *Source:* `schemas/eval_case.json` (schema 0.1.3: the `awaiting_expert` status and the session
 fields, an additive change to the unreleased version), `evaluation/reference_review.py` (pipeline
 0.4.3). *Status:* directed by product owner 2026-10-02.*
+*Superseded by D-030:* `awaiting_expert` is no longer a status, and no expert coverage is required.
+The session fields `reviewer_roles` and `reviewer_expert_domains` remain as an audit snapshot.
+
+**D-030 — Owner-only approval for all current training and evaluation review decisions.** This
+supersedes the expert-gate parts of D-026 (expert escalation), D-028 ("Expert tier unchanged") and
+D-029 (`awaiting_expert`). Everything else in those decisions stands.
+* **One owner suffices.** In `solo_owner` mode, an approval of the exact current content hash by the
+  registered, active human owner who reads the item's languages is a complete human approval of any
+  current training example. That includes the former expert tier: non-`allowed` safety categories
+  and risk tags. The owner's decisions on every reference output likewise complete the review of any
+  evaluation case.
+* **No external expert is required.** No decision needs the `domain_expert` role. The role stays
+  only so that registries and the reviewer snapshots in recorded events and sessions remain
+  readable. No expert is registered or invented, and the owner's registry entry is unchanged.
+* **`awaiting_expert` is no longer a status.**
+  * Training examples resolve to `pending` (`not_reviewed` or `content_changed`), `approved`,
+    `needs_revision` or `rejected`. The ineligibility reasons have no expert reason.
+  * An evaluation case's `reference_status` is `draft_unreviewed` while some current reference
+    output has no human decision, and `human_reviewed` when all have one.
+  * The former expert tier remains a risk label: it drives review sampling and review focus, and
+    every event records it (`review_tier`, `required_expert_domains`).
+* **Everything else stands.** These are unchanged:
+  * content-hash binding, the registered-human and language-match rules, and revise/reject
+    semantics;
+  * findings acknowledgement and known issues;
+  * every release gate: validation, `review_all_approved`, `findings_acknowledged`,
+    `known_issues_closed`, leakage, coverage (including the non-`allowed` safety share), evaluation
+    readiness and licensing.
+
+  Training-eligible still means `approved`, and training-ready still needs every applicable gate.
+* **Evaluation stays separate from training (D-017).** A reviewed evaluation case never becomes a
+  training row, in any tier.
+* **History remains valid.**
+  * No review event, reference-review session or release is rewritten. No recorded event ever
+    carried `awaiting_expert`.
+  * The four evaluation cases that were `awaiting_expert` (`e2-safe-01`, `e2-safe-03`, `e2-comp-07`,
+    `e2-long-06`) are `human_reviewed` on their existing owner decisions, with no new session.
+  * Release manifests built before D-030 keep the eligibility accounting they were built with.
+  * Schema 0.1.3, which defines `awaiting_expert`, is archived. Envelopes stamped with it still
+    validate.
+* **A governance change, not a qualification.** D-030 changes who may approve. It does not certify
+  the owner's professional qualification in medicine, law, finance, mental health or any other
+  field. Every example is still held to the safety decision (D-008), the rubric's safety hard gate
+  (M) and the referral policies, and the owner's review of a risk-tier item carries that
+  responsibility. Rubric 0.2.1's `automation: expert` label on criterion M is now read as
+  "safety-critical: the owner's judgement". The rubric file is unchanged because recorded events are
+  stamped with its version.
+
+*Why:* the project has one accountable owner and no registered domain expert. The expert gate could
+be met only by an expert the project does not have, or by an invented one, which the review rules
+forbid. So the product owner made the owner's approval sufficient and kept every other quality gate.
+*Source:* `configs/review.yaml`, `generation/pipelines/review_store.py`,
+`evaluation/reference_review.py`, schema 0.1.4 (`eval_case.json`, `review_event.json`; 0.1.3
+archived), pipeline 0.4.4. *Status:* directed by product owner 2026-10-03.*
 
 ## Engineering process
 

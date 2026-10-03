@@ -107,15 +107,18 @@ def test_language_qualification(store, registry):
     approve(store, registry, POOL["gj-safe-001"], "en-only")                # English example is fine
 
 
-def test_expert_tier_needs_matching_expert(store, registry):
-    rec = POOL["gj-safe-004"]                                               # chest pain -> medical
+def test_former_expert_tier_is_approved_by_a_qualified_human_without_an_expert(store, registry):
+    """D-030: the risk tier is still computed and recorded, but a dataset reviewer's approval suffices."""
+    rec = POOL["gj-safe-004"]                                               # chest pain -> medical risk domain
     assert RS.review_tier(rec) == "expert_review_required"
     assert RS.required_expert_domains(rec) == ["medical"]
-    ev = approve(store, registry, rec, "alice")
-    assert (ev["new_status"], ev["new_status_detail"]) == ("pending", "awaiting_expert")
-    ev = approve(store, registry, rec, "lawyer")
-    assert (ev["new_status"], ev["new_status_detail"]) == ("pending", "awaiting_expert")
+    ev = approve(store, registry, rec, "alice")                             # dataset_reviewer, no expert domains
+    assert (ev["new_status"], ev["new_status_detail"]) == ("approved", "decided")
+    assert (ev["review_tier"], ev["required_expert_domains"]) == ("expert_review_required", ["medical"])
+    # a domain expert's approval (matching or not) changes nothing: the row is already approved
+    assert approve(store, registry, rec, "lawyer")["new_status"] == "approved"
     assert approve(store, registry, rec, "dr-med")["new_status"] == "approved"
+    assert RS.resolve(rec, store.events())["detail"] == "decided"
 
 
 def test_allowed_examples_in_sensitive_domains_stay_human_tier():

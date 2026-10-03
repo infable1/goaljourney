@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/verification_result.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/verification_result.json",
   "title": "Operation output: verification_result (Types F, G)",
   "description": "Decision on submitted evidence against the task's protocol. Insufficient evidence => needs_more_evidence (not rejection). 'verified' requires every pass criterion to be met. Self-report-only evidence caps confidence at 'limited'.",
   "type": "object",

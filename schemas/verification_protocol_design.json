@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/verification_protocol_design.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/verification_protocol_design.json",
   "title": "Operation output: verification_protocol_design (Type E)",
   "type": "object",
   "additionalProperties": false,

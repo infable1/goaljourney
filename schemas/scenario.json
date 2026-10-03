@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/scenario.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/scenario.json",
   "title": "Scenario seed for synthetic generation",
   "description": "A compact description of a user situation. The generator turns one scenario into several examples (different operations along the same journey), all sharing one scenario_group.",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/journey.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/journey.json",
   "title": "Journey",
   "description": "A living route from the current state to the desired outcome. Grammar: Region > Milestone > Node (task | challenge | ai_checkpoint | decision_point | verification). Dependencies live on nodes (`depends_on`) — a single source of truth, validated as a DAG. Near-term nodes are detailed (`detail_level: full` with a Task); later nodes stay outlines until their region opens (progressive disclosure, prevents overplanning). Levels and achievements are goal-specific and tied to verified progress, never to app activity.",
   "type": "object",

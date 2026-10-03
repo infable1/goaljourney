@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/revision_ledger.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/revision_ledger.json",
   "title": "Dataset revision ledger",
   "description": "Every difference between a dataset version and its base version, with the reason for it. `gj revisions check` fails if any example differs from the base release without a matching entry (no silent edits). Computed fields (hashes, changed_paths, snapshots) are filled by `gj revisions sync`.",
   "type": "object",

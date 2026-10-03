@@ -35,9 +35,10 @@ and adapts the route. It is not the mobile app, and the navigator is not a gener
 - The dataset contains no real user data, and user data never enters training automatically.
 - Automation never approves. Never record, invent or imply a human review decision.
   `review/reviewers.yaml` lists humans only, and validation passing is not a review.
-- Review governance is solo-owner-first (D-026). Pairwise gates are N/A, never "passed". AI may
-  critique a rating after the human has rated, but it is never a reviewer or an expert. Never
-  create a second identity.
+- Review governance is solo-owner-first (D-026). The owner's approval of the exact content suffices
+  in every risk tier; no expert sign-off exists (D-030). Pairwise gates are N/A, never "passed". AI
+  may critique a rating after the human has rated, but it is never a reviewer or an expert. Never
+  create a second identity or claim a qualification.
 - Releases are immutable. Every content change needs a new `dataset_version` and a revision-ledger
   entry (`data/revisions/`); no silent edits. v0.1.0 artefacts are frozen.
 - Never loosen release gates, tests or validators to make something pass.

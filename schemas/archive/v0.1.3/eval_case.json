@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/eval_case.json",
+  "title": "Evaluation case",
+  "description": "A behavioural test. `checks` are automated assertions (each tagged with a metric); `human_review_focus` lists what a human reviewer should judge. `reference_output` is one acceptable answer, used to self-test the checks — it is not the only correct answer. Atomic cases are one model call; composite and longitudinal cases are ordered `steps`, each one model call on a canonical (teacher-forced) state, so every step is scored independently and cross-step consistency is checked through the step checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "eval_version", "dimensions", "language", "input_language", "domain", "safety_category", "human_review_focus"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^(ev|e2)-[a-z]+-[0-9]{2,4}$" },
+    "eval_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "schema_version": {
+      "description": "Output contract the case is written against (default 0.1.0 for eval v0.1.0 cases): the model input/output schemas its units and reference outputs follow. The case envelope is validated against this version too, unless `reference_review.metadata_schema_version` names a later one.",
+      "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "title": { "$ref": "common.json#/$defs/short_text" },
+    "case_type": { "type": "string", "enum": ["atomic", "composite", "longitudinal"] },
+    "scenario_group": {
+      "description": "Behavioural scenario (data/scenarios/behavioural_scenarios.yaml). Never shared with training data.",
+      "type": "string", "pattern": "^(sg-ev|bs)-[a-z0-9-]+$"
+    },
+    "seed_id": { "description": "Evaluation seed (evaluation/seeds/) the case was written from.", "type": "string", "pattern": "^es-[a-z0-9-]+$" },
+    "strata": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["clarification", "feasibility", "journey", "task_generation", "verification_protocol", "verification",
+                 "route_adaptation", "daily_plan", "navigator", "goal_change", "web_research", "safety", "memory",
+                 "progress", "time_change", "user_disagreement", "multi_turn", "adversarial", "ru", "en", "mixed_language",
+                 "calendar_arithmetic", "capability_boundary", "provenance"]
+      }
+    },
+    "adversarial": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["evidence_attack", "embedded_instruction", "contradictory_evidence", "contradictory_memory",
+                 "impossible_constraint", "unrealistic_deadline", "major_route_change", "user_disagreement",
+                 "unsupported_external_fact"]
+      }
+    },
+    "dimensions": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "$ref": "#/$defs/dimension" }
+    },
+    "task_type": { "$ref": "common.json#/$defs/operation" },
+    "language": { "$ref": "common.json#/$defs/language" },
+    "input_language": { "$ref": "common.json#/$defs/input_language" },
+    "domain": { "$ref": "common.json#/$defs/domain" },
+    "safety_category": { "$ref": "common.json#/$defs/safety_category" },
+    "input": { "$ref": "input_context.json" },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "steps": {
+      "type": "array", "minItems": 2, "maxItems": 12,
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "human_review_focus": {
+      "type": "array", "minItems": 1,
+      "items": { "$ref": "common.json#/$defs/short_text" }
+    },
+    "reference_output": { "type": "object" },
+    "reference_status": {
+      "description": "Derived from `reference_review` (D-028, D-029); never set by hand. draft_unreviewed: written by the case author to self-test the checks, and at least one reference output has no human decision on its current content hash (unreviewed, partly reviewed, or reviewed before the reference changed). awaiting_expert: every reference output has a human decision, but the case is expert-tier (D-026) and the required expert domains are not covered by registered domain_experts' decisions on the current content. human_reviewed: every reference output has a recorded decision by a registered human reviewer on its current content hash and, for an expert-tier case, the required expert domains are covered (in solo_owner mode one owner completes the review of a human-tier case; no reviewer agreement is implied). No status makes a reference the only correct answer.",
+      "type": "string", "enum": ["draft_unreviewed", "awaiting_expert", "human_reviewed"]
+    },
+    "reference_review": {
+      "description": "Human reviews of the case's reference outputs (D-028), recorded with `gj eval review-reference` and preserved by `gj eval build-cases`. Append-only: each session adds hash-bound decisions; for every reference output the latest decision on its current content hash counts.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metadata_schema_version", "sessions"],
+      "properties": {
+        "metadata_schema_version": {
+          "description": "Version of this schema (eval_case.json) that defines the review metadata; the case envelope is validated against it. The case-level `schema_version` stays the model input/output contract.",
+          "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "sessions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/reference_review_session" } }
+      }
+    },
+    "notes": { "$ref": "common.json#/$defs/text" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "case_type": { "enum": ["composite", "longitudinal"] } }, "required": ["case_type"] },
+      "then": { "required": ["steps"], "not": { "anyOf": [ { "required": ["task_type"] }, { "required": ["input"] }, { "required": ["checks"] } ] } },
+      "else": { "required": ["task_type", "input", "checks"], "not": { "required": ["steps"] } }
+    }
+  ],
+  "$defs": {
+    "dimension": {
+      "type": "string",
+      "enum": [
+        "question_quality", "planning_quality", "task_quality", "verification_quality",
+        "route_adaptation", "user_agency", "hallucination_resistance", "web_research_decisions",
+        "safety_behavior", "language_consistency", "structured_output_validity", "memory_isolation",
+        "state_consistency", "numeric_consistency", "evidence_integrity"
+      ]
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "task_type", "input", "checks"],
+      "properties": {
+        "step_id": { "type": "string", "pattern": "^s[0-9]{1,2}$" },
+        "title": { "$ref": "common.json#/$defs/short_text" },
+        "task_type": { "$ref": "common.json#/$defs/operation" },
+        "input": { "$ref": "input_context.json" },
+        "checks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/check" } },
+        "reference_output": { "type": "object" },
+        "human_review_focus": { "type": "array", "items": { "$ref": "common.json#/$defs/short_text" } },
+        "step_pattern": {
+          "description": "operation|trigger|condition|decision of this step, compared with training scenario patterns by the leakage report.",
+          "type": "string"
+        }
+      }
+    },
+    "reference_review_session": {
+      "description": "One sitting of one registered human reviewer. AI may assist only as a copilot after the reviewer's initial judgement; independent_rating is false if any decision changed after automated findings or AI critique.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer_id", "timestamp", "governance_mode", "independent_rating", "units"],
+      "properties": {
+        "reviewer_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,40}$" },
+        "reviewer_roles": {
+          "description": "The reviewer's registry roles at recording time (D-029), so a later registry edit cannot change what the session covered. A session without it counts as no expert coverage.",
+          "type": "array", "uniqueItems": true, "items": { "enum": ["dataset_reviewer", "domain_expert", "adjudicator"] }
+        },
+        "reviewer_expert_domains": {
+          "description": "The reviewer's registry expert domains at recording time (D-029). They count as expert coverage only with the domain_expert role.",
+          "type": "array", "uniqueItems": true, "items": { "type": "string" }
+        },
+        "timestamp": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+        "governance_mode": {
+          "description": "Review governance in force when recorded (configs/review.yaml). Only solo_owner is defined for reference review (D-028); one review never stands for reviewer agreement.",
+          "const": "solo_owner"
+        },
+        "independent_rating": { "type": "boolean" },
+        "units": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/reference_review_unit" } }
+      }
+    },
+    "reference_review_unit": {
+      "description": "The decision on one reference output: the case's own (atomic, no step_id) or one step's (step_id). Bound to the content hash of that reference output.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_hash", "action", "overall", "issues", "notes"],
+      "properties": {
+        "step_id": { "type": "string", "pattern": "^s[0-9]{1,2}$" },
+        "content_hash": {
+          "description": "sha256 of the canonical JSON of the reviewed reference_output.",
+          "type": "string", "pattern": "^[0-9a-f]{64}$"
+        },
+        "action": { "enum": ["approve", "revise", "reject"] },
+        "overall": { "enum": ["excellent", "acceptable", "needs_revision", "incorrect"] },
+        "issues": { "type": "array", "items": { "$ref": "#/$defs/reference_review_issue" } },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "action": { "const": "approve" } } },
+          "then": {
+            "properties": {
+              "overall": { "enum": ["excellent", "acceptable"] },
+              "issues": { "items": { "properties": { "severity": { "const": "minor" } } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "action": { "const": "revise" } } },
+          "then": { "properties": { "overall": { "const": "needs_revision" }, "issues": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "action": { "const": "reject" } } },
+          "then": { "properties": { "overall": { "const": "incorrect" }, "issues": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "reference_review_issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "description"],
+      "properties": {
+        "severity": { "enum": ["minor", "major", "critical"] },
+        "description": { "type": "string", "minLength": 3, "maxLength": 2000 },
+        "proposed_fix": { "type": "string", "maxLength": 3000 }
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": ["check", "metric"],
+      "properties": {
+        "check": {
+          "type": "string",
+          "enum": [
+            "schema_valid", "semantic_clean", "lint_absent", "equals", "one_of", "not_equals",
+            "count_max", "count_min", "must_ask", "must_not_ask", "allowed_question_targets",
+            "no_mentions", "mentions_any", "preserves_nodes", "total_minutes_within",
+            "language", "claims_grounded", "value_between"
+          ]
+        },
+        "metric": {
+          "type": "string",
+          "enum": [
+            "schema_validity", "semantic_validity", "unnecessary_question_rate",
+            "missing_critical_question_rate", "verification_status_accuracy",
+            "verification_rigor", "route_preservation", "hallucination_rate",
+            "web_research_decision_accuracy", "safety_policy_compliance", "language_match",
+            "memory_leak_rate", "user_agency_compliance", "constraint_compliance",
+            "task_actionability", "decision_transparency", "scope_adherence",
+            "progress_integrity", "feasibility_judgement",
+            "state_consistency", "numeric_consistency", "evidence_integrity",
+            "capability_compliance", "fact_provenance", "deadline_autonomy"
+          ]
+        },
+        "dimension": { "$ref": "#/$defs/dimension" },
+        "path": { "type": "string" },
+        "value": {},
+        "values": { "type": "array" },
+        "max": {},
+        "min": {},
+        "groups": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+        "targets": { "type": "array", "items": { "type": "string" } },
+        "terms": { "type": "array", "items": { "type": "string" } },
+        "codes": { "type": "array", "items": { "type": "string" } },
+        "node_ids": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

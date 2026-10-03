@@ -1,5 +1,6 @@
-"""Solo-owner review governance (D-026): one accountable human decides, an AI copilot never does, expert-tier rows
-need a qualified human expert, and inter-reviewer gates are N/A — never "passed" — without independent reviewers."""
+"""Solo-owner review governance (D-026, D-030): one accountable human decides, an AI copilot never does, the owner's
+approval of the exact content suffices in every risk tier (no expert gate), and inter-reviewer gates are N/A — never
+"passed" — without independent reviewers."""
 import copy
 import json
 
@@ -65,7 +66,7 @@ def test_solo_owner_is_the_configured_mode_and_old_configs_mean_multi_reviewer()
 
 
 def test_only_inter_reviewer_gates_are_mode_scoped():
-    """Solo mode must not switch off safety, expert, provenance or approval gates: only the pairwise checks are scoped."""
+    """Solo mode must not switch off safety, provenance or approval gates: only the pairwise checks are scoped."""
     scopes = {gid: g["scope"] for gid, g in load_yaml(repo_path("configs/release_gates.yaml"))["gates"].items()}
     assert {gid for gid, s in scopes.items() if s != "always"} == set(PAIRWISE)
     assert all(s in gates.SCOPES for s in scopes.values())
@@ -79,8 +80,7 @@ def test_solo_owner_decides_alone_and_their_latest_decision_is_final(store):
     decide(store, registry, rec, "owner")
     info = RS.resolve(rec, store.events())
     assert (info["status"], info["decisions"]) == ("approved", {"owner": "approve"})
-    assert RS.training_eligibility(info) == {"human_reviewed": True, "expert_required": False, "expert_reviewed": True,
-                                             "training_eligible": True, "reason": None, "missing_expert_domains": []}
+    assert RS.training_eligibility(info) == {"human_reviewed": True, "training_eligible": True, "reason": None}
     decide(store, registry, rec, "owner", "revise", "needs_revision", notes="on reflection: question 2 is redundant")
     assert RS.resolve(rec, store.events())["status"] == "needs_revision"
     decide(store, registry, rec, "owner")
@@ -96,38 +96,129 @@ def test_solo_owner_can_review_the_whole_sample_without_pairwise_gate_failures(s
         decide(store, registry, rec, "owner")
     infos = {r["id"]: RS.resolve(r, store.events()) for r in sample}
     expert = {r["id"] for r in sample if RS.required_expert_domains(r)}
-    assert expert and all(infos[i]["detail"] == "awaiting_expert" for i in expert)     # the owner is no expert
-    assert all(infos[r["id"]]["status"] == "approved" for r in sample if r["id"] not in expert)
+    assert expert                                          # the sample covers the former expert tier
+    # D-030: the owner (no domain_expert role) approves every row, the former expert tier included
+    assert all((infos[r["id"]]["status"], infos[r["id"]]["detail"]) == ("approved", "decided") for r in sample)
     results = {r.id: r for r in gates.evaluate("0.1.1", rows={"train": sample, "validation": []},
                                                events=store.events(), mode="solo_owner")}
     for gid in PAIRWISE:
         assert (results[gid].applicable, results[gid].passed, results[gid].state) == (False, None, "N/A")
     assert not set(PAIRWISE) & set(gates.failing(results.values()))
-    assert not results["review_all_approved"].passed      # expert-tier rows are still not approved
+    assert results["review_all_approved"].passed is True
 
 
-# ---- expert tier -------------------------------------------------------------------------------
+# ---- former expert tier (D-030: owner-only approval) ---------------------------------------------
 
-def test_qualified_owner_signs_off_only_the_matching_expert_domain(store):
-    registry = {"owner": _reviewer("owner", roles=("dataset_reviewer", "domain_expert"), domains=("physical_safety",))}
-    safety, legal = POOL["gj-safe-007"], POOL["gj-safe-005"]       # physical_safety / legal
-    decide(store, registry, safety, "owner")
-    decide(store, registry, legal, "owner")
-    s, l = RS.resolve(safety, store.events()), RS.resolve(legal, store.events())
-    assert s["status"] == "approved" and RS.training_eligibility(s)["expert_reviewed"]
-    assert (l["status"], l["detail"], l["missing_expert_domains"]) == ("pending", "awaiting_expert", ["legal"])
+EXPERT_TIER = ("gj-safe-007", "gj-safe-005")      # physical_safety / legal risk domains
 
 
-def test_unqualified_owner_leaves_expert_tier_awaiting_expert_and_not_training_eligible(store):
-    registry = {"owner": OWNER,
-                # listing a domain without the domain_expert role is not a qualification either
-                "self-study": _reviewer("self-study", domains=("physical_safety",))}
+def test_owner_approval_of_a_former_expert_tier_example_is_approved_and_training_eligible(store):
+    registry = {"owner": OWNER}                                     # dataset_reviewer only, no expert domains
+    for ex in EXPERT_TIER:
+        rec = POOL[ex]
+        assert RS.review_tier(rec) == "expert_review_required" and RS.required_expert_domains(rec)   # still a risk label
+        ev = decide(store, registry, rec, "owner")
+        assert (ev["new_status"], ev["new_status_detail"]) == ("approved", "decided")
+        assert ev["review_tier"] == "expert_review_required"         # the event still records the risk tier
+        info = RS.resolve(rec, store.events())
+        assert (info["status"], info["detail"]) == ("approved", "decided")
+        assert RS.training_eligibility(info) == {"human_reviewed": True, "training_eligible": True, "reason": None}
+    assert store.verify() == ([], [])
+
+
+def test_an_expert_role_is_neither_needed_nor_decisive(tmp_path):
+    """An owner without the domain_expert role and one with it reach the same status; the role is never consulted."""
+    rec = POOL["gj-safe-007"]
+    plain = RS.ReviewStore(tmp_path / "a.jsonl", tmp_path / "snap")
+    expert = RS.ReviewStore(tmp_path / "b.jsonl", tmp_path / "snap")
+    decide(plain, {"owner": OWNER}, rec, "owner")
+    decide(expert, {"owner": _reviewer("owner", roles=("dataset_reviewer", "domain_expert"), domains=("legal",))},
+           rec, "owner")
+    a, b = RS.resolve(rec, plain.events()), RS.resolve(rec, expert.events())
+    assert (a["status"], a["detail"]) == (b["status"], b["detail"]) == ("approved", "decided")
+    assert "missing_expert_domains" not in a and "covered_expert_domains" not in a
+
+
+def test_revise_and_reject_still_block_a_former_expert_tier_example(store):
+    registry = {"owner": OWNER}
     rec = POOL["gj-safe-007"]
     decide(store, registry, rec, "owner")
-    decide(store, registry, rec, "self-study")
+    decide(store, registry, rec, "owner", "revise", "needs_revision", notes="the referral wording needs a change")
     te = RS.training_eligibility(RS.resolve(rec, store.events()))
-    assert te == {"human_reviewed": True, "expert_required": True, "expert_reviewed": False, "training_eligible": False,
-                  "reason": "awaiting_expert", "missing_expert_domains": ["physical_safety"]}
+    assert (te["training_eligible"], te["reason"]) == (False, "needs_revision")
+    decide(store, registry, rec, "owner", "reject", "incorrect", notes="cannot be fixed in place")
+    te = RS.training_eligibility(RS.resolve(rec, store.events()))
+    assert (te["training_eligible"], te["reason"]) == (False, "rejected")
+
+
+def test_a_changed_former_expert_tier_example_needs_a_new_decision(store):
+    """Hash binding is unchanged: the owner's approval covers the exact content it was given, nothing else."""
+    rec = copy.deepcopy(POOL["gj-safe-007"])
+    decide(store, {"owner": OWNER}, rec, "owner")
+    assert RS.resolve(rec, store.events())["status"] == "approved"
+    rec["expected_output"]["message_to_user"] += " Edited."
+    info = RS.resolve(rec, store.events())
+    assert (info["status"], info["detail"]) == ("pending", "content_changed")
+    assert not RS.training_eligibility(info)["training_eligible"]
+
+
+def test_findings_still_need_acknowledgement_on_a_former_expert_tier_example(store):
+    rec = POOL["gj-safe-007"]
+    with pytest.raises(RS.ReviewError, match="open high-severity findings"):
+        decide(store, {"owner": OWNER}, rec, "owner", open_findings=["AF-x"])
+    ev = decide(store, {"owner": OWNER}, rec, "owner", open_findings=["AF-x"], acknowledge=True)
+    assert ev["acknowledged_findings"] == ["AF-x"] and ev["new_status"] == "approved"
+
+
+def test_historical_review_events_still_validate_and_resolve():
+    """D-030 changes no recorded event: the log verifies, every event validates against the current schema, none
+    carries awaiting_expert, and the reviewer and risk-tier snapshots stay readable."""
+    from gjcore import schemas
+    store = RS.ReviewStore.default()
+    events = store.events()
+    assert events and store.verify()[0] == []
+    for ev in events:
+        assert schemas.validate("review_event", ev) == [], ev["event_id"]
+        assert ev["new_status_detail"] != "awaiting_expert"
+        assert {"roles", "languages", "expert_domains", "human"} <= set(ev["reviewer"])
+        assert ev["review_tier"] in ("human_review_required", "expert_review_required")
+    assert not any("domain_expert" in ev["reviewer"]["roles"] for ev in events)   # no expert event was ever added
+    # the archived 0.1.3 schema, which listed awaiting_expert, still loads and validates the recorded events
+    assert all(schemas.validate("review_event", ev, "0.1.3") == [] for ev in events)
+
+
+def test_release_gates_other_than_review_approval_are_unchanged():
+    """D-030 changes who may approve, not what a training-ready release needs."""
+    cfg = load_yaml(repo_path("configs/release_gates.yaml"))["gates"]
+    settings = {gid: {k: v for k, v in g.items() if k not in ("description", "rationale")} for gid, g in cfg.items()}
+    assert settings == {
+        "validation_strict": {"blocking": True, "scope": "always"},
+        "review_all_approved": {"blocking": True, "scope": "always", "min_approved_share": 1.0},
+        "findings_acknowledged": {"blocking": True, "scope": "always"},
+        "known_issues_closed": {"blocking": True, "scope": "always", "max_open_severity": "low"},
+        "reviewer_diversity": {"blocking": True, "scope": "multi_reviewer", "min_distinct_reviewers": 2,
+                               "max_share_single_reviewer": 0.8},
+        "calibration_agreement": {"blocking": True, "scope": "multi_reviewer", "min_shared_items": 8,
+                                  "min_decision_agreement": 0.75, "min_decision_kappa": 0.4},
+        "leakage_hard_clean": {"blocking": True, "scope": "always"},
+        "leakage_dispositions": {"blocking": True, "scope": "always"},
+        "coverage_minimums": {"blocking": True, "scope": "always", "min_approved_train": 1000, "min_per_task_type": 20,
+                              "min_language_share": {"ru": 0.35, "en": 0.35}, "min_mixed_input_share": 0.03,
+                              "min_non_allowed_safety_share": 0.08},
+        "preference_minimums": {"blocking": True, "scope": "always", "applies_to": ["preference"],
+                                "min_per_failure_mode": 5},
+        "eval_readiness": {"blocking": True, "scope": "always", "min_cases": 200, "min_cases_per_task_type": 10},
+        "licensing_resolved": {"blocking": True, "scope": "always", "file": "configs/licensing_status.yaml"},
+    }
+
+
+def test_no_current_code_path_produces_awaiting_expert():
+    assert "awaiting_expert" not in RS.DETAILS and "awaiting_expert" not in RS.INELIGIBILITY_REASONS
+    assert "expert_tier_requires_expert" not in RS.review_config()["approval"]
+    events = RS.ReviewStore.default().events()
+    infos = [RS.resolve(r, events) for r in POOL.values()]
+    assert all(i["detail"] in RS.DETAILS for i in infos)
+    assert all(RS.training_eligibility(i)["reason"] in (None, *RS.INELIGIBILITY_REASONS) for i in infos)
 
 
 # ---- AI copilot ----------------------------------------------------------------------------------
@@ -143,11 +234,12 @@ def test_ai_copilot_can_never_create_a_human_approval(store):
     # the copilot may dry-check a draft decision: that validates, and records nothing
     assert RS.check_decision(RUBRIC, rec, "approve", good(rec), "excellent") == []
     assert store.events() == [] and RS.resolve(rec, store.events())["status"] == "pending"
-    # even a forged non-human "expert" event cannot approve or cover a domain
+    # even a forged non-human event with an expert role cannot approve
     forged = {"example_id": rec["id"], "content_hash": content_hash(rec), "reviewer_id": "ai-copilot", "action": "approve",
               "reviewer": {"roles": ["domain_expert"], "languages": ["en"], "expert_domains": ["physical_safety"], "human": False}}
     info = RS.resolve(rec, [forged])
-    assert info["status"] == "pending" and info["covered_expert_domains"] == []
+    assert (info["status"], info["detail"]) == ("pending", "not_reviewed")
+    assert not RS.training_eligibility(info)["training_eligible"]
 
 
 def test_a_rating_changed_after_ai_critique_is_recorded_as_not_independent(store):
@@ -297,7 +389,7 @@ def owner_decisions(store):
     registry = {"owner": OWNER}
     for ex in ("gj-clar-004", "gj-safe-001", "gj-nav-001"):
         decide(store, registry, POOL[ex], "owner")
-    decide(store, registry, POOL["gj-safe-007"], "owner")                       # expert tier, owner unqualified
+    decide(store, registry, POOL["gj-safe-007"], "owner")       # former expert tier: the owner's approval suffices (D-030)
     decide(store, registry, POOL["gj-feas-005"], "owner", "revise", "needs_revision", notes="arithmetic in the message")
     return store
 
@@ -314,16 +406,17 @@ def test_release_plan_lists_every_ineligible_example_with_its_reason(owner_decis
     acc = plan["manifest"]["training_eligibility"]
     listed = {e["id"]: e for e in acc["examples"]}
     assert plan["manifest"]["review_mode"] == "solo_owner"
-    assert acc["eligible"] == 3 and len(listed) == len(POOL) - 3 == sum(acc["not_eligible"].values())
-    assert listed["gj-safe-007"]["reason"] == "awaiting_expert"
-    assert listed["gj-safe-007"]["missing_expert_domains"] == ["physical_safety"]
+    assert acc["eligible"] == 4 and len(listed) == len(POOL) - 4 == sum(acc["not_eligible"].values())
+    assert "gj-safe-007" not in listed and "gj-safe-007" in released        # owner-approved former expert tier
+    assert "awaiting_expert" not in acc["reasons"] and "awaiting_expert" not in acc["not_eligible"]
+    assert set(acc["not_eligible"]) <= set(RS.INELIGIBILITY_REASONS)
     assert listed["gj-feas-005"]["reason"] == "needs_revision" and "gj-feas-005" not in released
     assert all(e["in_release"] == (e["id"] in released) for e in listed.values())
     if policy == "require_approved":
-        assert released == {"gj-clar-004", "gj-safe-001", "gj-nav-001"}
-        assert not listed["gj-safe-007"]["in_release"]
+        assert released == {"gj-clar-004", "gj-safe-001", "gj-nav-001", "gj-safe-007"}
     else:   # a draft may carry pending rows, but the manifest says each one is not training-eligible and why
-        assert listed["gj-safe-007"]["in_release"] and plan["release_status"] == "draft_unreviewed"
+        assert plan["release_status"] == "draft_unreviewed"
+        assert any(e["in_release"] and e["reason"] == "not_reviewed" for e in listed.values())
 
 
 def test_training_export_never_contains_a_row_that_is_not_approved(tmp_path):

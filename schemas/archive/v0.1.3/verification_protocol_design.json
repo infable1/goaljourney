@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/verification_protocol_design.json",
+  "title": "Operation output: verification_protocol_design (Type E)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "response_language", "message_to_user", "task_id", "protocol"],
+  "properties": {
+    "type": { "const": "verification_protocol_design" },
+    "response_language": { "$ref": "common.json#/$defs/language" },
+    "message_to_user": { "$ref": "common.json#/$defs/message" },
+    "task_id": { "$ref": "common.json#/$defs/id" },
+    "protocol": { "$ref": "verification_protocol.json" }
+  }
+}

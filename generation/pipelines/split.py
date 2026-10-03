@@ -6,7 +6,7 @@ Steps (the build aborts on any failure — nothing is written half-way):
   3. selection by review policy: `approved` examples always; `pending` *authored* examples only under
      `allow_pending` (release marked draft_unreviewed); everything else (needs_revision, rejected) and
      unapproved generated candidates are excluded. Under allow_pending, `pending` includes content changed
-     since a decision and approvals still awaiting an expert — they are released only as draft rows;
+     since a decision — it is released only as draft rows;
   4. leakage guard: any hard finding of the layered checks (exact, near-duplicate, lexical paraphrase,
      scenario group, seed id, decision pattern — see docs/LEAKAGE_CHECKS.md) aborts the build; multi-step
      evaluation cases are checked per step;
@@ -20,8 +20,9 @@ Steps (the build aborts on any failure — nothing is written half-way):
      An existing version is never overwritten: identical data files are a no-op (the manifest is kept
      as built), different data fails.
   The manifest records the review governance mode and `training_eligibility`: every pool example that is not
-  training-eligible, with its reason (awaiting_expert with the missing domains, needs_revision, rejected,
-  not_reviewed, content_changed) and whether it is in the release as a draft row — nothing is dropped silently.
+  training-eligible, with its reason (needs_revision, rejected, not_reviewed, content_changed) and whether it is
+  in the release as a draft row — nothing is dropped silently. Manifests built before D-030 also list the reason
+  `awaiting_expert`; they are kept as built (releases are immutable).
   `plan_release` computes the release (selection, split, manifest) without writing anything; `build_release`
   writes it.
 """
@@ -99,8 +100,7 @@ def training_accounting(pool, infos, selected_ids):
             continue
         reasons[te["reason"]] += 1
         rows.append({"id": rec["id"], "reason": te["reason"], "status": infos[rec["id"]]["status"],
-                     "detail": infos[rec["id"]]["detail"], "origin": origin, "in_release": rec["id"] in selected_ids,
-                     **({"missing_expert_domains": te["missing_expert_domains"]} if te["reason"] == "awaiting_expert" else {})})
+                     "detail": infos[rec["id"]]["detail"], "origin": origin, "in_release": rec["id"] in selected_ids})
     eligible = len(pool) - len(rows)
     return {"eligible": eligible, "not_eligible": dict(sorted(reasons.items())),
             "not_eligible_in_release": sum(1 for r in rows if r["in_release"]),

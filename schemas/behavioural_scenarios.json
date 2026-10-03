@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/behavioural_scenarios.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/behavioural_scenarios.json",
   "title": "Behavioural scenario registry",
   "description": "Scenario groups describe the underlying behavioural scenario — the situation, the decisive condition and the decision the navigator should take — not the topic. Training examples and evaluation cases reference these ids; training and evaluation never share an id or a decision pattern (operation|trigger|condition|decision).",
   "type": "object",

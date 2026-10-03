@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.3/input_context.json",
+  "title": "Model input context",
+  "description": "The single request object the app sends to the navigator model. `operation` selects the output contract. Everything except `operation` and `today` is optional: send only what the operation needs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["operation", "today"],
+  "properties": {
+    "operation": { "$ref": "common.json#/$defs/operation" },
+    "today": { "$ref": "common.json#/$defs/date" },
+    "app_locale": {
+      "description": "UI locale. A hint only: the user's own messages decide the response language.",
+      "$ref": "common.json#/$defs/language"
+    },
+    "user_memory": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "memory.json" }
+    },
+    "goal_memory": {
+      "type": "array",
+      "maxItems": 30,
+      "items": { "$ref": "memory.json" }
+    },
+    "retrieved_memory": {
+      "description": "Items returned by memory retrieval. May contain noise from other goals (goal_id differs from goal.id); those must be ignored.",
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "memory.json" }
+    },
+    "goal": { "$ref": "goal.json" },
+    "journey": { "$ref": "journey.json" },
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "completed_node_ids": { "$ref": "common.json#/$defs/id_list" },
+        "verified_node_ids": { "$ref": "common.json#/$defs/id_list" },
+        "verified_milestone_ids": { "$ref": "common.json#/$defs/id_list" },
+        "current_level_index": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "unlocked_achievement_ids": { "$ref": "common.json#/$defs/id_list" },
+        "outcome_metrics": {
+          "description": "Real-world outcome counters relevant to the goal (e.g. paying_clients: 12).",
+          "type": "object",
+          "additionalProperties": { "type": ["number", "string"] },
+          "maxProperties": 10
+        },
+        "app_activity": {
+          "description": "Engagement data. Must NOT drive levels or achievements.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "streak_days": { "type": "integer", "minimum": 0 },
+            "app_opens_last_30_days": { "type": "integer", "minimum": 0 },
+            "last_active": { "$ref": "common.json#/$defs/date" }
+          }
+        }
+      }
+    },
+    "task": { "$ref": "task.json" },
+    "target_node_id": {
+      "description": "For task_generation / navigator requests: the node or milestone the request is about.",
+      "$ref": "common.json#/$defs/id"
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 10,
+      "items": { "$ref": "evidence.json" }
+    },
+    "verification_history": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["attempt", "evidence", "result_status", "result_summary"],
+        "properties": {
+          "attempt": { "type": "integer", "minimum": 1 },
+          "evidence": { "type": "array", "items": { "$ref": "evidence.json" }, "maxItems": 10 },
+          "result_status": { "type": "string", "enum": ["verified", "needs_more_evidence", "rejected"] },
+          "result_summary": { "$ref": "common.json#/$defs/text" },
+          "requested_evidence": { "$ref": "common.json#/$defs/text_list" }
+        }
+      }
+    },
+    "time_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "available_minutes_today": { "type": "integer", "minimum": 0, "maximum": 1440 },
+        "hours_per_week": { "type": "number", "minimum": 0, "maximum": 100 },
+        "previous_hours_per_week": { "type": "number", "minimum": 0, "maximum": 100 },
+        "energy": { "type": "string", "enum": ["low", "normal", "high"] }
+      }
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "description"],
+        "properties": {
+          "type": { "$ref": "common.json#/$defs/change_trigger" },
+          "description": { "$ref": "common.json#/$defs/text" },
+          "date": { "$ref": "common.json#/$defs/date" }
+        }
+      }
+    },
+    "decision_log": {
+      "description": "Earlier route decisions for this goal (goal-level memory), newest last.",
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "summary"],
+        "properties": {
+          "date": { "$ref": "common.json#/$defs/date" },
+          "summary": { "$ref": "common.json#/$defs/text" },
+          "trigger": { "$ref": "common.json#/$defs/change_trigger" }
+        }
+      }
+    },
+    "research_results": {
+      "description": "Results of web research performed by the app. The only valid basis for 'verified_with_source' claims.",
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "finding", "source"],
+        "properties": {
+          "id": { "$ref": "common.json#/$defs/id" },
+          "query": { "$ref": "common.json#/$defs/short_text" },
+          "finding": { "$ref": "common.json#/$defs/text" },
+          "source": { "$ref": "common.json#/$defs/source" }
+        }
+      }
+    },
+    "conversation": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "content"],
+        "properties": {
+          "role": { "type": "string", "enum": ["user", "assistant"] },
+          "content": { "type": "string", "minLength": 1, "maxLength": 4000 }
+        }
+      }
+    }
+  }
+}

@@ -29,8 +29,9 @@ current set, for two reasons found in the Milestone 1.5 audit:
    `reference_review` block with `gj eval review-reference`: one per reference output, bound to its
    content hash. In `solo_owner` mode one registered human owner completes the review, and no second
    reviewer is required. The case becomes `human_reviewed` only when every reference output has a
-   decision on its current content. An expert-tier case stays `awaiting_expert` until a registered
-   `domain_expert` covers its domains (D-029).
+   decision on its current content, in every risk tier: since D-030 there is no expert condition and
+   no `awaiting_expert` status (the D-029 rule is superseded). Reviewing a reference never makes a
+   case training data (D-017).
 5. **Checks measure, people judge.** Automated checks cover what can be decided mechanically:
    schema, lint codes, numbers, dates, ids, states. Quality judgements are listed in
    `human_review_focus`.

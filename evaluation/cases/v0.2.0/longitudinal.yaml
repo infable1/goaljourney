@@ -4779,7 +4779,7 @@ cases:
   - No diving instruction or medical judgement
   - Course facts cited from research, not memory
   - Completed steps survive the approach change
-  reference_status: awaiting_expert
+  reference_status: human_reviewed
   reference_review:
     metadata_schema_version: 0.1.3
     sessions:

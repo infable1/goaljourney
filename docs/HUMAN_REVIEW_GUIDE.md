@@ -15,15 +15,16 @@ quality.** Your judgement is the quality gate. The policies you review against �
 confidence semantics, deadline autonomy, Russian voice, fact provenance — are in
 [`POLICY_DECISIONS_v0.1.1.md`](POLICY_DECISIONS_v0.1.1.md).
 
-## Review governance: solo owner first (D-026)
+## Review governance: solo owner first (D-026, D-030)
 
-The dataset is reviewed by **one accountable human owner**, helped by an **AI review copilot**, with a
-**qualified external expert** only where an expert-tier example needs one
-(`configs/review.yaml` → `governance.mode: solo_owner`).
+The dataset is reviewed by **one accountable human owner**, helped by an **AI review copilot**
+(`configs/review.yaml` → `governance.mode: solo_owner`). The owner's approval of an item's exact
+content is sufficient in every risk tier: no external domain expert is required (D-030).
 
 > The project needs rigorous human judgement, not bureaucratic multiplication of humans.
 > AI can be a reviewer coach, but the human remains the accountable decision-maker.
-> Expert qualification is a real-world requirement, not something the software or AI can simulate.
+> D-030 changes who may approve; it is not a certificate of professional qualification.
+> Risk-tier items still have to meet the safety rules, the safety hard gate (M) and the referral policies.
 
 ```text
                  ┌──────────────────────┐
@@ -33,17 +34,17 @@ The dataset is reviewed by **one accountable human owner**, helped by an **AI re
 ┌──────────────┐     ┌───────────────┐
 │ Dataset item │ ──▶ │  Human owner  │ ──▶ approve / revise / reject   (latest decision on the content is final)
 └──────────────┘     └───────┬───────┘
-                   ordinary  │  expert-tier
-                     item ◀──┴──▶ item: a qualified human domain expert signs off (the owner only if qualified);
-                  human final     without one it stays `pending / awaiting_expert` and never enters training (§16)
+                             │  every item, ordinary or risk tier (former expert tier):
+                             ▼  the owner's latest decision on the exact content is final (§16)
+                     approved → training-eligible; training-ready only when every release gate passes
 ```
 
 * No second reviewer, reviewer-diversity check, adjudicator or pairwise calibration is required. The
   release gates `reviewer_diversity` and `calibration_agreement` are reported **N/A** in this mode, never
   as passed.
 * Nothing about quality changes: the rubric A–Q, the hard gates L and M, exact content-hash binding,
-  immutable snapshots, the append-only history, re-review after any edit, independence from automated
-  findings and expert sign-off all apply exactly as before.
+  immutable snapshots, the append-only history, re-review after any edit and independence from
+  automated findings all apply exactly as before. Only the expert sign-off is gone (D-030).
 * Decisions recorded by several reviewers earlier (the 2026-09-28/29 calibration round) keep their
   meaning: on that content version every reviewer's latest decision still counts.
 * A second reviewer can be added later; see §17.
@@ -51,9 +52,11 @@ The dataset is reviewed by **one accountable human owner**, helped by an **AI re
 ## 1. Before you start
 
 1. Add yourself to [`review/reviewers.yaml`](../review/reviewers.yaml): a stable pseudonymous `id`,
-   `roles`, the `languages` you can judge natively or near-natively, `expert_domains` only if you are
-   professionally qualified, and `human: true`. In solo_owner mode one entry — the owner — is enough.
-   Automated agents, including the AI copilot, are never registered and cannot record decisions.
+   `roles`, the `languages` you can judge natively or near-natively, and `human: true`. In
+   solo_owner mode one entry — the owner — is enough. `expert_domains` is optional and changes
+   nothing since D-030; list a domain only if you are professionally qualified in it, never to make
+   an approval count. Automated agents, including the AI copilot, are never registered and cannot
+   record decisions.
 2. Read the rubric ([`evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml`](../evaluation/rubrics/dataset_review_rubric_v0.2.1.yaml))
    and this guide.
 3. Skim [`DATASET_SPEC.md`](../DATASET_SPEC.md) §5–§12 (operations, journey grammar, verification,
@@ -64,12 +67,14 @@ The dataset is reviewed by **one accountable human owner**, helped by an **AI re
 | Role | Can do | Notes |
 |---|---|---|
 | `dataset_reviewer` | approve, revise or reject examples in the languages they list | the owner, in solo_owner mode. Russian and mixed-input examples need a reviewer who reads Russian; mixed input needs both languages |
-| `domain_expert` | the same, and signs off expert-tier examples in their `expert_domains` | a professionally qualified human only — the owner if genuinely qualified, otherwise an external expert; never an AI, never self-study. Expert-tier examples stay `pending` (detail `awaiting_expert`) until approvals cover every required domain |
+| `domain_expert` | the same as `dataset_reviewer`; since D-030 it grants nothing extra | optional, kept so registries and recorded snapshots stay readable. Only a professionally qualified human may hold it; never an AI, never self-study, never assigned to make an approval count |
 | `adjudicator` | resolves disagreements; their latest decision on a content version is final | multi_reviewer mode only (§17); not used in solo_owner mode. Use sparingly, and write the reasoning in `notes` |
 
-**Expert tier** means a non-`allowed` safety category or an explicit risk tag, which covers 10
-examples in v0.1.0. The required domains are shown by `gj review show` and `gj review list`: medical,
-mental_health, legal, financial, physical_safety, privacy or safety_policy.
+**Risk tier** (the former expert tier, `expert_review_required`) means a non-`allowed` safety
+category or an explicit risk tag, which covers 10 examples in v0.1.0. Its risk domains are shown by
+`gj review show` and `gj review list`: medical, mental_health, legal, financial, physical_safety,
+privacy or safety_policy. Since D-030 the tier asks for extra care, not for an expert: the owner's
+approval suffices. It still weights review sampling and is recorded in every event.
 
 ## 3. What automation decides, and what it cannot
 
@@ -78,7 +83,7 @@ mental_health, legal, financial, physical_safety, privacy or safety_policy.
 | **automatically validatable** | schema validity; ids and references; dependency DAG and order; dates vs `today` and the deadline; daily time budget; photo-only proof; self-report confidence ceiling; verification status vs criteria; exposed reasoning; response language (script); `must_not_mention` memory leaks; rejected outputs in the auto-detectable failure modes. **Since v0.1.1:** weekday vs date; hour/week arithmetic in the plan *and in the message text*; deadline autonomy (task auto / milestone with summary / goal only proposed); capabilities (no video, no reminders, no API calls); confidence ceilings by evidence class; recorded contradictions; `facts_used` provenance; Russian gendered self-reference, address and memory | `gj validate` — if it fails, fix the example; you still judge everything else |
 | **flagged by heuristics, decided by you** | vague titles (incl. outline nodes); user-entered data rated as objective; product-capability assumptions; too many questions; unsupported feasibility claims; capacity mismatch; milestone-date changes without consent; unsupported generalisations; quantities not in the input; retrieved-memory leaks; Russian gendered forms; weekday/date mismatches | `gj audit` shows candidates; a heuristic hit is a question, not a verdict |
 | **human review required** | usefulness; goal understanding (no invented facts); question minimality; actionability; realism and arithmetic; verification fit; evidence interpretation; user agency; adaptation proportionality; explanation quality; natural language and gender neutrality; contrastive plausibility and tagging; the 16 human-only failure modes | you |
-| **expert review required** | medical, mental-health, legal, financial, physical-safety and privacy content of expert-tier examples; any health claim | a qualified `domain_expert` |
+| **safety-critical, owner's judgement** | medical, mental-health, legal, financial, physical-safety and privacy content of risk-tier examples; any health claim. Rubric 0.2.1 labels criterion M `automation: expert`; since D-030 that means "safety-critical", not "needs an expert" | you, the owner (D-030): no prescriptions, referrals where needed, restricted goals declined with a legitimate alternative |
 
 No example is ever approved automatically, whatever its tier.
 
@@ -226,7 +231,7 @@ forms themselves («я прочитал»), which is fine in the input. The outp
 
   | Status | Detail |
   |---|---|
-  | `pending` | `not_reviewed`, `content_changed` or `awaiting_expert` |
+  | `pending` | `not_reviewed` or `content_changed` (the pre-D-030 detail `awaiting_expert` is gone) |
   | `approved` | `decided` |
   | `needs_revision` | `decided` |
   | `rejected` | `decided` |
@@ -273,8 +278,9 @@ forms themselves («я прочитал»), which is fine in the input. The outp
   `gj review verify-log` detects edits, deletions and reordering, and a test enforces it.
 * Append on one branch at a time. Merging two branches that both appended is detected as a fork
   (a warning, order kept). It is not tampering, but it should be rare.
-* Your registry entry (roles, languages, expert domains) is copied into each event, so later registry
-  edits never change past decisions.
+* Your registry entry (roles, languages, expert domains) is copied into each event, so later
+  registry edits never change past decisions. Since D-030 the roles and domains in that snapshot are
+  audit data; they do not decide a status.
 
 ## 12. Effort
 
@@ -286,12 +292,14 @@ Expect 10–20 minutes per example for a careful first pass (longer for journeys
 * Approve because validation passed, or because the example "looks like the others".
 * Look at automated findings before rating (then say so if you did).
 * Fix an example in place without recording a `revise` decision.
-* Approve outside your languages or expertise; ask for an expert instead.
+* Approve outside your languages, or approve a risk-tier item you have not checked against the
+  safety rules; `revise` with the doubt instead (§15).
 * Edit `review_events.jsonl` or the snapshots by hand.
-* Let the AI copilot choose, record or phrase your decision as if it were yours; count its output as expert
-  sign-off; or approve an uncertain item because the copilot's answer sounds plausible (§14, §15).
-* Register a second identity for yourself, or an expert domain you are not professionally qualified in, to
-  make a gate or a status move.
+* Let the AI copilot choose, record or phrase your decision as if it were yours; present its output
+  as professional advice; or approve an uncertain item because the copilot's answer sounds plausible
+  (§14, §15).
+* Register a second identity for yourself, or an expert domain you are not professionally qualified
+  in.
 
 ## 14. AI review copilot
 
@@ -309,7 +317,7 @@ judges for you.
 | dry-check a filled decision file against the decision rules (nothing is recorded) | see your ratings before you have recorded them, if you want an independent first pass |
 
 The software enforces the hard part: only a registered `human: true` reviewer can record a decision,
-only approvals by human `domain_expert`s cover expert domains, and a dry check writes nothing
+an AI's output never becomes an approval, and a dry check writes nothing
 (`tests/test_solo_review.py`).
 
 **Order of work** (keeps your first rating independent, §5):
@@ -340,38 +348,39 @@ You:      choose the rating and decision, and write the reasoning in notes, e.g.
            and unsourced. Copilot consulted after my initial rating (independent_rating: false)."
 ```
 
-If you still cannot decide, `revise` with an issue that states the doubt is the safe choice: the item
-stays out of training until its content or your judgement settles. For expert-tier content the doubt
-is not yours to settle: leave it to a qualified expert (§16).
+If you still cannot decide, `revise` with an issue that states the doubt is the safe choice: the
+item stays out of training until its content or your judgement settles. That holds for risk-tier
+content too: since D-030 nobody else settles it, so an unresolved safety doubt is a `revise`, never
+an approval (§16).
 
-## 16. Expert-tier items and training eligibility
+## 16. Risk-tier items and training eligibility (D-030)
 
-Expert-tier examples (§2) need sign-off from a qualified human `domain_expert` for every required
-domain, in every governance mode.
+Since D-030 your approval of the exact current content approves an item in every tier, in every
+governance mode. There is no expert sign-off and no `awaiting_expert` state.
 
-* **You are genuinely qualified** in the required domain: hold the `domain_expert` role with that
-  domain in `review/reviewers.yaml`, under the same qualification standard as always. Your approval then
-  covers it.
-* **You are not qualified:** review the item normally — your decision still counts as the human review —
-  but do not add the domain to your entry. The item stays `pending / awaiting_expert`, lists the missing
-  domains, and is **not training-eligible** until a qualified expert approves it. It does not block your
-  review of anything else. Self-study and AI assistance are not a qualification.
+* **Risk-tier items** (§2) get extra care: check the safety category and role, referrals, the
+  absence of medical, legal or financial prescriptions, and the declined restricted goal with its
+  legitimate alternative. Approve only if hard gate M is `good` or `not_applicable`; otherwise
+  `revise` or `reject`.
+* **Your approval is a governance decision, not a qualification.** It does not certify professional
+  expertise, and nothing in the registry should suggest otherwise. Self-study and AI assistance are
+  not a qualification either; they are simply not required any more.
 
 Review states, per exact content version (`review_store.training_eligibility`, `gj review stats`):
 
 | State | Meaning |
 |---|---|
 | human-reviewed | a human decision exists on the current content |
-| expert-reviewed | no expert domain is required, or qualified human experts cover every required domain |
-| training-eligible | the current content is `approved`: human approval, expert coverage, no open objection |
-| not training-eligible | with a reason: `not_reviewed`, `content_changed`, `awaiting_expert` (with the missing domains), `needs_revision` or `rejected` |
+| training-eligible | the current content is `approved`: a qualified human approval and no open objection |
+| not training-eligible | with a reason: `not_reviewed`, `content_changed`, `needs_revision` or `rejected` |
 | training-ready release | every training row is eligible and every applicable release gate passes (`gj gates`) |
 
 Every release manifest (`gj split`) records `review_mode` and a `training_eligibility` section that
-lists **every** pool example that is not training-eligible, with its reason, missing expert domains and
-whether it is in the release as a draft row. `require_approved` releases leave such rows out;
-`allow_pending` drafts may carry them, clearly marked. `gj export` writes only `approved` rows to
-training formats, and only for a release whose applicable gates all pass. Nothing is dropped silently.
+lists **every** pool example that is not training-eligible, with its reason and whether it is in the
+release as a draft row. Manifests built before D-030 may list the reason `awaiting_expert`; releases
+are immutable, so they keep it. `require_approved` releases leave such rows out; `allow_pending`
+drafts may carry them, clearly marked. `gj export` writes only `approved` rows to training formats,
+and only for a release whose applicable gates all pass. Nothing is dropped silently.
 
 ## 17. Multi-reviewer mode (compatibility)
 
@@ -392,7 +401,7 @@ Set `governance.mode: multi_reviewer` when there really are several independent 
 
 Switching modes never rewrites the review log; it changes which gates apply.
 
-## 18. Evaluation reference outputs (D-028)
+## 18. Evaluation reference outputs (D-028, D-030)
 
 Each evaluation case has reference outputs: one per atomic case, one per step of a composite or
 longitudinal case. A reference output is one acceptable answer that self-tests the automated checks.
@@ -401,14 +410,16 @@ automated checks still decide what they measure.
 
 * **Same principle as §14.** In `solo_owner` mode you alone complete the review; there is no second
   reviewer. Rate first; the AI copilot may challenge afterwards. If you change a decision after that,
-  record it with `--independent-rating no`. On expert-tier cases (§16) your review is recorded, but
-  the case stays `awaiting_expert` until a registered, qualified domain expert covers the required
-  domains (D-029).
+  record it with `--independent-rating no`. Risk-tier cases are no different (D-030): your review
+  completes them, and no expert session is needed.
 * **Per reference output, no criterion ratings.** Give `action` (`approve`, `revise`, `reject`),
   `overall` (`excellent`/`acceptable`, `needs_revision`, `incorrect`) and, if any, issues and notes.
   The decision is bound to the reference's content hash.
 * **Recording:** `gj eval review-reference <case> --reviewer <id> --from <file> --independent-rating
   yes|no`. The command writes the decisions into the case file (`reference_review`).
-* **Status:** the case becomes `human_reviewed` only when every reference output has your decision on
-  its current content, and, for an expert-tier case, the expert domains are covered. A partial review
-  leaves it `draft_unreviewed`; an expert-tier case without expert coverage is `awaiting_expert`.
+* **Status:** the case becomes `human_reviewed` when every reference output has your decision on its
+  current content; a partial review, or a review of content that has since changed, leaves it
+  `draft_unreviewed`. There is no expert condition (D-030). A `revise` decision still counts as a
+  decision; its fix needs a new `evaluation_version`.
+* **Evaluation stays evaluation (D-017).** Reviewing a reference never makes the case a training
+  row.

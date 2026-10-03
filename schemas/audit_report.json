@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.goaljourney.invalid/v0.1.3/audit_report.json",
+  "$id": "https://schemas.goaljourney.invalid/v0.1.4/audit_report.json",
   "title": "Dataset audit report",
   "description": "Output of `gj audit`: heuristic findings for the targeted audits (Problems 1–9 and extra rules) plus the known-issues register. Findings are advisory review aids, never approvals or rejections.",
   "type": "object",

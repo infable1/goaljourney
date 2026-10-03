@@ -314,6 +314,11 @@ perform any of these steps.)
    risk tag are `expert_review_required` and stay `pending` (detail `awaiting_expert`) until a
    `domain_expert` covering every required domain has signed off; this covers 10 examples in
    v0.1.0.
+
+   *Note added 2026-10-03 (D-030):* item 6, the `domain_expert` part of item 1 and the
+   `awaiting_expert` detail in item 5 no longer apply. The owner's approval of the exact content
+   approves an example in every risk tier, and evaluation reference reviews need no expert either.
+   The tier stays a risk label for sampling and review focus; it is not a qualification claim.
 7. **Time expectation** — roughly one working day per reviewer for the 30-item sample, plus about
    half a day for the 8 calibration items and the disagreement discussion that follows.
 

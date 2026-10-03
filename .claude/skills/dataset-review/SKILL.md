@@ -59,10 +59,13 @@ python3 scripts/gj.py gates                      # which review gates are still 
 
 - Never add `--with-automated` to a reviewer's packet. Reviewers rate first and look at automated
   findings afterwards (guide §5).
-- Expert-tier items need a registered `domain_expert` for every required domain. List those items
-  and their domains for the owner. Never tell a reviewer outside a domain that they may approve.
-- Without a qualified expert, an expert-tier item stays `pending` / `awaiting_expert` and is not
-  training-eligible. Release manifests list it with its reason; it is never dropped silently.
+- Risk-tier items (the former expert tier) need no expert sign-off (D-030): the owner's approval of
+  the exact content suffices. List them and their risk domains for the owner as items that need
+  extra care against the safety rules and hard gate M. Never present that approval, or the copilot's
+  input, as a professional qualification, and never register an expert to make an approval count.
+- There is no `awaiting_expert` state. An item that is not training-eligible (`not_reviewed`,
+  `content_changed`, `needs_revision`, `rejected`) is listed with its reason in release manifests;
+  it is never dropped silently.
 
 ## 4. Record decisions (only a human's own filled file)
 
@@ -119,6 +122,5 @@ Update Progress and Next action in `docs/ACTIVE_MILESTONE.md`. Record these coun
 `docs/PROJECT_STATE.md`:
 
 - the governance mode;
-- human-reviewed and training-eligible counts;
-- awaiting expert;
+- human-reviewed and training-eligible counts, and the ineligibility reasons;
 - applicable gates passed, and the N/A gates.
