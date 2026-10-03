@@ -87,7 +87,23 @@ cases:
     requires_user_confirmation: false
     suggested_next_action: Set a daily 7:00 alarm named after today's practice step.
     decision_summary: null
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:01Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 3934bebc0482bc22ef85d61ab87a8d081ef9f6de3f441d42afc54ff63467101c
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-nav-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -184,7 +200,23 @@ cases:
       what_changed: Предложены два способа закрыть задачу без письменной выписки идей.
       why: Выписывать неудобно, а проверка нужна, чтобы идеи дошли до плана посадок.
       impact: Выбор за вами; при самоотчёте уверенность будет ограниченной.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:05Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 245b837cc1c1b152168832448b16f2ce509f27965cdf114d36ec4c4c5368cfe6
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-nav-03
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -296,7 +328,23 @@ cases:
       what_changed: 'Proposed: goal date March 1 → April 15, milestone February 21 → April 7.'
       why: The ground is frozen, so the frame cannot go up yet.
       impact: Nothing changes until you confirm.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:10Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: ea39cb447cfa9d74d05135396a711a90956581db93fc33b3b0f9fdf9f9a9e50f
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-nav-04
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -383,7 +431,23 @@ cases:
     requires_user_confirmation: false
     suggested_next_action: Переписать первые три строки опыта под SQL и Power BI.
     decision_summary: null
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:15Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 55b04d17237716cf423d3570322da5fab53f407d0735e1780cef06a907989d6f
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-nav-05
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -464,7 +528,23 @@ cases:
     requires_user_confirmation: false
     suggested_next_action: Upload the pitch as an audio file.
     decision_summary: null
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:20Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 060d41abbd4e3981ffc20def0f76146bcbab9930f67e3d8e201a977f347ca58e
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-gc-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -633,7 +713,23 @@ cases:
       what_changed: Предложено поставить цель на паузу до 15 февраля и перенести срок на 29 марта.
       why: 6 оставшихся работ занимают около 6 недель при прежнем темпе.
       impact: Готовые работы сохраняются; срок меняется только после вашего подтверждения.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:25Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 60cbe7049d4d42b2ab771b406769a99aa5d6e959766fa16627c6743b7b6b8db9
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-gc-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -762,7 +858,23 @@ cases:
       what_changed: 'Proposed: new date April 10; the past-tense unit moves after the trip.'
       why: The trip moved up by about seven weeks.
       impact: Travel-critical topics stay; completed work carries over.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:29Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 19b6ff74d09149c0714157b4404f7f09b0484bfe42ba0849862b2766f369aa7b
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-web-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -856,7 +968,23 @@ cases:
       handling: Check the current figure
     can_proceed_without_research: true
     interim_guidance: Plan the jars and labels now; hold the budget line for the permit until the fee is confirmed.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:34Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: d02dc7f18b6d45a8eb86c872ca004c1c5f614cce4507217cc3530f98b293f094
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-web-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -926,7 +1054,23 @@ cases:
     queries: []
     unsupported_claims: []
     can_proceed_without_research: true
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T17:05:39Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 8014a88c47cb898ddaaee4b1ab40c1f7647c5c0fa9c3d2398a5ca0e292b9574e
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-safe-01
   eval_version: 0.2.0
   schema_version: 0.1.1
