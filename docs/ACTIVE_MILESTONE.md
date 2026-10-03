@@ -72,14 +72,14 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
 * Task 7 has started: the reference-review mechanism (D-028, D-029) is in place. All six
   longitudinal cases, all 14 composite cases, `e2-safe-01`…`e2-safe-03`, `e2-mem-01`, `e2-mem-02`,
   `e2-prog-01`, `e2-prog-02`, `e2-clar-01`…`e2-clar-04`, `e2-feas-01`…`e2-feas-03`, `e2-jour-01`,
-  `e2-jour-02`, `e2-vprot-01`…`e2-vprot-03`, `e2-task-01`, `e2-task-02`, `e2-vres-01`…`e2-vres-06`
-  and `e2-route-01`…`e2-route-04` (94 of 106 reference outputs) have the owner's review. Four
-  expert-tier cases stay `awaiting_expert` until a registered `domain_expert` covers their domain:
-  `e2-long-06` (`safety_policy`), `e2-comp-07` (`financial`), `e2-safe-01` and `e2-safe-03` (both
-  `medical`). Nine reference outputs have `revise` decisions whose fixes are open:
-  `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`, `e2-comp-07/s2`,
-  `e2-comp-14/s1`, `e2-prog-01`, `e2-feas-01` and `e2-vres-01`. Task 8 has not started, and the
-  milestone is not complete.
+  `e2-jour-02`, `e2-vprot-01`…`e2-vprot-03`, `e2-task-01`, `e2-task-02`, `e2-vres-01`…`e2-vres-06`,
+  `e2-route-01`…`e2-route-05`, `e2-daily-01` and `e2-daily-02` (97 of 106 reference outputs) have
+  the owner's review. Four expert-tier cases stay `awaiting_expert` until a registered
+  `domain_expert` covers their domain: `e2-long-06` (`safety_policy`), `e2-comp-07` (`financial`),
+  `e2-safe-01` and `e2-safe-03` (both `medical`). Nine reference outputs have `revise` decisions
+  whose fixes are open: `e2-long-02/s5`, `e2-long-05/s2`, `e2-long-05/s4`, `e2-comp-02/s2`,
+  `e2-comp-07/s2`, `e2-comp-14/s1`, `e2-prog-01`, `e2-feas-01` and `e2-vres-01`. Task 8 has not
+  started, and the milestone is not complete.
 
 * **M1.7a (done).** The solo-owner governance mode is implemented:
   * gate scopes, with N/A reporting that never counts as passed;
@@ -701,7 +701,11 @@ solo-owner review of the rest of the sample is done (22 non-calibration items).
   `e2-route-03` and `e2-route-04`, each `approve` / `excellent`, no issues, no notes,
   `independent_rating: true`. All three are human-tier and `human_reviewed`.
 
-  All 14 composite cases are reviewed. The other 12 cases (12 reference outputs, all atomic) are
+  Three more atomic cases, recorded as given on 2026-10-03 by `po-reviewer`: `e2-route-05`,
+  `e2-daily-01` and `e2-daily-02`, each `approve` / `excellent`, no issues, no notes,
+  `independent_rating: true`. All three are human-tier and `human_reviewed`.
+
+  All 14 composite cases are reviewed. The other 9 cases (9 reference outputs, all atomic) are
   `draft_unreviewed`.
 * **Task 8 (not started).** POL-A…F and the licensing owners are unconfirmed.
 * **Task 9 (ongoing).** The blind calibration packet was prepared (in `scratch/`, git-ignored). The
@@ -771,7 +775,7 @@ subagents. It changed no data.
    `evaluation/leakage/v0.2.0.yaml` has a human disposition. If a new overlap is found, it is
    recorded `open` and the owner decides it. The agent records the decision as given
    (`disposition`, `decided_by`, `note`) and never changes `proposed_disposition`.
-5. **Owner (Task 7):** review the remaining reference outputs: the 12 atomic cases still
+5. **Owner (Task 7):** review the remaining reference outputs: the 9 atomic cases still
    `draft_unreviewed`. The longitudinal and composite ones are done; `e2-long-06` awaits a
    `safety_policy` expert, `e2-comp-07` a `financial` expert, and `e2-safe-01` and `e2-safe-03` a
    `medical` expert. Decide when to apply the open revise decisions

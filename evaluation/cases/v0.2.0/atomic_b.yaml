@@ -1656,7 +1656,23 @@ cases:
       what_changed: Nothing changed yet.
       why: The new exam date is unconfirmed hearsay.
       impact: The plan is rebuilt only after the date is confirmed.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:54:55Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: fbc954660862376da0d55e507c59598a279d4e068864474e1c9285f59715a96d
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-daily-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1770,7 +1786,23 @@ cases:
     - task_id: n3
       reason: Срок 13 ноября — время есть.
     next_action: Выписать 5 пунктов, о чём будет письмо.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:55:00Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: a368098840361ca8ed7af3c9ca46c0f12f73a499bfaf2c7f9861ee644c3926fe
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-daily-02
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -1875,4 +1907,20 @@ cases:
     - task_id: n2
       reason: Needs about 40 minutes.
     next_action: Open the first fork-and-pin puzzle.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:55:05Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 1f2ac872a8c3e82a0a42e22c9346473c2e783bf6e913e020cbf8b8bb5b0bc641
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
