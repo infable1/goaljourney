@@ -638,7 +638,23 @@ cases:
       what_changed: Задача остаётся открытой.
       why: Скриншот не заменяет публичную ссылку.
       impact: Засчитается, как только будет ссылка — когда вам будет удобно.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:39:31Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 40c8396b1c13ea6d3463a1eac44ca4e25b36ace15ed6972d895f864ef2fac7bf
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-vres-06
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -756,7 +772,23 @@ cases:
       what_changed: Task verified.
       why: The answers meet the 4-of-5 threshold.
       impact: The next task opens; ROWS vs RANGE is worth a second look.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:39:36Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: f5e8769a0c6a879fab72c2c0a6e4e6edb42b977028fef470936163c13fe9b5cd
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-route-01
   eval_version: 0.2.0
   schema_version: 0.1.1
@@ -955,7 +987,23 @@ cases:
       what_changed: Planned at 5 hours a week with a holiday boost; a choice between more hours, a later date or an extension.
       why: About 80 hours remain and cannot be cut; at the new pace they need about 14 weeks, roughly 2 weeks more than remain.
       impact: Nothing changes until you choose; completed courses stay counted.
-  reference_status: draft_unreviewed
+  reference_status: human_reviewed
+  reference_review:
+    metadata_schema_version: 0.1.3
+    sessions:
+    - reviewer_id: po-reviewer
+      reviewer_roles:
+      - dataset_reviewer
+      reviewer_expert_domains: []
+      timestamp: '2026-10-03T16:39:41Z'
+      governance_mode: solo_owner
+      independent_rating: true
+      units:
+      - content_hash: 9803f3350e031611171c7eb82e21711a49e98a3a60931f384534001c58994b23
+        action: approve
+        overall: excellent
+        issues: []
+        notes: ''
 - id: e2-route-02
   eval_version: 0.2.0
   schema_version: 0.1.1
